@@ -2,12 +2,12 @@ rm -f version.h
 
 if test -e ../.git -a ! -z "`which git`"; then
  version=`git describe | sed 's/-/./'`
- echo "version... ${version}"
+ echo ${version}
  echo "[[define]](wasoraversion, ${version})[[dnl]]" > version.m4
 
  branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
  date=`git log --pretty=format:"%ad" | head -n1`
- cat << EOF > src/version-vcs.h
+ cat << EOF > version-vcs.h
 #define WASORA_VCS_BRANCH    "${branch}"
 #define WASORA_VCS_VERSION   "${version}"
 #define WASORA_VCS_DATE      "${date}"

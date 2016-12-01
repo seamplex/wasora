@@ -3,7 +3,7 @@
 @include version.texi
 
 @set AUTHOR  G. Theler
-@set EMAIL   gtheler@@cites-gss.com
+@set EMAIL   gtheler@@seamplex.com
 @set YEAR    2016
 
 @setfilename wasora.info

@@ -1,6 +1,6 @@
 ---
 title: Description of the computational tool wasora
-author: G. Theler <gtheler@cites-gss.com>
+author: G. Theler <gtheler@seamplex.com>
 ...
 
 

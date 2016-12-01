@@ -1,0 +1,8 @@
+# generate pairs of (x,y) data to be used with interp1.was
+# use seeds to get repetitive results
+
+CONST static_steps
+static_steps = round(random_gauss(10,2,1))
+x = step_static/static_steps
+
+PRINT x+random(-0.04,0.04,2) 1-x+random(-0.2,0.2,3)+random_gauss(0,0.2,4)

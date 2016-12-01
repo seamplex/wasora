@@ -1,0 +1,7 @@
+nprec = 6
+VECTOR c      SIZE nprec
+VECTOR lambda SIZE nprec   DATA   1/7.8e1 1/3.1e1 1/8.5   1/3.2   1/7.1e-1 1/2.5e-1
+VECTOR beta   SIZE nprec   DATA   2.6e-4  1.5e-3  1.4e-3  3.0e-3  1.0e-3   2.3e-4
+CONST lambda Lambda beta Beta
+Lambda = 1e-3
+Beta = vecsum(beta)

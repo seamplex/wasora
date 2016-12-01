@@ -1,0 +1,15 @@
+# define a two-dimensional scalar field
+FUNCTION g(x,y) INTERPOLATION rectangle DATA {
+0    0    1-1
+0    1    1-0.5
+0    2    1
+1    0    1
+1    1    1+0.25
+1    2    1
+2    0    1-0.25
+2    1    1+0.25
+2    2    1+0.5
+}
+
+# print g(x,y) at the selected range to the standard output
+PRINT_FUNCTION g MIN 0 0 MAX 2 2 STEP 0.05 0.05

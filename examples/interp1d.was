@@ -1,0 +1,7 @@
+# read file f.dat and define two one-dimensional functions,
+# one using linear interpolation (default) and another with akima
+FUNCTION f(x) FILE_PATH f.dat INTERPOLATION linear
+FUNCTION g(x) FILE_PATH f.dat INTERPOLATION akima
+FUNCTION h(x) FILE_PATH f.dat INTERPOLATION steffen
+
+PRINT_FUNCTION f g h FILE_PATH f-interp.dat MIN f_a MAX f_b STEP 2e-3

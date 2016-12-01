@@ -1,0 +1,46 @@
+# example of fitting a set of data to an algebraic function
+VAR C0 C1 C2 r
+
+# the function to be fitted
+P(X) := C0 + C1*X + C2*X^r
+
+# initial guess
+C0_0 = 1
+C1_0 = 0.4
+C2_2 = 0.2
+r_0 = 1.5
+
+# the experimental data 
+FUNCTION data(X) DATA {
+0   2.02
+1   2.23
+3   2.15
+4   1.99
+5   1.74
+6   1.45
+7   1.10
+8   0.68
+9   0.20
+10  -0.31
+}
+# alternatively the data may be read from a file as follows
+# FUNCTION data(X) FILE_PATH data.dat COLUMNS 1 2
+
+FIT P TO data VIA C0 C1 C2 r
+
+# print the partial solutions (including the intermediate
+# steps needed to numerically compute the gradient)
+PRINT %g step_outer C0 C1 C2 r
+
+# once the solution converged, output the data
+IF done_outer
+ OUTPUT_FILE fitted fitted.dat
+
+ PRINT_FUNCTION FILE_PATH expdata.dat data
+
+ PRINT FILE fitted TEXT "\# C0 = " C0
+ PRINT FILE fitted TEXT "\# C1 = " C1
+ PRINT FILE fitted TEXT "\# C2 = " C2
+ PRINT FILE fitted TEXT "\# r  = " r
+ PRINT_FUNCTION FILE fitted P MIN data_a MAX data_b STEP 0.1*(data_b-data_a)/data_n
+ENDIF

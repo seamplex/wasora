@@ -1,0 +1,29 @@
+INCLUDE parameters.was
+PHASE_SPACE phi c rho
+
+end_time = 21       # target time
+target_phi = 1.02   # target level
+rhostep = 1e-5      # initial step
+
+# initial conditions for the DAE system
+rho_0 = 0
+phi_0 = 1
+c_0(i) = phi_0 * beta(i)/(Lambda*lambda(i))
+
+# DAE system (reactor point kinetics)
+rho .= rhostep * heaviside(t-1)
+phi_dot .= (rho-Beta)/Lambda * phi + vecdot(lambda, c)
+c_dot(i) .= beta(i)/Lambda * phi - lambda(i)*c(i)
+
+# the function to be minimized is the quadratic deviation
+# of the flux level with respect to the target at t = end_time
+f(rhostep) := (target_phi - phi)^2
+MINIMIZE f METHOD nmsimplex STEP 1e-5 TOL 1e-10
+
+# write some information
+IF done
+  PRINT TEXT "\# " %g step_outer rhostep f(rhostep)
+ENDIF
+IF done_outer
+  PRINT t phi HEADER
+ENDIF

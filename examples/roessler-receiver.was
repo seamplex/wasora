@@ -1,0 +1,31 @@
+# receive a 3d phase-space trajectory data from shared memory
+# and write the ascii data into the standard output
+
+# we do not know where the data comes, but it should
+# be a three-dimensional phase-space trajectory
+VAR x y z 
+# we do not know the end time either, so we start assuming
+# we run through infinite but actually end when done is true
+end_time = infinite
+
+# print a message to remind the user that another wasora
+# sending the data is to be executed
+IF in_static
+ PRINT "\# waiting for data..." NONEWLINE
+ENDIF
+
+SEM sender_ready WAIT
+
+IF in_static
+ PRINT "ok!"
+ENDIF
+
+# read t, dt, done, x, y and z from shm-object "state"
+# note that roessler-sender defines x as a vector of size 3
+# we defined x as a scalar, and read x, y and z
+# this is a perfectly valid coupling schme!
+READ SHM_OBJECT state t dt done x y z
+SEM receiver_ready POST
+
+# print the data so it can be finally plotted
+PRINT %f t x y z

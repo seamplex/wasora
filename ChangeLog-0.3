@@ -1,0 +1,1415 @@
+2015-10-23  G. Theler  <gtheler@cites-gss.com>
+
+	* src/define.c, src/parser.c:
+	= pop error message for duplicated variable definition
+	[7b945af4ba31] <dynamic_init>
+
+2015-10-21  G. Theler  <gtheler@cites-gss.com>
+
+	* merge
+	[46ecc88e06bb] <dynamic_init>
+
+	* src/matrix.c:
+	fixed bug regarding rows and cols
+	[75791981ba23] <dynamic_init>
+
+2015-10-20  G. Theler  <gtheler@cites-gss.com>
+
+	* src/vector.c:
+	improved dynamic initialization of vectors
+	[0cf2d11c1226] <dynamic_init>
+
+2015-10-21  G. Theler  <gtheler@cites-gss.com>
+
+	* src/matrix.c:
+	improved matrix initialization
+	[fb9f6118088a] <dynamic_init>
+
+2015-10-09  G. Theler  <gtheler@cites-gss.com>
+
+	* src/function.c:
+	= do not initialize 1d mesh-based functions with GSL
+	[dcbaf33eab21] <dynamic_init>
+
+	* doc/lexer/wasoralexer/lexer.py, realbook/007-functions/inline.ppl,
+	realbook/007-functions/inline.was,
+	realbook/007-functions/vectors.was,
+	realbook/010-2dfunctions/nearest.was,
+	realbook/057-blackjack/dealer.was, realbook/078-boiling-
+	channel/inputs, src/vector.c:
+	= updated realbook examples
+	[380ce055bb8a] <dynamic_init>
+
+2015-10-09  J. P. Gomez Omil  <jugomez@tecna.com>
+
+	* merge
+	[509e8cea577f]
+
+	* autogen.sh, src/debug.c:
+	+readline on mingw platforms
+	[bb3646475c45]
+
+2015-10-09  G. Theler  <gtheler@cites-gss.com>
+
+	* src/define.c, src/matrix.c, src/parser.c, src/print.c, src/vector.c,
+	src/wasora.h:
+	= dynamically execute vector & matrix DATA
+	[4874bbd2f141] <dynamic_init>
+
+2015-10-09  R. Vignolo  <rvignolo@tecna.com>
+
+	* src/cleanup.c:
+	+ re-order free functions
+	[672b28cb4d01]
+
+2015-10-08  G. Theler  <gtheler@cites-gss.com>
+
+	* AUTHORS, doc/examples/abort1.was, doc/examples/sum3.was,
+	doc/examples/vecdot.was, doc/examples/vecsize.was,
+	doc/examples/vecsum.was, src/builtinvectorfunctions.c:
+	vectorfunctions
+	[283b05019bde] <dynamic_init>
+
+	* src/algebra.c, src/cleanup.c, src/debug.c, src/define.c,
+	src/getptr.c, src/init.c, src/interface.c, src/parser.c,
+	src/wasora.h:
+	- removed NUMBERs
+	[e21142d73643] <dynamic_init>
+
+2015-10-07  G. Theler  <gtheler@cites-gss.com>
+
+	* realbook/078-boiling-channel/boiling-2010-eta.was, realbook/078
+	-boiling-channel/boiling-2010.was, realbook/078-boiling-
+	channel/boiling-2012-transient.was:
+	= changed syntax in realbook examples
+	[ccdf9e97ddbb] <dynamic_init>
+
+	* src/alias.c:
+	= bug in aliases
+	[ce71736f9e1d] <dynamic_init>
+
+	* src/alias.c, src/parser.c, src/wasora.h:
+	= dynamic aliases
+	[f5ed6467a55e] <dynamic_init>
+
+2015-10-01  G. Theler  <gtheler@cites-gss.com>
+
+	* src/function.c, src/print.c, src/wasora.h:
+	= initialize fuctions in PRINT_FUNCTION
+	[0bf02e876a72] <dynamic_init>
+
+	* src/interface.c:
+	= initialize matrices in interface.c
+	[8d6965566f74] <dynamic_init>
+
+	* src/dae.c:
+	= fixed evaluation of vector & matrix DAEs
+	[171b71f2bf0e] <dynamic_init>
+
+2015-09-30  G. Theler  <gtheler@cites-gss.com>
+
+	* src/dae.c:
+	= switched checks for i_min & i_max
+	[155cfbabbe8d] <dynamic_init>
+
+	* src/cleanup.c, src/dae.c, src/init.c, src/parser.c, src/wasora.c,
+	src/wasora.h:
+	= DAEs are dynamically initialized
+	[15d1307d391b] <dynamic_init>
+
+	* realbook/realbook.sh, src/io.c:
+	= ignore libGL warnings when running realbook (to allow ssh -X)
+	[e4e7012cbf05] <dynamic_init>
+
+	* examples/io-readfile-writeshm.was, examples/runtest.sh, src/io.c,
+	src/parser.c, src/wasora.h:
+	+ dynamic IOs
+	[9a959e1f36c6] <dynamic_init>
+
+2015-09-29  G. Theler  <jeremy@talador.com.ar>
+
+	* realbook/007-functions/vectors.was, src/function.c, src/parser.c,
+	src/vector.c:
+	+ vector-type functions are correctly (dynamically) initialized
+	[e1165b2ebd03] <dynamic_init>
+
+	* examples/N.txt, examples/matrix.was, src/assignment.c, src/define.c,
+	src/matrix.c, src/parser.c, src/wasora.h:
+	+ dynamic initialization of matrices
+	[0c2fc1d79648] <dynamic_init>
+
+2015-09-24  G. Theler  <gtheler@cites-gss.com>
+
+	* src/cleanup.c, src/function.c, src/interface.c, src/parser.c:
+	= fixed memory leak when initializing functions = fixed double free
+	with vectors with "_dot" = initialize vectors when accessing from
+	interace.c = smoother cleanups
+	[173b5ae0bc7d] <dynamic_init>
+
+	* src/algebra.c, src/assignment.c:
+	= use wasora_call() for wasora_vector_init()
+	[178e5da6134e] <dynamic_init>
+
+	* Merge with default
+	[3484ab04126f] <dynamic_init>
+
+	* src/plugin.c:
+	= restore missing "lib"+".so" combinations when loading plugins
+	[bd9cccf96946]
+
+	* autogen.sh, src/algebra.c, src/assignment.c, src/define.c,
+	src/parser.c, src/print.c, src/vector.c, src/wasora.h:
+	= vector are dynamically initialized (make check passed)
+	[80d99ce7b5f6] <dynamic_init>
+
+2015-09-17  G. Theler  <gtheler@cites-gss.com>
+
+	* src/wasora.h:
+	= size_expr in vector_t
+	[7c945754ca8f] <dynamic_init>
+
+2015-09-16  G. Theler  <gtheler@cites-gss.com>
+
+	* src/cleanup.c, src/define.c, src/function.c, src/init.c:
+	= dynamic initialization of mesh-vector functions
+	[6e3764ae609a] <dynamic_init>
+
+	* src/function.c, src/init.c, src/io.c, src/wasora.h:
+	= first attempt to have dynamic initialization (i.e. initialize
+	objects at run-time when needed)
+	[01ed79937379] <dynamic_init>
+
+	* src/cleanup.c, src/parser.c:
+	= free vectors only if they were allocated
+	[e35848cbe636]
+
+2015-09-15  G. Theler  <gtheler@cites-gss.com>
+
+	* src/parser.c:
+	= complain if no residuals were given to SOLVE
+	[6d6b47356f3a]
+
+	* src/parser.c, src/wasora.h:
+	+ added DO_NOT_EVALUATE_AT_PARSE_TIME keyword
+	[9895fdd0fcf0]
+
+	* src/function.c, src/parser.c:
+	= complain if unknown keywords appear in SOLVE = do not evaluate
+	rectangular functions if not initializaed
+	[6b173c9ac9c0]
+
+2015-09-07  G. Theler  <gtheler@cites-gss.com>
+
+	* autogen.sh, dist.sh:
+	= directory src/.libs should be created from configure, not from
+	autogen.sh (otherwise the tar.gz won't compile)
+	[ecbea3c62205]
+
+	* autogen.sh, src/init.c:
+	= files are not closed in parametric runs
+	[9eae65ab9654]
+
+2015-09-04  G. Theler  <gtheler@cites-gss.com>
+
+	* doc/syntax-tex.sh, examples/double.was:
+	added example of double pendulum
+	[d96a6383fea6]
+
+2015-08-31  jeremy theler  <jeremy@talador.com.ar>
+
+	* dist.sh:
+	dist.sh does not generate 32 bits binaries anymore
+	[c7328b5430a5]
+
+2015-08-19  G. Theler  <gtheler@cites-gss.com>
+
+	* Merge with winplugins
+	[f293313e83e5]
+
+	* Makefile.am, autogen.sh:
+	make clean removes src/.libs/*
+	[52ce45aef842] <winplugins>
+
+	* src/parser.c:
+	fix argument numbers of wasora_dlopen() in LOAD_ROUTINE
+	[9bb77a15f701] <winplugins>
+
+2015-08-19  J. P. Gomez Omil  <jugomez@tecna.com>
+
+	* src/wasora.h:
+	+wasora structure to be imported/exported too
+	[535aa889cf9c] <winplugins>
+
+	* merge
+	[1d62c7e2d60c] <winplugins>
+
+2015-08-19  G. Theler  <gtheler@cites-gss.com>
+
+	* src/cleanup.c:
+	fixed cleanup of vars that are aliases
+	[e2762021f6d7]
+
+	* src/cleanup.c:
+	free function name after (possibly) failing to free other stuff
+	[b4a368b2d2bf]
+
+2015-08-13  G. Theler  <gtheler@cites-gss.com>
+
+	* src/plugin.c, src/wasora.h:
+	= more symmetry between dlopen and loadlibrary
+	[64ea9bc4fda2] <winplugins>
+
+	* m4/wasora.m4:
+	= option --enable-download-gsl does not disable shared libraries
+	[3d99f42519ea] <winplugins>
+
+2015-08-12  J. P. Gomez Omil  <jugomez@tecna.com>
+
+	* autoclean.sh, autogen.sh:
+	=autogen.sh creates the directory .libs in src/ and autoclean.sh
+	removes it
+	[7dfb96ee897a] <winplugins>
+
+	* autogen.sh, src/plugin.c, src/wasora.h:
+	+now the plugin scheme is also available in windows
+	[b0753bbd105e] <winplugins>
+
+2015-08-12  G. Theler  <gtheler@cites-gss.com>
+
+	* src/parser.c:
+	history functions have "t" as argument name
+	[b7767755dc18]
+
+	* src/cleanup.c:
+	free argument name of a function only if it was allocated
+	[00346e189e86]
+
+2015-08-10  G. Theler  <gtheler@cites-gss.com>
+
+	* src/cleanup.c, src/parser.c, src/wasora.c, src/wasora.h:
+	= improved cleaning up allocs
+	[e94cc117bd8b]
+
+2015-08-07  G. Theler  <gtheler@cites-gss.com>
+
+	* doc/examples/solve1.was, doc/examples/solve2.was,
+	examples/solve.was, src/cleanup.c, src/multiroot.c, src/parser.c,
+	src/wasora.h:
+	= cleanup solves
+	[a33343b92cd4]
+
+2015-08-06  G. Theler  <jeremy@talador.com.ar>
+
+	* src/multiroot.c:
+	+ added forgetten source file for multiroot finding
+	[2cc21a393f38]
+
+	* examples/solve.was, src/define.c, src/parser.c, src/wasora.h:
+	+ added SOLVE instruction for systems of non-linear equations =
+	better check for valid object names (factor serparators such as '-'
+	are not allowed)
+	[8187d41bec2a]
+
+2015-07-08  J. P. Gomez Omil  <jugomez@tecna.com>
+
+	* src/assignment.c, src/parser.c, src/wasora.h:
+	+ added the case of matrix arguments depending only on i or only on
+	j
+	[2f2c197f06d5]
+
+2015-06-26  G. Theler  <gtheler@cites-gss.com>
+
+	* src/assignment.c, src/parser.c, src/wasora.h:
+	= improved scalar assignment of vectors and matrices (reported by
+	jpgomezomil)
+	[8a8ab88a9709]
+
+2015-06-13  G. Theler  <gtheler@cites-gss.com>
+
+	* m4/petsc.m4:
+	= updated petsc.m4 to comply with version 3.6.0
+	[afe5163b72e0]
+
+2015-05-28  G. Theler  <jeremy@talador.com.ar>
+
+	* examples/fitlag.was, examples/genlag.was:
+	+ added examples to find out the characteristic time of a lag given
+	data samples
+	[831f7bce5256]
+
+2015-05-26  R. Vignolo  <rvignolo@tecna.com>
+
+	* src/assignment.c:
+	= fixed bug in matrices assignments
+	[c20c942e314c]
+
+2015-05-26  G. Theler  <gtheler@cites-gss.com>
+
+	* .hgignore, doc/showcase/bootstrap.min.css,
+	doc/showcase/bootstrap.min.js, doc/showcase/bootstrap_green.html,
+	doc/showcase/clean.sh, doc/showcase/docs.min.js,
+	doc/showcase/fibonacci.sh, doc/showcase/fibonacci.text,
+	doc/showcase/fibonacci.title, doc/showcase/fibonacci.was,
+	doc/showcase/glyphicons-halflings-regular.eot, doc/showcase
+	/glyphicons-halflings-regular.svg, doc/showcase/glyphicons-
+	halflings-regular.ttf, doc/showcase/glyphicons-halflings-
+	regular.woff, doc/showcase/glyphicons-halflings-regular.woff2,
+	doc/showcase/green.css, doc/showcase/inputs,
+	doc/showcase/jquery.min.js, doc/showcase/latex_figs/notice.pdf,
+	doc/showcase/latex_figs/question.pdf,
+	doc/showcase/latex_figs/summary.pdf,
+	doc/showcase/latex_figs/warning.pdf, doc/showcase/lorenz.expl,
+	doc/showcase/lorenz.gp, doc/showcase/lorenz.results,
+	doc/showcase/lorenz.sh, doc/showcase/lorenz.text,
+	doc/showcase/lorenz.title, doc/showcase/lorenz.was,
+	doc/showcase/make.sh, doc/showcase/min.sh, doc/showcase/min.text,
+	doc/showcase/min.title, doc/showcase/pi.sh, doc/showcase/pi.text,
+	doc/showcase/pi.title, doc/showcase/pi.was,
+	doc/showcase/showcase.sh, doc/showcase/svg2pdf.sh:
+	- removed showcase (moved to wiki)
+	[a802df5c6542]
+
+2015-05-21  G. Theler  <gtheler@cites-gss.com>
+
+	* .hgignore, doc/showcase/.hgignore:
+	= updated hgignore for showcase
+	[5eba862f8907]
+
+	* doc/showcase/.hgignore, doc/showcase/bootstrap.min.css,
+	doc/showcase/bootstrap.min.js, doc/showcase/bootstrap_green.html,
+	doc/showcase/clean.sh, doc/showcase/docs.min.js,
+	doc/showcase/fibonacci.sh, doc/showcase/fibonacci.text,
+	doc/showcase/fibonacci.title, doc/showcase/fibonacci.was,
+	doc/showcase/glyphicons-halflings-regular.eot, doc/showcase
+	/glyphicons-halflings-regular.svg, doc/showcase/glyphicons-
+	halflings-regular.ttf, doc/showcase/glyphicons-halflings-
+	regular.woff, doc/showcase/glyphicons-halflings-regular.woff2,
+	doc/showcase/green.css, doc/showcase/inputs,
+	doc/showcase/jquery.min.js, doc/showcase/latex_figs/notice.pdf,
+	doc/showcase/latex_figs/question.pdf,
+	doc/showcase/latex_figs/summary.pdf,
+	doc/showcase/latex_figs/warning.pdf, doc/showcase/lorenz.expl,
+	doc/showcase/lorenz.gp, doc/showcase/lorenz.results,
+	doc/showcase/lorenz.sh, doc/showcase/lorenz.text,
+	doc/showcase/lorenz.title, doc/showcase/lorenz.was,
+	doc/showcase/make.sh, doc/showcase/min.sh, doc/showcase/min.text,
+	doc/showcase/min.title, doc/showcase/pi.sh, doc/showcase/pi.text,
+	doc/showcase/pi.title, doc/showcase/pi.was,
+	doc/showcase/showcase.sh, doc/showcase/svg2pdf.sh, src/version.c:
+	+ added showcase subdir in doc
+	[00b20b88eca0]
+
+2015-05-19  G. Theler  <gtheler@cites-gss.com>
+
+	* autogen.sh:
+	= do not pass -rdynamic to the linker in cygwin
+	[c429b2e9a8b0]
+
+2015-05-18  G. Theler  <gtheler@cites-gss.com>
+
+	* src/wasora.h:
+	+ added wasora_var_value macro
+	[692f54659627]
+
+2015-05-15  G. Theler  <gtheler@cites-gss.com>
+
+	* src/cleanup.c:
+	= correctly destroy assigments that involve vectors & matrices
+	[8aba467f5489]
+
+	* doc/READMEdoc.md, doc/lexer/wasoralexer/lexer.py, examples/clean.sh,
+	realbook/017-double-pendulum/back.svg, realbook/017-double-
+	pendulum/inputs, realbook/020-gsl/inputs,
+	realbook/020-gsl/multimin.was, realbook/020-gsl/nmsimplex.was,
+	realbook/020-gsl/siman.was, realbook/025-mathace/mathace.sh,
+	realbook/057-blackjack/inputs, realbook/078-boiling-channel/inputs:
+	= updated realbook examples to test the new assignment scheme
+	[64313344740b]
+
+	* src/algebra.c, src/assignment.c, src/cleanup.c, src/dae.c,
+	src/debug.c, src/parser.c, src/wasora.h:
+	= assignments have only one expression for the RHS (ranges can be
+	arbitrary expressions, although expressions that need auxiliary
+	pointers do not work when used in vector or matrix assignments) -
+	issue #3
+	[0075ba5bf3f2]
+
+2015-05-14  G. Theler  <gtheler@cites-gss.com>
+
+	* src/cleanup.c:
+	= fixed a bug when destroying assignments (reported by jgz)
+	[df11d7af33f5]
+
+2015-04-19  G. Theler  <jeremy@talador.com.ar>
+
+	* src/version.c:
+	= fixed a typo in version
+	[19e70de966f9]
+
+2015-04-17  G. Theler  <gtheler@cites-gss.com>
+
+	* examples/parameters.was, examples/targetflux.was, examples/tran.was,
+	realbook/020-gsl/min.was, src/cleanup.c, src/minimize.c,
+	src/multiminf.c, src/multiminfdf.c, src/parser.c, src/siman.c,
+	src/version.c, src/wasora.h:
+	= updated MINIMIZE syntax
+	- removed SIMAN_* keywords + added targetflux.was example
+	[b6012b5c9149]
+
+2015-04-14  J. P. Gomez Omil  <jugomez@tecna.com>
+
+	* src/parser.c:
+	mnodification of parser.c in order to avoid compilation errors when
+	cross compiling due to function strcmp()
+	[434b48e7de69]
+
+2015-04-08  G. Theler  <gtheler@cites-gss.com>
+
+	* src/parser.c:
+	= improved handling of duplicate ordinates in file-based functions
+	[0184ebc4289b]
+
+2015-04-01  G. Theler  <jeremy@talador.com.ar>
+
+	* m4/wasora.m4:
+	= renamed INCLUDEWASORA to WASORA_INCLUDE in autoconf
+	[19f8698d7c0a]
+
+2015-03-31  G. Theler  <jeremy@talador.com.ar>
+
+	* autogen.sh, m4/petsc.m4, m4/slepc.m4, m4/wasora.m4:
+	= updates in autoconf macros
+	[794e7fdc83c7]
+
+2015-03-20  G. Theler  <jeremy@talador.com.ar>
+
+	* src/cleanup.c:
+	= free plugin structure
+	[24034e81a850]
+
+	* src/version.c:
+	= version only shows branch if it is not "default"
+	[cf6ca2891680]
+
+2015-03-20  G. Theler  <gtheler@cites-gss.com>
+
+	* TODO, src/wasora.c:
+	= fixed memory leak when showing usage, version, etc. = updated TODO
+	[7427150c369c]
+
+2015-03-19  G. Theler  <gtheler@cites-gss.com>
+
+	* src/builtin.h, src/parser.c, src/version.c:
+	+ instructions are read from standard input if "-" is passed as
+	inputfile
+	[09b62120f3ef]
+
+	* src/builtin.h, src/builtinfunctions.c:
+	= builtin function if returns 1 if no second argument is given
+	[a0a2a43befc8]
+
+2015-03-18  G. Theler  <gtheler@cites-gss.com>
+
+	* src/print.c, src/wasora.h:
+	= HEADER is only printed in the first outer step in parametric mode
+	[464ef88848cb]
+
+2015-03-13  G. Theler  <gtheler@cites-gss.com>
+
+	* src/cleanup.c, src/wasora.h:
+	+ added functions to destroy variables, vectors and matrices
+	[fe63064a20aa]
+
+2015-03-06  G. Theler  <gtheler@cites-gss.com>
+
+	* dist.sh, src/builtinfunctionals.c:
+	= in gsl_integration epsabs cannot be zero! (bug reported by
+	mrivero)
+	[96391333b849]
+
+2015-02-27  G. Theler  <gtheler@cites-gss.com>
+
+	* src/parser.c, src/print.c:
+	+ added NSTEPS to PRINT_FUNCTION
+	[fe4ce0e1049b]
+
+2015-02-16  G. Theler  <jeremy@talador.com.ar>
+
+	* doc/examples/expint1.was, doc/examples/expint2.was,
+	doc/examples/expintn.was:
+	+ added newlines at the end of the expint examples
+	[be37530d28f7]
+
+2015-02-16  Ramiro Vignolo  <rvignolo@tecna.com>
+
+	* doc/examples/expint1.was, doc/examples/expint2.was,
+	doc/examples/expintn.was:
+	New examples for En(x) functions
+	[2b1a901d9620]
+
+2015-02-15  Ramiro Vignolo  <rvignolo@tecna.com>
+
+	* doc/katepart/wasora.xml, src/builtin.h, src/builtindecl.h,
+	src/builtinfunctions.c, src/wasora.h:
+	Added more builtin functions
+	[6b2ed9401b8f]
+
+2015-02-15  G. Theler  <jeremy@talador.com.ar>
+
+	* m4/wasora.m4:
+	= added "make SHELL=/bin/bash" banner
+	[c23f033c098f]
+
+	* README.md, examples/legendre.was, realbook/003-lag/lag.was,
+	realbook/make.sh, src/builtinfunctions.c:
+	= updated some documentation
+	[0184fec0a4bb]
+
+2015-02-14  Ramiro Vignolo  <rvignolo@tecna.com>
+
+	* doc/katepart/wasora.xml, src/builtin.h, src/builtindecl.h,
+	src/builtinfunctions.c, src/wasora.h:
+	added En(x) functions
+	[ae3276c9ebcf]
+
+2015-02-04  G. Theler  <gtheler@cites-gss.com>
+
+	* examples/test-logistic.sh, examples/test-mathace.sh:
+	= updated logistic & mathace test scripts to work with gnuplot5
+	[b344ff436fc1]
+
+2015-02-03  G. Theler  <gtheler@cites-gss.com>
+
+	* realbook/007-functions/vectors.was,
+	realbook/010-2dfunctions/nearest.was,
+	realbook/018-waterwheel/readmap.was,
+	realbook/018-waterwheel/wheel.was, realbook/020-gsl/interp.was,
+	realbook/057-blackjack/enhc.was, realbook/078-boiling-
+	channel/boiling-2010-eta.was, realbook/078-boiling-
+	channel/boiling-2010.was, realbook/078-boiling-
+	channel/boiling-2012-transient.was, realbook/078-boiling-
+	channel/channel.was, src/algebra.c, src/parser.c, src/wasora.h:
+	+ variables that involve divisions are not evaluated at parse-time
+	[e89b34dcffa1]
+
+2015-02-02  G. Theler  <gtheler@cites-gss.com>
+
+	* src/function.c:
+	+ interpolation of uninitialized functions is avoided in parse-time
+	evaluations
+	[b66393c9f343]
+
+	* src/init.c, src/parseaux.c, src/parser.c:
+	+ division by zeros are ignored when evaluating expressions at
+	parse-time + if a FILE refers to stdin, debugging is automatically
+	switched off (--no-debug)
+	[d7eb3355776e]
+
+2015-01-30  G. Theler  <gtheler@cites-gss.com>
+
+	* examples/histogram-samples, examples/histogram-samples.dat,
+	examples/histogram.was, examples/matrix.was, examples/reactor.was,
+	examples/test-histogram.sh, src/parser.c, src/plugin.c,
+	src/wasora.h:
+	+ assignments over variables involving constants may be used instead
+	of NUMBERs
+	[fc8a44450191]
+
+	* .hgignore, Makefile.am, examples/locateruntest.sh:
+	+ test suite is always run within the examples subdirectory
+	[2f40b92deafd]
+
+2015-01-29  G. Theler  <gtheler@cites-gss.com>
+
+	* examples/m4.was, examples/template.m4, src/error.c, src/m4.c,
+	src/parseaux.c, src/parser.c, src/shmem.c, src/template.c,
+	src/wasora.h:
+	+ added M4 keyword
+	- removed TEMPLATE keyword
+	[83f3f2317584]
+
+2015-01-27  G. Theler  <gtheler@cites-gss.com>
+
+	* doc/generate-lexer.sh, src/print.c:
+	- print do not enclose single-letter headers between '$' (qdp now
+	does) = updated pygments lexer generator in doc
+	[2b4f1bf280a8]
+
+2015-01-23  R. Vignolo  <rvignolo@tecna.com>
+
+	* src/parser.c:
+	Indexes inversion
+	[c4e7176db2ac]
+
+2015-01-12  G. Theler  <gtheler@cites-gss.com>
+
+	* src/file.c:
+	= fixed -Werror=format-security in file.c
+	[6f234bde0e31]
+
+2015-01-02  G. Theler  <gtheler@cites-gss.com>
+
+	* src/define.c, src/file.c, src/parser.c:
+	= FILEs are allowed to not have an explicit MODE
+	[35850427fb83]
+
+2014-12-30  G. Theler  <gtheler@cites-gss.com>
+
+	* TODO, m4/slepc.m4, realbook/035-transport/uniform.was, src/parser.c:
+	= updated TODO + added 035-transport to realbook = updated PETSc &
+	SLEPc version in configure error message
+	[baba4adc41ff]
+
+2014-12-29  G. Theler  <gtheler@cites-gss.com>
+
+	* src/algebra.c, src/assignment.c, src/fit.c:
+	= assignments report the expression where a NaN is raised
+	[533120c617e3]
+
+	* TODO, src/parser.c:
+	= updated TODO = updated error messages in parser.c
+	[0ed61745f7a5]
+
+	* doc/generate-lexer.sh, doc/lexer/wasoralexer/lexer.py, doc/make.sh,
+	doc/parser-pre.do.txt, doc/reference.sh, src/init.c, src/parser.c:
+	= fixed some issues with the doc scripts + added description to some
+	keywords in parser.c
+	[48a48ebd3e7f]
+
+2014-12-27  G. Theler  <jeremy@talador.com.ar>
+
+	* doc/parser-pre.do.txt, src/file.c, src/function.c, src/parametric.c,
+	src/parser.c, src/wasora.c:
+	= fixed -Wall warnings
+	[b7791f958b2f]
+
+2014-12-26  G. Theler  <jeremy@talador.com.ar>
+
+	* src/parametric.c:
+	= replaced mktemp() with mkdtemp() in parametric.c
+	[cdc8bc2b740e]
+
+2014-12-23  G. Theler  <jeremy@talador.com.ar>
+
+	* .hgignore, Makefile.am, doc/clean.sh, doc/html/dummy,
+	doc/lexer/wasoralexer/lexer.py, doc/make.sh, doc/online.txt:
+	= documentation-related updates
+	[8a0e309c39bb]
+
+2014-12-23  G. Theler  <gtheler@cites-gss.com>
+
+	* .hgignore, doc/READMEdoc.md, doc/bootstrap_green.html, doc/clean.sh,
+	doc/description.do.txt, doc/generate-lexer.sh, doc/green.css,
+	doc/input.do.txt, doc/introduction.do.txt, doc/keywords.sh,
+	doc/lexer/wasoralexer/lexer.py, doc/make.sh, doc/parser-pre.do.txt,
+	doc/reference.do.txt, doc/reference.sh, doc/wasora.do.txt,
+	src/builtinfunctionals.c, src/builtinfunctions.c:
+	= update documentation subdir = fixed escaping issue in generate-
+	lexer.sh = updated hgignore
+	[1f27641d169f]
+
+2014-11-30  G. Theler  <jeremy@talador.com.ar>
+
+	* realbook/pdf.sh, realbook/syntax.tex:
+	+ added script to generate pdfs of realbook examples
+	[bccdc5d6baa0]
+
+2014-11-26  G. Theler  <jeremy@talador.com.ar>
+
+	* src/thirdparty/uthash.h, src/thirdparty/utlist.h:
+	updated uthash.h & utlist.h to latest git version
+	[7b229b3b20dd]
+
+2014-11-20  G. Theler  <gtheler@cites-gss.com>
+
+	* src/init.c, src/wasora.h:
+	+ added special file stdin
+	[8e746cd5e102]
+
+2014-11-18  G. Theler  <gtheler@cites-gss.com>
+
+	* realbook/012-mechanics/pendulum.was, realbook/012-mechanics/period-
+	vs-amplitude.was, src/wasora.c:
+	= updated 012-mechanics example + wasora_standard_run retunrs
+	instead of exiting after error in IDA
+	[90dac679ed7b]
+
+2014-11-09  G. Theler  <jeremy@talador.com.ar>
+
+	* doc/clean.sh, doc/generate-lexer.sh, doc/lexer/wasoralexer/lexer.py:
+	= updated pygments lexer generator
+	[8fd7f1077e17]
+
+2014-11-07  G. Theler  <jeremy@talador.com.ar>
+
+	* realbook/012-mechanics/period-vs-amplitude.sh, src/init.c:
+	= phase space values are reset to zero in non-ADIABATIC PARAMETRICs
+	- updated period-vs-amplitude qdp call
+	[5a2534c9e881]
+
+2014-11-07  jeremy theler  <jeremy@talador.com.ar>
+
+	* src/init.c, src/parser.c, src/wasora.h:
+	+ added ADIABATIC keyword to PARAMETRIC (and reset all ICs to zero
+	otherwise)
+	[9f2fc161e44a]
+
+2014-10-21  gtheler  <gtheler>
+
+	* src/parametric.c:
+	included <sys/wait.h> in parametric.c to compile with old gcc
+	[5f609d6c11d3]
+
+	* src/init.c, src/wasora.c:
+	fixed behavior of in_transient_first, in_transient_last &
+	done_transient
+	[98d884db66b6]
+
+2014-10-16  G. Theler  <gtheler@tecna.com>
+
+	* realbook/057-blackjack/enhc.was, realbook/078-boiling-
+	channel/boiling-2010-parametric-coarse.was, realbook/078-boiling-
+	channel/boiling-2010-parametric-fine.was, src/init.c,
+	src/parametric.c, src/parser.c, src/wasora.h:
+	+ added variable ncores and removed option "auto" from MAX_DAUGHTERS
+	[372f7ff9885f]
+
+	* examples/clean.sh, src/parametric.c:
+	= parallel parametric runs of course do not work in win32 (it
+	doesn't have fork)
+	[feb5fab74db7]
+
+	* realbook/057-blackjack/enhc.was, realbook/078-boiling-
+	channel/boiling-2010-parametric-coarse.was, realbook/078-boiling-
+	channel/boiling-2010-parametric-fine.was, src/init.c,
+	src/parametric.c, src/parser.c, src/wasora.h:
+	+ parametric computations can be performed in parallel using
+	MAX_DAUGHTERS
+	- removed max_daughters variable
+	[d706b69c1dc2]
+
+2014-10-14  G. Theler  <jeremy@talador.com.ar>
+
+	* realbook/realbook.sh:
+	= fixed a bug in realbook.sh to ignore cases
+	[3aa9bdb51d05]
+
+	* realbook/057-blackjack/inputs, realbook/078-boiling-channel/inputs,
+	src/minimize.c:
+	+ fixed a bug whith minimize and the upmost collection + do not run
+	long realbook examples
+	[10f98c3c0f2b]
+
+2014-10-14  G. Theler  <gtheler@tecna.com>
+
+	* src/error.c, src/fit.c, src/minimize.c, src/parametric.c,
+	src/wasora.c, src/wasora.h:
+	= errors are collected at the topmost call
+	[0a8204ef843c]
+
+2014-10-08  G. Theler  <jeremy@talador.com.ar>
+
+	* realbook/012-mechanics/pendulum-video.was, realbook/017-double-
+	pendulum/trajectories.was, realbook/028-mass/fsm.png,
+	realbook/057-blackjack/enhc.sh:
+	= realbook examples update
+	[e036959ca7e9]
+
+2014-10-08  G. Theler  <gtheler@tecna.com>
+
+	* realbook/007-functions/inline.was,
+	realbook/007-functions/satwater.was,
+	realbook/007-functions/vectors.was,
+	realbook/010-2dfunctions/nearest.was,
+	realbook/010-2dfunctions/rectangle.was,
+	realbook/010-2dfunctions/scattered.was, realbook/012-mechanics
+	/pendulum-video.was, realbook/017-double-pendulum/double.was,
+	realbook/020-gsl/nlfit.was, realbook/020-gsl/siman.was,
+	realbook/028-mass/compare.was, realbook/028-mass/fsm.png,
+	realbook/078-boiling-channel/channel.was:
+	= updated realbook examples to the default behavior of FILEs
+	[d2fd1329a3a9]
+
+	* src/cleanup.c:
+	= temporarily fixed a bug when destroying aliased variables
+	[c27aa4ea42fc]
+
+	* src/cleanup.c:
+	+ cleanup.c takes into account #HAVE_IDA and re-alloced vectors
+	[545812ccfa51]
+
+	* src/cleanup.c, src/parser.c, src/print.c, src/wasora.h:
+	+ some objects are correctly destroyed at finalization = minor name
+	changes in wasora.h
+	[47216d980021]
+
+2014-10-06  G. Theler  <jeremy@talador.com.ar>
+
+	* PLUGINS.md, plugins_INSTALL.md:
+	updated PLUGINS file with generic information about plugins
+	[79408c4c7b2f]
+
+	* INSTALL.md, m4/wasora.m4, plugins_INSTALL.md:
+	= do not re-download gsl tar.gz if it already exists = spelling
+	updates
+	[a546c42b6713]
+
+2014-10-01  G. Theler  <gtheler@tecna.com>
+
+	* m4/python.m4, m4/slepc.m4, m4/wasora.m4:
+	+ updated m4 macros for plugin's autoconf (slepc & python)
+	[647a45add788]
+
+	* src/algebra.c, src/define.c, src/file.c, src/init.c, src/parser.c,
+	src/wasora.h:
+	= in parametric runs, files are not closed in init_before_run = by
+	default FILEs are OPENed (changed default behavior) = clearer error
+	messages in algebraic parser
+	[cb07455ea4b1]
+
+2014-09-08  G. Theler  <gtheler@tecna.com>
+
+	* src/function.c, src/history.c:
+	+ fixed a bug when realloc'ing histories
+	[df8f246da0e2]
+
+2014-08-27  jeremy theler  <jeremy@talador.com.ar>
+
+	* examples/fit.was, examples/interp1d.was:
+	examples use FILE_PATHs instead of FILEs
+	[06f941c329cc]
+
+	* src/parser.c:
+	FILE_PATH keywords added to PRINT, PRINT_FUNCTION and PRINT_VECTOR
+	[55eb0e856c61]
+
+	* src/file.c, src/io.c, src/parseaux.c, src/parser.c, src/wasora.h:
+	FILE_PATH keywords are mapped to fixed-paths FILEs
+	[eff8633b83c8]
+
+2014-08-22  G. Theler  <gtheler@tecna.com>
+
+	* src/file.c:
+	+ increased up to eight arguments in the evaluated string for FILEs
+	(and its return value is checked)
+	[71d8e81798c5]
+
+2014-08-21  G. Theler  <gtheler@tecna.com>
+
+	* autogen.sh, src/wasora.c, src/wasora.h:
+	+ the originals argc and argv before getopt are copied so they can
+	be passed to plugins in the original order
+	[4c01f7869550]
+
+2014-08-18  gtheler  <gtheler>
+
+	* README.md, src/debug.c:
+	* option -l also lists functions
+	* added a comment to the skel plugin URL in the README
+	[030fbafcd280]
+
+	* README.md, doc/builtinfunctions-pre.do.txt:
+	minor changes in README.md to reflect change sin the website
+	[ebdf52852bed]
+
+2014-08-17  gtheler  <gtheler>
+
+	* .hgignore, Makefile.am:
+	* updated .hgignore
+	* include INSTALL in pdf and html into the tarball
+	[59b1882775e6]
+
+	* .hgignore, INSTALL.md, autogen.sh, dist.sh, markdown.sh:
+	updated INSTALL instructions
+	[16eda2f84c2b]
+
+	* Makefile.am, autogen.sh, dist.sh, doc/make.sh, doc/newcommands.tex,
+	examples/README.md, examples/clean.sh,
+	realbook/010-2dfunctions/meta:
+	* updated dist.sh for generate v0.3.x series
+	[d033f6fa994d]
+
+	* .hgignore, README.md:
+	* fixed README.md to follow bitbucket's syntax (instead of pandoc's)
+	[a86b522927de]
+
+	* README.md, autogen.sh, examples/README.md, examples/calc.was,
+	examples/test-histogram.sh, examples/test-io.sh, examples/test-
+	roessler.sh, realbook/028-mass/fsm.png,
+	realbook/028-mass/theoretical.gp, realbook/057-blackjack/enhc.sh:
+	* updated README.md with test suite
+	* added examples/calc.was
+	* blackjack example in realbook shows how many hands were played in
+	total
+	[ff50244b9d79]
+
+2014-08-16  gtheler  <gtheler>
+
+	* .hgignore, Makefile.am, README.md, examples/binding_per_A.dat,
+	examples/clean.sh, examples/defaultf, examples/fibonacci.was,
+	examples/fsm.was, examples/gendata1d.was, examples/histogram-
+	samples.dat, examples/histogram.was, examples/interp1d.was, examples
+	/io-readfile-writeshm.was, examples/io-readshm.was,
+	examples/locateruntest.sh, examples/logistic.was,
+	examples/matrix.was, examples/optimization.was, examples/parser.was,
+	examples/quickstart/01.was, examples/quickstart/02.was,
+	examples/quickstart/03.was, examples/quickstart/04.was, examples
+	/read-file.was, examples/read-shm.was, examples/roessler-
+	receiver.was, examples/roessler-sender.was, examples/runtest.sh,
+	examples/static-linear.was, examples/static-nonlinear.was, examples
+	/test-fibonacci.sh, examples/test-fsm.sh, examples/test-
+	histogram.sh, examples/test-interp1d.sh, examples/test-io.sh,
+	examples/test-logistic.sh, examples/test-lorenz.sh, examples/test-
+	mathace.sh, examples/test-pi.sh, examples/test-read.sh, examples
+	/test-roessler.sh, examples/transient.was, locateruntest.sh,
+	plugins_INSTALL.md, plugins_INSTALL.txt,
+	realbook/028-mass/binding_per_A.dat, realbook/028-mass/compare.gp,
+	realbook/078-boiling-channel/inputs, realbook/README.md,
+	realbook/realbook.sh, src/algebra.c:
+	* fixed bug in the algebraic parser with missing operands
+	* updated test suite & examples, added histogram, fsm fit and remove
+	old ones
+	* updated README
+	[1a6320c8e3e2]
+
+2014-08-15  gtheler  <gtheler>
+
+	* INSTALL.md, INSTALL.txt, README.md, README.txt, autogen.sh:
+	renamed README.txt to README.md to render the markdown in bitbucket
+	updated version info in README
+	[9a03db203e4c]
+
+	* .hgignore, AUTHORS, COPYING, ChangeLog-0.2, INSTALL.txt,
+	Makefile.am, NEWS, README.txt, THANKS, TODO, autoclean.sh,
+	autogen.sh, dist.sh, doc/READMEdoc.md, doc/abstract.do.txt,
+	doc/bootstrap.min.css, doc/bootstrap.min.js,
+	doc/bootstrap_green.html, doc/builtinfunctionals-pre.do.txt, doc
+	/builtinfunctions-pre.do.txt, doc/builtinvectorfunctions-pre.do.txt,
+	doc/clean.sh, doc/compilation.do.txt, doc/description.do.txt, doc
+	/doconce-wasora.patch, doc/docs.min.js, doc/examples/abort1.was,
+	doc/examples/abort2.was, doc/examples/abs.was,
+	doc/examples/abs.was.sh, doc/examples/alias.was,
+	doc/examples/atan.was, doc/examples/atan2.was,
+	doc/examples/clock.was, doc/examples/clock.was.sh,
+	doc/examples/d_dt.was, doc/examples/d_dt.was.fig,
+	doc/examples/d_dt.was.sh, doc/examples/derivative.was,
+	doc/examples/exp.was, doc/examples/func_min.was,
+	doc/examples/function.was, doc/examples/heaviside.was,
+	doc/examples/implicit.was, doc/examples/include1.was,
+	doc/examples/include2.was, doc/examples/include3.was,
+	doc/examples/included2.was, doc/examples/integral1.was,
+	doc/examples/integral2.was, doc/examples/integral3.was,
+	doc/examples/integral_dt.was, doc/examples/last1.was,
+	doc/examples/last2.was, doc/examples/log.was,
+	doc/examples/parser.was, doc/examples/root1.was,
+	doc/examples/root2.was, doc/examples/root3.was,
+	doc/examples/root4.was, doc/examples/sawtooth_wave.was,
+	doc/examples/square_wave.was, doc/examples/sum1.was,
+	doc/examples/sum2.was, doc/examples/sum3.was,
+	doc/examples/vecdot.was, doc/examples/vecmax.was,
+	doc/examples/vecmaxindex.was, doc/examples/vecmin.was,
+	doc/examples/vecminindex.was, doc/examples/vecnorm.was,
+	doc/examples/vecsize.was, doc/examples/vecsum.was,
+	doc/figures/basis.svg, doc/figures/clean.sh, doc/figures/simple.svg,
+	doc/figures/svg2png.sh, doc/figures/understandable.svg, doc
+	/generate-lexer.sh, doc/green.css, doc/init-pre.do.txt,
+	doc/input.do.txt, doc/introduction.do.txt, doc/jquery.min.js,
+	doc/katepart/test.was, doc/katepart/wasora.xml, doc/keywords.sh,
+	doc/lexer/setup.py, doc/lexer/wasoralexer/__init__.py,
+	doc/lexer/wasoralexer/lexer.py, doc/logo.svg, doc/make.sh, doc
+	/parser-pre.do.txt, doc/plugins.do.txt, doc/pythonhighlight.sty,
+	doc/quickstart.do.txt, doc/reference.do.txt, doc/reference.sh,
+	doc/style.pyxplot, doc/syntax-geany.sh, doc/syntax-kate.sh, doc
+	/syntax-tex.sh, doc/wasora-bold.svg, doc/wasora-bold2.svg, doc
+	/wasora-bold3.svg, doc/wasora.do.txt, examples/allprimes.was,
+	examples/clean.sh, examples/control.was, examples/defaultf,
+	examples/fibonacci.was, examples/fit.was, examples/gendata1d.was,
+	examples/histogram.was, examples/interp1d.was,
+	examples/logistic.was, examples/lorenz.was, examples/mathace.was,
+	examples/matrix.was, examples/optimization.was, examples/pi.was,
+	examples/quickstart/01.was, examples/quickstart/02.was,
+	examples/quickstart/03.was, examples/quickstart/04.was,
+	examples/reactor.was, examples/read-file.was, examples/read-shm.was,
+	examples/roessler-receiver.was, examples/roessler-sender.was,
+	examples/runtest.sh, examples/static-linear.was, examples/static-
+	nonlinear.was, examples/test-fibonacci.sh, examples/test-
+	interp1d.sh, examples/test-logistic.sh, examples/test-lorenz.sh,
+	examples/test-mathace.sh, examples/test-pi.sh, examples/test-
+	read.sh, examples/test-roessler.sh, examples/tran.was,
+	examples/transient.was, m4/wasora.m4, plugins_INSTALL.txt,
+	realbook/000-hello/clean.sh, realbook/000-hello/hello-post.do.txt,
+	realbook/000-hello/hello-pre.do.txt, realbook/000-hello/hello.sh,
+	realbook/000-hello/hello.was, realbook/000-hello/inputs,
+	realbook/000-hello/intro.do.txt, realbook/000-hello/meta,
+	realbook/001-peano/clean.sh, realbook/001-peano/inputs,
+	realbook/001-peano/intro.do.txt, realbook/001-peano/meta,
+	realbook/001-peano/peano-post.do.txt, realbook/001-peano/peano-
+	pre.do.txt, realbook/001-peano/peano.sh,
+	realbook/001-peano/peano.was, realbook/002-expressions/clean.sh,
+	realbook/002-expressions/expr-post.do.txt, realbook/002-expressions
+	/expr-pre.do.txt, realbook/002-expressions/expr.sh,
+	realbook/002-expressions/expr.was, realbook/002-expressions/hoc-
+	post.do.txt, realbook/002-expressions/hoc-pre.do.txt,
+	realbook/002-expressions/hoc.sh, realbook/002-expressions/hoc.was,
+	realbook/002-expressions/inputs,
+	realbook/002-expressions/intro.do.txt,
+	realbook/002-expressions/meta, realbook/003-lag/clean.sh,
+	realbook/003-lag/compact-post.do.txt, realbook/003-lag/compact-
+	pre.do.txt, realbook/003-lag/compact.sh,
+	realbook/003-lag/compact.was, realbook/003-lag/inputs,
+	realbook/003-lag/intro.do.txt, realbook/003-lag/lag-post.do.txt,
+	realbook/003-lag/lag-pre.do.txt, realbook/003-lag/lag.figs,
+	realbook/003-lag/lag.sh, realbook/003-lag/lag.was,
+	realbook/003-lag/meta, realbook/003-lag/quasi-sine-pre.do.txt,
+	realbook/003-lag/quasi-sine.figs, realbook/003-lag/quasi-sine.sh,
+	realbook/003-lag/quasi-sine.was, realbook/004-exp/clean.sh,
+	realbook/004-exp/exp-dt-post.do.txt, realbook/004-exp/exp-dt-
+	pre.do.txt, realbook/004-exp/exp-dt.figs, realbook/004-exp/exp-
+	dt.ppl, realbook/004-exp/exp-dt.sh, realbook/004-exp/exp-dt.was,
+	realbook/004-exp/exp-error.ppl, realbook/004-exp/exp-post.do.txt,
+	realbook/004-exp/exp-pre.do.txt, realbook/004-exp/exp.figs,
+	realbook/004-exp/exp.sh, realbook/004-exp/exp.was,
+	realbook/004-exp/inputs, realbook/004-exp/intro.do.txt,
+	realbook/004-exp/meta, realbook/005-lorenz/clean.sh,
+	realbook/005-lorenz/inputs, realbook/005-lorenz/intro.do.txt,
+	realbook/005-lorenz/lorenz-post.do.txt, realbook/005-lorenz/lorenz-
+	pre.do.txt, realbook/005-lorenz/lorenz.figs,
+	realbook/005-lorenz/lorenz.sh, realbook/005-lorenz/lorenz.was,
+	realbook/005-lorenz/lorenz3d.gp, realbook/005-lorenz/meta,
+	realbook/006-fibonacci/clean.sh, realbook/006-fibonacci
+	/fibo_formula-pre.do.txt, realbook/006-fibonacci/fibo_formula.sh,
+	realbook/006-fibonacci/fibo_formula.was, realbook/006-fibonacci
+	/fibo_iterative-pre.do.txt,
+	realbook/006-fibonacci/fibo_iterative.sh,
+	realbook/006-fibonacci/fibo_iterative.was, realbook/006-fibonacci
+	/fibo_vector-pre.do.txt, realbook/006-fibonacci/fibo_vector.sh,
+	realbook/006-fibonacci/fibo_vector.was,
+	realbook/006-fibonacci/inputs, realbook/006-fibonacci/intro.do.txt,
+	realbook/006-fibonacci/meta, realbook/007-functions/algebraic-
+	pre.do.txt, realbook/007-functions/algebraic.figs,
+	realbook/007-functions/algebraic.sh,
+	realbook/007-functions/algebraic.was,
+	realbook/007-functions/clean.sh, realbook/007-functions/file-
+	pre.do.txt, realbook/007-functions/file.figs,
+	realbook/007-functions/file.sh, realbook/007-functions/file.was,
+	realbook/007-functions/function.data, realbook/007-functions/inline-
+	pre.do.txt, realbook/007-functions/inline.figs,
+	realbook/007-functions/inline.ppl, realbook/007-functions/inline.sh,
+	realbook/007-functions/inline.was, realbook/007-functions/inputs,
+	realbook/007-functions/intro.do.txt, realbook/007-functions/meta,
+	realbook/007-functions/satwater-pre.do.txt,
+	realbook/007-functions/satwater.figs,
+	realbook/007-functions/satwater.ppl,
+	realbook/007-functions/satwater.sh,
+	realbook/007-functions/satwater.txt,
+	realbook/007-functions/satwater.was, realbook/007-functions/vectors-
+	pre.do.txt, realbook/007-functions/vectors.figs,
+	realbook/007-functions/vectors.sh,
+	realbook/007-functions/vectors.was, realbook/008-integrals/au117-ng-
+	au118.xs, realbook/008-integrals/blackbody.svg,
+	realbook/008-integrals/clean.sh, realbook/008-integrals/comparison-
+	pre.do.txt, realbook/008-integrals/inputs,
+	realbook/008-integrals/intro.do.txt, realbook/008-integrals/lag-
+	comparison-post.do.txt, realbook/008-integrals/lag-comparison-
+	pre.do.txt, realbook/008-integrals/lag-comparison.figs,
+	realbook/008-integrals/lag-comparison.sh, realbook/008-integrals
+	/lag-comparison.was, realbook/008-integrals/loop.sh,
+	realbook/008-integrals/meta, realbook/008-integrals/pre.sh,
+	realbook/008-integrals/resonance-pre.do.txt,
+	realbook/008-integrals/resonance.figs,
+	realbook/008-integrals/resonance.ppl,
+	realbook/008-integrals/resonance.sh,
+	realbook/008-integrals/resonance.was, realbook/008-integrals/sigma-
+	pre.do.txt, realbook/008-integrals/sigma.sh,
+	realbook/008-integrals/sigma.was, realbook/010-2dfunctions/clean.sh,
+	realbook/010-2dfunctions/compwater-post.do.txt,
+	realbook/010-2dfunctions/compwater-pre.do.txt,
+	realbook/010-2dfunctions/compwater.figs,
+	realbook/010-2dfunctions/compwater.gp,
+	realbook/010-2dfunctions/compwater.sh,
+	realbook/010-2dfunctions/compwater.txt,
+	realbook/010-2dfunctions/compwater.was,
+	realbook/010-2dfunctions/inputs,
+	realbook/010-2dfunctions/intro.do.txt,
+	realbook/010-2dfunctions/meta, realbook/010-2dfunctions/nearest-
+	pre.do.txt, realbook/010-2dfunctions/nearest.figs,
+	realbook/010-2dfunctions/nearest.gp,
+	realbook/010-2dfunctions/nearest.sh,
+	realbook/010-2dfunctions/nearest.was, realbook/010-2dfunctions
+	/paraboloid-pre.do.txt, realbook/010-2dfunctions/paraboloid.figs,
+	realbook/010-2dfunctions/paraboloid.gp,
+	realbook/010-2dfunctions/paraboloid.sh,
+	realbook/010-2dfunctions/paraboloid.was, realbook/010-2dfunctions
+	/rectangle-pre.do.txt, realbook/010-2dfunctions/rectangle.figs,
+	realbook/010-2dfunctions/rectangle.gp,
+	realbook/010-2dfunctions/rectangle.sh,
+	realbook/010-2dfunctions/rectangle.was, realbook/010-2dfunctions
+	/scattered-post.do.txt, realbook/010-2dfunctions/scattered-
+	pre.do.txt, realbook/010-2dfunctions/scattered.figs,
+	realbook/010-2dfunctions/scattered.gp,
+	realbook/010-2dfunctions/scattered.sh,
+	realbook/010-2dfunctions/scattered.was,
+	realbook/012-mechanics/clean.sh, realbook/012-mechanics/genvideo.sh,
+	realbook/012-mechanics/guys.jpg,
+	realbook/012-mechanics/hamilton.was, realbook/012-mechanics/inputs,
+	realbook/012-mechanics/intro.do.txt,
+	realbook/012-mechanics/lagrange.was, realbook/012-mechanics/meta,
+	realbook/012-mechanics/newton.was, realbook/012-mechanics/pendulum-
+	post.do.txt, realbook/012-mechanics/pendulum-pre.do.txt,
+	realbook/012-mechanics/pendulum-video-post.do.txt,
+	realbook/012-mechanics/pendulum-video.sh, realbook/012-mechanics
+	/pendulum-video.was, realbook/012-mechanics/pendulum.figs,
+	realbook/012-mechanics/pendulum.ppl,
+	realbook/012-mechanics/pendulum.sh,
+	realbook/012-mechanics/pendulum.was, realbook/012-mechanics/period-
+	vs-amplitude.figs, realbook/012-mechanics/period-vs-amplitude.sh,
+	realbook/012-mechanics/period-vs-amplitude.was,
+	realbook/012-mechanics/pre.sh, realbook/012-mechanics/simple.svg,
+	realbook/015-primes/checkprime-post.do.txt, realbook/015-primes
+	/checkprimes-pre.do.txt, realbook/015-primes/checkprimes.sh,
+	realbook/015-primes/checkprimes.was, realbook/015-primes/clean.sh,
+	realbook/015-primes/inputs, realbook/015-primes/intro.do.txt,
+	realbook/015-primes/isprime-post.do.txt, realbook/015-primes
+	/isprime-pre.do.txt, realbook/015-primes/isprime.sh,
+	realbook/015-primes/isprime.was, realbook/015-primes/meta,
+	realbook/015-primes/nprimes-pre.do.txt,
+	realbook/015-primes/nprimes.figs, realbook/015-primes/nprimes.sh,
+	realbook/015-primes/nprimes.was, realbook/015-primes/prime.c,
+	realbook/017-double-pendulum/back.svg, realbook/017-double-
+	pendulum/clean.sh, realbook/017-double-pendulum/double-post.do.txt,
+	realbook/017-double-pendulum/double-pre.do.txt, realbook/017-double-
+	pendulum/double.figs, realbook/017-double-pendulum/double.ppl,
+	realbook/017-double-pendulum/double.sh, realbook/017-double-
+	pendulum/double.svg, realbook/017-double-pendulum/double.was,
+	realbook/017-double-pendulum/genvideo.sh, realbook/017-double-
+	pendulum/hamilton-analytical.was, realbook/017-double-pendulum
+	/hamilton-numerical.was, realbook/017-double-pendulum/inputs,
+	realbook/017-double-pendulum/intro.do.txt, realbook/017-double-
+	pendulum/lagrange-analytical.was, realbook/017-double-pendulum
+	/lagrange-numerical.was, realbook/017-double-pendulum/meta,
+	realbook/017-double-pendulum/pre.sh, realbook/017-double-pendulum
+	/trajectories-post.do.txt, realbook/017-double-pendulum
+	/trajectories-pre.do.txt, realbook/017-double-
+	pendulum/trajectories.sh, realbook/017-double-
+	pendulum/trajectories.was, realbook/018-waterwheel/clean.sh,
+	realbook/018-waterwheel/drawing.was,
+	realbook/018-waterwheel/genvideo.sh, realbook/018-waterwheel/inputs,
+	realbook/018-waterwheel/intro.do.txt,
+	realbook/018-waterwheel/jeremywheel.jpg,
+	realbook/018-waterwheel/meta, realbook/018-waterwheel/offline-
+	post.do.txt, realbook/018-waterwheel/offline-pre.do.txt,
+	realbook/018-waterwheel/offline.sh,
+	realbook/018-waterwheel/offline.was, realbook/018-waterwheel/online-
+	post.do.txt, realbook/018-waterwheel/online-pre.do.txt,
+	realbook/018-waterwheel/online.sh,
+	realbook/018-waterwheel/online.was,
+	realbook/018-waterwheel/poster.jpg, realbook/018-waterwheel/pre.sh,
+	realbook/018-waterwheel/readmap.was,
+	realbook/018-waterwheel/realwheel.webm, realbook/018-waterwheel
+	/video-post.do.txt, realbook/018-waterwheel/video-pre.do.txt,
+	realbook/018-waterwheel/video.sh, realbook/018-waterwheel/video.was,
+	realbook/018-waterwheel/wheel-post.do.txt, realbook/018-waterwheel
+	/wheel-pre.do.txt, realbook/018-waterwheel/wheel.PNG,
+	realbook/018-waterwheel/wheel.figs,
+	realbook/018-waterwheel/wheel.sh, realbook/018-waterwheel/wheel.was,
+	realbook/018-waterwheel/wheel3d.PNG, realbook/020-gsl/clean.sh,
+	realbook/020-gsl/demo_fn.c, realbook/020-gsl/demo_fn.h,
+	realbook/020-gsl/diff-post.do.txt, realbook/020-gsl/diff-pre.do.txt,
+	realbook/020-gsl/diff.c, realbook/020-gsl/diff.sh,
+	realbook/020-gsl/diff.was, realbook/020-gsl/expfit.c,
+	realbook/020-gsl/inputs, realbook/020-gsl/integration-pre.do.txt,
+	realbook/020-gsl/integration.c, realbook/020-gsl/integration.sh,
+	realbook/020-gsl/integration.was, realbook/020-gsl/interp-
+	post.do.txt, realbook/020-gsl/interp-pre.do.txt,
+	realbook/020-gsl/interp.c, realbook/020-gsl/interp.figs,
+	realbook/020-gsl/interp.sh, realbook/020-gsl/interp.was,
+	realbook/020-gsl/interpp-post.do.txt, realbook/020-gsl/interpp-
+	pre.do.txt, realbook/020-gsl/interpp.c,
+	realbook/020-gsl/interpp.figs, realbook/020-gsl/interpp.sh,
+	realbook/020-gsl/interpp.was, realbook/020-gsl/intro.do.txt,
+	realbook/020-gsl/meta, realbook/020-gsl/min-post.do.txt,
+	realbook/020-gsl/min-pre.do.txt, realbook/020-gsl/min.c,
+	realbook/020-gsl/min.sh, realbook/020-gsl/min.was, realbook/020-gsl
+	/multimin-post.do.txt, realbook/020-gsl/multimin-pre.do.txt,
+	realbook/020-gsl/multimin.c, realbook/020-gsl/multimin.sh,
+	realbook/020-gsl/multimin.was, realbook/020-gsl/multiminfn.c,
+	realbook/020-gsl/nlfit-post.do.txt, realbook/020-gsl/nlfit-
+	pre.do.txt, realbook/020-gsl/nlfit.c, realbook/020-gsl/nlfit.figs,
+	realbook/020-gsl/nlfit.ppl, realbook/020-gsl/nlfit.sh,
+	realbook/020-gsl/nlfit.was, realbook/020-gsl/nmsimplex-post.do.txt,
+	realbook/020-gsl/nmsimplex-pre.do.txt, realbook/020-gsl/nmsimplex.c,
+	realbook/020-gsl/nmsimplex.sh, realbook/020-gsl/nmsimplex.was,
+	realbook/020-gsl/ode-initval-post.do.txt, realbook/020-gsl/ode-
+	initval-pre.do.txt, realbook/020-gsl/ode-initval.c, realbook/020-gsl
+	/ode-initval.figs, realbook/020-gsl/ode-initval.sh, realbook/020-gsl
+	/ode-initval.was, realbook/020-gsl/qrng-pre.do.txt,
+	realbook/020-gsl/qrng.c, realbook/020-gsl/qrng.figs,
+	realbook/020-gsl/qrng.sh, realbook/020-gsl/qrng.was,
+	realbook/020-gsl/rngunif-post.do.txt, realbook/020-gsl/rngunif-
+	pre.do.txt, realbook/020-gsl/rngunif.c, realbook/020-gsl/rngunif.sh,
+	realbook/020-gsl/rngunif.was, realbook/020-gsl/roots-post.do.txt,
+	realbook/020-gsl/roots-pre.do.txt, realbook/020-gsl/roots.c,
+	realbook/020-gsl/roots.sh, realbook/020-gsl/roots.was,
+	realbook/020-gsl/siman-energy.ppl, realbook/020-gsl/siman-f.ppl,
+	realbook/020-gsl/siman-position.ppl, realbook/020-gsl/siman-
+	post.do.txt, realbook/020-gsl/siman-pre.do.txt,
+	realbook/020-gsl/siman.c, realbook/020-gsl/siman.figs,
+	realbook/020-gsl/siman.sh, realbook/020-gsl/siman.was,
+	realbook/020-gsl/skel-post.do.txt, realbook/020-gsl/skel-pre.do.txt,
+	realbook/020-gsl/stat-post.do.txt, realbook/020-gsl/stat-pre.do.txt,
+	realbook/020-gsl/stat.c, realbook/020-gsl/stat.sh,
+	realbook/020-gsl/stat.was, realbook/020-gsl/tex.sh,
+	realbook/020-gsl/vanderpool.ppl, realbook/025-mathace/clean.sh,
+	realbook/025-mathace/inputs, realbook/025-mathace/intro.do.txt,
+	realbook/025-mathace/mathace-post.do.txt, realbook/025-mathace
+	/mathace-pre.do.txt, realbook/025-mathace/mathace.gp,
+	realbook/025-mathace/mathace.sh, realbook/025-mathace/mathace.was,
+	realbook/025-mathace/meta, realbook/028-mass/clean.sh,
+	realbook/028-mass/coh71.was, realbook/028-mass/compare-post.do.txt,
+	realbook/028-mass/compare-pre.do.txt, realbook/028-mass/compare.sh,
+	realbook/028-mass/compare.was, realbook/028-mass/experimental.gp,
+	realbook/028-mass/fit-post.do.txt, realbook/028-mass/fit-pre.do.txt,
+	realbook/028-mass/fit.sh, realbook/028-mass/fit.was,
+	realbook/028-mass/inputs, realbook/028-mass/intro.do.txt,
+	realbook/028-mass/meta, realbook/028-mass/mey67.was,
+	realbook/028-mass/pea86.was, realbook/028-mass/pre.sh,
+	realbook/028-mass/seg65.was, realbook/028-mass/the05.was,
+	realbook/028-mass/theoretical.gp, realbook/030-buffon/buffon-
+	pre.do.txt, realbook/030-buffon/buffon.figs,
+	realbook/030-buffon/buffon.ppl, realbook/030-buffon/buffon.sh,
+	realbook/030-buffon/buffon.was, realbook/030-buffon/clean.sh,
+	realbook/030-buffon/inputs, realbook/030-buffon/intro.do.txt,
+	realbook/030-buffon/meta, realbook/030-buffon/needle.svg,
+	realbook/030-buffon/pre.sh, realbook/057-blackjack/clean.sh,
+	realbook/057-blackjack/compute.sh,
+	realbook/057-blackjack/data/cards/clean.sh,
+	realbook/057-blackjack/data/cards/orig/10C.svg,
+	realbook/057-blackjack/data/cards/orig/10D.svg,
+	realbook/057-blackjack/data/cards/orig/10H.svg,
+	realbook/057-blackjack/data/cards/orig/10S.svg,
+	realbook/057-blackjack/data/cards/orig/2C.svg,
+	realbook/057-blackjack/data/cards/orig/2D.svg,
+	realbook/057-blackjack/data/cards/orig/2H.svg,
+	realbook/057-blackjack/data/cards/orig/2S.svg,
+	realbook/057-blackjack/data/cards/orig/3C.svg,
+	realbook/057-blackjack/data/cards/orig/3D.svg,
+	realbook/057-blackjack/data/cards/orig/3H.svg,
+	realbook/057-blackjack/data/cards/orig/3S.svg,
+	realbook/057-blackjack/data/cards/orig/4C.svg,
+	realbook/057-blackjack/data/cards/orig/4D.svg,
+	realbook/057-blackjack/data/cards/orig/4H.svg,
+	realbook/057-blackjack/data/cards/orig/4S.svg,
+	realbook/057-blackjack/data/cards/orig/5C.svg,
+	realbook/057-blackjack/data/cards/orig/5D.svg,
+	realbook/057-blackjack/data/cards/orig/5H.svg,
+	realbook/057-blackjack/data/cards/orig/5S.svg,
+	realbook/057-blackjack/data/cards/orig/6C.svg,
+	realbook/057-blackjack/data/cards/orig/6D.svg,
+	realbook/057-blackjack/data/cards/orig/6H.svg,
+	realbook/057-blackjack/data/cards/orig/6S.svg,
+	realbook/057-blackjack/data/cards/orig/7C.svg,
+	realbook/057-blackjack/data/cards/orig/7D.svg,
+	realbook/057-blackjack/data/cards/orig/7H.svg,
+	realbook/057-blackjack/data/cards/orig/7S.svg,
+	realbook/057-blackjack/data/cards/orig/8C.svg,
+	realbook/057-blackjack/data/cards/orig/8D.svg,
+	realbook/057-blackjack/data/cards/orig/8H.svg,
+	realbook/057-blackjack/data/cards/orig/8S.svg,
+	realbook/057-blackjack/data/cards/orig/9C.svg,
+	realbook/057-blackjack/data/cards/orig/9D.svg,
+	realbook/057-blackjack/data/cards/orig/9H.svg,
+	realbook/057-blackjack/data/cards/orig/9S.svg,
+	realbook/057-blackjack/data/cards/orig/AC.svg,
+	realbook/057-blackjack/data/cards/orig/AD.svg,
+	realbook/057-blackjack/data/cards/orig/AH.svg,
+	realbook/057-blackjack/data/cards/orig/AS.svg,
+	realbook/057-blackjack/data/cards/orig/AUTHORS.txt,
+	realbook/057-blackjack/data/cards/orig/CHANGELOG.txt,
+	realbook/057-blackjack/data/cards/orig/COPYING.LESSER.txt,
+	realbook/057-blackjack/data/cards/orig/COPYING.txt,
+	realbook/057-blackjack/data/cards/orig/JC.svg,
+	realbook/057-blackjack/data/cards/orig/JD.svg,
+	realbook/057-blackjack/data/cards/orig/JH.svg,
+	realbook/057-blackjack/data/cards/orig/JS.svg,
+	realbook/057-blackjack/data/cards/orig/KC.svg,
+	realbook/057-blackjack/data/cards/orig/KD.svg,
+	realbook/057-blackjack/data/cards/orig/KH.svg,
+	realbook/057-blackjack/data/cards/orig/KS.svg,
+	realbook/057-blackjack/data/cards/orig/NEWS.txt,
+	realbook/057-blackjack/data/cards/orig/QC.svg,
+	realbook/057-blackjack/data/cards/orig/QD.svg,
+	realbook/057-blackjack/data/cards/orig/QH.svg,
+	realbook/057-blackjack/data/cards/orig/QS.svg,
+	realbook/057-blackjack/data/cards/orig/README.txt,
+	realbook/057-blackjack/dealer-enhc.c,
+	realbook/057-blackjack/dealer.was,
+	realbook/057-blackjack/dealerup.ppl,
+	realbook/057-blackjack/drawings.sh, realbook/057-blackjack/enhc-
+	post.do.txt, realbook/057-blackjack/enhc-pre.do.txt,
+	realbook/057-blackjack/enhc.figs, realbook/057-blackjack/enhc.sh,
+	realbook/057-blackjack/enhc.was, realbook/057-blackjack/inputs,
+	realbook/057-blackjack/intro.do.txt, realbook/057-blackjack/meta,
+	realbook/057-blackjack/playerup-above.ppl, realbook/057-blackjack
+	/playerup-below.ppl, realbook/057-blackjack/pre.sh, realbook/078
+	-boiling-channel/2010-parametric-coarse.gp, realbook/078-boiling-
+	channel/2010-parametric-fine.gp, realbook/078-boiling-
+	channel/2010-phase.ppl, realbook/078-boiling-channel/2012-phase-
+	arbitrary.ppl, realbook/078-boiling-channel/2012-phase-sine.ppl,
+	realbook/078-boiling-channel/2012-phase-uniform.ppl, realbook/078
+	-boiling-channel/arbitrary.was, realbook/078-boiling-
+	channel/background.svg, realbook/078-boiling-channel/boiling-2010
+	-eta-post.do.txt, realbook/078-boiling-channel/boiling-2010-eta-
+	pre.do.txt, realbook/078-boiling-channel/boiling-2010-eta.figs,
+	realbook/078-boiling-channel/boiling-2010-eta.sh, realbook/078
+	-boiling-channel/boiling-2010-eta.was, realbook/078-boiling-
+	channel/boiling-2010-parametric-coarse-pre.do.txt, realbook/078
+	-boiling-channel/boiling-2010-parametric-coarse.figs, realbook/078
+	-boiling-channel/boiling-2010-parametric-coarse.sh, realbook/078
+	-boiling-channel/boiling-2010-parametric-coarse.was, realbook/078
+	-boiling-channel/boiling-2010-parametric-fine-pre.do.txt,
+	realbook/078-boiling-channel/boiling-2010-parametric-fine.figs,
+	realbook/078-boiling-channel/boiling-2010-parametric-fine.sh,
+	realbook/078-boiling-channel/boiling-2010-parametric-fine.was,
+	realbook/078-boiling-channel/boiling-2010-parametric.sh,
+	realbook/078-boiling-channel/boiling-2010-post.do.txt, realbook/078
+	-boiling-channel/boiling-2010-pre.do.txt, realbook/078-boiling-
+	channel/boiling-2010.figs, realbook/078-boiling-
+	channel/boiling-2010.sh, realbook/078-boiling-
+	channel/boiling-2010.was, realbook/078-boiling-channel/boiling-2012
+	-steady-post.do.txt, realbook/078-boiling-channel/boiling-2012
+	-steady-pre.do.txt, realbook/078-boiling-
+	channel/boiling-2012-steady.sh, realbook/078-boiling-
+	channel/boiling-2012-steady.was, realbook/078-boiling-
+	channel/boiling-2012-transient-post.do.txt, realbook/078-boiling-
+	channel/boiling-2012-transient-pre.do.txt, realbook/078-boiling-
+	channel/boiling-2012-transient.sh, realbook/078-boiling-
+	channel/boiling-2012-transient.was, realbook/078-boiling-channel
+	/canal-adim.svg, realbook/078-boiling-channel/channel-post.do.txt,
+	realbook/078-boiling-channel/channel-pre.do.txt, realbook/078
+	-boiling-channel/channel.sh, realbook/078-boiling-
+	channel/channel.was, realbook/078-boiling-channel/clean.sh,
+	realbook/078-boiling-channel/inputs, realbook/078-boiling-
+	channel/intro.do.txt, realbook/078-boiling-channel/meta,
+	realbook/078-boiling-channel/pre.sh, realbook/078-boiling-
+	channel/sine.was, realbook/078-boiling-channel/uniform.was,
+	realbook/clean.sh, realbook/make.sh, realbook/newcommands.tex,
+	realbook/realbook.do.txt, realbook/realbook.sh,
+	realbook/realbooklogo.svg, realbook/skel/inputs,
+	realbook/skel/intro.do.txt, realbook/skel/meta, realbook/skel/skel-
+	post.do.txt, realbook/skel/skel-pre.do.txt, realbook/skel/skel.sh,
+	realbook/skel/skel.was, realbook/syntax.tex,
+	realbook/wasorarealbook.svg, src/algebra.c, src/assignment.c,
+	src/builtin.h, src/builtindecl.h, src/builtinfunctionals.c,
+	src/builtinfunctions.c, src/builtinvectorfunctions.c, src/call.c,
+	src/cleanup.c, src/dae.c, src/debug.c, src/define.c, src/error.c,
+	src/file.c, src/fit.c, src/flow.c, src/function.c, src/getptr.c,
+	src/history.c, src/init.c, src/interface.c, src/interface.h,
+	src/io.c, src/minimize.c, src/multiminf.c, src/multiminfdf.c,
+	src/parametric.c, src/parseaux.c, src/parser.c, src/plugin.c,
+	src/print.c, src/randomline.c, src/realtime.c, src/shell.c,
+	src/shmem.c, src/siman.c, src/template.c, src/thirdparty/kdtree.c,
+	src/thirdparty/kdtree.h, src/thirdparty/uthash.h,
+	src/thirdparty/utlist.h, src/version.c, src/wasora.c, src/wasora.h:
+	initial 0.3 series version, same source as 0.2.167
+	[f28325d9deeb]
+

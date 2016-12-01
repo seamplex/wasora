@@ -1,0 +1,23 @@
+end_time = 10
+dt = 0.02
+
+# the initial guess of the lag time that will be fitted
+T_0 = 0.8
+
+FUNCTION data(t) FILE_PATH lag.dat COLUMNS 1 3
+
+# a ramp of slope 1 between 0 and 1 starting a t=1
+# (we could compute it this way or read it from lag.dat)
+y = limit(heaviside(t-1)*(t-1), 0, 1)
+
+# compute the lag as a variable
+z = lag(y, T)
+# and the define a function of time with the history of the variable
+HISTORY z z_func
+
+# ask wasora to fit z_func to the data and be verbose
+FIT z_func TO data VIA T VERBOSE
+
+OUTPUT_FILE iteration fitlag-%.0f.dat step_outer
+PRINT FILE iteration t z
+ 

@@ -1,0 +1,13 @@
+# remember to compile wasora with mesh support, configure with
+# ./configure --enable-mesh
+MESH FILE_PATH square.msh DIMENSIONS 2
+
+PHYSICAL_ENTITY NAME fuel
+PHYSICAL_ENTITY NAME left
+PHYSICAL_ENTITY NAME right
+PHYSICAL_ENTITY NAME front
+PHYSICAL_ENTITY NAME back
+VAR res
+
+MESH_INTEGRATE EXPR x*y OVER fuel RESULT res
+PRINT res

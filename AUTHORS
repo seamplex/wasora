@@ -1,0 +1,20 @@
+wasora was originally written from scratch by
+  jeremy theler (jeremy) <jeremy@seamplex.com>
+  
+substantial contributions (code & ideas) by  
+  esteban pellegrino (larry) <pellegre.esteban@gmail.com>
+  juan pablo gomez omil <jugomez@tecna.com>
+  ramiro vignolo <rvignolo@tecna.com>
+  
+  
+wasora depends on the following free libraries: 
+  GNU Scientific Library <http://www.gnu.org/s/gsl/>
+  SUNDIALS IDA Library <http://computation.llnl.gov/casc/sundials/main.html>
+  GNU Readline <http://tiswww.case.edu/php/chet/readline/rltop.html>
+
+wasora incorporates the following free snippets into its source code:
+  thirdparty/kdtree.c by John Tsiombikas <http://code.google.com/p/kdtree/>
+  thirdparty/uthash.h by Troy D. Hanson <http://troydhanson.github.com/uthash/>
+  
+each of these libraries and files is released under a free software license,
+see the documentation and/or actual source code of each one for further details

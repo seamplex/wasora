@@ -1,0 +1,9 @@
+# read a scalar and a vector from a shared-memory object
+VAR a
+VECTOR b SIZE 3
+
+SEM data-written WAIT       # wait for a semaphore called "data-written" to be posted
+READ SHM_OBJECT data a b    # read from a shm-object called "data" a & b
+SEM data-read    POST       # post a semaphore called "data-read" to inform the other end
+
+PRINT %g a b SEP " "

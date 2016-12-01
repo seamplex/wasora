@@ -1,0 +1,3 @@
+a = sqrt(2)
+M4 INPUT_FILE_PATH template.m4 OUTPUT_FILE_PATH m4.out MACRO a %.2f a MACRO greeting "Hey-Diddly-Ho!"
+SHELL "cat m4.out"

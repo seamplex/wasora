@@ -1,0 +1,22 @@
+# lorenz' seminal dynamical system
+PHASE_SPACE x y z
+end_time = 40
+
+CONST sigma r b  
+sigma = 10            # parameters
+r = 28
+b = 8/3
+
+x_0 = -11             # initial conditions
+y_0 = -16
+z_0 = 22.5
+
+# the dynamical system
+x_dot .= sigma*(y - x)
+y_dot .= x*(r - z) - y
+z_dot .= x*y - b*z
+
+PRINT t x y z HEADER
+
+# exercise: play with the system! change
+# the parameters and plot, plot plot!

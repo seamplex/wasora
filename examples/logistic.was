@@ -1,0 +1,17 @@
+# compute the logistic map for a range of the parameter r
+
+DEFAULT_ARGUMENT_VALUE 1 2.6  # by default compute r in [2.6:4]
+DEFAULT_ARGUMENT_VALUE 2 4
+
+# sweep the parameter r between the arguments given in the commandline
+# sample 1000 values from a halton quasi-random number sequence
+PARAMETRIC r MIN $1 MAX $2 OUTER_STEPS 1000 TYPE halton
+
+static_steps = 800     # for each r compute 800 steps
+x_init = 0.5           # start at x = 0.5
+x = r*x*(1-x)          # apply the map
+
+# only print x for the last 50 steps to obtain the asymptotic behaviour
+IF step_static>static_steps-50
+ PRINT %g r x 
+ENDIF

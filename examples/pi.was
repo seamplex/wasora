@@ -1,0 +1,31 @@
+# computing pi in eight different ways
+VECTOR piapprox SIZE 8
+VAR x y
+
+# the double-precision internal representation of pi (M_PI)
+piapprox(1) = pi
+
+# four times the arc-tangent of the unity
+piapprox(2) = 4*atan(1)
+
+# the abscissae x where tan(x) = 0 in the range [3:3.5]
+piapprox(3) = root(tan(x), x, 3, 3.5)
+
+# the square of the numerical integral of the guassian curve 
+piapprox(4) = integral(exp(-x^2), x, -10, 10)^2
+
+# the numerical integral of a circle inscribed in a unit square
+piapprox(5) = integral(integral((x^2+y^2) < 1, y, -1, 1), x, -1, 1)
+
+# the numerical integral of a circle parametrized with sqrt(1-x^2)
+piapprox(6) = integral(integral(1, y, -sqrt(1-x^2), sqrt(1-x^2)), x, -1, 1)
+
+# the gregory-leibniz sum (one hundred thousand terms)
+piapprox(7) = 4*sum((-1)^(i+1)/(2*i-1), i, 1, 1e5)
+
+# the abraham sharp sum (twenty-one terms)
+piapprox(8) = sum(2*(-1)^i * 3^(1/2-i)/(2*i+1), i, 0, 20)
+
+
+PRINT_VECTOR FORMAT "% .20f" piapprox piapprox(i)-pi
+

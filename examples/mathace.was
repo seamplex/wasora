@@ -1,0 +1,20 @@
+# Knuth's mystery equation
+f(x,y) := {
+ ( abs(abs(3-abs(x)) - 3 + abs(x)) + abs(abs(sqrt(abs(9-x^2)) - abs(y-2/3*abs(x))) - sqrt(abs(9-x^2)) + abs(y - 2/3*abs(x)))) *
+ ( abs(abs(x*y) + x*y) +
+   ( abs(abs(2 - abs(33-3*abs(x))) - 2 + abs(33-3*abs(x))) + abs(14 - abs(y)) ) *
+   ( abs(16 - abs(y) - 3*abs(11 - abs(x))) *
+      abs(abs(sqrt(abs(1 - (11 - abs(x))^2)) - abs(11 - abs(y) + 2/3*abs(11 - abs(x)))) - sqrt(abs(1 - (11 - abs(x))^2)) + abs(11 - abs(y) + 2/3*abs(11 - abs(x))))
+      + abs(abs(1 - abs(11 - abs(x))) - 1 + abs(11 - abs(x))) )
+ )
+}
+
+DEFAULT_ARGUMENT_VALUE 1 sobol
+DEFAULT_ARGUMENT_VALUE 2 2e5
+
+# the range to sweep
+PARAMETRIC x y MIN -13 -18 MAX 13 18 TYPE $1 OUTER_STEPS $2
+                 
+IF abs(f(x,y))<1
+ PRINT %f x y
+ENDIF

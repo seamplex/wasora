@@ -1,0 +1,4 @@
+# remember to compile wasora with mesh support, configure with
+# ./configure --enable-mesh
+MESH FILE_PATH tiny.msh DIMENSIONS 2 READ_FUNCTION f AS f
+PRINT_FUNCTION f

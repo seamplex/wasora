@@ -1,0 +1,30 @@
+# implement a simple control system for a fission reactor
+# to follow a power setpoint ramp using a single control rod
+# fission power is read from an external process (suposedly a
+# neutron kinetics code, but in this case another wasora source)
+# and the position of the control rod is fed to such instance
+# through shared memory objects
+end_time = 1e5
+
+phi_0 = 1       # initial flux level
+z_0 = 0.5       # initial position of the control rod
+
+# ramp from 100% to 80% of power (flux) at 1% per minute
+a = 1000
+b = 1200
+setpoint[0:a] = phi_0
+setpoint[a:a+b] = phi_0*(1-0.2*(t-a)/b)
+setpoint[a+b:infinite] = phi_0*0.8
+
+WRITE SHM_OBJECT control done phi_0 z
+SEMAPHORE control_ready POST
+SEMAPHORE reactor_ready WAIT
+READ SHM_OBJECT  reactor t dt phi 
+
+# move the control rod if power error exceeds a dead band of 0.3%
+vrod = 1/500    # one 500th of core per second
+band = 3e-3
+error = phi - setpoint
+z = z_0 + integral_dt(vrod*((error>(+band))-(error<(-band))))
+
+PRINT t phi setpoint z

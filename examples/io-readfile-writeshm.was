@@ -1,0 +1,12 @@
+# read a scalar and a vector of size three from a file and
+# send them  to another wasora instance through shared memory
+VAR a
+VECTOR b SIZE 3
+
+READ ASCII_FILE_PATH data.dat a b    # read data from the file
+
+WRITE SHM_OBJECT data a b   # output a & b to a shm-object called "data"
+SEM data-written POST       # post a shared semaphore called "data-written"
+SEM data-read    WAIT       # wait until the other end reads the data
+
+PRINT %g a b SEP " "

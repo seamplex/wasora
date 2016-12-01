@@ -1,0 +1,56 @@
+# this file shows some particularities about the wasora parser
+
+# there are primary and secondary keywords, in this case
+# PRINT is the primary keyword and TEXT is the secondary, which
+# takes a single token as an argument, in this case the word hello
+PRINT TEXT hello
+
+# if the text to be printed contains a space, double quotes should be used:
+PRINT TEXT "hello world"
+# if the text to be printed contains quotes, they should be escaped:
+PRINT TEXT "hello \"world\""
+
+# it does not matter if the argument is a string or an expression, whenever
+# a certain argument is expected, either spaces are to be remove or
+# the arguments should be enclosed in double quotes:
+PRINT 1 + 1    # the parser will read three different keywords
+PRINT "1 + 1"  # this is the correct way to compute 1+1
+PRINT 1+1      # this line also works becasue there are no spaces
+
+# you already guessed it, to insert comments, use the hash `#` character
+PRINT sqrt(2)/2     # comments may appear in the same line as a keyword
+
+# in case a hash character is expected to appear literally in an argument
+# it should be escaped to prevent wasora to ignore the rest of the line:
+PRINT TEXT "\# this is a commented output line"  # this is a wasora comment 
+
+# secondary keywords and/or arguments can be given in different lines either by
+# a. using a continuation marker composed of a single backslash:
+PRINT sqrt(2)/2 \
+      sin(pi/4) \
+      cos(pi/4)
+# b. enclosing the lines within brackets `{` and `}`
+PRINT sqrt(2)/2 \ {
+      sin(pi/4) \
+      # comments may appear inside brackets (but not within continued lines)
+      cos(pi/4) }
+
+# arguments may be given in the command line after the input file
+# they are referred to as $1, $2, etc. and are literally used
+# i.e. they can appear as arguments or even keywords
+# if a $n expressions appears in the input file but less than n
+# arguments were provided, wasora complains
+# this behavior can be avoided by giving a default value:
+DEFAULT_ARGUMENT_VALUE 1 world
+DEFAULT_ARGUMENT_VALUE 2 2
+
+PRINT TEXT "hello $1"
+PRINT sqrt($2)/$2
+
+# try executing this input as
+# $ wasora parser.was WORLD
+# $ wasora parser.was WORLD 3
+
+# if a literal dollar sign is part of an argument, quote it with a backslash:
+PRINT TEXT "argument \$1 is $1"
+

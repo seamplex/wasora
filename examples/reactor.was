@@ -1,0 +1,82 @@
+# solve the point kinetics equations with xenon-135 feedback
+# with a single control rod whose worth as a function of its 
+# position is a known function
+# the position of such rod is read from another process
+# (supposedly a control system emulation code, but implemented as
+# another wasora input in this case) through shared memory
+
+# we run until we are told to stop through the done variable
+end_time = infinite 
+max_dt = 1
+
+# number of neutron precursor groups
+nprec = 6
+
+# yields
+VECTOR beta    SIZE nprec DATA 0.25243e-3 1.10764e-3 0.96750e-3 2.12977e-3 0.70632e-3 0.17335e-3
+# decay constants
+VECTOR lambda  SIZE nprec DATA 1/1377.4 1/31.756 1/8.2167 1/3.1424 1/0.71976 1/0.26713
+
+CONST Beta Lambda
+Lambda = 6.4e-4         # neutron lifetime [s]
+Beta = vecsum(beta)     # total delayed neutron yield
+
+# reactivity worth of the single mean control rod
+# as a function of the nondimensional insertion z
+FUNCTION rodworth(z) INTERPOLATION akima DATA {
+0     2.155529e+01*1e-5*10
+0.2   6.337352e+00*1e-5*10    
+0.4  -3.253021e+01*1e-5*10
+0.6  -7.418505e+01*1e-5*10   
+0.8  -1.103352e+02*1e-5*10   
+1    -1.285819e+02*1e-5*10  
+}
+
+VECTOR c       SIZE nprec
+VAR rho phi I X
+VAR initial_flux setpoint
+
+PHASE_SPACE rho phi c I X
+
+
+# constants for xenon computation
+CONST gammaX gammaI lambdaX lambdaI sigmaX
+
+gammaX = 1.4563E10       # xenon-135 direct fission yield
+gammaI = 1.629235E11     # iodine-135 direction fission yield
+GammaX = -3.724869E-17   # xenon-135 reactivity coefficiente
+
+lambdaX = 2.09607E-05    # xenon-135 decay constant
+lambdaI = 2.83097E-05    # iodine-135 decay constant
+
+sigmaX = 2.203206E-04    # microscopic XS of neutron absorption for Xe-134
+
+# read data from control
+SEMAPHORE control_ready WAIT
+READ SHM_OBJECT control done initial_flux z setpoint
+
+phi_0 = initial_flux     # initial nondimensional flux level
+
+# steady-state conditions
+c_0(i) = beta(i)/(lambda(i)*Lambda) * phi_0
+I_0 = gammaI*phi_0/lambdaI
+X_0 = (gammaX + gammaI)/(lambdaX + sigmaX*phi_0) * phi_0
+rho_bias_0 = -rodworth(z_0) - GammaX*X_0
+
+# differential transient equations
+# the net reactivity
+rho .= rho_bias + rodworth(z) + GammaX*X
+
+# point kinetics
+phi_dot .= (rho - Beta)/Lambda * phi + vecdot(c, lambda)
+c_dot(i) .= beta(i)/Lambda * phi - lambda(i)*c(i)
+
+# iodine and xenon dynamics
+I_dot  .= gammaI * phi - lambdaI * I
+X_dot  .= gammaX * phi + lambdaI * I - lambdaX * X - sigmaX * phi * X
+
+# write data to control
+WRITE SHM_OBJECT  reactor t dt phi 
+SEMAPHORE reactor_ready POST
+
+PRINT t phi setpoint z X rodworth(z) rho

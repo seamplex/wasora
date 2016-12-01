@@ -1,0 +1,32 @@
+# read the mesh 'square.msh' and name it "square"
+MESH NAME square FILE_PATH square.msh DIMENSIONS 2
+
+# define a function defined over the mesh whose independent values
+# are given by the contents of the vector "in" (the size is
+# automatically computed from the number of cells in the mesh)
+# to define f at the nodes, replace CELLS with NODES
+FUNCTION f(x,y) MESH square CELLS VECTOR in
+
+# fill in the values of the vector T (probably by reading them
+# from a file or from shared memory)
+in(i) = sqrt(i)
+
+# define a vector that will hold a vector of another function over
+# the mesh. The special variable cells (nodes) contains the number
+# of cells (nodes) of the last mesh read.
+VECTOR out SIZE cells
+# you can use the vecsize() function over "in" to achieve the same result
+# VECTOR out SIZE vecsize(in)
+
+# do some computing here
+# PRINT %g nodes cells elements
+# PRINT_FUNCTION f
+g(x,y) := x^2
+
+# fill in the vector "out" with the function g(x,y) 
+MESH_FILL_VECTOR MESH square CELLS VECTOR out FUNCTION g
+# alternatively one may use an expression of x, y and z
+# MESH_FILL_VECTOR MESH square CELLS VECTOR out EXPRESSION x^2
+
+# you can now write out to a shared memory object
+PRINT_VECTOR out

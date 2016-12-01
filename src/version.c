@@ -136,11 +136,9 @@ void wasora_show_version(int long_version) {
 void wasora_shortversion(void) {
 
 #ifdef WASORA_VCS_BRANCH
-  printf("wasora %s.%s %s (%s%s %s)\n", WASORA_VCS_MAJOR, WASORA_VCS_MINOR,
-                                      strcmp(WASORA_VCS_BRANCH, "default")?WASORA_VCS_BRANCH:"",
-                                      WASORA_VCS_SHORTID,
-                                      (WASORA_VCS_CLEAN==0)?"":"+Δ",
-                                      WASORA_VCS_DATE);
+  printf("wasora %s%s %s\n", WASORA_VCS_VERSION,
+                                (WASORA_VCS_CLEAN==0)?"":"+Δ",
+                                strcmp(WASORA_VCS_BRANCH, "master")?WASORA_VCS_BRANCH:"");
 #else
   printf("wasora %s\n", PACKAGE_VERSION);
 #endif
@@ -151,16 +149,9 @@ void wasora_shortversion(void) {
 }
 
 void wasora_longversion(void) {
-
-#ifdef WASORA_VCS_BRANCH
   printf("\n");
-  printf(" rev hash %s\n", WASORA_VCS_REVID);
-  printf(" last commit on %s (rev %d)\n",
-   WASORA_VCS_DATE,
-   WASORA_VCS_REVNO);
-#endif
-
-  printf("\n");
+  
+  printf(" last commit on %s\n", WASORA_VCS_DATE);
   printf(" compiled on %s by %s@%s (%s)\n",
    COMPILATION_DATE,
    COMPILATION_USERNAME,

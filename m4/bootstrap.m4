@@ -28,10 +28,10 @@ if test ${vcs} = "git"; then
  branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
  date=`git log --pretty=format:"%ad" | head -n1`
  cat << EOF > src/version-vcs.h
-#define WASORA_VCS_BRANCH    \"{branch}\"\n\
-#define WASORA_VCS_VERSION   \"${version}\"\n\
-#define WASORA_VCS_DATE      \"${date}\"\n\
-#define WASORA_VCS_CLEAN     `git status --porcelain | wc -l`\n" > src/version-vcs.h
+#define WASORA_VCS_BRANCH    "${branch}"
+#define WASORA_VCS_VERSION   "${version}"
+#define WASORA_VCS_DATE      "${date}"
+#define WASORA_VCS_CLEAN     `git status --porcelain | wc -l`
 EOF
 
  echo -n "building changelog... "

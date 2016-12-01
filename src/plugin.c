@@ -22,9 +22,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#ifndef __WIN32__
- #include <dlfcn.h>
-#endif
+#include <dlfcn.h>
 
 #include "wasora.h"
 #include "version.h"
@@ -95,7 +93,6 @@ int wasora_load_plugin(const char *library) {
     return WASORA_RUNTIME_ERROR;
   }
 
-#ifndef __WIN32__
   if ((wasora.plugin[wasora.i_plugin].name = dlsym(wasora.plugin[wasora.i_plugin].handle, "plugin_name")) == NULL) {
     wasora_push_error_message("plugin '%s' is invalid, it does not contain plugin_name()", wasora.plugin[wasora.i_plugin].library_file);
     return WASORA_RUNTIME_ERROR;
@@ -144,57 +141,6 @@ int wasora_load_plugin(const char *library) {
     wasora.plugin[wasora.i_plugin].usage_string = wasora.plugin[wasora.i_plugin].usage();
   }
 
-#else
-  
-  if ((wasora.plugin[wasora.i_plugin].name = (winplugin_name_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_name")) == NULL) {
-    wasora_push_error_message("plugin '%s' is invalid, it does not contain plugin_name()", wasora.plugin[wasora.i_plugin].library_file);
-    return WASORA_RUNTIME_ERROR;
-  }
-  if ((wasora.plugin[wasora.i_plugin].version = (winplugin_version_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_version")) == NULL) {
-    wasora_push_error_message("plugin '%s' is invalid, it does not contain plugin_version()", wasora.plugin[wasora.i_plugin].library_file);
-    return WASORA_RUNTIME_ERROR;
-  }
-  if ((wasora.plugin[wasora.i_plugin].wasorahmd5 = (winplugin_wasorahmd5_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_wasorahmd5")) == NULL) {
-    wasora_push_error_message("plugin '%s' is invalid, it does not contain plugin_wasorahmd5()", wasora.plugin[wasora.i_plugin].library_file);
-    return WASORA_RUNTIME_ERROR;
-  }
-  if ((wasora.plugin[wasora.i_plugin].copyright = (winplugin_copyright_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_copyright")) == NULL) {
-    wasora_push_error_message("plugin '%s' is invalid, it does not contain plugin_copyright()", wasora.plugin[wasora.i_plugin].library_file);
-    return WASORA_RUNTIME_ERROR;
-  }
-  if ((wasora.plugin[wasora.i_plugin].init_before_parser = (winplugin_init_before_parser_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_init_before_parser")) == NULL) {
-    wasora_push_error_message("plugin '%s' is invalid, it does not contain plugin_init_before_parser()", wasora.plugin[wasora.i_plugin].library_file);
-    return WASORA_RUNTIME_ERROR;
-  }
-  if ((wasora.plugin[wasora.i_plugin].parse_line = (winplugin_parse_line_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_parse_line")) == NULL) {
-    wasora_push_error_message("plugin '%s' is invalid, it does not contain plugin_parse_line()", wasora.plugin[wasora.i_plugin].library_file);
-    return WASORA_RUNTIME_ERROR;
-  }
-  if ((wasora.plugin[wasora.i_plugin].init_after_parser = (winplugin_init_after_parser_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_init_after_parser")) == NULL) {
-    wasora_push_error_message("plugin '%s' is invalid, it does not contain plugin_init_after_parser()", wasora.plugin[wasora.i_plugin].library_file);
-    return WASORA_RUNTIME_ERROR;
-  }
-  if ((wasora.plugin[wasora.i_plugin].init_before_run = (winplugin_init_before_run_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_init_before_run")) == NULL) {
-    wasora_push_error_message("plugin '%s' is invalid, it does not contain plugin_init_before_run()", wasora.plugin[wasora.i_plugin].library_file);
-    return WASORA_RUNTIME_ERROR;
-  }
-  if ((wasora.plugin[wasora.i_plugin].finalize = (winplugin_finalize_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_finalize")) == NULL) {
-    wasora_push_error_message("plugin '%s' is invalid, it does not contain plugin_finalize() ", wasora.plugin[wasora.i_plugin].library_file);
-    return WASORA_RUNTIME_ERROR;
-  }
-  
-  // estos son opcionales
-  if ((wasora.plugin[wasora.i_plugin].longversion = (winplugin_longversion_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_longversion")) != NULL) {
-    wasora.plugin[wasora.i_plugin].longversion_string = wasora.plugin[wasora.i_plugin].longversion();
-  }
-  if ((wasora.plugin[wasora.i_plugin].description = (winplugin_description_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_description")) != NULL) {
-    wasora.plugin[wasora.i_plugin].description_string = wasora.plugin[wasora.i_plugin].description();
-  }
-  if ((wasora.plugin[wasora.i_plugin].usage = (winplugin_usage_t)GetProcAddress(wasora.plugin[wasora.i_plugin].handle, "plugin_usage")) != NULL) {
-    wasora.plugin[wasora.i_plugin].usage_string = wasora.plugin[wasora.i_plugin].usage();
-  }
-#endif
-
   // rellenamos strings
   wasora.plugin[wasora.i_plugin].name_string = wasora.plugin[wasora.i_plugin].name();
   wasora.plugin[wasora.i_plugin].version_string = wasora.plugin[wasora.i_plugin].version();
@@ -224,13 +170,8 @@ Please recompile either wasora or the plugin.", wasora.plugin[0].library_file, W
 }
 
 
-#ifndef __WIN32__
 void *wasora_dlopen(const char *filepath) {
   void *handle;
-#else
-HMODULE wasora_dlopen(const char *filepath) {
-  HMODULE handle;
-#endif
   
   if (wasora_dlopen_try(filepath, NULL, NULL, &handle) != 0) {
     return handle;
@@ -240,7 +181,6 @@ HMODULE wasora_dlopen(const char *filepath) {
     return handle;
   }
   
-#ifndef __WIN32__
   if (wasora_dlopen_try(filepath, "./", ".so", &handle) != 0) {
     return handle;
   }
@@ -256,28 +196,13 @@ HMODULE wasora_dlopen(const char *filepath) {
   if (wasora_dlopen_try(filepath, "lib", ".so", &handle) != 0) {
     return handle;
   }
-#else
-  if (wasora_dlopen_try(filepath, "./", ".dll", &handle) != 0) {
-    return handle;
-  }
-  if (wasora_dlopen_try(filepath, "../", ".dll", &handle) != 0) {
-    return handle;
-  }
-  if (wasora_dlopen_try(filepath, NULL, ".dll", &handle) != 0) {
-    return handle;
-  }
-#endif
   
   wasora_push_error_message("do not know where the shared object for plugin '%s' is", filepath);
   return NULL;
   
 }
 
-#ifndef __WIN32__
 int wasora_dlopen_try(const char *basepath, const char *prefix, const char *postfix, void **handle) {
-#else
-int wasora_dlopen_try(const char *basepath, const char *prefix, const char *postfix, HMODULE *handle) {
-#endif  
   char *fullpath;
   char *errorstring;
   int len;
@@ -288,7 +213,6 @@ int wasora_dlopen_try(const char *basepath, const char *prefix, const char *post
 
   sprintf(fullpath, "%s%s%s", (prefix != NULL)?prefix:"", basepath, (postfix != NULL)?postfix:"");
   
-#ifndef __WIN32__
   *handle = dlopen(fullpath, RTLD_NOW | RTLD_GLOBAL);
   free(fullpath);
   
@@ -301,13 +225,6 @@ int wasora_dlopen_try(const char *basepath, const char *prefix, const char *post
       return -1;
     }
   }
-#else
-  *handle = LoadLibrary(fullpath);
-  free(fullpath);
-  if (*handle == NULL) {
-    return 0;
-  }
-#endif
   
   return 1;
   

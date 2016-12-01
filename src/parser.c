@@ -27,10 +27,8 @@
 #include <ctype.h>
 #include <math.h>
 
-#ifndef __WIN32__
- #include <unistd.h>
- #include <dlfcn.h>
-#endif
+#include <unistd.h>
+#include <dlfcn.h>
 
 #include <gsl/gsl_sf.h>
 #include <gsl/gsl_interp.h>
@@ -59,11 +57,7 @@ int wasora_parse_main_input_file(char *filepath) {
   // miramos el tamanio de la pagina para usar un buffer de tamanio razonable
   // si despues necesitamos mas vamos pidiendo a medida que nos quedamos cortos,
   // pero no gastamos un fangote de memoria al pedo
-#ifndef __WIN32__
   wasora.page_size = (size_t)sysconf(_SC_PAGESIZE);
-#else
-  wasora.page_size = 4096;
-#endif
   wasora.actual_buffer_size = wasora.page_size-64;
   wasora.line = malloc(wasora.actual_buffer_size);
 
@@ -547,17 +541,10 @@ if (strcasecmp(token, "FROM") == 0) {
       if (wasora_parser_string(&path) != WASORA_PARSER_OK) {
         return WASORA_PARSER_ERROR;
       }
-#ifndef __WIN32__      
       if ((library = wasora_dlopen(path)) == NULL) {
         wasora_push_error_message("'%s' when opening library '%s'", dlerror(), path);
         return WASORA_PARSER_ERROR;
       }
-#else
-      // esto no camina en winkk, TODO: que camine
-      wasora_push_error_message("dlopen");
-      return WASORA_PARSER_ERROR;
-      
-#endif
 
 ///kw+LOAD_ROUTINE+usage <routine_1> [ <routine_2> ... <routine_n> ]
       while ((token = wasora_get_next_token(NULL)) != NULL) {

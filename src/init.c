@@ -222,9 +222,7 @@ int wasora_init_before_parser(void) {
 //va+ncores+desc This value can be used in the `MAX_DAUGHTERS` expression of the `PARAMETRIC` keyword
 //va+ncores+desc (i.e `ncores/2`).
   wasora_special_var(ncores) = wasora_define_variable("ncores");
-#ifndef __WIN32__
   wasora_var(wasora_special_var(ncores)) = (double)sysconf(_SC_NPROCESSORS_ONLN);
-#endif
   
 
   

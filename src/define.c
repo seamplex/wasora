@@ -1,6 +1,4 @@
-#ifndef __WIN32__
- #include <dlfcn.h>
-#endif
+#include <dlfcn.h>
 #include <ctype.h>
 #include <string.h>
 
@@ -223,7 +221,6 @@ loadable_routine_t *wasora_define_loadable_routine(char *name, void *library) {
   loadable_routine = calloc(1, sizeof(loadable_routine_t));
   loadable_routine->name = strdup(name);
 
-#ifndef __WIN32__
   // reseteamos errores como dice el manual
   dlerror();
   // cargamos la rutina
@@ -234,7 +231,6 @@ loadable_routine_t *wasora_define_loadable_routine(char *name, void *library) {
      dlclose(library);
      return NULL;
    }
-#endif
 
   HASH_ADD_KEYPTR(hh, wasora.loadable_routines, loadable_routine->name, strlen(loadable_routine->name), loadable_routine);
 

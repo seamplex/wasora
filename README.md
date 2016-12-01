@@ -1,5 +1,8 @@
+% Wasora
+%
+%
 
-[wasora](https://wasora.bitbucket.org) is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing algebraic expressions, data for function interpolation, differential equations and output instructions amongst other facilities. At a first glance, it may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical calculation. For example, see [here](https://wasora.bitbucket.org/realbook/._realbook006.html) to find how the famous [Lorenz system](http://en.wikipedia.org/wiki/Lorenz_system) may be solved by writing the three differential equations into a plain-text input file as humanly-friendly as possible.
+[Wasora](https://www.seamplex.com/wasora) is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing algebraic expressions, data for function interpolation, differential equations and output instructions amongst other facilities. At a first glance, it may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical calculation. For example, see [here](https://wasora.bitbucket.org/realbook/._realbook006.html) to find how the famous [Lorenz system](http://en.wikipedia.org/wiki/Lorenz_system) may be solved by writing the three differential equations into a plain-text input file as humanly-friendly as possible.
 
 Although its ultimate subject is optimization, it may hopefully help you with the tough calculations that usually appear when working with problems that have some kind of complexity, allowing the user to focus on what humans perform best---expert judgment and reaching conclusions. Some of its main features include
 
@@ -60,9 +63,11 @@ PRINT %g $1
 
 can be used as a command-line calculator:
 
-    $ wasora calc.was 1+1
-    2
-    $
+```
+$ wasora calc.was 1+1
+2
+$
+```
 
 See the `examples/parser.was` file, the [Examples & test suite] and [The wasora Real Book] sections below for examples of usage of arguments.
 
@@ -71,7 +76,9 @@ See the `examples/parser.was` file, the [Examples & test suite] and [The wasora 
 
 After the compilation of the code (that follows the standard `./configure && make` procedure, see `INSTALL` for details), one recommended step is to run the test suite with
 
-    $ make check
+```
+$ make check
+```
 
 It consists of ten examples of application that use different kind of the features provided by wasora. They work both as examples of usage and as a suite of tests that check that wasora implements correctly the functionalities that are expected. A more detailed set of examples that illustrate real applications of wasora in a wide variety of fields---ranging from classical mechanical systems up to analysis of blackjack strategies---can be found in [The wasora Real Book]. Some of the cases in the test suite generate graphical data which is shown on the screen using [gnuplot](http://www.gnuplot.info/), provided it is installed.
 
@@ -79,7 +86,7 @@ The `make check` command may not show the actual output of the examples but the 
 
 # Plugins
 
-Almost any single feature included in the code was needed at least once by [the author](http://www.talador.com.ar/jeremy) during his career in the nuclear industry. Nevertheless, wasora is aimed at solving general mathematical problems (see below for a description of the [wasora Real Book](#the-wasora-real-book)). Should a particular calculation be needed, wasora's features may be extended by the implementation of dynamically-loaded plugins, for example:
+Almost any single feature included in the code was needed at least once by [the author](http://www.seamplex.com/jeremy) during his career in the nuclear industry. Nevertheless, wasora is aimed at solving general mathematical problems (see below for a description of the [wasora Real Book](#the-wasora-real-book)). Should a particular calculation be needed, wasora's features may be extended by the implementation of dynamically-loaded plugins, for example:
 
 [besssugo](https://wasora.bitbucket.org/besssugo)
 :   builds scientific videos out of wasora computations
@@ -115,9 +122,9 @@ See the file `INSTALL` for compilation and installation instructions.
 See the directory `examples` for the test suite and other examples.  
 See the contents of directory `doc` for full documentation.  
 
-Home page(s): <https://wasora.bitbucket.org>  & <http://wasora.bitbucket.org>  
+Home page(s): <https://www.seamplex.com/wasora>
 Mailing list and bug reports: <https://groups.google.com/a/seamplex.com/forum/#!forum/wasora>  
-FAQ: <http://wasora.bitbucket.org/FAQ.html>  
+FAQ: <https://www.seamplex.com/wasora/FAQ.html>
 
 ----------------------------------------------------
 

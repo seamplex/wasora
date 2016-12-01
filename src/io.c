@@ -41,17 +41,9 @@ int wasora_instruction_sem(void *arg) {
   
 
   if (semaphore->operation == semaphore_wait) {
-#ifdef __WIN32__
-    WaitForSingleObject(semaphore->pointer, INFINITE);
-#else
     sem_wait(semaphore->pointer);
-#endif
   } else if (semaphore->operation == semaphore_post) {
-#ifdef __WIN32__
-    ReleaseSemaphore(semaphore->pointer, 1, NULL);
-#else
     sem_post(semaphore->pointer);
-#endif
   }
   
   return WASORA_RUNTIME_OK;

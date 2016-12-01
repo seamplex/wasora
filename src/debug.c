@@ -23,9 +23,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#ifndef __WIN32__
- #include <sys/select.h>
-#endif
+#include <sys/select.h>
 
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
@@ -142,16 +140,9 @@ void wasora_list_symbols(void) {
 void wasora_debug(void) {
 
 #ifdef HAVE_READLINE
-#ifndef __WIN32__
   fd_set rfds;
   struct timeval tv;
   int retval;
-#else
-  INPUT_RECORD record;
-  DWORD numRead;  
-  DWORD fdwSaveOldMode;
-  HANDLE stdinHandle;
-#endif
   char *debugcommand = NULL;
   char *token;
   char *argument;
@@ -171,7 +162,6 @@ void wasora_debug(void) {
   // miramos si tocaron enter
   if (wasora.mode == mode_normal) {
 
-#ifndef __WIN32__
     // a select le pasamos solo stdin (fd = 0) 
     FD_ZERO(&rfds);
     FD_SET(0, &rfds);
@@ -182,29 +172,13 @@ void wasora_debug(void) {
     retval = select(1, &rfds, NULL, NULL, &tv);        
 
     if (retval != 0) {
-#else
-    stdinHandle = GetStdHandle(STD_INPUT_HANDLE);
-    GetConsoleMode(stdinHandle, &fdwSaveOldMode);
-    SetConsoleMode(stdinHandle, fdwSaveOldMode & ~ENABLE_MOUSE_INPUT);
-    PeekConsoleInput(stdinHandle, &record, 128, &numRead);
-    if (numRead > 0) {
-      ReadConsoleInput(stdinHandle, &record, 512, &numRead);
-      if (record.EventType == KEY_EVENT) {
-        record.EventType = 0;
-        if (record.Event.KeyEvent.bKeyDown) {
-#endif
       wasora.mode = mode_debug;
       // TODO: tamanio dinamico! ver ejemplo de readline
       debugcommand = malloc(128);
       if (fgets(debugcommand, 128, stdin) == NULL) {
         return;
       }
-#ifdef __WIN32__
-        }
-      }
-#endif
     }
-
   }
 
   

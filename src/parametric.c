@@ -27,10 +27,8 @@
 #include <math.h>
 #include <time.h>
 
-#ifndef __WIN32__
- #include <sys/types.h>
- #include <sys/wait.h>
-#endif
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sf.h>
@@ -58,7 +56,6 @@ int wasora_parametric_run(void) {
   pid_t pid;
   int status;
   
-#ifndef __WIN32__
   if (wasora.parametric.max_daughters > 1) {
     sprintf(parallel_semaphore_name, "wasora-%d-XXXXXX", getpid());
     if (mkdtemp(parallel_semaphore_name) == NULL) {
@@ -75,7 +72,6 @@ int wasora_parametric_run(void) {
       sem_post(parallel_semaphore);
     }
   }
-#endif
           
   local_step = calloc(wasora.parametric.dimensions, sizeof(int));
   v = calloc(wasora.parametric.dimensions, sizeof(double));
@@ -235,7 +231,6 @@ int wasora_parametric_run(void) {
     // miramos si es el ultimo pase
     wasora_var(wasora_special_var(done_outer)) = (step == wasora.parametric.outer_steps-1);
 
-#ifndef __WIN32__
     if (wasora.parametric.max_daughters <= 1) {
       
       // corremos el programa en modo estandar
@@ -267,10 +262,6 @@ int wasora_parametric_run(void) {
         }
       }
     }
-#else
-  // wanna do this right? get rid of fucking windoze    
-  wasora_call(wasora_standard_run());
-#endif
     
     // incrementamos steps
     ++local_step[wasora.parametric.dimensions-1];
@@ -283,7 +274,6 @@ int wasora_parametric_run(void) {
     
   }
 
-#ifndef __WIN32__  
   // esperamos a los que nos quedan
   if (wasora.parametric.max_daughters > 1) {
     for (i = 0; i < wasora.parametric.max_daughters; i++) {
@@ -296,7 +286,6 @@ int wasora_parametric_run(void) {
     sem_close(parallel_semaphore);
     sem_unlink(parallel_semaphore_name);
   }
-#endif
 
 
   

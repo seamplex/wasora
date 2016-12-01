@@ -62,10 +62,7 @@ double builtin_clock(factor_t *expr) {
   tp.tv_sec = mts.tv_sec;
   tp.tv_nsec = mts.tv_nsec;
 
-  return (float)tp.tv_sec + ((float)tp.tv_nsec * 1E-9);
-    
-#elif defined (__WIN32__)
-  return 0;
+  return (float)tp.tv_sec + ((float)tp.tv_nsec * 1E-9);    
 #else
   struct timespec tp;
   clockid_t clk_id;

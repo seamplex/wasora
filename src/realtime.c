@@ -25,23 +25,6 @@
 
 #include "wasora.h"
 
-#if !HAVE_USLEEP
-// http://stackoverflow.com/questions/5801813/c-usleep-is-obsolete-workarounds-for-windows-mingw
-void usleep(unsigned int usec)
-{
-    HANDLE timer;
-    LARGE_INTEGER ft;
- 
-    ft.QuadPart = -(10 * (__int64)usec);
- 
-//Timer Funktionen ab WINNT verfügbar
-    timer = CreateWaitableTimer(NULL, TRUE, NULL);
-    SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
-    WaitForSingleObject(timer, INFINITE);
-    CloseHandle(timer);
-}
-#endif
-
 /* inicializa la estructura t0 */
 void wasora_init_realtime(void) {
   gettimeofday(&wasora.t0, NULL);
@@ -51,13 +34,8 @@ void wasora_init_realtime(void) {
 /* espera un pasito */
 void wasora_wait_realtime(void) {
 
-#ifdef __WIN32__
-  long int delay;
-  long int t_menos_t0;
-#else
   useconds_t delay;
   useconds_t t_menos_t0;
-#endif
 
   if (wasora_var(wasora.special_vars.realtime_scale) == 0) {
     return;

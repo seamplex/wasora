@@ -26,21 +26,15 @@
 #include <errno.h>
 #include <string.h>
 
-#ifndef __WIN32__
- #include <sys/mman.h>
- #include <fcntl.h>
-#endif
+#include <sys/mman.h>
+#include <fcntl.h>
 
 #include "wasora.h"
 
 void *wasora_get_shared_pointer(char *name, size_t size) {
   void *pointer;
   int dangling_pid;
-#ifndef __WIN32__
   int fd;
-#else
-  HANDLE fd;
-#endif
 
   if ((dangling_pid = wasora_create_lock(name, 0)) != 0) {
     wasora_push_error_message("shared memory segment '%s' is being used by process %d", name, dangling_pid);
@@ -52,7 +46,6 @@ void *wasora_get_shared_pointer(char *name, size_t size) {
     wasora_runtime_error();
   }
 
-#ifndef __WIN32__
   umask(0);
   if ((fd = shm_open(name, O_RDWR | O_CREAT, 0666)) == -1) {
     wasora_push_error_message("'%s' opening shared memory object '%s'", strerror(errno), name);
@@ -69,16 +62,6 @@ void *wasora_get_shared_pointer(char *name, size_t size) {
   }
 
   close(fd);
-#else
-  if ((fd = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, size, name)) == NULL) {
-    return NULL;
-  }
-
-  if ((pointer = MapViewOfFile(fd, FILE_MAP_ALL_ACCESS, 0, 0, size)) == NULL) {
-    return NULL;
-  }
-#endif
-
 
   return pointer;
 }
@@ -87,12 +70,8 @@ void *wasora_get_shared_pointer(char *name, size_t size) {
 
 void wasora_free_shared_pointer(void *pointer, char *name, size_t size) {
   wasora_remove_lock(name, 0);
-#ifndef __WIN32__
   munmap(pointer, size);
   shm_unlink(name);
-#else
-  UnmapViewOfFile(pointer);
-#endif
 }
 
 
@@ -106,17 +85,11 @@ sem_t *wasora_get_semaphore(char *name) {
   }
 
 
-#ifndef __WIN32__
   umask(0);
   if ((semaphore = sem_open(name, O_CREAT, 0666, 0)) == SEM_FAILED) {
     perror(name);
     return NULL;
   }
-#else
-  if ((semaphore = CreateSemaphore(NULL, 0, 1000, name)) == NULL) {
-    return NULL;
-  }
-#endif
 
   return semaphore;
 }
@@ -135,12 +108,8 @@ int wasora_create_lock(char *name, int sem) {
   }
 
   if (stat(wasora.lock_dir, &dummy) == -1) {
-#ifndef WIN32
     umask(0);
     if (mkdir(wasora.lock_dir, 0777) == -1) {
-#else
-    if (mkdir(wasora.lock_dir) == -1) {
-#endif
       wasora_push_error_message("creating lock directory '%s'", wasora.lock_dir);
       wasora_runtime_error();
     }
@@ -175,13 +144,9 @@ int wasora_create_lock(char *name, int sem) {
 }
 
 void wasora_free_semaphore(sem_t *semaphore, char *name) {
-#ifndef __WIN32__
   wasora_remove_lock(name, 1);
   sem_close(semaphore);
   sem_unlink(name);
-#else
-  CloseHandle(semaphore);
-#endif
 }
 
 void wasora_remove_lock(char *name, int sem) {

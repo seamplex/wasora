@@ -12,7 +12,7 @@ ${wasorabin} --no-debug ${testdir}roessler-sender.was &
 ${wasorabin} --no-debug ${testdir}roessler-receiver.was > roessler.dat
 
 # check the result
-if [ "x`head -n2 roessler.dat | tail -n1 | awk '{print $4}' | ${trim}`" = "x3.123456" ]; then
+if [ "x`head -n2 roessler.dat | tail -n1 | awk '{print $4}'`" = "x3.123456" ]; then
  outcome=0
 else
  outcome=99

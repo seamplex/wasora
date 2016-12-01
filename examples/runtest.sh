@@ -4,22 +4,8 @@
 if [ -e ./wasora ]; then
  wasorabin="./wasora"
  testdir="examples/"
-elif [ -e ./wasora.exe ]; then
- if [ "x`which wine`" = "x" ]; then
-   wasorabin="./wasora.exe"
- else
-   wasorabin="wine ./wasora.exe"
- fi
- testdir="examples/"
 elif [ -e ../wasora ]; then
  wasorabin="../wasora"
- testdir=""
-elif [ -e ../wasora.exe ]; then
- if [ "x`which wine`" = "x" ]; then
-   wasorabin="../wasora.exe"
- else
-   wasorabin="wine ../wasora.exe"
- fi
  testdir=""
 elif [ "`which wasora`" != "" ]; then
   wasorabin=`which wasora`
@@ -35,32 +21,10 @@ else
  exit 1
 fi
 
-if [ ! -z "`which dos2unix`" ]; then
- trim="dos2unix"
-elif [ ! -z "`which d2u`" ]; then
- trim="d2u"
-else
- trim="cat"
-fi
-
 if [ `which gnuplot` ]; then
  hasgnuplot=1
 fi
 
-
-# calls gnuplot with the provided command if it is installed
-# function plot {
-#  if [ "x`which gnuplot`" != "x" ]; then
-#   if [ "x`uname | cut -c-6`" = "xCYGWIN" ]; then
-#    if [ "x`ps -e | grep X | wc -l`" = "x0" ]; then
-#     XWin.exe -multiwindow -clipboard -silent-dup-error > /dev/null &
-#     sleep 2
-#    fi
-#    export DISPLAY=:0.0
-#   fi
-#   gnuplot -p -e "$1"
-#  fi
-# }
 function plot {
  if [[ "x`which gnuplot`" != "x" && ! -z "$DISPLAY" ]]; then
   gnuplot -p -e "$1"

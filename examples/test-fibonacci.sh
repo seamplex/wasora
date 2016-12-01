@@ -13,7 +13,7 @@ rm -rf ${fdat}
 ${wasorabin} ${testdir}fibonacci.was | tee ${fdat}
 
 # check the result
-if [ "x`tail -n1 ${fdat} | ${trim} | tr -d \r`" = "x610" ]; then
+if [ "x`tail -n1 ${fdat} | tr -d \r`" = "x610" ]; then
  outcome=0
 else
  outcome=99

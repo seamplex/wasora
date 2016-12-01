@@ -15,7 +15,7 @@ ${wasorabin} ${testdir}io-readshm.was | tee io-shm.dat
 
 
 # check the result
-if [[ "x`diff io-file.dat io-shm.dat`" = "x" ]] && [[ "x`cat io-shm.dat | ${trim}`" = "x0.1 1.23456 1 -987.654" ]]; then
+if [[ "x`diff io-file.dat io-shm.dat`" = "x" ]] && [[ "x`cat io-shm.dat`" = "x0.1 1.23456 1 -987.654" ]]; then
   outcome=0
  else
   outcome=99

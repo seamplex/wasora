@@ -28,7 +28,7 @@ fi
 
 rm -f get.log
 echo -n "0. checking pre-requisistes..." | tee -a get.log; echo >> get.log
-for i in m4 autoconf xargs gcc git make makeinfo; do
+for i in m4 autoconf xargs gcc git make; do
  if ! command_exists $i; then
   echo
   echo "error: $i not installed"
@@ -63,25 +63,25 @@ cd wasora-suite
 
 # step 2: clone or update repo
 if test ! -d ./${name}; then
-  echo -n "2. cloning ${name} repository..."  | tee -a ../get.log; echo >> get.log
-  git clone https://bitbucket.org/seamplex/${name}.git >> ../get.log; echo >> get.log
+  echo -n "2. cloning ${name} repository..."  | tee -a ../get.log; echo >> ../get.log
+  git clone https://bitbucket.org/seamplex/${name}.git >> ../get.log; echo >> ../get.log
   cd ${name}
   echo "ok!"
 else
-  echo -n "2. pulling and updating ${name} repository..."  | tee -a ../get.log; echo >> get.log
+  echo -n "2. pulling and updating ${name} repository..."  | tee -a ../get.log; echo >> ../get.log
   cd ${name}
-  git pull  >> ../../get.log; echo >> get.log
+  git pull  >> ../../get.log; echo >> ../../get.log
   echo "ok!"
 fi
 
 
 # step 3: bootstrap repo
-echo -n "3. bootstrapping ${name} source tree..."  | tee -a ../../get.log; echo >> get.log
-./autogen.sh 2>&1 >> ../../get.log; echo >> get.log
+echo -n "3. bootstrapping ${name} source tree..."  | tee -a ../../get.log; echo >> ../../get.log
+./autogen.sh 2>&1 >> ../../get.log; echo >> ../../get.log
 echo "ok!"
 
 # step 4: check for GSL
-echo -n "4. checking for GSL..." | tee -a ../../get.log; echo >> get.log
+echo -n "4. checking for GSL..." | tee -a ../../get.log; echo >> ../../get.log
 cat << EOF > test.c
 #include <gsl/gsl_version.h>
 
@@ -120,8 +120,8 @@ if test ${nodynamicgsl} -eq 1; then
      exit 1
     fi;;
   "b")
-    echo "ok, I will ask configure to download and compile it" | tee -a ../../get.log; echo >> get.log
-    echo "note that step number 5 may take some time" | tee -a ../../get.log; echo >> get.log
+    echo "ok, I will ask configure to download and compile it" | tee -a ../../get.log; echo >> ../../get.log
+    echo "note that step number 5 may take some time" | tee -a ../../get.log; echo >> ../../get.log
     configflag="--enable-download-gsl"
     ;;
   *)
@@ -131,18 +131,18 @@ if test ${nodynamicgsl} -eq 1; then
  
 else
  configflag=""
- echo "already installed!" | tee -a ../../get.log; echo >> get.log
+ echo "already installed!" | tee -a ../../get.log; echo >> ../../get.log
 fi
 
 
 # step 5. configure
-echo -n "5. configuring ${name}..."  | tee -a ../../get.log; echo >> get.log
-./configure ${configflag} >> ../../get.log; echo >> get.log
+echo -n "5. configuring ${name}..."  | tee -a ../../get.log; echo >> ../../get.log
+./configure ${configflag} >> ../../get.log; echo >> ../../get.log
 echo "ok!"
 
 # step 6. compile
-echo -n "6. compiling ${name}..."  | tee -a ../../get.log; echo >> get.log
-make >> ../../get.log; echo >> get.log
+echo -n "6. compiling ${name}..."  | tee -a ../../get.log; echo >> ../../get.log
+make >> ../../get.log; echo >> ../../get.log
 echo "ok!"
 
 # step 7. link to $HOME/bin
@@ -173,7 +173,7 @@ cd ../..
 echo
 if command_exists ${name}; then
   echo "congratulations! ${name} compiled and installed correctly!"
-  echo "type '${name}' (without the quotes) if you do not believe me."
+  echo "type ‘${name}’ (without the quotes) if you do not believe me."
 else
   echo "something went wrong as ${name} does not run :-("
   echo "share your get.log file with the mailing list for help."

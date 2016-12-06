@@ -226,10 +226,8 @@ AS_IF([test "x$ac_cv_lib_readline_readline" = xyes -a "x$ac_cv_header_readline_r
 
 
 AC_DEFUN([WASORA_HOST_VERSION_H],[
-# nos fabricamos el version-conf.h
-VERSIONH=src/version-conf.h
-AC_MSG_NOTICE([creating $VERSIONH])
-cat << EOF > $VERSIONH
+AC_MSG_NOTICE([creating version-conf.h])
+cat << EOF > src/version-conf.h
 #define COMPILATION_ARCH     "${host_os} ${host_cpu}"
 #define COMPILER_VERSION     "`$CC --version | head -n1`"
 #define COMPILER_CFLAGS      "$CFLAGS"
@@ -241,7 +239,7 @@ cd ..
 ])
 
 AC_DEFUN([WASORA_PLUGIN_VERSION_H],[
-AC_MSG_NOTICE([creating $PLUGINVERSIONH])
+AC_MSG_NOTICE([creating version-conf.h])
 
 cd src
 cat << EOF > version-conf.h

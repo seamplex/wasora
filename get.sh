@@ -9,7 +9,7 @@ command_exists() {
 # step 0: needed commands
 # if wasora-suite does not exist, create
 echo -n "0. checking pre-requisistes..." | tee -a get.log
-for i in m4 autoconf xargs gcc hg make makeinfo; do
+for i in m4 autoconf xargs gcc git make makeinfo; do
  if ! command_exists $i; then
   echo
   echo "error: $i not installed"
@@ -45,14 +45,13 @@ cd wasora-suite
 # step 2: clone or update repo
 if test ! -d ./wasora; then
   echo -n "2. cloning wasora repository..."  | tee -a ../get.log
-  hg clone https://bitbucket.org/wasora/wasora  >> ../get.log
+  git clone https://bitbucket.org/seamplex/wasora.git >> ../get.log
   cd wasora
   echo "ok!"
 else
   echo -n "2. pulling and updating wasora repository..."  | tee -a ../get.log
   cd wasora
-  hg pull  >> ../../get.log
-  hg update  >>  ../../get.log
+  git pull  >> ../../get.log
   echo "ok!"
 fi
 

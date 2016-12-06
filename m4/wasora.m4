@@ -241,21 +241,22 @@ cd ..
 ])
 
 AC_DEFUN([WASORA_PLUGIN_VERSION_H],[
-# nos fabricamos el version.h del plugin
-PLUGINVERSIONH=src/version-conf.h
-
 AC_MSG_NOTICE([creating $PLUGINVERSIONH])
 
-cat << EOF > $PLUGINVERSIONH
+cd src
+cat << EOF > version-conf.h
 #define COMPILATION_ARCH     "${host_os} ${host_cpu}"
 #define CCOMPILER_VERSION    "`$CC --version | head -n1`"
 #define CCOMPILER_FLAGS      "$CFLAGS"
 EOF
-
-cd src
 ./version.sh
-cd ..
-cd wasora/src
+
+cd ../wasora/src
+cat << EOF > version-conf.h
+#define COMPILATION_ARCH     "${host_os} ${host_cpu}"
+#define CCOMPILER_VERSION    "`$CC --version | head -n1`"
+#define CCOMPILER_FLAGS      "$CFLAGS"
+EOF
 ./version.sh
 cd ../..
 ])

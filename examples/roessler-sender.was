@@ -2,30 +2,30 @@
 # to a shared memory object
 end_time = 100
 
-VECTOR x SIZE 3
-PHASE_SPACE x
+VECTOR X SIZE 3
+PHASE_SPACE X
 
 CONST a b c            # system parameters
 a = 0.2
 b = 0.2
 c = 5.7
 
-x_0(i) = i+0.123456    # initial conditions as a function of i
+X_0(i) = i+0.123456    # initial conditions as a function of i
 
 # system of equations written in implicit form
-0 = -x_dot(1) - x(2) - x(3)
-0 = -x_dot(2) + x(1) + a*x(2)
-0 = -x_dot(3) + b + x(3)*(x(1) - c)
+0 = -X_dot(1) - X(2) - X(3)
+0 = -X_dot(2) + X(1) + a*X(2)
+0 = -X_dot(3) + b + X(3)*(X(1) - c)
 
-# write t, dt, done and vector x to shared object "state"
-WRITE SHM_OBJECT state t dt done x
+# write t, dt, done and vector X to shared object "state"
+WRITE SHM_OBJECT state t dt done X
 
 # tell the receiver the data is ready through a "sender_ready" semaphore
 SEM sender_ready   POST  
 
 # wait until the other read the data end before advancing another step
 # if we are on the first step, we write a message to remind the user
-# that the other instance of wasora is to be executed at the same time
+# that the other instance of wasora is to be eXecuted at the same time
 IF in_static
  PRINT "\# waiting for other end to read my data..." NONEWLINE
 ENDIF

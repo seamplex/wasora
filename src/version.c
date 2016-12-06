@@ -137,13 +137,13 @@ void wasora_shortversion(void) {
 
 #ifdef WASORA_VCS_BRANCH
   printf("wasora %s%s %s\n", WASORA_VCS_VERSION,
-                                (WASORA_VCS_CLEAN==0)?"":"+Δ",
-                                strcmp(WASORA_VCS_BRANCH, "master")?WASORA_VCS_BRANCH:"");
+                             (WASORA_VCS_CLEAN==0)?"":"+Δ",
+                             strcmp(WASORA_VCS_BRANCH, "master")?WASORA_VCS_BRANCH:"");
 #else
   printf("wasora %s\n", PACKAGE_VERSION);
 #endif
 
-  printf("wasora's an advanced suite for optimization & reactor analysis\n");
+  printf("wasora’s an advanced suite for optimization & reactor analysis\n");
 
   return;
 }

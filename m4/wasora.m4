@@ -5,13 +5,13 @@ dnl
 
 AC_DEFUN([WASORA_PLUGIN_INIT_C],[
 AM_INIT_AUTOMAKE
-LT_INIT
-AC_PROG_AWK
+#LT_INIT
+#AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PROG_CC
 AM_PROG_CC_C_O
-AC_CANONICAL_HOST
+#AC_CANONICAL_HOST
 ])
 
 
@@ -228,40 +228,6 @@ AS_IF([test "x$ac_cv_lib_readline_readline" = xyes -a "x$ac_cv_header_readline_r
    readline=0
   ])
 ])
-
-
-AC_DEFUN([WASORA_CHECK_WASORA_DIR],[
-
-AC_ARG_WITH([wasora],
-  [AS_HELP_STRING([--with-wasora=DIR],
-    [look for src/wasora.h in the specified directory])])
-
-# buscamos wasora.h
-AC_MSG_CHECKING([for wasora directory])
-# la opcion --with-wasora sobre-escribe la variable de entorno
-AS_IF([test -n "$with_wasora"], [WASORA_DIR=$with_wasora])
-
-# si todavia esta vacia, usamos la embebida
-AS_IF([test -n  "${WASORA_DIR}"],
- [AS_IF([test -e "${WASORA_DIR}/src/wasora.h"],
-  [AC_MSG_RESULT([yes])
-   #AC_CHECK_HEADER([wasora.h],,AC_MSG_ERROR([It seems that the wasora.h header does not work.]))
-   WASORA_INCLUDE="${WASORA_DIR}/src -I${WASORA_DIR}/gsl-1.16"
-  ],[
-   AC_MSG_RESULT([cannot find ${WASORA_DIR}/src/wasora.h])
-   AC_MSG_ERROR([
-The directory should be set to the wasora directory that contains src, i.e. either
-export WASORA_DIR=$HOME/wasora
-or
-./configure --with-wasora=$HOME/wasora
-and not the src subdirectory itself. Please check and configure again.])
- ])],[
-  AC_MSG_RESULT([no, proceeding with embedded wasora source])
-  WASORA_INCLUDE="./wasora"
- ])
-AC_SUBST([WASORA_INCLUDE], [-I${WASORA_INCLUDE}])
-])
-
 
 
 AC_DEFUN([WASORA_HOST_VERSION_H],[

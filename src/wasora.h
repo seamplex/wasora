@@ -205,6 +205,9 @@ typedef struct builtin_functional_t builtin_functional_t;
 
 typedef struct multidim_range_t multidim_range_t;
 
+typedef struct mesh_t mesh_t;
+
+
 // -- expresion algebraic ------------ -----        ----           --     -
 // una expresion algebraica consiste en una cantidad de tokens y 
 // un arreglo de tokens que la representa 
@@ -422,7 +425,7 @@ struct function_t {
   void *property;
 
   // malla no-estructurada sobre la que esta definida la funcion
-  void *mesh;
+  mesh_t *mesh;
   
   // apuntador a un arbol k-dimensional para nearest neighbors 
   void *kd;
@@ -1691,7 +1694,6 @@ extern  double wasora_get_function_value(const char *name, double *arg);
 //  mesh
 // ------------------------------------------------------------------------
 
-typedef struct mesh_t mesh_t;
 typedef struct physical_property_t physical_property_t;
 typedef struct property_data_t property_data_t;
 typedef struct material_t material_t;

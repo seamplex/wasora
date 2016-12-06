@@ -156,7 +156,7 @@ int mesh_vtk_write_scalar(mesh_post_t *mesh_post, function_t *function, centerin
   if (mesh_post->mesh != NULL) {
     mesh = mesh_post->mesh;
   } else if (function != NULL) {
-    mesh = (mesh_t *)function->mesh;
+    mesh = function->mesh;
   } else {
     return WASORA_RUNTIME_ERROR;
   }
@@ -216,7 +216,7 @@ int mesh_vtk_write_vector(mesh_post_t *mesh_post, function_t **function, centeri
   if (mesh_post->mesh != NULL) {
     mesh = mesh_post->mesh;
   } else if (function[0] != NULL) {
-    mesh = (mesh_t *)function[0]->mesh;
+    mesh = function[0]->mesh;
   } else {
     return WASORA_RUNTIME_ERROR;
   }

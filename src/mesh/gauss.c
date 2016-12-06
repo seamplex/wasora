@@ -35,7 +35,7 @@ double mesh_integral_over_element(function_t *function, element_t *element, expr
   int j;
   int d;
   
-  mesh_t *mesh = (mesh_t *)function->mesh;
+  mesh_t *mesh = function->mesh;
   
   for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
     w = mesh_integration_weight(mesh, element, v);

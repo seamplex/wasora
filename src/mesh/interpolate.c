@@ -264,7 +264,7 @@ double mesh_interpolate_function_cell(struct function_t *f, const double *x) {
   static cell_t *chosen_cell;
   node_t *nearest_node;
   element_list_item_t *associated_element;
-  mesh_t *m = (mesh_t *)f->mesh;
+  mesh_t *m = f->mesh;
 
 
   if (m->kd_nodes != NULL) {
@@ -302,7 +302,7 @@ double mesh_interpolate_function_property(struct function_t *function, const dou
   double y = 0;
   property_data_t *property_data = NULL;
   physical_property_t *property = (physical_property_t *)function->property;
-  mesh_t *mesh= (mesh_t *)function->mesh;
+  mesh_t *mesh= function->mesh;
   element_t *element; 
 
   // si no hay malla puede ser que todavia no se inicializo, no es un error  

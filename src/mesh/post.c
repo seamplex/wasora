@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related post-processing generation routines
  *
- *  Copyright (C) 2014--2015 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,11 +19,9 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
-#include <stdio.h>
-
 #include <wasora.h>
-#include "mesh.h"
+
+#include <stdio.h>
 
 int wasora_instruction_mesh_post(void *arg) {
 
@@ -62,4 +60,3 @@ int wasora_instruction_mesh_post(void *arg) {
 
   return WASORA_RUNTIME_OK;
 }
-#endif

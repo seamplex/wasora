@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related point element routines
  *
- *  Copyright (C) 2014--2015 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,11 +19,9 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
-#include <math.h>
-
 #include <wasora.h>
-#include "mesh.h"
+
+#include <math.h>
 
 // --------------------------------------------------------------
 // punto de un nodo
@@ -86,4 +84,3 @@ double mesh_one_node_point_dhdr(int i, int j, gsl_vector *gsl_r) {
 double mesh_point_vol(element_t *element) {
   return 0;
 }
-#endif

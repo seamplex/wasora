@@ -19,10 +19,10 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
 #include <wasora.h>
-#include "mesh.h"
+
 #include <gsl/gsl_linalg.h>
+
 
 // --------------------------------------------------------------
 // tetrahedro isoparametrico de cuatro nodos
@@ -374,4 +374,3 @@ double mesh_tetrahedron_vol(element_t *element) {
   
   return 1.0/(1.0*2.0*3.0) * fabs(mesh_cross_dot(c, a, b));
 }
-#endif

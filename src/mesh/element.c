@@ -19,9 +19,7 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
 #include <wasora.h>
-#include "mesh.h"
 
 /*
 
@@ -311,4 +309,3 @@ int mesh_node_indexes(mesh_t *mesh, int dofs) {
   
   return WASORA_RUNTIME_OK;
 }
-#endif

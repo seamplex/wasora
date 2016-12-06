@@ -40,7 +40,6 @@ wasora_SOURCES = \
 ./thirdparty/kdtree.c \
 ./thirdparty/uthash.h \
 ./builtinvectorfunctions.c \
-./siman.c \
 ./multiminfdf.c \
 ./alias.c \
 ./m4.c \

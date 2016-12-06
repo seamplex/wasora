@@ -26,11 +26,11 @@ if test ${vcs} = "git"; then
  echo "[[define]](wasoraversion, ${version})[[dnl]]" > version.m4
 
  branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
- date=`git log --pretty=format:"%ad" | head -n1`
+ commitdate=`git log -1 --pretty=format:"%ad"`
  cat << EOF > src/version-vcs.h
 #define WASORA_VCS_BRANCH    "${branch}"
 #define WASORA_VCS_VERSION   "${version}"
-#define WASORA_VCS_DATE      "${date}"
+#define WASORA_VCS_DATE      "${commitdate}"
 #define WASORA_VCS_CLEAN     `git status --porcelain | wc -l`
 EOF
 
@@ -48,18 +48,13 @@ fi
 define([PLUGIN_VERSION_VCS],
 # plugin version
 if test "${vcs}" = "git"; then
- echo -n "major version... "
- majorversion=`git log -r tip --template='{latesttag}'`
- echo ${majorversion}
- 
- echo -n "minor version... "
- minorversion=`git log -r tip --template="{latesttagdistance}"`
- echo ${minorversion}
- 
- version="${majorversion}.${minorversion}"
- commitdate=`git log -r tip --template="{date|shortdate}"`
- author=`git log -r tip --template="{author|person}"`
- email=`git log -r tip --template="{author|email}"`
+ version=`git describe | sed 's/-/./'`
+ echo "version... ${version}"
+
+ branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+ commitdate=`git log -1 --pretty=format:"%ad"`
+ author=`git log -1 --pretty=format:"%an"`
+ email=`git log -1 --pretty=format:"%ae"`
  quotedemail=`echo ${email} | sed s/@/@@/`
  year=`echo ${shortdate} | cut -c-4`
 
@@ -87,18 +82,15 @@ cat << EOF > doc/plugin.texi
 @set YEAR    ${year}
 EOF
 
- git log -r tip --template="\
-#define PLUGIN_VCS_BRANCH    \"{branch}\"\n\
-#define PLUGIN_VCS_MAJOR     \"${majorversion}\"\n\
-#define PLUGIN_VCS_MINOR     \"${minorversion}\"\n\
-#define PLUGIN_VCS_REVID     \"{node}\"\n\
-#define PLUGIN_VCS_SHORTID   \"{node|short}\"\n\
-#define PLUGIN_VCS_REVNO     {rev}\n\
-#define PLUGIN_VCS_DATE      \"{date|isodate}\"\n\
-#define PLUGIN_VCS_CLEAN     `git status | wc -l`\n" > src/version-vcs.h
+ cat << EOF > src/version-vcs.h
+#define WASORA_VCS_BRANCH    "${branch}"
+#define WASORA_VCS_VERSION   "${version}"
+#define WASORA_VCS_DATE      "${date}"
+#define WASORA_VCS_CLEAN     `git status --porcelain | wc -l`
+EOF
 
  echo -n "building changelog... "
- git log --style changelog > ChangeLog
+ git log > ChangeLog
  echo "done"
 else
  majorversion=x.y
@@ -175,7 +167,7 @@ echo -n "copying wasora source... "
 rm -rf src/wasora
 mkdir src/wasora
 cp -r ${WASORA_PATH}/src/* src/wasora
-rm -f src/wasora/wasora src/wasora/Makefile* src/wasora/*.o  src/wasora/*.lo src/wasora/*.lo
+rm -f src/wasora/wasora src/wasora/Makefile src/wasora/Makefiel.am src/wasora/*.o  src/wasora/*.lo src/wasora/*.lo
 if test ! -f src/wasora/version-conf.h; then
  echo "error: the wasora tree at ${WASORA_PATH} is not configured yet"
  echo "execute ./configure (previously ./autogen.sh if needed) at ${WASORA_PATH}" 
@@ -221,7 +213,7 @@ rm -rf src/.deps src/.libs src/.dirstamp src/stamp-h1 src/config.h.in src/config
 rm -f README INSTALL PLUGINS README.pdf INSTALL.pdf PLUGINS.pdf README.html INSTALL.html PLUGINS.html ChangeLog
 rm -f README doc/README.pdf doc/README.html INSTALL doc/INSTALL.pdf doc/INSTALL.html PLUGINS doc/PLUGINS doc/PLUGINS.pdf doc/PLUGINS.html ChangeLog
 rm -f aclocal.m4 configure config.log config.status compile depcomp install-sh missing ltmain.sh config.guess config.sub libtool libtool test-driver
-rm -f src/version.h src/version-vcs.h src/version-conf.h
+rm -f src/version.h src/version-vcs.h src/version-conf.h version.m4
 rm -rf autom4te.cache
 rm -rf src/.deps src/.libs src/.dirstamp src/stamp-h1 src/config.h.in src/config.h
 rm -f Makefile Makefile.in src/Makefile src/Makefile.in

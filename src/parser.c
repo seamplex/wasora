@@ -37,10 +37,6 @@
 #include "wasora.h"
 #include "builtin.h"
 
-#ifdef WASORA_MESH
-#include "mesh/mesh.h"
-#endif
-
 typedef struct varlist_t varlist_t;
 struct varlist_t {
   var_t *var;
@@ -315,11 +311,13 @@ int wasora_parse_input_file(char *filepath, int from, int to) {
             wasora.line[32] = '.';
             wasora.line[33] = '\0';
           }
+/*          
 #ifndef WASORA_MESH
           if (strcasestr(wasora.line, "MESH") != NULL) {
             wasora_push_error_message("remember wasora needs to be configured with --enable-mesh to use MESH functionality", filepath, line_num);
           }
 #endif
+*/
           wasora_push_error_message("unknown syntax '%s'", wasora.line);
           wasora_push_error_message("%s: %d:", filepath, line_num);
           return WASORA_PARSER_ERROR;
@@ -961,7 +959,6 @@ if (strcasecmp(token, "FROM") == 0) {
 
 ///kw+FUNCTION+usage | MESH <name> { DATA <data> | VECTOR <vector> { NODES | CELLS } } |
         } else if (strcasecmp(token, "MESH") == 0) {
-#ifdef WASORA_MESH
 
           if ((token = wasora_get_next_token(NULL)) == NULL) {
             wasora_push_error_message("expected mesh name");
@@ -1030,11 +1027,6 @@ if (strcasecmp(token, "FROM") == 0) {
             return WASORA_PARSER_ERROR;
           }
           
-#else
-          wasora_push_error_message("function type MESH VECTOR needs wasora with mesh framework compiled");
-          return WASORA_PARSER_ERROR;
-#endif
-
 ///kw+FUNCTION+usage [ VECTOR_DATA <vector_1> <vector_2> ... <vector_n> <vector_n+1> ]
 ///kw+FUNCTION+usage }
         } else if (strcasecmp(token, "VECTOR_DATA") == 0 || strcasecmp(token, "VECTORS") == 0) {
@@ -3196,12 +3188,10 @@ if (strcasecmp(token, "FROM") == 0) {
 
       return WASORA_PARSER_OK;
 
-#ifdef WASORA_MESH
     } else {
       // si no entendimos la linea, probamos pasarsela al parser de mallas
       strcpy(line, wasora.line);
       return wasora_mesh_parse_line(line);    
-#endif
     }
 
   }

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related structured mesh routines
  *
- *  Copyright (C) 2014 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,12 +19,11 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
-#include <math.h>
 
 #include <wasora.h>
 #include <thirdparty/kdtree.h>
-#include "mesh.h"
+
+#include <math.h>
 
 extern element_type_t element_types[16];
 
@@ -737,4 +736,4 @@ int wasora_mesh_struct_find_cell(int n, double *x, double *dx, double x0) {
   return c;
 
 }
-#endif
+

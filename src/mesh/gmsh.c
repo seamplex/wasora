@@ -19,15 +19,13 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
+#include <wasora.h>
+#include <thirdparty/kdtree.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <wasora.h>
-
-#include <thirdparty/kdtree.h>
-#include "mesh.h"
 
 
 int mesh_gmsh_readmesh(mesh_t *mesh) {
@@ -761,4 +759,3 @@ int mesh_gmsh_write_vector(mesh_post_t *mesh_post, function_t **function, center
   return WASORA_RUNTIME_OK;
 
 }
-#endif

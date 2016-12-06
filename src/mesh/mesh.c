@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related routines
  *
- *  Copyright (C) 2014--2015 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,15 +19,12 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
+#include <wasora.h>
+#include <thirdparty/kdtree.h>
+
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
-
-#include <wasora.h>
-#include <thirdparty/kdtree.h>
-#include "mesh.h"
-
 
 int wasora_instruction_mesh(void *arg) {
 
@@ -293,4 +290,3 @@ mesh_t *wasora_get_mesh_ptr(const char *name) {
   HASH_FIND_STR(wasora_mesh.meshes, name, mesh);
   return mesh;
 }
-#endif

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related function interpolation routines
  *
- *  Copyright (C) 2014--2015 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,15 +19,13 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
+#include <wasora.h>
+#include <thirdparty/kdtree.h>
+
 #include <string.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_multiroots.h>
-
-#include <wasora.h>
-#include <thirdparty/kdtree.h>
-#include "mesh.h"
 
 struct mesh_interp_params {
   element_t *element;
@@ -331,4 +329,4 @@ double mesh_interpolate_function_property(struct function_t *function, const dou
   }
   return y;
 }
-#endif
+

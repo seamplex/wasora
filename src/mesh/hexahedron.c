@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related hexahedron element routines
  *
- *  Copyright (C) 2014--2015 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,9 +19,8 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
 #include <wasora.h>
-#include "mesh.h"
+
 #include <math.h>
 #include <gsl/gsl_linalg.h>
 
@@ -512,4 +511,3 @@ double mesh_hexahedron_vol(element_t *element) {
  return 1.0/(1.0*2.0*3.0) * (v1+v2+v3+v4+v5+v6);
 
 }
-#endif

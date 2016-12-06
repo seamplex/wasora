@@ -32,10 +32,6 @@
 #include "wasora.h"
 #include "thirdparty/kdtree.h"
 
-#ifdef WASORA_MESH
-#include "mesh/mesh.h"
-#endif
-
 
 // esta se llama despues de haber alocado los objetos
 // la idea es definir variables, funciones, archivos, etc. internos
@@ -276,11 +272,9 @@ int wasora_init_before_parser(void) {
   wasora.special_files.stderr_->pointer = stderr;
 
   // el framework de mallas
-#ifdef WASORA_MESH
   if (!wasora_mesh.initialized) {
     wasora_call(wasora_mesh_init_before_parser());
   }
-#endif  
 
   // e inicializamos los plugins
   for (i = 0; i < wasora.i_plugin; i++) {

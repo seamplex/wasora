@@ -2,7 +2,6 @@ rm -f version.h
 
 if test -e ../.git -a ! -z "`which git`"; then
  version=`git describe | sed 's/-/./'`
- echo ${version}
  echo "[[define]](wasoraversion, ${version})[[dnl]]" > version.m4
 
  branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')

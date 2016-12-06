@@ -19,9 +19,7 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
 #include <wasora.h>
-#include "mesh.h"
 
 // wasora_parser
 int wasora_mesh_parse_line(char *line) {
@@ -875,4 +873,3 @@ physical_entity_t *wasora_get_physical_entity_ptr(const char *name) {
   return physical_entity;
 }
 
-#endif

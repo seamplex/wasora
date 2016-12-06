@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related FEM routines
  *
- *  Copyright (C) 2014--2015 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,9 +19,7 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
 #include <wasora.h>
-#include "mesh.h"
 
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_vector.h>
@@ -371,4 +369,3 @@ double mesh_compute_fem_objects_at_gauss(mesh_t *mesh, element_t *element, int v
   return w;
   
 }
-#endif

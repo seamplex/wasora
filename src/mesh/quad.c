@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related quadrangle element routines
  *
- *  Copyright (C) 2014 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,12 +19,9 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
-#include <math.h>
-
 #include <wasora.h>
-#include "mesh.h"
 
+#include <math.h>
 
 // --------------------------------------------------------------
 // cuadrangulo de cuatro nodos
@@ -192,4 +189,4 @@ double mesh_quad_vol(element_t *element) {
   return 0.5*(fabs(mesh_subtract_cross_2d(element->node[0]->x, element->node[1]->x, element->node[2]->x)) +
               fabs(mesh_subtract_cross_2d(element->node[2]->x, element->node[3]->x, element->node[0]->x)) );
 }
-#endif
+

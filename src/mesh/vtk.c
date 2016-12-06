@@ -19,14 +19,12 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
+#include <wasora.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
-#include <wasora.h>
-#include "mesh.h"
 
 // conversion de gmsh a vtk
 int vtkfromgmsh_types[16] = {
@@ -262,4 +260,3 @@ int mesh_vtk_write_vector(mesh_post_t *mesh_post, function_t **function, centeri
   return WASORA_RUNTIME_OK;
   
 }
-#endif

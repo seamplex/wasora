@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related neighbor routines
  *
- *  Copyright (C) 2014 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,12 +19,10 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
+#include <wasora.h>
+
 #include <string.h>
 #include <gsl/gsl_math.h>
-
-#include <wasora.h>
-#include "mesh.h"
 
 int mesh_count_common_nodes(element_t *e1, element_t *e2, int *nodes) {
   
@@ -243,4 +241,3 @@ int mesh_fill_neighbors(mesh_t *mesh) {
   
   
 }
-#endif

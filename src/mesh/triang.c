@@ -19,10 +19,9 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
-#include <math.h>
 #include <wasora.h>
-#include "mesh.h"
+
+#include <math.h>
 
 
 // --------------------------------------------------------------
@@ -272,4 +271,3 @@ int mesh_point_in_triangle(element_t *element, const double *x) {
 double mesh_triang_vol(element_t *element) {
   return 0.5 * fabs(mesh_subtract_cross_2d(element->node[0]->x, element->node[1]->x, element->node[2]->x));
 }
-#endif

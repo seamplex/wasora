@@ -19,7 +19,7 @@ AC_DEFUN([WASORA_CHECK_BASIC_HEADERS],[
 # checks for header files.
 #AC_CHECK_HEADERS([fcntl.h limits.h malloc.h stdlib.h string.h sys/time.h unistd.h sys/select.h stddef.h],[],AC_MSG_ERROR([required header not found.]))
 #AC_CHECK_FUNCS([floor ftruncate gettimeofday memset mkdir munmap pow rint sqrt strcasecmp strchr strcspn strdup strspn strerror strpbrk strrchr strstr select clock_gettime strtok_r sem_open],[],AC_MSG_ERROR([required C library function not found.]))
-AC_CHECK_FUNCS([strtok_r usleep])
+#AC_CHECK_FUNCS([strtok_r usleep])
 ])
 
 

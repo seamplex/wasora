@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related prism element routines
  *
- *  Copyright (C) 2015 jeremy theler & ezequiel manavela chiapero
+ *  Copyright (C) 2015--2016 jeremy theler & ezequiel manavela chiapero
  *
  *  This file is part of wasora.
  *
@@ -19,11 +19,11 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
 #include <wasora.h>
-#include "mesh.h"
+
 #include <math.h>
 #include <gsl/gsl_linalg.h>
+
 
 // --------------------------------------------------------------
 // prisma de seis nodos
@@ -424,4 +424,3 @@ double mesh_prism_vol(element_t *element) {
   return 1.0/(1.0*2.0*3.0) * (v1+v2+v3);
 
 }
-#endif

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related vector-filling routines
  *
- *  Copyright (C) 2015 jeremy theler
+ *  Copyright (C) 2015--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,11 +19,10 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
+#include <wasora.h>
+
 #include <stdio.h>
 
-#include <wasora.h>
-#include "mesh.h"
 
 int wasora_instruction_mesh_fill_vector(void *arg) {
 
@@ -90,4 +89,3 @@ int wasora_instruction_mesh_fill_vector(void *arg) {
 
   return WASORA_RUNTIME_OK;
 }
-#endif

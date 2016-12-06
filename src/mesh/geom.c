@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related geometry routines
  *
- *  Copyright (C) 2014--2015 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,9 +19,8 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
-#include <gsl/gsl_math.h>
 #include <wasora.h>
+#include <gsl/gsl_math.h>
 
 // c = b - a
 void mesh_subtract(const double *a, const double *b, double *c) {
@@ -90,4 +89,3 @@ double mesh_subtract_squared_module(const  double *b, const  double *a) {
 double mesh_subtract_squared_module2d(const  double *b, const  double *a) {
   return (b[0]-a[0])*(b[0]-a[0]) + (b[1]-a[1])*(b[1]-a[1]);
 }
-#endif

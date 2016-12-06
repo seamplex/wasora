@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related gauss integration routines
  *
- *  Copyright (C) 2014--2015 jeremy theler
+ *  Copyright (C) 2014--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -19,13 +19,11 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
+#include <wasora.h>
+
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
-
-#include <wasora.h>
-#include "mesh.h"
 
 double mesh_integral_over_element(function_t *function, element_t *element, expr_t *weight) {
 
@@ -107,5 +105,3 @@ double mesh_integration_weight(mesh_t *mesh, element_t *element, int v) {
   // calculamos el peso de integracion por el determinante del jacobiano
   return element->type->gauss[GAUSS_POINTS_CANONICAL].w[v] * fabs(mesh_determinant(element->type->dim, mesh->fem.dxdr));
 }
-
-#endif

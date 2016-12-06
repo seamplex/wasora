@@ -19,11 +19,9 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#ifdef WASORA_MESH
-#include <stdio.h>
-
 #include <wasora.h>
-#include "mesh.h"
+
+#include <stdio.h>
 
 int wasora_instruction_mesh_integrate(void *arg) {
 
@@ -123,4 +121,3 @@ int wasora_instruction_mesh_integrate(void *arg) {
 
   return WASORA_RUNTIME_OK;
 }
-#endif

@@ -227,7 +227,7 @@ AS_IF([test "x$ac_cv_lib_readline_readline" = xyes -a "x$ac_cv_header_readline_r
 
 AC_DEFUN([WASORA_HOST_VERSION_H],[
 # nos fabricamos el version-conf.h
-VERSIONH=src/$1version-conf.h
+VERSIONH=src/version-conf.h
 AC_MSG_NOTICE([creating $VERSIONH])
 cat << EOF > $VERSIONH
 #define COMPILATION_ARCH     "${host_os} ${host_cpu}"
@@ -235,8 +235,6 @@ cat << EOF > $VERSIONH
 #define COMPILER_CFLAGS      "$CFLAGS"
 EOF
 
-dnl ejecutamos version.sh (sin el $1, porque en un plugin no
-dnl queremos meternos en src/wasora sino solo en src)
 cd src
 ./version.sh
 cd ..
@@ -257,6 +255,9 @@ EOF
 cd src
 ./version.sh
 cd ..
+cd wasora/src
+./version.sh
+cd ../..
 ])
 
 AC_DEFUN([WASORA_RESUME_LIBS],[
@@ -297,11 +298,7 @@ AS_IF([ test ${all_libs} -eq 0],[
   echo "If this was not the desired result, check config.log for clues."
   echo
 ])
-AS_IF([ test ${make_shell} -eq 0],[
-  echo "Now proceed to compile with 'make'"
-  echo
-],[
-  echo "Now proceed to compile with 'make' (or 'make SHELL=/bin/bash' on Debian)"
-  echo
+echo "Now proceed to compile with 'make'"
+echo
 ])
 ])

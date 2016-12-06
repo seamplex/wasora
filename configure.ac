@@ -39,7 +39,7 @@ echo
 AS_BOX([Configuration summary])
 WASORA_RESUME_LIBS
 AS_IF([ test $ida -eq 0 -o $readline -eq 0 ], [
-  WASORA_FINAL_WARN([0],[0])
+  WASORA_FINAL_WARN([0])
 ],[
-  WASORA_FINAL_WARN([1],[0])
+  WASORA_FINAL_WARN([1])
 ])

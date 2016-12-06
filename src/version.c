@@ -157,9 +157,11 @@ void wasora_longversion(void) {
    COMPILATION_USERNAME,
    COMPILATION_HOSTNAME,
    COMPILATION_ARCH);
+#ifdef COMPILER_VERSION
   printf(" with %s using %s and linked against\n",
    COMPILER_VERSION,
    COMPILER_CFLAGS);
+#endif
   printf("  GNU Scientific Library version %s\n", gsl_version);
 #if HAVE_IDA
   printf("  SUNDIALs Library version %s\n", SUNDIALS_PACKAGE_VERSION);

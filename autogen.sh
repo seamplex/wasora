@@ -15,9 +15,10 @@ for i in git m4 autoconf xargs; do
  fi
 done
 
+./autoclean.sh
+
 m4 m4/bootstrap.m4 - << EOF | sh
 WASORA_CHECK_VCS
-WASORA_AUTOCLEAN
 WASORA_VERSION_VCS
 WASORA_README_INSTALL
 EOF

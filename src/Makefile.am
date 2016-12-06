@@ -1,10 +1,8 @@
 AUTOMAKE_OPTIONS = subdir-objects
 ACLOCAL_AMFLAGS = $(ACLOCAL_FLAGS)
 bin_PROGRAMS = wasora
-wasora_INCLUDES = $(all_includes)
 wasora_LDADD = $(WASORALIBS) $(all_libraries) 
 
-# TODO: dejar afuera a mesh si no se nos pide
 wasora_SOURCES = \
 ./history.c \
 ./io.c \

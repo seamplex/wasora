@@ -1,17 +1,12 @@
 dnl This file is part of wasora and/or one of its plugins
 dnl GPL v3+ (c) 2009-2015 jeremy theler
-dnl <http://bitbucket.org/wasora/wasora>
 dnl
 
 AC_DEFUN([WASORA_PLUGIN_INIT_C],[
 AM_INIT_AUTOMAKE
-#LT_INIT
-#AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-AC_PROG_CC
 AM_PROG_CC_C_O
-#AC_CANONICAL_HOST
 ])
 
 

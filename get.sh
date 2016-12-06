@@ -1,6 +1,15 @@
 #!/bin/sh
 # set -e
 
+#
+# This script is meant for quick & easy install via:
+#   'curl -sSL https://get.docker.com/ | sh'
+# or:
+#   'wget -qO- https://get.docker.com/ | sh'
+
+# loosely based on docker's get.sh script at https://get.docker.com/
+# jeremy theler
+
 # check for needed tools
 command_exists() {
   command -v "$@" > /dev/null 2>&1
@@ -14,7 +23,7 @@ for i in m4 autoconf xargs gcc git make makeinfo; do
   echo
   echo "error: $i not installed"
   echo "install the following packages using your favorite package manager:"
-  echo "m4 autoconf gcc mercurial make texinfo"
+  echo "m4 autoconf gcc mercurial make"
   exit 1
  fi
 done

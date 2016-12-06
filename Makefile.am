@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = src doc
+SUBDIRS = src
 dist_doc_DATA = examples \
                 README \
                 doc/wasora.texi \

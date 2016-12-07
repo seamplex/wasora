@@ -155,7 +155,8 @@ double mesh_four_node_quad_dhdr(int j, int m, gsl_vector *gsl_r) {
 
 
 int mesh_point_in_quadrangle(element_t *element, const double *x) {
-  
+
+/*
   double z1, z2, z3;
 
   z1 = mesh_subtract_cross_2d(element->node[0]->x, element->node[1]->x, x);
@@ -181,6 +182,28 @@ int mesh_point_in_quadrangle(element_t *element, const double *x) {
     return 1;
   }
   
+  return 0;
+*/
+
+  int i, j;
+
+  element_t triang;
+
+  triang.type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE];
+  triang.node = calloc(triang.type->nodes, sizeof(node_t *));
+
+  for (i = 0; i < element->type->faces; i++) {
+    for (j = 0; j < triang.type->faces; j++) {
+      triang.node[j] = element->node[(i+j) % element->type->faces];
+    }
+    if (mesh_point_in_triangle(&triang, x)) {
+      free(triang.node);
+      return 1;
+    }
+  }
+
+  free(triang.node);
+
   return 0;
 }
 

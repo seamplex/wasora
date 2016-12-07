@@ -188,8 +188,7 @@ define([GET_STEP8],[dnl
 if test -z "`echo $PATH | grep $HOME/bin`"; then
   echo -n "8. adding $HOME/bin to the path in ~/.bashrc"
   cat >> $HOME/.bashrc << EOF
-# added by name get.sh
-export PATH=\$PATH:\$HOME/bin
+export PATH=\$PATH:\$HOME/bin    # added by name get.sh
 EOF
   export PATH=\$PATH:\$HOME/bin
   echo "ok!"
@@ -214,3 +213,56 @@ else
 fi
 ])
 
+
+dnl -----------------------------------------------------------------
+define([GET_PETSC],[dnl
+# step 4.5: check for PETSc/SLEPc
+echo -n "4.5. checking for PETSc/SLEPc..." | tee -a ../../get.log
+if test -z "$PETSC_DIR"; then
+ echo "PETSC_DIR variable not found, so I assume PETSc is not installed. You may:"
+ echo "  a. let me try to download and compile the library (may take some time)"
+ echo "  b. abort this script now, manually install the library or set the enviornment variables re-run"
+ echo -n "What do you want to do? (a/b) "
+
+ read response
+
+ case ${response} in
+  "a")
+    mkdir -p libs
+    cd libs
+    if test ! -f petsc-lite-petsc_version.tar.gz; then
+     if ! command_exists wget; then
+      echo "error: wget not installed"
+      exit 1
+     fi
+     wget -c http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-petsc_version.tar.gz
+    fi
+    tar xvzf petsc-lite-petsc_version.tar.gz 
+    cd petsc-petsc_version/
+    export PETSC_DIR=$PWD
+    export PETSC_ARCH=arch-linux2-c-opt
+    ./configure --download-fblaslapack --with-mpi=0 --with-debugging=0
+    make
+    make test
+    cat >> $HOME/.bashrc << EOF
+export PETSC_DIR=${PETSC_DIR}      # added by name get.sh
+export PETSC_ARCH=${PETSC_ARCH}    # added by name get.sh
+EOF
+    cd ../..
+    ;;
+  *)
+   echo "please manually install or fix PETSc and re-run this script"
+   exit;;
+ esac
+
+elif test ! -d ${PETSC_DIR}; then
+ echo "PETSC_DIR is ${PETSC_DIR} but it is not a directory"
+ echo "please manually install or fix PETSc re-run this script"
+ exit
+
+elif test -z "${PETSC_ARCH}"; then
+ echo "PETSC_ARCH is empty"
+ echo "please manually install or fix PETSc re-run this script"
+ exit
+fi
+])

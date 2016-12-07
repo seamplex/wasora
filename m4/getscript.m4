@@ -216,8 +216,8 @@ fi
 
 dnl -----------------------------------------------------------------
 define([GET_PETSC],[dnl
-# step 4.5: check for PETSc/SLEPc
-echo -n "4.5. checking for PETSc/SLEPc..." | tee -a ../../get.log
+# step 4.5: check for PETSc
+echo -n "4.5. checking for PETSc..." | tee -a ../../get.log
 if test -z "$PETSC_DIR"; then
  echo "PETSC_DIR variable not found, so I assume PETSc is not installed. You may:"
  echo "  a. let me try to download and compile the library (may take some time)"
@@ -263,6 +263,53 @@ elif test ! -d ${PETSC_DIR}; then
 elif test -z "${PETSC_ARCH}"; then
  echo "PETSC_ARCH is empty"
  echo "please manually install or fix PETSc re-run this script"
+ exit
+fi
+])
+
+dnl -----------------------------------------------------------------
+define([GET_SLEPC],[dnl
+# step 4.6: check for SLEPc
+echo -n "4.5. checking for SLEPc..." | tee -a ../../get.log
+if test -z "$SLEPC_DIR"; then
+ echo "SLEPC_DIR variable not found, so I assume SLEPc is not installed. You may:"
+ echo "  a. let me try to download and compile the library (may take some time)"
+ echo "  b. abort this script now, manually install the library or set the enviornment variables re-run"
+ echo -n "What do you want to do? (a/b) "
+
+ read response
+
+ case ${response} in
+  "a")
+    mkdir -p libs
+    cd libs
+    if test ! -f slepc-slepc_version.tar.gz; then
+     if ! command_exists wget; then
+      echo "error: wget not installed"
+      exit 1
+     fi
+     wget -c http://slepc.upv.es/download/download.php?filename=slepc-slepc_version.tar.gz
+     mv download.php\?filename=slepc-slepc_version.tar.gz slepc-slepc_version.tar.gz
+    fi
+    tar xvzf slepc-slepc_version.tar.gz 
+    cd slepc-slepc_version/
+    export SLEPC_DIR=$PWD
+    ./configure
+    make
+    make test
+    cat >> $HOME/.bashrc << EOF
+export SLEPC_DIR=${SLEPC_DIR}      # added by name get.sh
+EOF
+    cd ../..
+    ;;
+  *)
+   echo "please manually install or fix SLEPc and re-run this script"
+   exit;;
+ esac
+
+elif test ! -d ${SLEPC_DIR}; then
+ echo "SLEPC_DIR is ${SLEPC_DIR} but it is not a directory"
+ echo "please manually install or fix SLEPc re-run this script"
  exit
 fi
 ])

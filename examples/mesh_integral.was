@@ -1,5 +1,3 @@
-# remember to compile wasora with mesh support, configure with
-# ./configure --enable-mesh
 MESH FILE_PATH square.msh DIMENSIONS 2
 
 PHYSICAL_ENTITY NAME fuel

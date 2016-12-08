@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora random line
  *
- *  Copyright (C) 2009--2013 jeremy theler
+ *  Copyright (C) 2009--2016 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -22,7 +22,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <string.h>
+
+#include "version.h"
 
 void wasora_print_random_line(FILE *file, int length)  {
 
@@ -35,7 +37,12 @@ void wasora_print_random_line(FILE *file, int length)  {
   int i, j;
 
   if (first) {
-    srand(time(NULL));
+#ifdef WASORA_VCS_VERSION
+    char *buffer = strdup(WASORA_VCS_VERSION);
+    srand(*(buffer + strlen(buffer) - sizeof(unsigned int)));
+    free(buffer);
+#endif
+    
     first = 0;
   }
   

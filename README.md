@@ -3,7 +3,14 @@
 ![wasora](doc/logo.svg){.img-responsive}\ 
 
 
-[Wasora](https://www.seamplex.com/wasora) is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing algebraic expressions, data for function interpolation, differential equations and output instructions amongst other facilities. At a first glance, it may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical calculation. For example, see [here](https://www.seamplex.com/wasora/realbook/real-._realbook006.html) to find how the famous [Lorenz system](http://en.wikipedia.org/wiki/Lorenz_system) may be solved by writing the three differential equations into a plain-text input file as humanly-friendly as possible.
+[Wasora](https://www.seamplex.com/wasora) is a convenient high-level interface to perform mathematical computations. It also provides a framework which other particular computational codes can use. It is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing
+
+ * algebraic expressions,
+ * data for function interpolation,
+ * differential equations, and
+ * output instructions
+
+amongst other facilities. At a first glance, it may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical calculation. For example, see [here](https://www.seamplex.com/wasora/realbook/real-._realbook006.html) to find how the famous [Lorenz system](http://en.wikipedia.org/wiki/Lorenz_system) may be solved by writing the three differential equations into a plain-text input file as humanly-friendly as possible.
 
 Although its ultimate subject is optimization, it may hopefully help you with the tough calculations that usually appear when working with problems that have some kind of complexity, allowing the user to focus on what humans perform best---expert judgment and reaching conclusions. Some of its main features include
 
@@ -27,20 +34,72 @@ The code heavily relies on the numerical routines provided by the [GNU Scientifi
 
 # Quick-start
 
-
-If you are impatient to run wasora (or have failed to follow the instructions in [INSTALL](INSTALL.md)), open a terminal in any GNU/Linux box (may be a VirtualBox box) and run:
+Open a terminal in any GNU/Linux box (may be a VirtualBox box) and run:
 
 ```
 curl https://www.seamplex.com/wasora/get.sh | sh
 ```
 
-Make sure you have `curl` installed and if you are behind a proxy, that both `http_proxy` and `https_proxy` are properly set. If you get any error, either
+If `curl` is not installed, use `wget`:
+
+```
+wget -O- https://www.seamplex.com/wasora/get.sh | sh
+```
+
+
+If you are behind a proxy, that both `http_proxy` and `https_proxy` are properly set. If you get any error, either
 
  a. See the detailed explanation in [INSTALL](INSTALL.md)  
  b. Ask for help in the mailing list at <https://groups.google.com/a/seamplex.com/forum/#!forum/wasora>
 
-If these instructions are non-sense to you, go directly to point b.
+Should these instructions be non-sense, go directly to point b.
 
+
+## The Lorenz system
+
+As an illustration, let us solve the chaotic [Lorenz’ dynamical system](http://en.wikipedia.org/wiki/Lorenz_system)---that of the butterfly. The differential equations are
+
+$$
+\begin{align*}
+\dot{x} &= \sigma \cdot (y - x)\\
+\dot{y} &= x \cdot (r - z) - y\\
+\dot{z} &= xy - bz\\
+\end{align*}
+$$
+
+where $\sigma=10$, $b=8/3$ and $r=28$ are the classical parameters that generate the butterfly as presented by Edward Lorenz back in his seminal 1963 paper [Deterministic non-periodic flow](http://journals.ametsoc.org/doi/abs/10.1175/1520-0469%281963%29020%3C0130%3ADNF%3E2.0.CO%3B2).
+
+Wasora can be used to solve it by writing the equations in the input file as naturally as possible, as illustrated in the input file that follows:
+
+```wasora
+# lorenz’ seminal dynamical system
+PHASE_SPACE x y z
+end_time = 40
+
+CONST sigma r b
+sigma = 10            # parameters
+r = 28
+b = 8/3
+
+x_0 = -11             # initial conditions
+y_0 = -16
+z_0 = 22.5
+
+# the dynamical system
+x_dot .= sigma*(y - x)
+y_dot .= x*(r - z) - y
+z_dot .= x*y - b*z
+
+PRINT t x y z HEADER
+```
+
+We can pipe wasora’s standard output to [Gnuplot](http://gnuplot.info/) and obtain a beautiful figure:
+
+```
+wasora lorenz.was | gnuplot -e "set terminal svg; set output 'lorenz.svg'; set ticslevel 0; splot '-' u 2:3:4 w l ti ''"
+
+```
+![wasora](examples/lorenz.svg){.img-responsive}\ 
 
 # Running wasora
 

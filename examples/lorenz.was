@@ -1,4 +1,4 @@
-# lorenz' seminal dynamical system
+# lorenz’ seminal dynamical system
 PHASE_SPACE x y z
 end_time = 40
 

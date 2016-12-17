@@ -372,7 +372,11 @@ int wasora_mesh_parse_line(char *line) {
           
 ///kw+MESH_INTEGRATE+usage RESULT <variable>
         } else if (strcasecmp(token, "RESULT") == 0) {
-          wasora_call(wasora_parser_variable(&mesh_integrate->result));
+          char *variable;
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_integrate->result = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
 
 ///kw+MESH_INTEGRATE+usage [ MESH <mesh_identifier> ]
         } else if (strcasecmp(token, "MESH") == 0) {

@@ -3,7 +3,7 @@
 ![wasora](doc/logo.svg){.img-responsive}\ 
 
 
-[Wasora](https://www.seamplex.com/wasora) is a convenient high-level interface to perform mathematical computations. It also provides a framework which other particular computational codes can use. It is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing
+[Wasora](https://www.seamplex.com/wasora) is a convenient high-level interface to perform mathematical computations. It also provides a framework which other [particular computational codes](#plugins) can use. It is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing
 
  * algebraic expressions,
  * data for function interpolation,

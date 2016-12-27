@@ -17,9 +17,9 @@ From <https://bakerjd99.wordpress.com/2012/09/20/pandoc-based-j-syntax-highlight
     $ ~/.cabal/bin/cabal update
     $ ~/.cabal/bin/cabal install pandoc
     $ ~/.cabal/bin/pandoc --version
-    $ ~/.cabal/bin/cabal install regex-posix hxt
+    $ ~/.cabal/bin/cabal install base regex-posix hxt
     $ ~/.cabal/bin/cabal unpack highlighting-kate
-    $ cd highlighting-kate-0.6.2.1
+    $ cd highlighting-kate-0.6.3
     $ cp $HOME/.kde/share/apps/katepart/syntax/wasora.xml xml
     $ cp /usr/share/kde4/apps/katepart/syntax/language.dtd xml
     $ ~/.cabal/bin/cabal configure
@@ -30,7 +30,7 @@ From <https://bakerjd99.wordpress.com/2012/09/20/pandoc-based-j-syntax-highlight
     $ ~/.cabal/bin/cabal install --force-reinstalls
     $ cd ..
     $ ~/.cabal/bin/cabal unpack pandoc
-    $ cd pandoc-1.17.2
+    $ cd pandoc-1.19.1
     $ ~/.cabal/bin/cabal configure
     $ ~/.cabal/bin/cabal build
     $ ~/.cabal/bin/cabal install

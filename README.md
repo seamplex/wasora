@@ -186,7 +186,29 @@ The set of wasora plus one or more of its plugins is referred to as the _wasora 
 
 # The wasora Real Book
 
-As jazz, wasora is best mastered when played. The wasora Realbook, like the [original](http://en.wikipedia.org/wiki/Real_Book), introduces fully-usable examples of increasing complexity and difficulty. The examples come with introductions, wasora inputs, terminal mimics, figures and discussions. They range from simple mechanical systems, chaotic attractors and even blackjack strategies. Take a look at the [index](https://www.seamplex.com/wasora/realbook/real-genindex.html) to see how a certain keyword is used in a real-world application. 
+As jazz, wasora is best mastered when played. The wasora Realbook, like the [original](http://en.wikipedia.org/wiki/Real_Book), introduces fully-usable examples of increasing complexity and difficulty. The examples come with introductions, wasora inputs, terminal mimics, figures and discussions. They range from simple mechanical systems, chaotic attractors and even blackjack strategies:
+
+ * [Introduction](https://www.seamplex.com/wasora/realbook/index.html)
+ * [Hello World](https://www.seamplex.com/wasora/realbook/real-000-hello.html)
+ * [The Peano axiom](https://www.seamplex.com/wasora/realbook/real-001-peano.html)
+ * [Algebraic expressions](https://www.seamplex.com/wasora/realbook/real-002-expressions.html)
+ * [First-order lags](https://www.seamplex.com/wasora/realbook/real-003-lag.html)
+ * [A simple differential equation](https://www.seamplex.com/wasora/realbook/real-004-exp.html)
+ * [The Lorenz chaotic system](https://www.seamplex.com/wasora/realbook/real-005-lorenz.html)
+ * [The Fibonacci sequence](https://www.seamplex.com/wasora/realbook/real-006-fibonacci.html)
+ * [One-dimensional functions](https://www.seamplex.com/wasora/realbook/real-007-functions.html)
+ * [Having fun with integrals](https://www.seamplex.com/wasora/realbook/real-008-integrals.html)
+ * [Two-dimensional functions](https://www.seamplex.com/wasora/realbook/real-010-2dfunctions.html)
+ * [Newton, Lagrange & Hamilton](https://www.seamplex.com/wasora/realbook/real-012-mechanics.html)
+ * [Finding prime numbers](https://www.seamplex.com/wasora/realbook/real-015-primes.html)
+ * [The double pendulum](https://www.seamplex.com/wasora/realbook/real-017-double-pendulum.html)
+ * [The chaotic Lorenzian waterwheel](https://www.seamplex.com/wasora/realbook/real-018-waterwheel.html)
+ * [GNU Scientific Library examples rewritten](https://www.seamplex.com/wasora/realbook/real-020-gsl.html)
+ * [Math Ace](https://www.seamplex.com/wasora/realbook/real-025-mathace.html)
+ * [Semi-empirical mass formula fit](https://www.seamplex.com/wasora/realbook/real-028-mass.html)
+ * [Buffon's needle](https://www.seamplex.com/wasora/realbook/real-030-buffon.html)
+ * [Point reactor kinetics---direct and inverse](https://www.seamplex.com/wasora/realbook/real-042-point-kinetics.html)
+
 
 
 # Licensing

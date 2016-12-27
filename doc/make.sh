@@ -4,7 +4,7 @@
 # pandoc --template=template.html --mathjax --toc --smart --number-sections description.md -o html/description.html
 # pandoc --template=template.html --mathjax --toc --smart --number-sections realbook.md -o html/realbook.html
 
-pandoc --template=template.texi wasora.md -o wasora.texi
+# pandoc --template=template.texi wasora.md -o wasora.texi
 
 
 # cd ../examples
@@ -14,3 +14,4 @@ pandoc --template=template.texi wasora.md -o wasora.texi
 # pandoc --template=template.html --mathjax --toc --smart showcase.md -o html/showcase.html
 # cp ../examples/lorenz.svg html
 
+m4 reference.m4 > reference.md

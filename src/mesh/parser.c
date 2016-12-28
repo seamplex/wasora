@@ -584,7 +584,6 @@ int wasora_mesh_parse_line(char *line) {
 
 ///kw+PHYSICAL_ENTITY+usage PHYSICAL_ENTITY
       char *name = NULL;
-      char *buff = NULL;
       double xi = 0;
       int id = 0;
       mesh_t *mesh = NULL;
@@ -718,30 +717,6 @@ int wasora_mesh_parse_line(char *line) {
       if (pos != NULL) {
         memcpy(&physical_entity->pos, pos, 6*sizeof(expr_t));
         free(pos);
-      }
-      
-      // definimos variables para tener las reacciones de vinculo
-      // solo si hay nombre y es valido para una variable
-      if (name != NULL && strpbrk(name, factorseparators) == NULL) {
-        buff = malloc(strlen(name)+8);
-        snprintf(buff, strlen(name)+7, "R_%s_x", name);
-        
-        
-        if ((physical_entity->R[0] = wasora_define_variable(buff)) == NULL) {
-          wasora_push_error_message("cannot define variable '%s'", buff);
-          return WASORA_PARSER_ERROR;
-        }
-        snprintf(buff, strlen(name)+7, "R_%s_y", name);
-        if ((physical_entity->R[1] = wasora_define_variable(buff)) == NULL) {
-          wasora_push_error_message("cannot define variable '%s'", buff);
-          return WASORA_PARSER_ERROR;
-        }
-        snprintf(buff, strlen(name)+7, "R_%s_z", name);
-        if ((physical_entity->R[2] = wasora_define_variable(buff)) == NULL) {
-          wasora_push_error_message("cannot define variable '%s'", buff);
-          return WASORA_PARSER_ERROR;
-        }
-        free(buff);
       }
 
       return WASORA_PARSER_OK;

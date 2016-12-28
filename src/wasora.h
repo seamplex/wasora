@@ -1889,9 +1889,6 @@ struct physical_entity_t {
   // (1 = x<0, 2 = x>0, 3 = y<0, 4 = y>0, 5 = z<0, 6 = z>0)
   expr_t pos[6];
   
-  // variables que contienen las reacciones de vinculo
-  var_t *R[3];
-
   physical_entity_t *next;
   UT_hash_handle hh_id;
   UT_hash_handle hh_name;

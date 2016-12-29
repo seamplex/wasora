@@ -115,7 +115,7 @@ int wasora_parametric_run(void) {
     if (wasora.parametric.range.step != NULL) {
       wasora.parametric.step[i] = wasora_evaluate_expression(&wasora.parametric.range.step[i]);
     } else if (wasora.parametric.range.nsteps != NULL) {
-      wasora.parametric.step[i] = (wasora.parametric.max[i]-wasora.parametric.min[i])/(wasora_evaluate_expression(&wasora.parametric.range.nsteps[i]));
+      wasora.parametric.step[i] = (wasora.parametric.max[i]-wasora.parametric.min[i])/(wasora_evaluate_expression(&wasora.parametric.range.nsteps[i])-1);
     }
 
     if (wasora.parametric.max[i] < wasora.parametric.min[i]) {
@@ -128,7 +128,7 @@ int wasora_parametric_run(void) {
     }
 
     if (wasora.parametric.outer_steps == 0 && wasora.parametric.step[0] == 0) {
-      wasora_push_error_message("neither STEP nor TOTAL_STEPS keywords given");
+      wasora_push_error_message("neither STEP, NSTEPS nor TOTAL_STEPS keywords given");
       return WASORA_PARSER_ERROR;
     }
   }

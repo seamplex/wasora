@@ -9,7 +9,7 @@
 cat << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
-<language name="wasora" version="0.2" kateversion="3.7.4" section="Scientific" extensions="*.was,*.mil,*.fin" author="jeremy theler" license="GPL">
+<language name="wasora" version="0.2" kateversion="3.7.4" section="Scientific" extensions="*.was;*.mil;*.fin" author="jeremy theler" license="GPL">
 EOF
 
 # primary keywords

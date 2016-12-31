@@ -1195,11 +1195,6 @@ typedef struct {
   size_t actual_buffer_size; 
   char *line;
   
-  // funciones que manejan la evaluacion de funciones sobre mallas
-  double (*interpolate_function_node)(function_t *, const double *);
-  double (*interpolate_function_cell)(function_t *, const double *);
-  double (*interpolate_function_property)(function_t *, const double *);
-
 } wasora;
 
 struct phase_object_t {

@@ -24,11 +24,6 @@
 
 int wasora_mesh_init_before_parser(void) {
   
-  // redireccionamos estos apuntadores
-  wasora.interpolate_function_node = mesh_interpolate_function_node;
-  wasora.interpolate_function_cell = mesh_interpolate_function_cell;
-  wasora.interpolate_function_property = mesh_interpolate_function_property;
-  
   // vector con las coordenadas globales
   wasora_mesh.vars.vec_x = wasora_define_vector("x_global", 3, NULL, NULL);
   // como ahora hacemos alias de a los elementos del vector x_global lo inicializamos

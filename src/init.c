@@ -41,13 +41,6 @@ int wasora_init_before_parser(void) {
   int error;
   var_t *dummy;
 
-  // si nunca cargamos algun plugin que necesite mallas, todas las funciones
-  // de este tipo se van a evaluar a cero
-  // los plugins que tengan malla tienen que redireccionar estos apuntadores
-  wasora.interpolate_function_node = mesh_interpolate_function_node_dummy;
-  wasora.interpolate_function_cell = mesh_interpolate_function_cell_dummy;
-  wasora.interpolate_function_property = mesh_interpolate_function_property_dummy;
-
 //va+done_static+name done_static
 //va+done_static+desc Flag that indicates whether the static calculation is over or not.
 //va+done_static+desc It is set to true (i.e. $\neq 0$) by wasora if `step_static` $\ge$ `static_steps`.

@@ -805,7 +805,7 @@ int wasora_mesh_parse_line(char *line) {
       }
 
       // si ya hay una material le agregamos cosa a esa
-      HASH_FIND_STR(wasora_mesh.physical_properties,property_name, physical_property);
+      HASH_FIND_STR(wasora_mesh.physical_properties, property_name, physical_property);
       if (physical_property == NULL) {
         physical_property = wasora_define_physical_property(property_name, NULL);
       }

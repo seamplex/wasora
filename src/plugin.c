@@ -71,7 +71,7 @@ int wasora_load_hardcoded_plugin(void) {
 plugin '%s' is invalid for the host, the checksums of the wasora.h header do not match:\n\
 wasora hash: %s\n\
 plugin hash: %s\n\
-Please recompile either wasora or the plugin.", wasora.plugin[0].library_file, WASORA_HEADERMD5, wasora.plugin[0].wasorahmd5_string);
+Please recompile either wasora or the plugin.", wasora.plugin[0].name, WASORA_HEADERMD5, wasora.plugin[0].wasorahmd5_string);
     return WASORA_RUNTIME_ERROR;
   }
   

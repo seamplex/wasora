@@ -363,13 +363,13 @@ double wasora_evaluate_function(function_t *function, const double *x) {
     
 
   if (function->type == type_pointwise_mesh_node) {
-    return wasora.interpolate_function_node(function, x);
+    return mesh_interpolate_function_node(function, x);
     
   } else if (function->type == type_pointwise_mesh_cell) {
-    return wasora.interpolate_function_cell(function, x);
+    return mesh_interpolate_function_cell(function, x);
     
   } else if (function->type == type_pointwise_mesh_property) {
-    return wasora.interpolate_function_property(function, x);
+    return mesh_interpolate_function_property(function, x);
     
   } else if (function->type == type_routine) {
     y = function->routine(x);
@@ -832,18 +832,4 @@ int wasora_structured_scalar_index(int n_dims, int *size, int *index, int x_incr
   
   return scalar_index;
   
-}
-
-
-
-double mesh_interpolate_function_node_dummy(function_t *function, const double *x) {
-  return 0.0;
-}
-
-double mesh_interpolate_function_cell_dummy(function_t *function, const double *x) {
-  return 0.0;
-}
-
-double mesh_interpolate_function_property_dummy(function_t *function, const double *x) {
-  return 0.0;
 }

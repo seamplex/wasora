@@ -327,6 +327,7 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
 
 // http://en.wikipedia.org/wiki/Barycentric_coordinate_system  
   double zero, one, lambda1, lambda2, lambda3, lambda4;
+  double xi;
   gsl_matrix *T = gsl_matrix_alloc(3, 3);
   gsl_vector *xx4 = gsl_vector_alloc(3);
   gsl_vector *lambda = gsl_vector_alloc(3);
@@ -341,6 +342,10 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
     gsl_vector_set(xx4, i, x[i] - element->node[3]->x[i]);
   }
   gsl_linalg_LU_decomp (T, p, &s);
+  if ((xi = fabs(gsl_linalg_LU_det (T, s))) < 1e-20) {
+    wasora_push_error_message("element %d is degenerate", element->id);
+    wasora_runtime_error();
+  }
   gsl_linalg_LU_solve (T, p, xx4, lambda);
 
   zero = -wasora_var(wasora_mesh.vars.eps);

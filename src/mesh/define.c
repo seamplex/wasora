@@ -167,7 +167,8 @@ physical_property_t *wasora_define_physical_property(const char *name, mesh_t *m
   property->name = strdup(name);
   HASH_ADD_KEYPTR(hh, wasora_mesh.physical_properties, property->name, strlen(property->name), property);
 
-  // ademas de la propiedad, definimos una function
+  // ademas de la propiedad, definimos una function con el nombre de la propiedad
+  // que se va a resolver en funcion de x,y,z
   if ((function = wasora_define_function(name, mesh->bulk_dimensions)) == NULL) {
     return NULL;
   }
@@ -175,7 +176,7 @@ physical_property_t *wasora_define_physical_property(const char *name, mesh_t *m
   function->mesh = mesh;
   function->type = type_pointwise_mesh_property;
   function->property = property;
-
+  
 
   return property;
 }
@@ -186,6 +187,8 @@ property_data_t *wasora_define_property_data(const char *materialname, const cha
   property_data_t *property_data;
   material_t *material;
   physical_property_t *property;
+  function_t *function;
+  char *name;
 
   HASH_FIND_STR(wasora_mesh.materials, materialname, material);
   if (material == NULL) {
@@ -205,6 +208,19 @@ property_data_t *wasora_define_property_data(const char *materialname, const cha
     return NULL;
   }
 
+  // function llamada material_property que se evalua en x,y,z pero directamente
+  // el usuario elige la propiedad sin tener que depender de x,y,z
+  if (wasora_mesh.main_mesh->bulk_dimensions == 0) {
+    wasora_push_error_message("mesh '%s' has zero dimensions when defining property '%s', keyword DIMENSIONS in needed for MESH definition", wasora_mesh.main_mesh->name, property->name);
+    return NULL;
+  }
+  name = malloc(strlen(material->name)+strlen(property->name)+8);
+  sprintf(name, "%s_%s", material->name, property->name);
+  if ((function = wasora_define_function(name, wasora_mesh.main_mesh->bulk_dimensions)) == NULL) {
+    return NULL;
+  }
+  free(name);
+  
   HASH_ADD_KEYPTR(hh, material->property_datums, property->name, strlen(property->name), property_data);
 //  HASH_ADD_KEYPTR(hh, property->property_datums, material->name, strlen(material->name), property_data);
 

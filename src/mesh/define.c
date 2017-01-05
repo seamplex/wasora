@@ -219,6 +219,9 @@ property_data_t *wasora_define_property_data(const char *materialname, const cha
   if ((function = wasora_define_function(name, wasora_mesh.main_mesh->bulk_dimensions)) == NULL) {
     return NULL;
   }
+  function->type = type_algebraic;
+  function->var_argument = wasora_mesh.vars.arr_x;
+  function->algebraic_expression = property_data->expr;
   free(name);
   
   HASH_ADD_KEYPTR(hh, material->property_datums, property->name, strlen(property->name), property_data);

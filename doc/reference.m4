@@ -22,6 +22,10 @@ esyscmd([!./reference.sh mesh/parser kw!])
 
 esyscmd([!./reference.sh init va!])
 
+# Mesh-related variables
+
+esyscmd([!./reference.sh mesh/init va!])
+
 # Functions
 
 esyscmd([!./reference.sh builtinfunctions fn!])

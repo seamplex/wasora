@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora parametric runs
  *
- *  Copyright (C) 2009--2014 jeremy theler
+ *  Copyright (C) 2009--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -151,6 +151,7 @@ int wasora_parametric_run(void) {
   wasora.parametric.outer_steps -= wasora.parametric.offset;
  
   for (step = 0; step < wasora.parametric.outer_steps; step++) {
+    wasora_var(wasora.special_vars.in_outer_initial) = (step == 0)?1:0;
     wasora_var(wasora.special_vars.step_outer) = (double)(step+1);
 
     // calculamos el vector de parametros

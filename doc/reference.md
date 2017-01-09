@@ -1,10 +1,12 @@
-% Wasora v0.5.32-g8ff6156
- reference sheet
+% Wasora reference sheet
 % Jeremy Theler
+
+This reference sheet is for [wasora](index.html) v0.5.43-ge98f2f9
+.
 
 ~~~
 $ wasora
-wasora v0.5.31-g1eb4e06 
+wasora v0.5.41-g17ef363 
 wasora’s an advanced suite for optimization & reactor analysis
 $
 ~~~
@@ -734,6 +736,56 @@ solving DAE systems and overwriting `t`.
 A very small positive number, which is taken to avoid roundoff 
 errors when comparing floating point numbers such as replacing $a \leq a_\text{max}$
 with $a < a_\text{max} +$ `zero`. Default is $(1/2)^{-50} \approx 9\times 10^{-16}$ .
+
+
+
+
+
+
+# Mesh-related variables
+
+##  `cells`
+
+Number of cells of the unstructured grid. This number is the actual
+quantity of volumetric elements in which the domain was discretized.
+
+
+
+##  `elements`
+
+Number of total elements of the unstructured grid. This number
+include those surface elements that belong to boundary physical entities.
+
+
+
+##  `eps`
+
+Small value. Default is $10^{-6}$.
+
+
+
+##  `nodes`
+
+Number of nodes of the unstructured grid.
+
+
+
+##  `x`
+
+Holder variable for spatial dependance of functions, such spatial distribution
+of physical properties or results of partial differential equations.
+
+
+
+##  `y`
+
+Idem as `x`.
+
+
+
+##  `z`
+
+Idem as `x`.
 
 
 

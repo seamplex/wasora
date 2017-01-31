@@ -213,6 +213,10 @@ int wasora_init_before_parser(void) {
   wasora_special_var(ncores) = wasora_define_variable("ncores");
   wasora_var(wasora_special_var(ncores)) = (double)sysconf(_SC_NPROCESSORS_ONLN);
   
+//va+pid+name pid
+//va+pid+desc The UNIX process id of wasora (or the plugin).
+  wasora_special_var(pid) = wasora_define_variable("pid");
+  wasora_var(wasora_special_var(pid)) = (double)getpid();
 
   
 //va+on_nan+name on_nan

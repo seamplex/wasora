@@ -1130,6 +1130,7 @@ typedef struct {
     var_t *infinite;
 
     var_t *ncores;
+    var_t *pid;
     
     var_t *on_nan;
     var_t *on_gsl_error;

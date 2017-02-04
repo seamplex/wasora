@@ -37,10 +37,10 @@ int wasora_instruction_mesh_fill_vector(void *arg) {
     wasora_call(wasora_vector_init(mesh_fill_vector->vector));
   }
   
-  if (mesh_fill_vector->centering == centering_cells && mesh->n_cells != vector->size) {
+  if        (mesh_fill_vector->centering == centering_cells && mesh->n_cells != vector->size) {
     wasora_push_error_message("size mismatch between mesh '%s' cells (%d) and vector '%s' size (%d)", mesh->name, mesh->n_cells, vector->name, vector->size);
     return WASORA_RUNTIME_ERROR;
-  } else if (mesh_fill_vector->centering == centering_cells && mesh->n_nodes != vector->size) {
+  } else if (mesh_fill_vector->centering == centering_nodes && mesh->n_nodes != vector->size) {
     wasora_push_error_message("size mismatch between mesh '%s' nodes (%d) and vector '%s' size (%d)", mesh_fill_vector->mesh->name, mesh_fill_vector->mesh->n_nodes, vector->name, vector->size);
     return WASORA_RUNTIME_ERROR;
   }

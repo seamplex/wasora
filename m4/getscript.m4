@@ -188,7 +188,7 @@ if test -z "`echo $PATH | grep $HOME/bin`"; then
   cat >> $HOME/.bashrc << EOF
 export PATH=\$PATH:\$HOME/bin    # added by name get.sh
 EOF
-  export PATH=\$PATH:\$HOME/bin
+  export PATH=$PATH:$HOME/bin
   echo "ok!"
 else
   echo "8. directory $HOME/bin is already in the PATH envar, good!"

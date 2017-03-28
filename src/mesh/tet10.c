@@ -201,13 +201,13 @@ double mesh_ten_node_tetrahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
     case 4:
       switch(m) {
         case 0:
-          return 0;
+          return 4*(1-r-s-t)-4*r;
         break;
         case 1:
-          return 0;
+          return -4*r;
         break;
         case 2:
-          return 4*t-1;
+          return -4*r;
         break;
       }
     case 5:

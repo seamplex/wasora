@@ -179,9 +179,7 @@ int wasora_mesh_element_types_init(void) {
   element_type->dim = -1;
 
   wasora_mesh.element_type[8].dim = -1;
-  wasora_mesh.element_type[9].dim = -1;
   wasora_mesh.element_type[10].dim = -1;
-  wasora_mesh.element_type[11].dim = -1;
   wasora_mesh.element_type[12].dim = -1;
   wasora_mesh.element_type[13].dim = -1;
   wasora_mesh.element_type[14].dim = -1;

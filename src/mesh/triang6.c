@@ -91,6 +91,7 @@ double mesh_six_node_triang_h(int j, gsl_vector *gsl_r) {
     case 2:
       return s*(2*s-1);
       break;
+      
     case 3:
       return 4*(1-r-s)*r;
       break;
@@ -135,6 +136,7 @@ double mesh_six_node_triang_dhdr(int j, int m, gsl_vector *gsl_r) {
         return 4*s-1;
       }
       break;
+      
     case 3:
       if (m == 0) {
         return 4*(1-r-s)-4*r;

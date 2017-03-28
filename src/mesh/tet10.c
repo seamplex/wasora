@@ -118,10 +118,10 @@ double mesh_ten_node_tetrahedron_h(int j, gsl_vector *gsl_r) {
       return 4*r*s;
       break;
     case 6:
-      return 4*t*(1-r-s-t);
+      return 4*s*(1-r-s-t);
       break;
     case 7:
-      return 4*(1-r-s-t);
+      return 4*(1-r-s-t)*t;
       break;
     case 8:
       return 4*r*t;
@@ -225,25 +225,25 @@ double mesh_ten_node_tetrahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
     case 6:
       switch(m) {
         case 0:
-          return -4*t;
+          return -4*s;
         break;
         case 1:
-          return -4*t;
+          return 4*(1-r-s-t)-4*s;
         break;
         case 2:
-          return 4*(1-r-s-t) - 4*t;
+          return -4*s;
         break;
       }
     case 7:
       switch(m) {
         case 0:
-          return -4;
+          return -4*t;
         break;
         case 1:
-          return -4;
+          return -4*t;
         break;
         case 2:
-          return -4;
+          return -4*(1-r-s-t)-4*t;
         break;
       }
     case 8:

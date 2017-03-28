@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
- *  wasora's mesh-related triangle element routines
+ *  wasora's mesh-related second-order triangle element routines
  *
- *  Copyright (C) 2014-2016 jeremy theler
+ *  Copyright (C) 2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -23,21 +23,20 @@
 
 #include <math.h>
 
-
-int mesh_three_node_triangle_init(void) {
+int mesh_six_node_triangle_init(void) {
 
   element_type_t *element_type;
   gauss_t *gauss;
   
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE];
-  element_type->name = strdup("triangle");
-  element_type->id = ELEMENT_TYPE_TRIANGLE;
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE6];
+  element_type->name = strdup("triangle6");
+  element_type->id = ELEMENT_TYPE_TRIANGLE6;
   element_type->dim = 2;
-  element_type->nodes = 3;
+  element_type->nodes = 6;
   element_type->faces = 3;
-  element_type->nodes_per_face = 2;
-  element_type->h = mesh_three_node_triang_h;
-  element_type->dhdr = mesh_three_node_triang_dhdr;
+  element_type->nodes_per_face = 3;
+  element_type->h = mesh_six_node_triang_h;
+  element_type->dhdr = mesh_six_node_triang_dhdr;
   element_type->point_in_element = mesh_point_in_triangle;
   element_type->element_volume = mesh_triang_vol;
 
@@ -71,11 +70,11 @@ int mesh_three_node_triangle_init(void) {
     gauss->r[2][1] = 2.0/3.0;
 
     mesh_init_shape_at_gauss(gauss, element_type);
-    
+  
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_three_node_triang_h(int j, gsl_vector *gsl_r) {
+double mesh_six_node_triang_h(int j, gsl_vector *gsl_r) {
   double r;
   double s;
 
@@ -84,13 +83,22 @@ double mesh_three_node_triang_h(int j, gsl_vector *gsl_r) {
 
   switch (j) {
     case 0:
-      return 1-r-s;
+      return (1-r-s)*(2*(1-r-s)-1);
       break;
     case 1:
-      return r;
+      return r*(2*r-1);
       break;
     case 2:
-      return s;
+      return s*(2*s-1);
+      break;
+    case 3:
+      return 4*(1-r-s)*r;
+      break;
+    case 4:
+      return 4*r*s;
+      break;
+    case 5:
+      return 4*s*(1-r-s);
       break;
   }
 
@@ -98,18 +106,24 @@ double mesh_three_node_triang_h(int j, gsl_vector *gsl_r) {
 
 }
 
-double mesh_three_node_triang_dhdr(int j, int m, gsl_vector *gsl_r) {
+double mesh_six_node_triang_dhdr(int j, int m, gsl_vector *gsl_r) {
+  double r;
+  double s;
+
+  r = gsl_vector_get(gsl_r, 0);
+  s = gsl_vector_get(gsl_r, 1);
+
   switch(j) {
     case 0:
       if (m == 0) {
-        return -1;
+        return 1-4*(1-r-s);
       } else {
-        return -1;
+        return 1-4*(1-r-s);
       }
       break;
     case 1:
       if (m == 0) {
-        return 1;
+        return 4*r-1;
       } else {
         return 0;
       }
@@ -118,59 +132,34 @@ double mesh_three_node_triang_dhdr(int j, int m, gsl_vector *gsl_r) {
       if (m == 0) {
         return 0;
       } else {
-        return 1;
+        return 4*s-1;
       }
       break;
+    case 3:
+      if (m == 0) {
+        return 4*(1-r-s)-4*r;
+      } else {
+        return -4*r;
+      }
+      break;
+    case 4:
+      if (m == 0) {
+        return 4*s;
+      } else {
+        return 4*r;
+      }
+      break;
+    case 5:
+      if (m == 0) {
+        return -4*s;
+      } else {
+        return 4*(1-r-s)-4*s;
+      }
+      break;
+
   }
 
   return 0;
 
-}
 
-
-int mesh_point_in_triangle(element_t *element, const double *x) {
-
-/*  
-  double z1, z2, z3;
-
-  z1 = mesh_subtract_cross_2d(element->node[0]->x, element->node[1]->x, x);
-  z2 = mesh_subtract_cross_2d(element->node[1]->x, element->node[2]->x, x);
-  z3 = mesh_subtract_cross_2d(element->node[2]->x, element->node[0]->x, x);
-  
-  if ((GSL_SIGN(z1) == GSL_SIGN(z2) && GSL_SIGN(z2) == GSL_SIGN(z3)) ||
-      (fabs(z1) < 1e-4 && GSL_SIGN(z2) == GSL_SIGN(z3)) ||
-      (fabs(z2) < 1e-4 && GSL_SIGN(z1) == GSL_SIGN(z3)) ||          
-      (fabs(z3) < 1e-4 && GSL_SIGN(z1) == GSL_SIGN(z2)) ) {
-    return 1;
-  }
-  return 0;
-*/
-  
-// metodo de coordenadas baricentricas
-//  http://en.wikipedia.org/wiki/Barycentric_coordinate_system  
-  double lambda1, lambda2, lambda3;
-  double x1 = element->node[0]->x[0];
-  double x2 = element->node[1]->x[0];
-  double x3 = element->node[2]->x[0];
-  double y1 = element->node[0]->x[1];
-  double y2 = element->node[1]->x[1];
-  double y3 = element->node[2]->x[1];
-  double zero, one;
-  
-  lambda1 = ((y2-y3)*(x[0]-x3) + (x3-x2)*(x[1]-y3))/((y2-y3)*(x1-x3) + (x3-x2)*(y1-y3));
-  lambda2 = ((y3-y1)*(x[0]-x3) + (x1-x3)*(x[1]-y3))/((y2-y3)*(x1-x3) + (x3-x2)*(y1-y3));
-  lambda3 = 1 - lambda1 - lambda2;
-  
-  zero = -wasora_var(wasora_mesh.vars.eps);
-  one = 1+wasora_var(wasora_mesh.vars.eps);
-  
-  return (lambda1 > zero && lambda1 < one &&
-          lambda2 > zero && lambda2 < one &&
-          lambda3 > zero && lambda3 < one);
-
-}
-
-
-double mesh_triang_vol(element_t *element) {
-  return 0.5 * fabs(mesh_subtract_cross_2d(element->node[0]->x, element->node[1]->x, element->node[2]->x));
 }

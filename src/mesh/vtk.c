@@ -37,9 +37,9 @@ int vtkfromgmsh_types[16] = {
  13,    // ELEMENT_TYPE_PRISM 
  14,    // ELEMENT_TYPE_PYRAMID 
   0,
+ 22,    // ELEMENT_TYPE_TRIANGLE6
   0,
-  0,
-  0,
+ 24,    // ELEMENT_TYPE_TETRAHEDRON10
   0,
   0,
   0,

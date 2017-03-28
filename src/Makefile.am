@@ -66,6 +66,7 @@ wasora_SOURCES = \
 ./mesh/line.c \
 ./mesh/interpolate.c \
 ./mesh/tetrahedron.c \
+./mesh/tet10.c \
 ./mesh/hexahedron.c \
 ./mesh/struct.c \
 ./mesh/post.c \
@@ -75,6 +76,7 @@ wasora_SOURCES = \
 ./mesh/gauss.c \
 ./mesh/define.c \
 ./mesh/triang.c \
+./mesh/triang6.c \
 ./plugin.c \
 ./define.c \
 ./wasora.c

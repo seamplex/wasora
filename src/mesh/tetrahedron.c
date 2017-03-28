@@ -116,6 +116,7 @@ int mesh_four_node_tetrahedron_init(void) {
     gauss->w[0] = 1.0/6.0 * 1.0;
     gauss->r[0][0] = 1.0/3.0;
     gauss->r[0][1] = 1.0/3.0;
+    gauss->r[0][2] = 1.0/3.0;
 
     mesh_init_shape_at_gauss(gauss, element_type);  
   
@@ -378,4 +379,9 @@ double mesh_tetrahedron_vol(element_t *element) {
   mesh_subtract(element->node[0]->x, element->node[3]->x, c);
   
   return 1.0/(1.0*2.0*3.0) * fabs(mesh_cross_dot(c, a, b));
+
+// AFEM.Ch09.pdf
+// 6V = J = x 21 (y 23 z 34 − y34 z 23 ) + x32 (y34 z 12 − y12 z34 ) + x 43 (y12 z23 − y23 z 12),
+  
+ 
 }

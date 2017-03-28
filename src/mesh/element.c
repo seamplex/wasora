@@ -153,14 +153,16 @@ int wasora_mesh_element_types_init(void) {
   // line ----------------------------------------------------------------------
   mesh_two_node_line_init();
 
-  // triangle ------------------------------------------------------------------
+  // triangles -----------------------------------------------------------------
   mesh_three_node_triangle_init();
+  mesh_six_node_triangle_init();
   
   // quadrangle ----------------------------------------------------------------
   mesh_four_node_quadrangle_init();
   
-  // tetrahedron  --------------------------------------------------------------
+  // tetrahedra  ---------------------------------------------------------------
   mesh_four_node_tetrahedron_init();
+  mesh_ten_node_tetrahedron_init();
   
   // hexahedron ---------------------------------------------------------------- 
   mesh_six_node_hexahedron_init();

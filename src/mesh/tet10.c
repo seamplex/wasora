@@ -30,7 +30,6 @@
 int mesh_ten_node_tetrahedron_init(void) {
   
   element_type_t *element_type;
-  gauss_t *gauss;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON10];
   element_type->name = strdup("tetrahedron10");
@@ -44,46 +43,7 @@ int mesh_ten_node_tetrahedron_init(void) {
   element_type->point_in_element = mesh_point_in_tetrahedron;
   element_type->element_volume = mesh_tetrahedron_vol;
   
-  // tres juegos de puntos de gauss
-  element_type->gauss = calloc(3, sizeof(gauss_t));
-  
-  // el primero es el default
-  // ---- cuatro puntos de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 4);
-  
-    gauss->w[0] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[0][0] = 1.0/6.0;
-    gauss->r[0][1] = 1.0/6.0;
-    gauss->r[0][2] = 1.0/6.0;
-  
-    gauss->w[1] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[1][0] = 2.0/3.0;
-    gauss->r[1][1] = 1.0/6.0;
-    gauss->r[1][2] = 1.0/6.0;
-  
-    gauss->w[2] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[2][0] = 1.0/6.0;
-    gauss->r[2][1] = 2.0/3.0;
-    gauss->r[2][2] = 1.0/6.0;
-
-    gauss->w[3] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[3][0] = 1.0/6.0;
-    gauss->r[3][1] = 1.0/6.0;
-    gauss->r[3][2] = 2.0/3.0;
-    
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
-  // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
-  
-    gauss->w[0] = 1.0/6.0 * 1.0;
-    gauss->r[0][0] = 1.0/3.0;
-    gauss->r[0][1] = 1.0/3.0;
-    gauss->r[0][2] = 1.0/3.0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);  
+  mesh_tetrahedron_gauss_init(element_type);
 
   return WASORA_RUNTIME_OK;
 }
@@ -92,11 +52,28 @@ double mesh_ten_node_tetrahedron_h(int j, gsl_vector *gsl_r) {
   double r;
   double s;
   double t;
+//  double h[10];
 
   r = gsl_vector_get(gsl_r, 0);
   s = gsl_vector_get(gsl_r, 1);
   t = gsl_vector_get(gsl_r, 2);
 
+  // bathe page 375 re-numerado para gmsh, hay que swapear 8 y 10
+/*  
+  h[8-1] = 4*t*(1-r-s-t);
+  h[9-1] = 4*s*t;
+  h[10-1] = 4*r*t;
+  h[7-1] = 4*s*(1-r-s-t);
+  h[6-1] = 4*r*s;
+  h[5-1] = 4*r*(1-r-s-t);
+  
+  h[4-1] = t - 0.5*(h[8-1] + h[9-1] + h[10-1]);
+  h[3-1] = s - 0.5*(h[6-1] + h[7-1] + h[9-1]);
+  h[2-1] = r - 0.5*(h[5-1] + h[6-1] + h[10-1]);
+  h[1-1] = (1-r-s-t) - 0.5*(h[5-1] + h[7-1] + h[8-1]);
+  
+  return h[j];
+*/  
   switch (j) {
     case 0:
       return (1-r-s-t)*(2*(1-r-s-t)-1);
@@ -124,10 +101,10 @@ double mesh_ten_node_tetrahedron_h(int j, gsl_vector *gsl_r) {
       return 4*(1-r-s-t)*t;
       break;
     case 8:
-      return 4*r*t;
+      return 4*s*t;
       break;
     case 9:
-      return 4*s*t;
+      return 4*r*t;
       break;
       
   }
@@ -249,18 +226,6 @@ double mesh_ten_node_tetrahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
     case 8:
       switch(m) {
         case 0:
-          return 4*t;
-        break;
-        case 1:
-          return 0;
-        break;
-        case 2:
-          return 4*r;
-        break;
-      }
-    case 9:
-      switch(m) {
-        case 0:
           return 0;
         break;
         case 1:
@@ -268,6 +233,18 @@ double mesh_ten_node_tetrahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
         break;
         case 2:
           return 4*s;
+        break;
+      }
+    case 9:
+      switch(m) {
+        case 0:
+          return 4*t;
+        break;
+        case 1:
+          return 0;
+        break;
+        case 2:
+          return 4*r;
         break;
       }
 

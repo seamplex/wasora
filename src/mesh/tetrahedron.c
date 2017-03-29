@@ -65,7 +65,6 @@ double mesh_four_node_tetrahedron_h(int j, gsl_vector *gsl_r) {
 int mesh_four_node_tetrahedron_init(void) {
   
   element_type_t *element_type;
-  gauss_t *gauss;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON];
   element_type->name = strdup("tetrahedron");
@@ -79,33 +78,41 @@ int mesh_four_node_tetrahedron_init(void) {
   element_type->point_in_element = mesh_point_in_tetrahedron;
   element_type->element_volume = mesh_tetrahedron_vol;
   
-  // tres juegos de puntos de gauss
-  element_type->gauss = calloc(3, sizeof(gauss_t));
+  mesh_tetrahedron_gauss_init(element_type);
+
+  return WASORA_RUNTIME_OK;
+}
+
+void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
+  gauss_t *gauss;
+
+  element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // el primero es el default
   // ---- cuatro puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
     mesh_alloc_gauss(gauss, element_type, 4);
-  
+    
     gauss->w[0] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[0][0] = 1.0/6.0;
-    gauss->r[0][1] = 1.0/6.0;
-    gauss->r[0][2] = 1.0/6.0;
+    gauss->r[0][0] = 0.1381966011250105;
+    gauss->r[0][1] = 0.1381966011250105;
+    gauss->r[0][2] = 0.1381966011250105;
   
     gauss->w[1] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[1][0] = 2.0/3.0;
-    gauss->r[1][1] = 1.0/6.0;
-    gauss->r[1][2] = 1.0/6.0;
-  
+    gauss->r[1][0] = 0.5854101966249685;
+    gauss->r[1][1] = 0.1381966011250105;
+    gauss->r[1][2] = 0.1381966011250105;
+ 
     gauss->w[2] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[2][0] = 1.0/6.0;
-    gauss->r[2][1] = 2.0/3.0;
-    gauss->r[2][2] = 1.0/6.0;
-
+    gauss->r[2][0] = 0.1381966011250105;
+    gauss->r[2][1] = 0.5854101966249685;
+    gauss->r[2][2] = 0.1381966011250105;
+    
     gauss->w[3] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[3][0] = 1.0/6.0;
-    gauss->r[3][1] = 1.0/6.0;
-    gauss->r[3][2] = 2.0/3.0;
+    gauss->r[3][0] = 0.1381966011250105;
+    gauss->r[3][1] = 0.1381966011250105;
+    gauss->r[3][2] = 0.5854101966249685;
+    
     
     mesh_init_shape_at_gauss(gauss, element_type);
     
@@ -119,36 +126,8 @@ int mesh_four_node_tetrahedron_init(void) {
     gauss->r[0][2] = 1.0/3.0;
 
     mesh_init_shape_at_gauss(gauss, element_type);  
-  
-  // ---- tres puntos de gauss producto tensorial  ----  
-/*    
-    gauss = &element_type->gauss[2];
-    mesh_alloc_gauss(gauss, element_type, 3, "3-tensor");
-  
-    gauss->w[0] = 1.0;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-    gauss->r[0][1] = -1.0/M_SQRT3;
-    gauss->r[0][2] = -1.0/M_SQRT3;
-
-    gauss->w[1] = 1.0;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-    gauss->r[1][1] = -1.0/M_SQRT3;
-    gauss->r[1][2] = -1.0/M_SQRT3;
-
-    gauss->w[2] = 2.0;
-    gauss->r[2][0] = 0;
-    gauss->r[2][1] = +1.0/M_SQRT3;
-    gauss->r[2][2] = -1.0/M_SQRT3;
-
-    gauss->w[3] = 4.0;
-    gauss->r[3][0] = 0/M_SQRT3;
-    gauss->r[3][1] = 0/M_SQRT3;
-    gauss->r[3][2] = +1.0/M_SQRT3;
-  
-    mesh_init_shape_at_gauss(gauss, element_type);  
-*/
-
-  return WASORA_RUNTIME_OK;
+    
+  return;
 }
 
 double mesh_four_node_tetrahedron_h(int j, gsl_vector *gsl_r) {

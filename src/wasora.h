@@ -2315,6 +2315,7 @@ extern double mesh_hexahedron_vol(element_t *);
 
 // tetrahedron.c
 extern int mesh_four_node_tetrahedron_init(void);
+extern void mesh_tetrahedron_gauss_init(element_type_t *);
 extern double mesh_four_node_tetrahedron_h(int, gsl_vector *);
 extern double mesh_four_node_tetrahedron_dhdr(int, int, gsl_vector *);
 extern int mesh_point_in_tetrahedron(element_t *, const double *);

@@ -1,0 +1,26 @@
+MESH NAME tet4  FILE_PATH tet1.msh DIMENSIONS 3
+MESH NAME tet10 FILE_PATH tet2.msh DIMENSIONS 3
+
+PHYSICAL_ENTITY ID 17 NAME bulk
+
+
+MESH_INTEGRATE MESH tet4  EXPR 1   OVER bulk RESULT I10
+MESH_INTEGRATE MESH tet4  EXPR x   OVER bulk RESULT I11
+MESH_INTEGRATE MESH tet4  EXPR y^2 OVER bulk RESULT I12
+MESH_INTEGRATE MESH tet4  EXPR z^3 OVER bulk RESULT I13
+
+MESH_INTEGRATE MESH tet10 EXPR 1   OVER bulk RESULT I20
+MESH_INTEGRATE MESH tet10 EXPR x   OVER bulk RESULT I21
+MESH_INTEGRATE MESH tet10 EXPR y^2 OVER bulk RESULT I22
+MESH_INTEGRATE MESH tet10 EXPR z^3 OVER bulk RESULT I23
+
+
+PRINT TEXT "------------+----------------+------------+----------------"
+PRINT TEXT " integrand        tet4            tet10        analytical  "
+PRINT TEXT "------------+----------------+------------+----------------"
+PRINT TEXT "     1    "  %f I10  I20 1/6
+PRINT TEXT "     x    "  %f I11  I21 1/24
+PRINT TEXT "    y^2   "  %f I12  I22 1/60
+PRINT TEXT "    z^3   "  %f I13  I23 1/120
+PRINT TEXT "------------+----------------+------------+----------------"
+

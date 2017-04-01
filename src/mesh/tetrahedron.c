@@ -94,24 +94,24 @@ void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
     mesh_alloc_gauss(gauss, element_type, 4);
     
     gauss->w[0] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[0][0] = 0.1381966011250105;
-    gauss->r[0][1] = 0.1381966011250105;
-    gauss->r[0][2] = 0.1381966011250105;
+    gauss->r[0][0] = (5.0-sqrt(5))/20.0;
+    gauss->r[0][1] = (5.0-sqrt(5))/20.0;
+    gauss->r[0][2] = (5.0-sqrt(5))/20.0;
   
     gauss->w[1] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[1][0] = 0.5854101966249685;
-    gauss->r[1][1] = 0.1381966011250105;
-    gauss->r[1][2] = 0.1381966011250105;
+    gauss->r[1][0] = (5.0+3.0*sqrt(5))/20.0;
+    gauss->r[1][1] = (5.0-sqrt(5))/20.0;
+    gauss->r[1][2] = (5.0-sqrt(5))/20.0;
  
     gauss->w[2] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[2][0] = 0.1381966011250105;
-    gauss->r[2][1] = 0.5854101966249685;
-    gauss->r[2][2] = 0.1381966011250105;
+    gauss->r[2][0] = (5.0-sqrt(5))/20.0;
+    gauss->r[2][1] = (5.0+3.0*sqrt(5))/20.0;
+    gauss->r[2][2] = (5.0-sqrt(5))/20.0;
     
     gauss->w[3] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[3][0] = 0.1381966011250105;
-    gauss->r[3][1] = 0.1381966011250105;
-    gauss->r[3][2] = 0.5854101966249685;
+    gauss->r[3][0] = (5.0-sqrt(5))/20.0;
+    gauss->r[3][1] = (5.0-sqrt(5))/20.0;
+    gauss->r[3][2] = (5.0+3.0*sqrt(5))/20.0;
     
     
     mesh_init_shape_at_gauss(gauss, element_type);
@@ -121,9 +121,9 @@ void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
     mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 1.0/6.0 * 1.0;
-    gauss->r[0][0] = 1.0/3.0;
-    gauss->r[0][1] = 1.0/3.0;
-    gauss->r[0][2] = 1.0/3.0;
+    gauss->r[0][0] = 1.0/4.0;
+    gauss->r[0][1] = 1.0/4.0;
+    gauss->r[0][2] = 1.0/4.0;
 
     mesh_init_shape_at_gauss(gauss, element_type);  
     

@@ -242,7 +242,7 @@ int wasora_mesh_parse_line(char *line) {
           int values[] = {post_format_gmsh, post_format_vtk, 0};
           wasora_call(wasora_parser_keywords_ints(keywords, values, (int *)&mesh_post->format));
 
-///kw+MESH_POST+usage [ CELL | ]
+///kw+MESH_POST+usage [ CELLS | ]
         } else if (strcasecmp(token, "CELLS") == 0) {
           mesh_post->centering = centering_cells;
 
@@ -271,6 +271,8 @@ int wasora_mesh_parse_line(char *line) {
               mesh_post_dist->vector[i]->var_argument = wasora_mesh.vars.arr_x;
               wasora_call(wasora_parse_expression(token, &mesh_post_dist->vector[i]->algebraic_expression)); 
             }
+            // TODO: como tenemos una funcion podemos ver si es node o cell
+            mesh_post_dist->centering = mesh_post->centering;
           }
           
           LL_APPEND(mesh_post->mesh_post_dists, mesh_post_dist);
@@ -289,6 +291,7 @@ int wasora_mesh_parse_line(char *line) {
             mesh_post_dist->scalar->var_argument = wasora_mesh.vars.arr_x;
             wasora_call(wasora_parse_expression(token, &mesh_post_dist->scalar->algebraic_expression)); 
           }
+          mesh_post_dist->centering = mesh_post->centering;
           LL_APPEND(mesh_post->mesh_post_dists, mesh_post_dist);
         }
       }

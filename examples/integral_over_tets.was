@@ -24,3 +24,8 @@ PRINT TEXT "    y^2   "  %f I12  I22 1/60
 PRINT TEXT "    z^3   "  %f I13  I23 1/120
 PRINT TEXT "------------+----------------+------------+----------------"
 
+
+FUNCTION g(x,y) MESH tet10 VECTOR f NODES
+f(i) = i
+
+MESH_POST MESH tet10 FILE_PATH tet10.vtk g x y z

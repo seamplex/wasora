@@ -309,6 +309,28 @@ void mesh_compute_x(element_t *element, gsl_vector *r, gsl_vector *x) {
   return;
 }
 
+int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
+
+  int j, m;
+  
+  if (element->type->id != ELEMENT_TYPE_TETRAHEDRON &&  element->type->id != ELEMENT_TYPE_TETRAHEDRON10) {
+    wasora_push_error_message("not for element type %d", element->type->id) ;
+    return WASORA_RUNTIME_ERROR;
+  }
+
+/*
+ * TO BE DONE! eq 9.11 de AFEM.Ch09  
+  gsl_vector_set_zero(x);
+  for (j = 0; j < element->type->nodes; j++) {
+    for (m = 0; m < element->type->dim; m++) {
+      gsl_vector_add_to_element(x, m, element->type->h(j, r) * element->node[j]->x[m]);
+    }
+  }
+*/
+
+  return WASORA_RUNTIME_OK;
+}
+
 int mesh_compute_H(mesh_t *mesh, element_t *element) {
   int j;
   int d;

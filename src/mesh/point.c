@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related point element routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -35,6 +35,7 @@ int mesh_one_node_point_init(void) {
   element_type->name = strdup("point");
   element_type->id = ELEMENT_TYPE_POINT;
   element_type->dim = 0;
+  element_type->order = 0;
   element_type->nodes = 1;
   element_type->faces = 0;
   element_type->nodes_per_face = 0;

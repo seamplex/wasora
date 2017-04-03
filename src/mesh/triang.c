@@ -33,6 +33,7 @@ int mesh_three_node_triangle_init(void) {
   element_type->name = strdup("triangle");
   element_type->id = ELEMENT_TYPE_TRIANGLE;
   element_type->dim = 2;
+  element_type->order = 1;
   element_type->nodes = 3;
   element_type->faces = 3;
   element_type->nodes_per_face = 2;

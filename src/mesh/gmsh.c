@@ -41,6 +41,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   int cell_id;
   int spatial_dimensions;
   int bulk_dimensions;
+  int order;
   int first_neighbor_nodes;
   char *dummy;
   char *name;
@@ -61,6 +62,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   // de mayor dimension que aparece -> esa es la de la malla
   bulk_dimensions = 0;
   spatial_dimensions = 0;
+  order = 0;
   
   while (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) != NULL) {
 
@@ -230,6 +232,11 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         // vemos la dimension del elemento -> la mayor es la de la malla
         if (mesh->element[id].type->dim > bulk_dimensions) {
           bulk_dimensions = mesh->element[id].type->dim;
+        }
+        
+        // el orden
+        if (mesh->element[id].type->order > order) {
+          order = mesh->element[id].type->order;
         }
         
         // nos acordamos del elemento que tenga el mayor numero de nodos
@@ -527,7 +534,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   }
   
   mesh->spatial_dimensions = spatial_dimensions;
-  
+  mesh->order = order;  
 
   // armamos un kd-tree de nodos y miramos cual es la mayor cantidad de vecinos que tiene un nodo
   mesh->kd_nodes = kd_create(mesh->spatial_dimensions);

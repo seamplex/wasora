@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related tetrahedron element routines
  *
- *  Copyright (C) 2015--2016 jeremy theler
+ *  Copyright (C) 2015--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -70,6 +70,7 @@ int mesh_four_node_tetrahedron_init(void) {
   element_type->name = strdup("tetrahedron");
   element_type->id = ELEMENT_TYPE_TETRAHEDRON;
   element_type->dim = 3;
+  element_type->order = 1;
   element_type->nodes = 4;
   element_type->faces = 4;
   element_type->nodes_per_face = 3;

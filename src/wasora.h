@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora common framework header
  *
- *  Copyright (C) 2009--2016 jeremy theler
+ *  Copyright (C) 2009--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -1826,6 +1826,7 @@ struct element_type_t {
 
   int id;              // id segun gmsh  
   int dim;             // dimensiones espaciales del elemento
+  int order;           // eso
   int nodes;           // cantidad de nodos en el elemento
   int faces;           // superficies == cantidad de vecinos
   int nodes_per_face;  // cantidad de nodos en las caras
@@ -1986,7 +1987,14 @@ struct mesh_t {
   int spatial_dimensions;        // dimensiones espaciales
   int bulk_dimensions;           // dimension del mayor elemento
 
+  int n_nodes;                   // cantidad de nodos
+  int n_elements;                // cantidad de elementos (fem)
+  int n_cells;                   // cantidad de celdas    (fvm)
+
   int degrees_of_freedom;        // grados de libertad por incognita
+  int order;                     // mayor orden de algun elemento
+  
+  
   enum  {
     ordering_node_based,
     ordering_unknown_based,
@@ -2003,11 +2011,7 @@ struct mesh_t {
   expr_t *offset_x;               // offset en nodos
   expr_t *offset_y;               // offset en nodos
   expr_t *offset_z;               // offset en nodos
-  
-  int n_nodes;                   // cantidad de nodos
-  int n_elements;                // cantidad de elementos (fem)
-  int n_cells;                   // cantidad de celdas    (fvm)
-  
+    
   double **nodes_argument;
   double **cells_argument;
 
@@ -2248,6 +2252,7 @@ extern double mesh_determinant(int, gsl_matrix *);
 extern void mesh_compute_dhdx(element_t *, gsl_vector *, gsl_matrix *, gsl_matrix *);
 extern void mesh_compute_h(element_t *, gsl_vector *, gsl_vector *);
 extern void mesh_compute_x(element_t *, gsl_vector *, gsl_vector *);
+extern int mesh_compute_r(element_t *, gsl_vector *, gsl_vector *);
 extern int mesh_compute_l(mesh_t *, element_t *);
 extern double mesh_compute_fem_objects_at_gauss(mesh_t *, element_t *, int);
 

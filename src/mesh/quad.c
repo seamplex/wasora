@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related quadrangle element routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -35,6 +35,7 @@ int mesh_four_node_quadrangle_init(void) {
   element_type->name = strdup("quadrangle");
   element_type->id = ELEMENT_TYPE_QUADRANGLE;
   element_type->dim = 2;
+  element_type->order = 1;
   element_type->nodes = 4;
   element_type->faces = 4;
   element_type->nodes_per_face = 2;

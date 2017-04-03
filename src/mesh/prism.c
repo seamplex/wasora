@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related prism element routines
  *
- *  Copyright (C) 2015--2016 jeremy theler & ezequiel manavela chiapero
+ *  Copyright (C) 2015--2017 jeremy theler & ezequiel manavela chiapero
  *
  *  This file is part of wasora.
  *
@@ -38,6 +38,7 @@ int mesh_six_node_prism_init(void) {
   element_type->name = strdup("prism");
   element_type->id = ELEMENT_TYPE_PRISM;
   element_type->dim = 3;
+  element_type->order = 1;
   element_type->nodes = 6;
   element_type->faces = 5;
   element_type->nodes_per_face = 4;   // Ojo aca que en nodos por cara pusimos el maximo valor (4) ya que depende de la cara

@@ -35,6 +35,7 @@ int mesh_ten_node_tetrahedron_init(void) {
   element_type->name = strdup("tetrahedron10");
   element_type->id = ELEMENT_TYPE_TETRAHEDRON10;
   element_type->dim = 3;
+  element_type->order = 2;
   element_type->nodes = 10;
   element_type->faces = 4;
   element_type->nodes_per_face = 6;

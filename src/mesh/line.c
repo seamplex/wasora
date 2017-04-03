@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related line element routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -37,6 +37,7 @@ int mesh_two_node_line_init(void) {
   element_type->name = strdup("line");
   element_type->id = ELEMENT_TYPE_LINE;
   element_type->dim = 1;
+  element_type->order = 1;
   element_type->nodes = 2;
   element_type->faces = 2;
   element_type->nodes_per_face = 1;

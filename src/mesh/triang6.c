@@ -32,6 +32,7 @@ int mesh_six_node_triangle_init(void) {
   element_type->name = strdup("triangle6");
   element_type->id = ELEMENT_TYPE_TRIANGLE6;
   element_type->dim = 2;
+  element_type->order = 2;
   element_type->nodes = 6;
   element_type->faces = 3;
   element_type->nodes_per_face = 3;

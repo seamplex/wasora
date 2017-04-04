@@ -123,6 +123,7 @@ int wasora_function_init(function_t *function) {
       function->data_argument[i] = gsl_vector_ptr(wasora_value_ptr(function->vector_argument[i]), 0);
     }
   }
+  
   if (function->vector_value != NULL) {
 
     if (!function->vector_value->initialized) {
@@ -162,186 +163,185 @@ int wasora_function_init(function_t *function) {
 
   }
   
-  if (function->data_size != 0 && function->mesh == NULL) {
-    if (function->n_arguments == 1) {
-
-      if (function->interp_type.name == NULL) {
-        // interpolacion 1D por default 
-        function->interp_type = DEFAULT_INTERPOLATION;      
-      }
-
-      if ((function->interp = gsl_interp_alloc(&function->interp_type, function->data_size)) == NULL) {
-        wasora_push_error_message("interpolation method for function '%s' needs more points", function->name);
-        return WASORA_PARSER_ERROR;
-      }
-
-      function->interp_accel = gsl_interp_accel_alloc();
-
-      // si no es de tipo vector, inicializamos el interpolador (los datos quedan fijos) 
-      // porque si es vector y los vectores tienen fruta, el interpolador se queja 
-      if (function->type != type_pointwise_vector) {
-        wasora_push_error_message("in function %s", function->name);
-        gsl_interp_init(function->interp, function->data_argument[0], function->data_value, function->data_size);
-        wasora_pop_error_message();
-      }
-
+  if (function->data_size != 0) {
+    if (function->expr_multidim_threshold.n_tokens != 0) {
+      function->multidim_threshold = wasora_evaluate_expression(&function->expr_multidim_threshold);
     } else {
+      function->multidim_threshold = DEFAULT_MULTIDIM_INTERPOLATION_THRESHOLD;
+    }
+    if (function->mesh == NULL) {
+      if (function->n_arguments == 1) {
 
-      if (function->expr_multidim_threshold.n_tokens != 0) {
-        function->multidim_threshold = wasora_evaluate_expression(&function->expr_multidim_threshold);
-      } else {
-        function->multidim_threshold = DEFAULT_MULTIDIM_INTERPOLATION_THRESHOLD;
-      }
-      
-      if (function->expr_shepard_radius.n_tokens != 0) {
-        function->shepard_radius = wasora_evaluate_expression(&function->expr_shepard_radius);
-      } else {
-        function->shepard_radius = DEFAULT_SHEPARD_RADIUS;
-      }
-      if (function->expr_shepard_exponent.n_tokens != 0) {
-        function->shepard_exponent = wasora_evaluate_expression(&function->expr_shepard_exponent);
-      } else {
-        function->shepard_exponent = DEFAULT_SHEPARD_EXPONENT;
-      }
+        if (function->interp_type.name == NULL) {
+          // interpolacion 1D por default 
+          function->interp_type = DEFAULT_INTERPOLATION;      
+        }
 
-      if (function->n_arguments == 2) {
-
-        // miramos si tiene una malla regular en 2d
-        if (wasora_is_structured_grid_2d(function->data_argument[0], function->data_argument[1], function->data_size, &nx, &ny)) {
-          function->rectangular_mesh = 1;
-          function->x_increases_first = 1;
-        } else if (wasora_is_structured_grid_2d(function->data_argument[1], function->data_argument[0], function->data_size, &ny, &nx)) {
-          function->rectangular_mesh = 1;
-          function->x_increases_first = 0;
-        } else {
-          function->rectangular_mesh = 0;
-        }
-        
-        if (function->rectangular_mesh) {
-          function->rectangular_mesh_size = malloc(2*sizeof(int));
-          function->rectangular_mesh_size[0] = nx;
-          function->rectangular_mesh_size[1] = ny;
-        }
-        
-      } else if (function->n_arguments == 3) {
-        
-        // miramos si tiene una malla regular en 3d
-        if (wasora_is_structured_grid_3d(function->data_argument[0], function->data_argument[1], function->data_argument[2], function->data_size, &nx, &ny, &nz)) {
-          function->rectangular_mesh = 1;
-          function->x_increases_first = 1;
-        } else if (wasora_is_structured_grid_3d(function->data_argument[2], function->data_argument[1], function->data_argument[0], function->data_size, &nz, &ny, &nx)) {
-          function->rectangular_mesh = 1;
-          function->x_increases_first = 0;
-        } else {
-          function->rectangular_mesh = 0;
-        }
-        
-        if (function->rectangular_mesh) {
-          function->rectangular_mesh_size = malloc(3*sizeof(int));
-          function->rectangular_mesh_size[0] = nx;
-          function->rectangular_mesh_size[1] = ny;
-          function->rectangular_mesh_size[2] = nz;
-        }
-        
-      } else {
-        
-        // estamos en el caso de mayor dimension que 3
-        // confiamos de una que es rectangular
-        function->rectangular_mesh = 1;
-        
-        if (function->expr_x_increases_first.n_tokens != 0) {
-          function->x_increases_first = wasora_evaluate_expression(&function->expr_x_increases_first);
-        } else {
-          wasora_push_error_message("missing expression for X_INCREASES_FIRST keyword");
+        if ((function->interp = gsl_interp_alloc(&function->interp_type, function->data_size)) == NULL) {
+          wasora_push_error_message("interpolation method for function '%s' needs more points", function->name);
           return WASORA_PARSER_ERROR;
         }
-        
-        function->rectangular_mesh_size = malloc(function->n_arguments*sizeof(int));
-        
-        if (function->expr_rectangular_mesh_size != NULL) {
+
+        function->interp_accel = gsl_interp_accel_alloc();
+
+        // si no es de tipo vector, inicializamos el interpolador (los datos quedan fijos) 
+        // porque si es vector y los vectores tienen fruta, el interpolador se queja 
+        if (function->type != type_pointwise_vector) {
+          wasora_push_error_message("in function %s", function->name);
+          gsl_interp_init(function->interp, function->data_argument[0], function->data_value, function->data_size);
+          wasora_pop_error_message();
+        }
+
+      } else {
+
+        if (function->expr_shepard_radius.n_tokens != 0) {
+          function->shepard_radius = wasora_evaluate_expression(&function->expr_shepard_radius);
+        } else {
+          function->shepard_radius = DEFAULT_SHEPARD_RADIUS;
+        }
+        if (function->expr_shepard_exponent.n_tokens != 0) {
+          function->shepard_exponent = wasora_evaluate_expression(&function->expr_shepard_exponent);
+        } else {
+          function->shepard_exponent = DEFAULT_SHEPARD_EXPONENT;
+        }
+
+        if (function->n_arguments == 2) {
+
+          // miramos si tiene una malla regular en 2d
+          if (wasora_is_structured_grid_2d(function->data_argument[0], function->data_argument[1], function->data_size, &nx, &ny)) {
+            function->rectangular_mesh = 1;
+            function->x_increases_first = 1;
+          } else if (wasora_is_structured_grid_2d(function->data_argument[1], function->data_argument[0], function->data_size, &ny, &nx)) {
+            function->rectangular_mesh = 1;
+            function->x_increases_first = 0;
+          } else {
+            function->rectangular_mesh = 0;
+          }
+
+          if (function->rectangular_mesh) {
+            function->rectangular_mesh_size = malloc(2*sizeof(int));
+            function->rectangular_mesh_size[0] = nx;
+            function->rectangular_mesh_size[1] = ny;
+          }
+
+        } else if (function->n_arguments == 3) {
+
+          // miramos si tiene una malla regular en 3d
+          if (wasora_is_structured_grid_3d(function->data_argument[0], function->data_argument[1], function->data_argument[2], function->data_size, &nx, &ny, &nz)) {
+            function->rectangular_mesh = 1;
+            function->x_increases_first = 1;
+          } else if (wasora_is_structured_grid_3d(function->data_argument[2], function->data_argument[1], function->data_argument[0], function->data_size, &nz, &ny, &nx)) {
+            function->rectangular_mesh = 1;
+            function->x_increases_first = 0;
+          } else {
+            function->rectangular_mesh = 0;
+          }
+
+          if (function->rectangular_mesh) {
+            function->rectangular_mesh_size = malloc(3*sizeof(int));
+            function->rectangular_mesh_size[0] = nx;
+            function->rectangular_mesh_size[1] = ny;
+            function->rectangular_mesh_size[2] = nz;
+          }
+
+        } else {
+
+          // estamos en el caso de mayor dimension que 3
+          // confiamos de una que es rectangular
+          function->rectangular_mesh = 1;
+
+          if (function->expr_x_increases_first.n_tokens != 0) {
+            function->x_increases_first = wasora_evaluate_expression(&function->expr_x_increases_first);
+          } else {
+            wasora_push_error_message("missing expression for X_INCREASES_FIRST keyword");
+            return WASORA_PARSER_ERROR;
+          }
+
+          function->rectangular_mesh_size = malloc(function->n_arguments*sizeof(int));
+
+          if (function->expr_rectangular_mesh_size != NULL) {
+            for (i = 0; i < function->n_arguments; i++) {
+              if (function->expr_rectangular_mesh_size[i].n_tokens != 0) {
+                function->rectangular_mesh_size[i] = round(wasora_evaluate_expression(&function->expr_rectangular_mesh_size[i]));
+                if (function->rectangular_mesh_size[i] < 2) {
+                  wasora_push_error_message("size %d for argument number %d in function '%s' cannot be less than two", function->rectangular_mesh_size[i], i+1, function->name);
+                  return WASORA_RUNTIME_ERROR;
+                }
+              }
+            }
+          } else {
+            wasora_push_error_message("missing expressions for SIZES keyword");
+            return WASORA_PARSER_ERROR;
+          }
+        }
+
+        if (function->rectangular_mesh) {
+
+          int step;
+
+          // checkeamos solo el size (porq el usuario pudo meter fruta para dimension mayor a 3)
+          j = 1;
           for (i = 0; i < function->n_arguments; i++) {
-            if (function->expr_rectangular_mesh_size[i].n_tokens != 0) {
-              function->rectangular_mesh_size[i] = round(wasora_evaluate_expression(&function->expr_rectangular_mesh_size[i]));
-              if (function->rectangular_mesh_size[i] < 2) {
-                wasora_push_error_message("size %d for argument number %d in function '%s' cannot be less than two", function->rectangular_mesh_size[i], i+1, function->name);
-                return WASORA_RUNTIME_ERROR;
+            j *= function->rectangular_mesh_size[i];
+          }
+          if (function->data_size != j) {
+            wasora_push_error_message("data size of function %s do not match with the amount of given values", function->name);
+            return WASORA_RUNTIME_ERROR;
+          }
+
+          function->rectangular_mesh_point = malloc(function->n_arguments*sizeof(double *));
+          for (i = 0; i < function->n_arguments; i++) {
+            function->rectangular_mesh_point[i] = malloc(function->rectangular_mesh_size[i]*sizeof(double));
+          }
+
+          if (function->x_increases_first) {
+            step = 1;
+            for (i = 0; i < function->n_arguments; i++) {
+              for (j = 0; j < function->rectangular_mesh_size[i]; j++) {
+                function->rectangular_mesh_point[i][j] = function->data_argument[i][step*j];
+              }
+              step *= function->rectangular_mesh_size[i];
+            }
+          } else {
+            step = function->data_size;
+            for (i = 0; i < function->n_arguments; i++) {
+              step /= function->rectangular_mesh_size[i];
+              for (j = 0; j < function->rectangular_mesh_size[i]; j++) {
+                function->rectangular_mesh_point[i][j] = function->data_argument[i][step*j];
               }
             }
           }
-        } else {
-          wasora_push_error_message("missing expressions for SIZES keyword");
-          return WASORA_PARSER_ERROR;
         }
       }
-      
-      if (function->rectangular_mesh) {
-        
-        int step;
-        
-        // checkeamos solo el size (porq el usuario pudo meter fruta para dimension mayor a 3)
-        j = 1;
-        for (i = 0; i < function->n_arguments; i++) {
-          j *= function->rectangular_mesh_size[i];
-        }
-        if (function->data_size != j) {
-          wasora_push_error_message("data size of function %s do not match with the amount of given values", function->name);
-          return WASORA_RUNTIME_ERROR;
-        }
-        
-        function->rectangular_mesh_point = malloc(function->n_arguments*sizeof(double *));
-        for (i = 0; i < function->n_arguments; i++) {
-          function->rectangular_mesh_point[i] = malloc(function->rectangular_mesh_size[i]*sizeof(double));
-        }
-        
-        if (function->x_increases_first) {
-          step = 1;
-          for (i = 0; i < function->n_arguments; i++) {
-            for (j = 0; j < function->rectangular_mesh_size[i]; j++) {
-              function->rectangular_mesh_point[i][j] = function->data_argument[i][step*j];
-            }
-            step *= function->rectangular_mesh_size[i];
-          }
-        } else {
-          step = function->data_size;
-          for (i = 0; i < function->n_arguments; i++) {
-            step /= function->rectangular_mesh_size[i];
-            for (j = 0; j < function->rectangular_mesh_size[i]; j++) {
-              function->rectangular_mesh_point[i][j] = function->data_argument[i][step*j];
-            }
-          }
-        }
-        
-      }
-      
-    }
     
-    if (function->rectangular_mesh == 0 && function->multidim_interp == rectangle) {
-      wasora_push_error_message("rectangular interpolation of function '%s' needs a rectangular mesh", function->name);
-      return WASORA_RUNTIME_ERROR;
-    }
-
-/*
-    if (function->n_arguments > 3 && function->multidim_interp == rectangle) {
-      wasora_push_error_message("rectangular interpolation does not work for dimensions higher than three (function '%s' has %d arguments)", function->name, function->n_arguments);
-      return WASORA_RUNTIME_ERROR;
-    }
-*/
-
-    if (function->n_arguments > 1 && (function->multidim_interp == nearest || function->multidim_interp == modified_shepard)) {
-
-      double *point;
-
-      point = malloc(function->n_arguments*sizeof(double));
-      function->kd = kd_create(function->n_arguments);
-
-      for (j = 0; j < function->data_size; j++) {
-        for (k = 0; k < function->n_arguments; k++) {
-          point[k] = function->data_argument[k][j];
-        }
-        kd_insert(function->kd, point, &function->data_value[j]);
+      if (function->rectangular_mesh == 0 && function->multidim_interp == rectangle) {
+        wasora_push_error_message("rectangular interpolation of function '%s' needs a rectangular mesh", function->name);
+        return WASORA_RUNTIME_ERROR;
       }
 
-      free(point);
+  /*
+      if (function->n_arguments > 3 && function->multidim_interp == rectangle) {
+        wasora_push_error_message("rectangular interpolation does not work for dimensions higher than three (function '%s' has %d arguments)", function->name, function->n_arguments);
+        return WASORA_RUNTIME_ERROR;
+      }
+  */
+
+      if (function->n_arguments > 1 && (function->multidim_interp == nearest || function->multidim_interp == modified_shepard)) {
+
+        double *point;
+
+        point = malloc(function->n_arguments*sizeof(double));
+        function->kd = kd_create(function->n_arguments);
+
+        for (j = 0; j < function->data_size; j++) {
+          for (k = 0; k < function->n_arguments; k++) {
+            point[k] = function->data_argument[k][j];
+          }
+          kd_insert(function->kd, point, &function->data_value[j]);
+        }
+
+        free(point);
+      }
     }
   }
 

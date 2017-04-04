@@ -198,7 +198,7 @@ int mesh_vtk_write_scalar(mesh_post_t *mesh_post, function_t *function, centerin
     fprintf(mesh_post->file->pointer, "SCALARS %s double\n", function->name);
     fprintf(mesh_post->file->pointer, "LOOKUP_TABLE default\n");
   
-    if (function->type == type_pointwise_mesh_node) {
+    if (function->type == type_pointwise_mesh_node && function->data_size == mesh_post->mesh->n_nodes) {
       wasora_function_init(function);
       for (i = 0; i < function->data_size; i++) {
         fprintf(mesh_post->file->pointer, "%g\n", function->data_value[i]);
@@ -219,7 +219,7 @@ int mesh_vtk_write_scalar(mesh_post_t *mesh_post, function_t *function, centerin
 
 int mesh_vtk_write_vector(mesh_post_t *mesh_post, function_t **function, centering_t centering) {
 
-  int i;
+  int i, j;
   mesh_t *mesh;
   
   if (mesh_post->mesh != NULL) {
@@ -256,10 +256,24 @@ int mesh_vtk_write_vector(mesh_post_t *mesh_post, function_t **function, centeri
     
     fprintf(mesh_post->file->pointer, "VECTORS %s-%s-%s double\n", function[0]->name, function[1]->name, function[2]->name);
       
-    for (i = 0; i < mesh->n_nodes; i++) {
-      fprintf(mesh_post->file->pointer, "%g %g %g\n", wasora_evaluate_function(function[0], mesh->node[i].x),
-                                                      wasora_evaluate_function(function[1], mesh->node[i].x),
-                                                      wasora_evaluate_function(function[2], mesh->node[i].x));
+    for (j = 0; j < mesh->n_nodes; j++) {
+      if (function[0]->type == type_pointwise_mesh_node && function[0]->data_size == mesh_post->mesh->n_nodes) {
+        fprintf(mesh_post->file->pointer, "%g ", function[0]->data_value[j]);
+      } else {
+        fprintf(mesh_post->file->pointer, "%g ", wasora_evaluate_function(function[0], mesh->node[j].x));
+      }
+
+      if (function[1]->type == type_pointwise_mesh_node && function[1]->data_size == mesh_post->mesh->n_nodes) {
+        fprintf(mesh_post->file->pointer, "%g ", function[0]->data_value[j]);
+      } else {
+        fprintf(mesh_post->file->pointer, "%g ", wasora_evaluate_function(function[1], mesh->node[j].x));
+      }
+
+      if (function[2]->type == type_pointwise_mesh_node && function[2]->data_size == mesh_post->mesh->n_nodes) {
+        fprintf(mesh_post->file->pointer, "%g\n", function[0]->data_value[j]);
+      } else {
+        fprintf(mesh_post->file->pointer, "%g\n", wasora_evaluate_function(function[2], mesh->node[j].x));
+      }
     }
   }
   

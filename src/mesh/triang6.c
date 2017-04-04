@@ -42,7 +42,7 @@ int mesh_six_node_triangle_init(void) {
   element_type->element_volume = mesh_triang_vol;
 
   // tres juegos de puntos de gauss
-  element_type->gauss = calloc(3, sizeof(gauss_t));
+  element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // ---- un punto de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];

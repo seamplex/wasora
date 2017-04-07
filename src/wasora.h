@@ -1731,6 +1731,7 @@ typedef enum {
 #define ELEMENT_TYPE_HEXAHEDRON     5
 #define ELEMENT_TYPE_PRISM          6
 #define ELEMENT_TYPE_PYRAMID        7
+#define ELEMENT_TYPE_LINE3          8
 #define ELEMENT_TYPE_TRIANGLE6      9
 #define ELEMENT_TYPE_TETRAHEDRON10  11
 #define ELEMENT_TYPE_POINT          15
@@ -2290,6 +2291,11 @@ extern double mesh_two_node_line_h(int, gsl_vector *);
 extern double mesh_two_node_line_dhdr(int, int, gsl_vector *);
 extern int mesh_point_in_line(element_t *, const double *);
 extern double mesh_line_vol(element_t *);
+
+// line3.c
+extern int mesh_three_node_line_init(void);
+extern double mesh_three_node_line_h(int, gsl_vector *);
+extern double mesh_three_node_line_dhdr(int, int, gsl_vector *);
 
 // triang.c
 extern int mesh_three_node_triangle_init(void);

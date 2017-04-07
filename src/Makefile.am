@@ -64,6 +64,7 @@ wasora_SOURCES = \
 ./mesh/geom.c \
 ./mesh/cell.c \
 ./mesh/line.c \
+./mesh/line3.c \
 ./mesh/interpolate.c \
 ./mesh/tetrahedron.c \
 ./mesh/tet10.c \

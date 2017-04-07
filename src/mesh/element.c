@@ -152,6 +152,7 @@ int wasora_mesh_element_types_init(void) {
   
   // line ----------------------------------------------------------------------
   mesh_two_node_line_init();
+  mesh_three_node_line_init();
 
   // triangles -----------------------------------------------------------------
   mesh_three_node_triangle_init();
@@ -178,7 +179,6 @@ int wasora_mesh_element_types_init(void) {
   element_type->id = ELEMENT_TYPE_PYRAMID;
   element_type->dim = -1;
 
-  wasora_mesh.element_type[8].dim = -1;
   wasora_mesh.element_type[10].dim = -1;
   wasora_mesh.element_type[12].dim = -1;
   wasora_mesh.element_type[13].dim = -1;

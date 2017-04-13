@@ -311,7 +311,7 @@ void mesh_compute_x(element_t *element, gsl_vector *r, gsl_vector *x) {
 
 int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
 
-  int j, j_prime, m;
+  int j, j_prime;
   
   
   if (element->type->id == ELEMENT_TYPE_TETRAHEDRON || element->type->id == ELEMENT_TYPE_TETRAHEDRON10) {
@@ -348,8 +348,8 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
     
     one = xi0 + gsl_vector_get(r,0) + gsl_vector_get(r,1) + gsl_vector_get(r,2);
     
-    if (gsl_fcmp(one, 1.0, 1e-8) != 0) {
-      printf("internal mismatch\n");
+    if (gsl_fcmp(one, 1.0, 1e-3) != 0) {
+      printf("internal mismatch when computing canonical coordinates in element %d\n", element->id);
       return WASORA_RUNTIME_ERROR;
     }
     

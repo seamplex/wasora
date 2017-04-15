@@ -315,7 +315,7 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
   
   
   if (element->type->id == ELEMENT_TYPE_TETRAHEDRON || element->type->id == ELEMENT_TYPE_TETRAHEDRON10) {
-    double xi0, one;
+//    double xi0, one;
     double sixV;
     double sixV01, sixV02, sixV03, sixV04;
 
@@ -341,21 +341,110 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
     sixV04 = element->node[0]->x[0] * (element->node[2]->x[1]*element->node[1]->x[2] - element->node[1]->x[1]*element->node[2]->x[2]) + element->node[1]->x[0] * (element->node[0]->x[1]*element->node[2]->x[2] - element->node[2]->x[1]*element->node[0]->x[2]) + element->node[2]->x[0] * (element->node[1]->x[1]*element->node[0]->x[2] - element->node[0]->x[1]*element->node[1]->x[2]);
     
     // otra vez en uno
-    xi0 =                1.0/sixV * (sixV01 * 1 + (dy[4][2]*dz[3][2] - dy[3][2]*dz[4][2])*gsl_vector_get(x, 0) + (dx[3][2]*dz[4][2] - dx[4][2]*dz[3][2])*gsl_vector_get(x, 1) + (dx[4][2]*dy[3][2] - dx[3][2]*dy[4][2])*gsl_vector_get(x, 2));
+//    xi0 =                1.0/sixV * (sixV01 * 1 + (dy[4][2]*dz[3][2] - dy[3][2]*dz[4][2])*gsl_vector_get(x, 0) + (dx[3][2]*dz[4][2] - dx[4][2]*dz[3][2])*gsl_vector_get(x, 1) + (dx[4][2]*dy[3][2] - dx[3][2]*dy[4][2])*gsl_vector_get(x, 2));
     gsl_vector_set(r, 0, 1.0/sixV * (sixV02 * 1 + (dy[3][1]*dz[4][3] - dy[3][4]*dz[1][3])*gsl_vector_get(x, 0) + (dx[4][3]*dz[3][1] - dx[1][3]*dz[3][4])*gsl_vector_get(x, 1) + (dx[3][1]*dy[4][3] - dx[3][4]*dy[1][3])*gsl_vector_get(x, 2)));
     gsl_vector_set(r, 1, 1.0/sixV * (sixV03 * 1 + (dy[2][4]*dz[1][4] - dy[1][4]*dz[2][4])*gsl_vector_get(x, 0) + (dx[1][4]*dz[2][4] - dx[2][4]*dz[1][4])*gsl_vector_get(x, 1) + (dx[2][4]*dy[1][4] - dx[1][4]*dy[2][4])*gsl_vector_get(x, 2)));
     gsl_vector_set(r, 2, 1.0/sixV * (sixV04 * 1 + (dy[1][3]*dz[2][1] - dy[1][2]*dz[3][1])*gsl_vector_get(x, 0) + (dx[2][1]*dz[1][3] - dx[3][1]*dz[1][2])*gsl_vector_get(x, 1) + (dx[1][3]*dy[2][1] - dx[1][2]*dy[3][1])*gsl_vector_get(x, 2)));
     
+/*    
     one = xi0 + gsl_vector_get(r,0) + gsl_vector_get(r,1) + gsl_vector_get(r,2);
-    
     if (gsl_fcmp(one, 1.0, 1e-3) != 0) {
       printf("internal mismatch when computing canonical coordinates in element %d\n", element->id);
       return WASORA_RUNTIME_ERROR;
     }
+ */
     
   } else {
     wasora_push_error_message("not for element type %d", element->type->id) ;
     return WASORA_RUNTIME_ERROR;
+  }
+
+  return WASORA_RUNTIME_OK;
+}
+
+
+int mesh_compute_r_at_node(element_t *element, int j, gsl_vector *r) {
+
+  switch (element->type->id) {
+    case ELEMENT_TYPE_TETRAHEDRON:
+      switch(j) {
+        case 0:
+         gsl_vector_set(r, 0, 0);
+         gsl_vector_set(r, 1, 0);
+         gsl_vector_set(r, 2, 0);
+        break;
+        case 1:
+         gsl_vector_set(r, 0, 1);
+         gsl_vector_set(r, 1, 0);
+         gsl_vector_set(r, 2, 0);
+        break;
+        case 2:
+         gsl_vector_set(r, 0, 0);
+         gsl_vector_set(r, 1, 1);
+         gsl_vector_set(r, 2, 0);
+        break;
+        case 3:
+         gsl_vector_set(r, 0, 0);
+         gsl_vector_set(r, 1, 0);
+         gsl_vector_set(r, 2, 1);
+        break;
+      }
+    break;
+    
+    case ELEMENT_TYPE_TETRAHEDRON10:
+      switch(j) {
+        case 0:
+         gsl_vector_set(r, 0, 0);
+         gsl_vector_set(r, 1, 0);
+         gsl_vector_set(r, 2, 0);
+        break;
+        case 1:
+         gsl_vector_set(r, 0, 1);
+         gsl_vector_set(r, 1, 0);
+         gsl_vector_set(r, 2, 0);
+        break;
+        case 2:
+         gsl_vector_set(r, 0, 0);
+         gsl_vector_set(r, 1, 1);
+         gsl_vector_set(r, 2, 0);
+        break;
+        case 3:
+         gsl_vector_set(r, 0, 0);
+         gsl_vector_set(r, 1, 0);
+         gsl_vector_set(r, 2, 1);
+        break;
+        case 4:
+         gsl_vector_set(r, 0, 0.5);
+         gsl_vector_set(r, 1, 0);
+         gsl_vector_set(r, 2, 0);
+        break;
+        case 5:
+         gsl_vector_set(r, 0, 0.5);
+         gsl_vector_set(r, 1, 0.5);
+         gsl_vector_set(r, 2, 0);
+        break;
+        case 6:
+         gsl_vector_set(r, 0, 0);
+         gsl_vector_set(r, 1, 0.5);
+         gsl_vector_set(r, 2, 0);
+        break;
+        case 7:
+         gsl_vector_set(r, 0, 0);
+         gsl_vector_set(r, 1, 0);
+         gsl_vector_set(r, 2, 0.5);
+        break;
+        case 8:
+         gsl_vector_set(r, 0, 0);
+         gsl_vector_set(r, 1, 0.5);
+         gsl_vector_set(r, 2, 0.5);
+        break;
+        case 9:
+         gsl_vector_set(r, 0, 0.5);
+         gsl_vector_set(r, 1, 0);
+         gsl_vector_set(r, 2, 0.5);
+        break;
+      }
+    break;
   }
 
   return WASORA_RUNTIME_OK;

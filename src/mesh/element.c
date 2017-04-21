@@ -313,3 +313,20 @@ int mesh_node_indexes(mesh_t *mesh, int dofs) {
   
   return WASORA_RUNTIME_OK;
 }
+
+
+int mesh_compute_local_node_index(element_t *element, int global_index) {
+  int j;
+  int local_index = -1;
+  
+  // buscamos a que indice local i corresponde el j global
+  for (j = 0; j < element->type->nodes; j++) {
+    if (element->node[j]->id == global_index+1) {
+      local_index = j;
+      break;
+    }
+  }
+  
+  return local_index;
+  
+}

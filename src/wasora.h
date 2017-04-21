@@ -2209,6 +2209,7 @@ extern int mesh_create_element(element_t *, int, int, physical_entity_t *);
 extern int mesh_add_element_to_list(element_list_item_t **, element_t *);
 extern int mesh_compute_element_barycenter(element_t *, double []);
 extern int mesh_node_indexes(mesh_t *, int);
+extern int mesh_compute_local_node_index(element_t *, int);
 
 // gauss.c
 extern int mesh_init_gauss_points(mesh_t *, int);
@@ -2254,6 +2255,7 @@ extern void mesh_compute_dhdx(element_t *, gsl_vector *, gsl_matrix *, gsl_matri
 extern void mesh_compute_h(element_t *, gsl_vector *, gsl_vector *);
 extern void mesh_compute_x(element_t *, gsl_vector *, gsl_vector *);
 extern int mesh_compute_r(element_t *, gsl_vector *, gsl_vector *);
+extern int mesh_compute_r_at_node(element_t *, int, gsl_vector *);
 extern int mesh_compute_l(mesh_t *, element_t *);
 extern double mesh_compute_fem_objects_at_gauss(mesh_t *, element_t *, int);
 

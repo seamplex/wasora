@@ -1903,7 +1903,26 @@ struct elementary_entity_t {
 struct bc_string_based_t {
   char *string;
   
-  int bc_type_int;
+  enum {
+    bc_math_undefined,
+    bc_math_dirichlet,
+    bc_math_dirichlet_algebraic_relationship,
+    bc_math_neumann,
+    bc_math_robin,
+  } bc_type_mathematical;
+
+  enum {
+    bc_phys_undefined,
+    bc_phys_displacement,
+    bc_phys_displacement_fixed,
+    bc_phys_displacement_constrained,
+    bc_phys_pressure,
+    bc_phys_traction,
+    bc_phys_force,
+    bc_phys_temperature,
+    bc_phys_heat_flux,
+    bc_phys_convection,
+  } bc_type_physical;  
   int dof;
   
   expr_t expr;

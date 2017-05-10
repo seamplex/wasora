@@ -1863,7 +1863,8 @@ struct physical_entity_t {
   material_t *material;
   
   char *bc_type_string; // el tipo de CC es arbitraria, despues cada codigo la interpreta
-  int bc_type_int;
+  int bc_type_math;
+  int bc_type_phys;
   
   // linked list con los argumentos que definen la cc
   // dependiendo del problema, los grados de libertad y
@@ -1871,6 +1872,10 @@ struct physical_entity_t {
   expr_t *bc_args;
   
   // linked list con strings arbitrarias que despues cada codigo interpreta
+  // el cuento es asi: dejamos que una CC se defina como texto y despues
+  // el codigo ve que hace, si usa directamente ese bc_string o rellena
+  // las expresiones y cosas de esta estructura
+  
   bc_string_based_t *bc_strings;
   
   // entero que indica en que direccion hay que aplicar una cierta cc
@@ -1903,31 +1908,12 @@ struct elementary_entity_t {
 struct bc_string_based_t {
   char *string;
   
-  enum {
-    bc_math_undefined,
-    bc_math_dirichlet,
-    bc_math_dirichlet_algebraic_relationship,
-    bc_math_neumann,
-    bc_math_robin,
-  } bc_type_mathematical;
-
-  enum {
-    bc_phys_undefined,
-    bc_phys_displacement,
-    bc_phys_displacement_fixed,
-    bc_phys_displacement_constrained,
-    bc_phys_pressure,
-    bc_phys_traction,
-    bc_phys_force,
-    bc_phys_temperature,
-    bc_phys_heat_flux,
-    bc_phys_convection,
-  } bc_type_physical;  
+  // estos son ints y no enums porque desde wasora no sabemos que va a haber
+  int bc_type_math;
+  int bc_type_phys;  
   int dof;
   
   expr_t expr;
-  expr_t expr_a;  // para robin
-  expr_t expr_b;
   
   bc_string_based_t *next;
 };

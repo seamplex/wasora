@@ -31,7 +31,12 @@ int wasora_instruction_mesh(void *arg) {
   mesh_t *mesh = (mesh_t *)arg;
   physical_entity_t *physical_entity;
   function_t *function, *tmp_function;
-  int i, j;
+  element_list_item_t *associated_element;
+  element_t *element;
+  int i, j, d, v;
+  int first_neighbor_nodes;
+  double w, vol;
+  double cog[3];
   double x_min[3];
   double x_max[3];
 
@@ -46,44 +51,64 @@ int wasora_instruction_mesh(void *arg) {
     wasora_call(mesh_gmsh_readmesh(mesh));
   }
   
-  // barremos los nodos y definimos la bounding box
+  // barremos los nodos y definimos la bounding box (capaz se pueda meter esto en el loop del kd_tree)
   mesh->bounding_box_min.id = -1;
   mesh->bounding_box_max.id = -1;
   mesh->bounding_box_min.index = NULL;
   mesh->bounding_box_max.index = NULL;
   mesh->bounding_box_min.associated_elements = NULL;
   mesh->bounding_box_max.associated_elements = NULL;
-  for (i = 0; i < 3; i++) {
-    x_min[i] = mesh->node[0].x[i];
-    x_max[i] = mesh->node[0].x[i];
+  for (d = 0; d < 3; d++) {
+    x_min[d] = mesh->node[0].x[d];
+    x_max[d] = mesh->node[0].x[d];
   }
-  for (i = 0; i < mesh->n_nodes; i++) {
-    for (j = 0; j < 3; j++) {
-      if (mesh->node[i].x[j] < x_min[j]) {
-        x_min[j] = mesh->node[i].x[j];
-        mesh->bounding_box_min.x[j] = x_min[j];
+  for (j = 0; j < mesh->n_nodes; j++) {
+    for (d = 0; d < 3; d++) {
+      if (mesh->node[j].x[d] < x_min[d]) {
+        x_min[d] = mesh->bounding_box_min.x[d] = mesh->node[j].x[d];
       }
-      if (mesh->node[i].x[j] > x_max[j]) {
-        x_max[j] = mesh->node[i].x[j];
-        mesh->bounding_box_max.x[j] = x_max[j];
+      if (mesh->node[j].x[d] > x_max[d]) {
+        x_max[d] = mesh->bounding_box_max.x[d] = mesh->node[j].x[d];
       }
     }
   }
 
+  // armamos un kd-tree de nodos y miramos cual es la mayor cantidad de vecinos que tiene un nodo
+  if (mesh->kd_nodes == NULL) {
+    mesh->kd_nodes = kd_create(mesh->spatial_dimensions);
+    for (j = 0; j < mesh->n_nodes; j++) {
+      kd_insert(mesh->kd_nodes, mesh->node[j].x, &mesh->node[j]);
+    
+      first_neighbor_nodes = 1;  // el nodo mismo
+      LL_FOREACH(mesh->node[j].associated_elements, associated_element) {
+        if (associated_element->element->type->dim == mesh->bulk_dimensions) {
+          first_neighbor_nodes += (associated_element->element->type->nodes) - 1; // menos el nodo mismo
+        }
+      }
+      if (first_neighbor_nodes > mesh->max_first_neighbor_nodes) {
+        mesh->max_first_neighbor_nodes = first_neighbor_nodes;
+      }
+    }
+  }
+  
+  
   // barremos los elementos y resolvemos la physical entity asociada
   for (i = 0; i < mesh->n_elements; i++) {
     if (mesh->element[i].tag != NULL && mesh->element[i].tag[0] != 0) {
       HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
       mesh->element[i].physical_entity = physical_entity;
+      if (physical_entity != NULL) {
+        wasora_call(mesh_add_element_to_list(&physical_entity->elements, &mesh->element[i]));
+      }
     }
   }
   
   // rellenamos un array de nodos que pueda ser usado como argumento de funciones
   mesh->nodes_argument = malloc(mesh->spatial_dimensions * sizeof(double *));
-  for (i = 0; i < mesh->spatial_dimensions; i++) {
-    mesh->nodes_argument[i] = malloc(mesh->n_nodes * sizeof(double));
+  for (d = 0; d < mesh->spatial_dimensions; d++) {
+    mesh->nodes_argument[d] = malloc(mesh->n_nodes * sizeof(double));
     for (j = 0; j < mesh->n_nodes; j++) {
-      mesh->nodes_argument[i][j] = mesh->node[j].x[i]; 
+      mesh->nodes_argument[d][j] = mesh->node[j].x[d]; 
     }
   }
   
@@ -91,10 +116,10 @@ int wasora_instruction_mesh(void *arg) {
   // TODO: ver si hay que hacerlo siempre
   wasora_call(mesh_element2cell(mesh));
   mesh->cells_argument = malloc(mesh->spatial_dimensions * sizeof(double *));
-  for (i = 0; i < mesh->spatial_dimensions; i++) {
-    mesh->cells_argument[i] = malloc(mesh->n_cells * sizeof(double));
-    for (j = 0; j < mesh->n_cells; j++) {
-      mesh->cells_argument[i][j] = mesh->cell[j].x[i]; 
+  for (d = 0; d < mesh->spatial_dimensions; d++) {
+    mesh->cells_argument[d] = malloc(mesh->n_cells * sizeof(double));
+    for (i = 0; i < mesh->n_cells; i++) {
+      mesh->cells_argument[d][i] = mesh->cell[i].x[d]; 
     }
   }
 
@@ -122,6 +147,27 @@ int wasora_instruction_mesh(void *arg) {
     }
   }
   
+// calculamos el volumen (o superficie o longitud) y el centro de masa de las physical entities
+  LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+    vol = cog[0] = cog[1] = cog[2] = 0;
+    LL_FOREACH(physical_entity->elements, associated_element) {
+      element = associated_element->element;
+      for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
+        w = mesh_integration_weight(mesh, element, v);
+
+        for (j = 0; j < element->type->nodes; j++) {
+          vol += w * gsl_vector_get(mesh->fem.h, j);
+          cog[0] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[0];
+          cog[1] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[1];
+          cog[2] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[2];
+        }
+      }
+    }
+    physical_entity->volume = vol;
+    physical_entity->cog[0] = cog[0]/vol;
+    physical_entity->cog[1] = cog[1]/vol;
+    physical_entity->cog[2] = cog[2]/vol;
+  }
   
   // esto es todo amigos!
   mesh->initialized = 1;
@@ -200,6 +246,7 @@ element_t *mesh_find_element(mesh_t *mesh, const double *x) {
 // esta en el input (dimensiones, grados de libertad, etc)
 int mesh_free(mesh_t *mesh) {
 
+  physical_entity_t *physical_entity;
   element_list_item_t *item, *tmp;
   int i, j, k;
 
@@ -249,6 +296,7 @@ int mesh_free(mesh_t *mesh) {
   if (mesh->kd_nodes != NULL) {
     kd_free(mesh->kd_nodes);
   }
+  mesh->kd_nodes = NULL;
 
   if (mesh->node != NULL) {
     for (k = 0; k < mesh->n_nodes; k++) {
@@ -278,6 +326,14 @@ int mesh_free(mesh_t *mesh) {
     mesh->fem.l = NULL;
   }
   
+  mesh->max_first_neighbor_nodes = 1;
+
+  LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+    LL_FOREACH_SAFE(physical_entity->elements, item, tmp) {
+      LL_DELETE(physical_entity->elements, item);
+      free(item);
+    }
+  }
   mesh->initialized = 0;
 
   return WASORA_RUNTIME_OK;

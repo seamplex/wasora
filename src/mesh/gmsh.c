@@ -42,12 +42,10 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   int spatial_dimensions;
   int bulk_dimensions;
   int order;
-  int first_neighbor_nodes;
   char *dummy;
   char *name;
   physical_entity_t *physical_entity;
   material_t *material;
-  element_list_item_t *associated_element;
 
   
   if (mesh->file->pointer == NULL) {
@@ -535,24 +533,6 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   
   mesh->spatial_dimensions = spatial_dimensions;
   mesh->order = order;  
-
-  // armamos un kd-tree de nodos y miramos cual es la mayor cantidad de vecinos que tiene un nodo
-  mesh->kd_nodes = kd_create(mesh->spatial_dimensions);
-  for (i = 0; i < mesh->n_nodes; i++) {
-    kd_insert(mesh->kd_nodes, mesh->node[i].x, &mesh->node[i]);
-    
-    first_neighbor_nodes = 1;  // el nodo mismo
-    LL_FOREACH(mesh->node[i].associated_elements, associated_element) {
-      if (associated_element->element->type->dim == mesh->bulk_dimensions) {
-        first_neighbor_nodes += (associated_element->element->type->nodes) - 1; // menos el nodo mismo
-      }
-    }
-    
-    if (first_neighbor_nodes > mesh->max_first_neighbor_nodes) {
-      mesh->max_first_neighbor_nodes = first_neighbor_nodes;
-    }
-    
-  }
 
   return WASORA_RUNTIME_OK;
 }

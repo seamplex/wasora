@@ -317,7 +317,8 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
   if (element->type->id == ELEMENT_TYPE_TETRAHEDRON || element->type->id == ELEMENT_TYPE_TETRAHEDRON10) {
 //    double xi0, one;
     double sixV;
-    double sixV01, sixV02, sixV03, sixV04;
+//    double sixV01;
+    double sixV02, sixV03, sixV04;
 
     // porque ya teniamos todo desde 1    
     double dx[5][5];
@@ -335,7 +336,7 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
     sixV = dx[2][1] * (dy[2][3] * dz[3][4] - dy[3][4] * dz[2][3] ) + dx[3][2] * (dy[3][4] * dz[1][2] - dy[1][2] * dz[3][4] ) + dx[4][3] * (dy[1][2] * dz[2][3] - dy[2][3] * dz[1][2]);
  
     // estos si arrancan en cero
-    sixV01 = element->node[1]->x[0] * (element->node[2]->x[1]*element->node[3]->x[2] - element->node[3]->x[1]*element->node[2]->x[2]) + element->node[2]->x[0] * (element->node[3]->x[1]*element->node[1]->x[2] - element->node[1]->x[1]*element->node[3]->x[2]) + element->node[3]->x[0] * (element->node[1]->x[1]*element->node[2]->x[2] - element->node[2]->x[1]*element->node[1]->x[2]);
+//    sixV01 = element->node[1]->x[0] * (element->node[2]->x[1]*element->node[3]->x[2] - element->node[3]->x[1]*element->node[2]->x[2]) + element->node[2]->x[0] * (element->node[3]->x[1]*element->node[1]->x[2] - element->node[1]->x[1]*element->node[3]->x[2]) + element->node[3]->x[0] * (element->node[1]->x[1]*element->node[2]->x[2] - element->node[2]->x[1]*element->node[1]->x[2]);
     sixV02 = element->node[0]->x[0] * (element->node[3]->x[1]*element->node[2]->x[2] - element->node[2]->x[1]*element->node[3]->x[2]) + element->node[2]->x[0] * (element->node[0]->x[1]*element->node[3]->x[2] - element->node[3]->x[1]*element->node[0]->x[2]) + element->node[3]->x[0] * (element->node[2]->x[1]*element->node[0]->x[2] - element->node[0]->x[1]*element->node[2]->x[2]);
     sixV03 = element->node[0]->x[0] * (element->node[1]->x[1]*element->node[3]->x[2] - element->node[3]->x[1]*element->node[1]->x[2]) + element->node[1]->x[0] * (element->node[3]->x[1]*element->node[0]->x[2] - element->node[0]->x[1]*element->node[3]->x[2]) + element->node[3]->x[0] * (element->node[0]->x[1]*element->node[1]->x[2] - element->node[1]->x[1]*element->node[0]->x[2]);
     sixV04 = element->node[0]->x[0] * (element->node[2]->x[1]*element->node[1]->x[2] - element->node[1]->x[1]*element->node[2]->x[2]) + element->node[1]->x[0] * (element->node[0]->x[1]*element->node[2]->x[2] - element->node[2]->x[1]*element->node[0]->x[2]) + element->node[2]->x[0] * (element->node[1]->x[1]*element->node[0]->x[2] - element->node[0]->x[1]*element->node[1]->x[2]);
@@ -509,4 +510,11 @@ double mesh_compute_fem_objects_at_gauss(mesh_t *mesh, element_t *element, int v
   
   return w;
   
+}
+
+int mesh_update_coord_vars(double *x) {
+  wasora_var(wasora_mesh.vars.x) = x[0];
+  wasora_var(wasora_mesh.vars.y) = x[1];
+  wasora_var(wasora_mesh.vars.z) = x[2];    
+  return WASORA_RUNTIME_OK;
 }

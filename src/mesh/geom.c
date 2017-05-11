@@ -89,3 +89,46 @@ double mesh_subtract_squared_module(const  double *b, const  double *a) {
 double mesh_subtract_squared_module2d(const  double *b, const  double *a) {
   return (b[0]-a[0])*(b[0]-a[0]) + (b[1]-a[1])*(b[1]-a[1]);
 }
+
+int mesh_compute_outward_normal(element_t *element, double *n) {
+  
+  double a[3], b[3], surface_center[3], volumetric_neighbor_center[3];
+  element_t *volumetric_neighbor;
+
+  if (element->type->dim == 0) {
+    wasora_push_error_message("trying to compute the outward normal of a point (element %d)", element->id);
+    return WASORA_RUNTIME_ERROR;
+  } else if (element->type->dim == 3) {
+    wasora_push_error_message("trying to compute the outward normal of a volume (element %d)", element->id);
+    return WASORA_RUNTIME_ERROR;
+  }
+  
+  // este algoritmo viene de sn_elements_compute_outward_normal
+  // calculamos el vector normal para tener las variables nx ny y nx
+  mesh_subtract(element->node[0]->x, element->node[1]->x, a);
+  mesh_subtract(element->node[0]->x, element->node[2]->x, b);
+  mesh_normalized_cross(a, b, n);
+    
+  // ahora tenemos que ver si la normal que elegimos es efectivamente la outward
+  // para eso primero calculamos el centro del elemento de superficie
+  wasora_call(mesh_compute_element_barycenter(element, surface_center));
+
+  // y despues el centro del elemento de volumen
+  if ((volumetric_neighbor = mesh_find_element_volumetric_neighbor(element)) == NULL) {
+    wasora_push_error_message("cannot find any volumetric neighbor for surface element %d", element->id);
+    return WASORA_RUNTIME_ERROR;
+  }
+    
+  volumetric_neighbor = mesh_find_element_volumetric_neighbor(element);
+  wasora_call(mesh_compute_element_barycenter(volumetric_neighbor, volumetric_neighbor_center));
+
+  // calculamos el producto entre la normal propuesta y la resta de estos dos vectores
+  // si elegimos la otra direccion, la damos tavuel
+  if (mesh_subtract_dot(volumetric_neighbor_center, surface_center, n) > 0) {
+    n[0] = -n[0];
+    n[1] = -n[1];
+    n[2] = -n[2];
+  }    
+          
+  return WASORA_RUNTIME_OK;
+}

@@ -1894,6 +1894,11 @@ struct physical_entity_t {
   // (1 = x<0, 2 = x>0, 3 = y<0, 4 = y>0, 5 = z<0, 6 = z>0)
   expr_t pos[6];
   
+  double volume;
+  double cog[3];
+  
+  element_list_item_t *elements;
+  
   physical_entity_t *next;
   UT_hash_handle hh_id;
   UT_hash_handle hh_name;
@@ -2263,7 +2268,7 @@ extern int mesh_compute_r(element_t *, gsl_vector *, gsl_vector *);
 extern int mesh_compute_r_at_node(element_t *, int, gsl_vector *);
 extern int mesh_compute_l(mesh_t *, element_t *);
 extern double mesh_compute_fem_objects_at_gauss(mesh_t *, element_t *, int);
-
+extern int mesh_update_coord_vars(double *);
 
 extern int mesh_compute_B(mesh_t *, element_t *);
 int mesh_compute_H(mesh_t *, element_t *);
@@ -2364,6 +2369,7 @@ extern double mesh_subtract_squared_module(const double *, const double *);
 extern double mesh_subtract_squared_module2d(const double *, const double *);
 extern double mesh_subtract_dot(const double *, const double *, const double *);
 extern double mesh_dot(const double *, const double *);
+extern int mesh_compute_outward_normal(element_t *, double *);
 
 extern void mesh_set_xyz(double *, struct var_t *, struct var_t *, struct var_t *);
 

@@ -333,82 +333,79 @@ int mesh_create_structured(mesh_t *mesh) {
   // barremos las physical entities y las aplicamos a los elementos
   i_entity = 0;
   LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-    if (physical_entity->material != NULL) {
-      
-      if (physical_entity->id == 0) {
-        physical_entity->id = ++i_entity;
-      }
-      if (physical_entity->name == NULL) {
-        physical_entity->name = malloc(strlen(physical_entity->material->name)+32);
-        sprintf(physical_entity->name, "%s-%d", physical_entity->material->name, physical_entity->id);
-      }
-      if (physical_entity->dimension == 0) {
-        physical_entity->dimension = mesh->bulk_dimensions; 
-      }
-    
-      if (physical_entity->pos[structured_direction_left-1].n_tokens != 0 || physical_entity->pos[structured_direction_right-1].n_tokens != 0) {
-        if ((i_min = wasora_mesh_struct_find_cell(mesh->ncells_x, mesh->cells_x, mesh->delta_x, wasora_evaluate_expression(&physical_entity->pos[0])+halfeps)) < 0) {
-          wasora_push_error_message("plane x = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[0]), physical_entity->id, physical_entity->name);
-          return WASORA_RUNTIME_ERROR;
-        }
-        if ((i_max = wasora_mesh_struct_find_cell(mesh->ncells_x, mesh->cells_x, mesh->delta_x, wasora_evaluate_expression(&physical_entity->pos[1])-halfeps)) < 0) {
-          wasora_push_error_message("plane x = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[1]), physical_entity->id, physical_entity->name);
-          return WASORA_RUNTIME_ERROR;
-        }
-      } else {
-        i_min = 0;
-        i_max = mesh->ncells_x-1;
-      }
-      if (physical_entity->pos[structured_direction_front-1].n_tokens != 0 || physical_entity->pos[structured_direction_rear-1].n_tokens != 0) {
-        if ((j_min = wasora_mesh_struct_find_cell(mesh->ncells_y, mesh->cells_y, mesh->delta_y, wasora_evaluate_expression(&physical_entity->pos[2])+halfeps)) < 0) {
-          wasora_push_error_message("plane y = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[2]), physical_entity->id, physical_entity->name);
-          return WASORA_RUNTIME_ERROR;
-        }
-        if ((j_max = wasora_mesh_struct_find_cell(mesh->ncells_y, mesh->cells_y, mesh->delta_y, wasora_evaluate_expression(&physical_entity->pos[3])-halfeps)) < 0) {
-          wasora_push_error_message("plane y = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[3]), physical_entity->id, physical_entity->name);
-          return WASORA_RUNTIME_ERROR;
-        }
-      } else {
-        j_min = 0;
-        j_max = mesh->ncells_y-1;
-      }
-      if (physical_entity->pos[structured_direction_bottom-1].n_tokens != 0 || physical_entity->pos[structured_direction_top-1].n_tokens != 0) {
-        if ((k_min = wasora_mesh_struct_find_cell(mesh->ncells_z, mesh->cells_z, mesh->delta_z, wasora_evaluate_expression(&physical_entity->pos[4])+halfeps)) < 0) {
-          wasora_push_error_message("plane z = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[4]), physical_entity->id, physical_entity->name);
-          return WASORA_RUNTIME_ERROR;
-        }
-        if ((k_max = wasora_mesh_struct_find_cell(mesh->ncells_z, mesh->cells_z, mesh->delta_z, wasora_evaluate_expression(&physical_entity->pos[5])-halfeps)) < 0) {
-          wasora_push_error_message("plane z = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[5]), physical_entity->id, physical_entity->name);
-          return WASORA_RUNTIME_ERROR;
-        }
-      } else {
-        k_min = 0;
-        k_max = mesh->ncells_z-1;
-      }
+    if (physical_entity->id == 0) {
+      physical_entity->id = ++i_entity;
+    }
+    if (physical_entity->name == NULL) {
+      physical_entity->name = malloc(strlen(physical_entity->material->name)+32);
+      sprintf(physical_entity->name, "%s-%d", physical_entity->material->name, physical_entity->id);
+    }
+    if (physical_entity->dimension == 0) {
+      physical_entity->dimension = mesh->bulk_dimensions; 
+    }
 
-      switch (mesh->bulk_dimensions) {
-        case 1:
-          for (i = i_min; i <= i_max; i++) {
-            mesh->element[i].physical_entity = physical_entity;
-          }
-        break;  
-        case 2:
-          for (i = i_min; i <= i_max; i++) {
-            for (j = j_min; j <= j_max; j++) {
-              mesh->element[i + mesh->ncells_x*j].physical_entity = physical_entity;
-            }
-          }
-        break;
-        case 3: 
-          for (i = i_min; i <= i_max; i++) {
-            for (j = j_min; j <= j_max; j++) {
-              for (k = k_min; k <= k_max; k++) {
-                mesh->element[i + mesh->ncells_x*j + mesh->ncells_x*mesh->ncells_y*k].physical_entity = physical_entity;
-              }
-            }
-          }
-        break;
+    if (physical_entity->pos[structured_direction_left-1].n_tokens != 0 || physical_entity->pos[structured_direction_right-1].n_tokens != 0) {
+      if ((i_min = wasora_mesh_struct_find_cell(mesh->ncells_x, mesh->cells_x, mesh->delta_x, wasora_evaluate_expression(&physical_entity->pos[0])+halfeps)) < 0) {
+        wasora_push_error_message("plane x = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[0]), physical_entity->id, physical_entity->name);
+        return WASORA_RUNTIME_ERROR;
       }
+      if ((i_max = wasora_mesh_struct_find_cell(mesh->ncells_x, mesh->cells_x, mesh->delta_x, wasora_evaluate_expression(&physical_entity->pos[1])-halfeps)) < 0) {
+        wasora_push_error_message("plane x = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[1]), physical_entity->id, physical_entity->name);
+        return WASORA_RUNTIME_ERROR;
+      }
+    } else {
+      i_min = 0;
+      i_max = mesh->ncells_x-1;
+    }
+    if (physical_entity->pos[structured_direction_front-1].n_tokens != 0 || physical_entity->pos[structured_direction_rear-1].n_tokens != 0) {
+      if ((j_min = wasora_mesh_struct_find_cell(mesh->ncells_y, mesh->cells_y, mesh->delta_y, wasora_evaluate_expression(&physical_entity->pos[2])+halfeps)) < 0) {
+        wasora_push_error_message("plane y = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[2]), physical_entity->id, physical_entity->name);
+        return WASORA_RUNTIME_ERROR;
+      }
+      if ((j_max = wasora_mesh_struct_find_cell(mesh->ncells_y, mesh->cells_y, mesh->delta_y, wasora_evaluate_expression(&physical_entity->pos[3])-halfeps)) < 0) {
+        wasora_push_error_message("plane y = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[3]), physical_entity->id, physical_entity->name);
+        return WASORA_RUNTIME_ERROR;
+      }
+    } else {
+      j_min = 0;
+      j_max = mesh->ncells_y-1;
+    }
+    if (physical_entity->pos[structured_direction_bottom-1].n_tokens != 0 || physical_entity->pos[structured_direction_top-1].n_tokens != 0) {
+      if ((k_min = wasora_mesh_struct_find_cell(mesh->ncells_z, mesh->cells_z, mesh->delta_z, wasora_evaluate_expression(&physical_entity->pos[4])+halfeps)) < 0) {
+        wasora_push_error_message("plane z = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[4]), physical_entity->id, physical_entity->name);
+        return WASORA_RUNTIME_ERROR;
+      }
+      if ((k_max = wasora_mesh_struct_find_cell(mesh->ncells_z, mesh->cells_z, mesh->delta_z, wasora_evaluate_expression(&physical_entity->pos[5])-halfeps)) < 0) {
+        wasora_push_error_message("plane z = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[5]), physical_entity->id, physical_entity->name);
+        return WASORA_RUNTIME_ERROR;
+      }
+    } else {
+      k_min = 0;
+      k_max = mesh->ncells_z-1;
+    }
+
+    switch (mesh->bulk_dimensions) {
+      case 1:
+        for (i = i_min; i <= i_max; i++) {
+          mesh->element[i].physical_entity = physical_entity;
+        }
+      break;  
+      case 2:
+        for (i = i_min; i <= i_max; i++) {
+          for (j = j_min; j <= j_max; j++) {
+            mesh->element[i + mesh->ncells_x*j].physical_entity = physical_entity;
+          }
+        }
+      break;
+      case 3: 
+        for (i = i_min; i <= i_max; i++) {
+          for (j = j_min; j <= j_max; j++) {
+            for (k = k_min; k <= k_max; k++) {
+              mesh->element[i + mesh->ncells_x*j + mesh->ncells_x*mesh->ncells_y*k].physical_entity = physical_entity;
+            }
+          }
+        }
+      break;
     }
   }
   

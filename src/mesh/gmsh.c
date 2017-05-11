@@ -208,7 +208,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           return WASORA_RUNTIME_ERROR;
         }
         mesh->element[id].type = &(wasora_mesh.element_type[type]);
-        if (mesh->element[id].type->dim == -1) {
+        if (mesh->element[id].type->nodes == 0) {
           wasora_push_error_message("elements of type '%s' are not supported in this version :-(", mesh->element[id].type->name);
           return WASORA_RUNTIME_ERROR;
         }

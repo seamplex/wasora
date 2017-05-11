@@ -171,21 +171,18 @@ int wasora_mesh_element_types_init(void) {
   // prism ---------------------------------------------------------------------
   mesh_six_node_prism_init();
 
-
   // not supported  
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_UNDEFINED];
-  element_type->dim = -1;
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_PYRAMID];
+  element_type->dim = 3;
   element_type->name = strdup("pyramid");
   element_type->id = ELEMENT_TYPE_PYRAMID;
-  element_type->dim = -1;
+  element_type->nodes = 0;
 
-  wasora_mesh.element_type[10].dim = -1;
   wasora_mesh.element_type[10].name = strdup("quad9");
-  wasora_mesh.element_type[12].dim = -1;
+  wasora_mesh.element_type[10].nodes = 9;
+  
   wasora_mesh.element_type[12].name = strdup("hexa27");
-  wasora_mesh.element_type[13].dim = -1;
   wasora_mesh.element_type[13].name = strdup("prism18");
-  wasora_mesh.element_type[14].dim = -1;
   wasora_mesh.element_type[14].name = strdup("pyramid14");
 
   

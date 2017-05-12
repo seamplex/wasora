@@ -69,14 +69,21 @@ void mesh_alloc_fem_objects(mesh_t *mesh) {
   G = mesh->degrees_of_freedom;
   N = J*G;
 
+  gsl_vector_free(mesh->fem.r);
   mesh->fem.r = gsl_vector_alloc(M);
   mesh->fem.x = wasora_value_ptr(wasora_mesh.vars.vec_x);
+  gsl_vector_free(mesh->fem.h);
   mesh->fem.h = gsl_vector_alloc(J);
+  gsl_matrix_free(mesh->fem.dhdr);
   mesh->fem.dhdr = gsl_matrix_alloc(J, M);
+  gsl_matrix_free(mesh->fem.dhdx);
   mesh->fem.dhdx = gsl_matrix_alloc(J, M);
+  gsl_matrix_free(mesh->fem.drdx);
   mesh->fem.drdx = gsl_matrix_alloc(M, M);
+  gsl_matrix_free(mesh->fem.dxdr);
   mesh->fem.dxdr = gsl_matrix_alloc(M, M);
   if (N != 0) {
+    free(mesh->fem.l);
     mesh->fem.l = calloc(N, sizeof(int));
   }
 
@@ -87,7 +94,9 @@ double mesh_integration_weight(mesh_t *mesh, element_t *element, int v) {
 
   int d;
   
-  if (mesh->fem.r == NULL) {
+  // miramos l porque los otros pueden estar definidos si no definimos
+  // mesh->dof antes de leer la malla
+  if (mesh->fem.l == NULL) {
     mesh_alloc_fem_objects(mesh);
   }
   

@@ -1897,7 +1897,11 @@ struct physical_entity_t {
   double volume;
   double cog[3];
   
-  element_list_item_t *elements;
+  // una linked list es muy cara
+//  element_list_item_t *elements;
+  int n_elements;
+  int i_element;
+  int *element;
   
   physical_entity_t *next;
   UT_hash_handle hh_id;

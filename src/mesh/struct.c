@@ -394,12 +394,14 @@ int mesh_create_structured(mesh_t *mesh) {
         case 1:
           for (i = i_min; i <= i_max; i++) {
             mesh->element[i].physical_entity = physical_entity;
+            physical_entity->n_elements++;
           }
         break;  
         case 2:
           for (i = i_min; i <= i_max; i++) {
             for (j = j_min; j <= j_max; j++) {
               mesh->element[i + mesh->ncells_x*j].physical_entity = physical_entity;
+              physical_entity->n_elements++;
             }
           }
         break;
@@ -408,6 +410,7 @@ int mesh_create_structured(mesh_t *mesh) {
             for (j = j_min; j <= j_max; j++) {
               for (k = k_min; k <= k_max; k++) {
                 mesh->element[i + mesh->ncells_x*j + mesh->ncells_x*mesh->ncells_y*k].physical_entity = physical_entity;
+                physical_entity->n_elements++;
               }
             }
           }

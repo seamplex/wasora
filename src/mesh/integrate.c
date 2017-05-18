@@ -30,7 +30,6 @@ int wasora_instruction_mesh_integrate(void *arg) {
   int i, j, v;
   mesh_integrate_t *mesh_integrate = (mesh_integrate_t *)arg;
   mesh_t *mesh = mesh_integrate->mesh;
-  element_list_item_t *element_list_item = NULL;
   element_t *element;
   function_t *function = mesh_integrate->function;
   expr_t *expr = &mesh_integrate->expr;
@@ -55,8 +54,8 @@ int wasora_instruction_mesh_integrate(void *arg) {
       }
     } else {
       if (function->type == type_pointwise_mesh_node && function->mesh == mesh) {
-        LL_FOREACH(physical_entity->elements, element_list_item) {
-          element = element_list_item->element;
+        for (i = 0; i < physical_entity->n_elements; i++) {
+          element = &mesh->element[physical_entity->element[i]];
           for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
             w = mesh_integration_weight(mesh, element, v);
 
@@ -69,8 +68,8 @@ int wasora_instruction_mesh_integrate(void *arg) {
           }
         }
       } else {
-        LL_FOREACH(physical_entity->elements, element_list_item) {
-          element = element_list_item->element;
+        for (i = 0; i < physical_entity->n_elements; i++) {
+          element = &mesh->element[physical_entity->element[i]];
           for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
             w = mesh_integration_weight(mesh, element, v);
 
@@ -93,8 +92,8 @@ int wasora_instruction_mesh_integrate(void *arg) {
         }
       }
     } else {
-      LL_FOREACH(physical_entity->elements, element_list_item) {
-        element = element_list_item->element;
+      for (i = 0; i < physical_entity->n_elements; i++) {
+        element = &mesh->element[physical_entity->element[i]];
         for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
           w = mesh_integration_weight(mesh, element, v);
 

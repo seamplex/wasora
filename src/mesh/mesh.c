@@ -98,7 +98,12 @@ int wasora_instruction_mesh(void *arg) {
       HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
       mesh->element[i].physical_entity = physical_entity;
       if (physical_entity != NULL) {
-        wasora_call(mesh_add_element_to_list(&physical_entity->elements, &mesh->element[i]));
+        if (physical_entity->element == NULL) {
+          physical_entity->element = malloc(physical_entity->n_elements * sizeof(int));
+        }
+// so expensive!
+//        wasora_call(mesh_add_element_to_list(&physical_entity->elements, &mesh->element[i]));
+        physical_entity->element[physical_entity->i_element++] = i;
       }
     }
   }
@@ -150,8 +155,8 @@ int wasora_instruction_mesh(void *arg) {
 // calculamos el volumen (o superficie o longitud) y el centro de masa de las physical entities
   LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
     vol = cog[0] = cog[1] = cog[2] = 0;
-    LL_FOREACH(physical_entity->elements, associated_element) {
-      element = associated_element->element;
+    for (i = 0; i < physical_entity->n_elements; i++) {
+      element = &mesh->element[physical_entity->element[i]];
       for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
         w = mesh_integration_weight(mesh, element, v);
 
@@ -329,10 +334,7 @@ int mesh_free(mesh_t *mesh) {
   mesh->max_first_neighbor_nodes = 1;
 
   LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-    LL_FOREACH_SAFE(physical_entity->elements, item, tmp) {
-      LL_DELETE(physical_entity->elements, item);
-      free(item);
-    }
+    free(physical_entity->element);
   }
   mesh->initialized = 0;
 

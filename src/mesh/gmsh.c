@@ -226,6 +226,15 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             return WASORA_RUNTIME_ERROR;
           }
         }
+        
+        // agregamos uno a la cantidad de elementos asociados a la entidad fisica
+        if (mesh->element[i].tag != NULL && mesh->element[i].tag[0] != 0) {
+          HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
+          if (physical_entity != NULL) {
+            physical_entity->n_elements++;
+          }
+        }
+        
 
         // vemos la dimension del elemento -> la mayor es la de la malla
         if (mesh->element[id].type->dim > bulk_dimensions) {

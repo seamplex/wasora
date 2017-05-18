@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related structured mesh routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2017 jeremy theler
  *
  *  This file is part of wasora.
  *

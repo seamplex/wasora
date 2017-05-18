@@ -93,16 +93,29 @@ int wasora_instruction_mesh(void *arg) {
   
   
   // barremos los elementos y resolvemos la physical entity asociada
+  // esto lo hacemos solo para la primera malla
+  if (wasora_mesh.meshes == mesh) {
+    LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+      if (physical_entity->n_elements != 0) {
+        physical_entity->element = malloc(physical_entity->n_elements * sizeof(int));
+      }
+    }
+  }
+  
+  // TODO: esto esta mezclado!
   for (i = 0; i < mesh->n_elements; i++) {
-    if (mesh->element[i].tag != NULL && mesh->element[i].tag[0] != 0) {
-      HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
-      mesh->element[i].physical_entity = physical_entity;
-      if (physical_entity != NULL) {
-        if (physical_entity->element == NULL) {
-          physical_entity->element = malloc(physical_entity->n_elements * sizeof(int));
-        }
-// so expensive!
-//        wasora_call(mesh_add_element_to_list(&physical_entity->elements, &mesh->element[i]));
+    if (mesh->structured == 0) {
+      if (mesh->element[i].tag != NULL && mesh->element[i].tag[0] != 0) {
+        HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
+        mesh->element[i].physical_entity = physical_entity;
+      } else {
+        physical_entity = NULL;
+      }
+    } else {
+      physical_entity = mesh->element[i].physical_entity;
+    }      
+    if (wasora_mesh.meshes == mesh) {
+      if (physical_entity != NULL && physical_entity->i_element < physical_entity->n_elements) {
         physical_entity->element[physical_entity->i_element++] = i;
       }
     }
@@ -152,26 +165,29 @@ int wasora_instruction_mesh(void *arg) {
     }
   }
   
-// calculamos el volumen (o superficie o longitud) y el centro de masa de las physical entities
-  LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-    vol = cog[0] = cog[1] = cog[2] = 0;
-    for (i = 0; i < physical_entity->n_elements; i++) {
-      element = &mesh->element[physical_entity->element[i]];
-      for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
-        w = mesh_integration_weight(mesh, element, v);
+  // calculamos el volumen (o superficie o longitud) y el centro de masa de las physical entities
+  // solo para la primera malla
+  if (wasora_mesh.meshes == mesh) {
+    LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+      vol = cog[0] = cog[1] = cog[2] = 0;
+      for (i = 0; i < physical_entity->n_elements; i++) {
+        element = &mesh->element[physical_entity->element[i]];
+        for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
+          w = mesh_integration_weight(mesh, element, v);
 
-        for (j = 0; j < element->type->nodes; j++) {
-          vol += w * gsl_vector_get(mesh->fem.h, j);
-          cog[0] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[0];
-          cog[1] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[1];
-          cog[2] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[2];
+          for (j = 0; j < element->type->nodes; j++) {
+            vol += w * gsl_vector_get(mesh->fem.h, j);
+            cog[0] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[0];
+            cog[1] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[1];
+            cog[2] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[2];
+          }
         }
       }
+      physical_entity->volume = vol;
+      physical_entity->cog[0] = cog[0]/vol;
+      physical_entity->cog[1] = cog[1]/vol;
+      physical_entity->cog[2] = cog[2]/vol;
     }
-    physical_entity->volume = vol;
-    physical_entity->cog[0] = cog[0]/vol;
-    physical_entity->cog[1] = cog[1]/vol;
-    physical_entity->cog[2] = cog[2]/vol;
   }
   
   // esto es todo amigos!

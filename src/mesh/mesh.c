@@ -349,9 +349,15 @@ int mesh_free(mesh_t *mesh) {
   
   mesh->max_first_neighbor_nodes = 1;
 
-  LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-    free(physical_entity->element);
+  if (mesh == wasora_mesh.meshes) {
+    LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+      physical_entity->n_elements = 0;
+      physical_entity->i_element = 0;
+      free(physical_entity->element);
+      physical_entity->element = NULL;
+    }
   }
+  
   mesh->initialized = 0;
 
   return WASORA_RUNTIME_OK;

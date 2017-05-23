@@ -64,10 +64,13 @@ mesh_t *wasora_define_mesh(char *name, file_t *file, int bulk_dimensions, int sp
     mesh->expr_uniform_delta_z = &deltas[2];
   }
  
-  // la agregamos al hash
+  // seteamos la principal como la primera
+  if (wasora_mesh.meshes == NULL) {
+    wasora_mesh.main_mesh = mesh;
+  }
+
+  // y la agregamos al hash
   HASH_ADD_KEYPTR(hh, wasora_mesh.meshes, mesh->name, strlen(mesh->name), mesh);
-  // y seteamos la principal como esta
-  wasora_mesh.main_mesh = mesh;
 
   return mesh;
 }

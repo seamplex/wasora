@@ -1,12 +1,12 @@
 % Wasora reference sheet
 % Jeremy Theler
 
-This reference sheet is for [wasora](index.html) v0.5.43-ge98f2f9
+This reference sheet is for [wasora](index.html) v0.5.80-g1a6df88
 .
 
 ~~~
 $ wasora
-wasora v0.5.41-g17ef363 
+wasora v0.5.77-gfed3831+Δ 
 wasora’s an advanced suite for optimization & reactor analysis
 $
 ~~~
@@ -498,7 +498,7 @@ MESH_INTEGRATE { FUNCTION <function> | EXPRESSION <expr> } OVER <physical_entity
 
 
 ~~~wasora
-MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ NO_MESH ] [ FORMAT { gmsh | vtk } ] [ CELL | ] NODE ] [ VECTOR <component_1> <component_2> <component_3> ] [ <scalar_1> ] [ <scalar_2> ] ...
+MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ NO_MESH ] [ FORMAT { gmsh | vtk } ] [ CELLS | ] NODE ] [ VECTOR <component_1> <component_2> <component_3> ] [ <scalar_1> ] [ <scalar_2> ] ...
 ~~~
 
 
@@ -674,6 +674,12 @@ is generated when evaluating any expression within wasora.
 
 A double-precision floating point representaion of the number $\pi$, equal to
 `math.h` 's `M_PI` constant.
+
+
+
+##  `pid`
+
+The UNIX process id of wasora (or the plugin).
 
 
 

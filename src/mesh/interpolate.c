@@ -97,7 +97,12 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
       }
       kd_res_free(presults);
     }
-
+    
+    // fallback: si asi y todo no lo encontramos, le ponemos el nearest
+    if (chosen_element == NULL && nearest_node != NULL) {
+      return f->data_value[nearest_node->id - 1];
+    }
+    
   } else {
 
     for (i = 0; i < m->n_nodes; i++) {

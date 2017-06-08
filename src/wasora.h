@@ -2110,12 +2110,14 @@ struct mesh_t {
     int *l;           // vector con mapeo de indices locales a globales
   } fem;
 
+  physical_entity_t *origin;
   physical_entity_t *left;
   physical_entity_t *right;
   physical_entity_t *front;
-  physical_entity_t *rear;
+  physical_entity_t *back;
   physical_entity_t *bottom;
   physical_entity_t *top;    
+  physical_entity_t *bulk;
   
   UT_hash_handle hh;
 

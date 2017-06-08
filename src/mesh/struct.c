@@ -58,6 +58,8 @@ int mesh_create_structured(mesh_t *mesh) {
     wasora_push_error_message("invalidad number of dimensions '%d'", mesh->bulk_dimensions);
     return WASORA_RUNTIME_ERROR;
   }
+
+  mesh->order = 1;
   
   // evaluamos los ncells, length, etc
   mesh->ncells_x = wasora_evaluate_expression(mesh->expr_ncells_x);
@@ -214,7 +216,7 @@ int mesh_create_structured(mesh_t *mesh) {
   switch (mesh->bulk_dimensions) {
     case 1:
       mesh->n_nodes = (mesh->ncells_x+1);
-      mesh->n_elements = mesh->ncells_x + 2;
+      mesh->n_elements = 1 + mesh->ncells_x + 2;   // el 1 es por el origen
       mesh->max_nodes_per_element = 2;
       mesh->max_faces_per_element = 2;
       mesh->max_first_neighbor_nodes = 3;
@@ -231,7 +233,7 @@ int mesh_create_structured(mesh_t *mesh) {
     break;
     case 2:
       mesh->n_nodes = (mesh->ncells_x+1) * (mesh->ncells_y+1);
-      mesh->n_elements = mesh->ncells_x*mesh->ncells_y + 2*(mesh->ncells_x + mesh->ncells_y);
+      mesh->n_elements = 1 + mesh->ncells_x*mesh->ncells_y + 2*(mesh->ncells_x + mesh->ncells_y);
       mesh->max_nodes_per_element = 4;
       mesh->max_faces_per_element = 4;
       mesh->max_first_neighbor_nodes = 9;
@@ -251,7 +253,7 @@ int mesh_create_structured(mesh_t *mesh) {
     break;
     case 3:
       mesh->n_nodes = (mesh->ncells_x+1) * (mesh->ncells_y+1) * (mesh->ncells_z+1);
-      mesh->n_elements = mesh->ncells_x*mesh->ncells_y*mesh->ncells_z + 2*(mesh->ncells_x*mesh->ncells_y + mesh->ncells_y*mesh->ncells_z + mesh->ncells_x*mesh->ncells_z);
+      mesh->n_elements = 1 + mesh->ncells_x*mesh->ncells_y*mesh->ncells_z + 2*(mesh->ncells_x*mesh->ncells_y + mesh->ncells_y*mesh->ncells_z + mesh->ncells_x*mesh->ncells_z);
       mesh->max_nodes_per_element = 8;
       mesh->max_faces_per_element = 6;
       mesh->max_first_neighbor_nodes = 27;
@@ -279,21 +281,31 @@ int mesh_create_structured(mesh_t *mesh) {
   }    
   
   // entidades fisicas de prepo
+  mesh->origin = wasora_define_physical_entity("origin", 0, mesh, 0, NULL, NULL, 0);
+  
   mesh->left =   wasora_define_physical_entity("left",   0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_left);
   mesh->right =  wasora_define_physical_entity("right",  0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_right);
   if (mesh->bulk_dimensions > 1) {
     mesh->front =  wasora_define_physical_entity("front",  0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_front);
-    mesh->rear =   wasora_define_physical_entity("back",   0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_rear);
+    mesh->back =   wasora_define_physical_entity("back",   0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_rear);
   }
   if (mesh->bulk_dimensions > 2) {
     mesh->bottom = wasora_define_physical_entity("bottom", 0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_bottom);
     mesh->top =    wasora_define_physical_entity("top",    0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_top);
   }
   
+  mesh->bulk = wasora_define_physical_entity("bulk", 0, mesh, mesh->bulk_dimensions, wasora_define_material("bulk"), NULL, 0);
   
   // elementos volumetricos
   mesh->element = calloc(mesh->n_elements, sizeof(element_t));
+
+  // el origen
   i_element = 0;
+  mesh_create_element(&mesh->element[i_element], i_element+1, ELEMENT_TYPE_POINT, mesh->origin);
+  mesh->element[i_element].node[0] = &mesh->node[0];
+  mesh_add_element_to_list(&mesh->node[0].associated_elements, &mesh->element[i_element]);
+  i_element++;
+
   for (k = 0; k < mesh->ncells_z; k++) {
     for (j = 0; j < mesh->ncells_y; j++) {
       for (i = 0; i < mesh->ncells_x; i++) {
@@ -322,6 +334,7 @@ int mesh_create_structured(mesh_t *mesh) {
           }
           
           mesh->element[i_element].node[i_node] = &mesh->node[node_index];
+          mesh->element[i_element].physical_entity = mesh->bulk;
           mesh_add_element_to_list(&mesh->element[i_element].node[i_node]->associated_elements, &mesh->element[i_element]);
         }
                 
@@ -393,14 +406,16 @@ int mesh_create_structured(mesh_t *mesh) {
       switch (mesh->bulk_dimensions) {
         case 1:
           for (i = i_min; i <= i_max; i++) {
-            mesh->element[i].physical_entity = physical_entity;
+            // el 1 es por el origen
+            mesh->element[1 + i].physical_entity = physical_entity;
             physical_entity->n_elements++;
           }
         break;  
         case 2:
           for (i = i_min; i <= i_max; i++) {
             for (j = j_min; j <= j_max; j++) {
-              mesh->element[i + mesh->ncells_x*j].physical_entity = physical_entity;
+              // el 1 es por el origen
+              mesh->element[1 + i + mesh->ncells_x*j].physical_entity = physical_entity;
               physical_entity->n_elements++;
             }
           }
@@ -409,7 +424,8 @@ int mesh_create_structured(mesh_t *mesh) {
           for (i = i_min; i <= i_max; i++) {
             for (j = j_min; j <= j_max; j++) {
               for (k = k_min; k <= k_max; k++) {
-                mesh->element[i + mesh->ncells_x*j + mesh->ncells_x*mesh->ncells_y*k].physical_entity = physical_entity;
+                // el 1 es por el origen
+                mesh->element[1 + i + mesh->ncells_x*j + mesh->ncells_x*mesh->ncells_y*k].physical_entity = physical_entity;
                 physical_entity->n_elements++;
               }
             }
@@ -563,7 +579,7 @@ int mesh_create_structured(mesh_t *mesh) {
               neighbor->cell = &mesh->cell[flat_index(i,j+1,k)];
               neighbor->element = neighbor->cell->element;
             } else {
-              mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->rear);
+              mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->back);
               // en 2d los nodos 2 y 3
               mesh->element[i_element].node[0] = mesh->cell[i_cell].element->node[2];
               mesh_add_element_to_list(&mesh->element[i_element].node[0]->associated_elements, &mesh->element[i_element]);                
@@ -625,7 +641,7 @@ int mesh_create_structured(mesh_t *mesh) {
               neighbor->cell = &mesh->cell[flat_index(i,j,k+1)];
               neighbor->cell->element = neighbor->cell->element;
             } else {
-              mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->bottom);
+              mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->top);
               // los nodos 4 5 6 7
               mesh->element[i_element].node[0] = mesh->cell[i_cell].element->node[4];
               mesh_add_element_to_list(&mesh->element[i_element].node[0]->associated_elements, &mesh->element[i_element]);                

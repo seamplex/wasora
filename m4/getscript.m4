@@ -162,6 +162,10 @@ define([GET_STEP6],[dnl
 # step 6. compile
 echo -n "6. compiling name..."  | tee -a ../../get.log; echo >> ../../get.log
 make >> ../../get.log; echo >> ../../get.log
+# god forbids...
+if [ ! -z "`uname | grep CYGWIN`" ]; then
+  ln -s libs/petsc-petsc_version/arch-linux2-c-opt/lib/libpetsc-petsc_version
+fi
 echo "ok!"
 ])
 

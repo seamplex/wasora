@@ -32,12 +32,12 @@ fi
 
 rm -f get.log
 echo -n "0. checking pre-requisistes..." | tee -a get.log; echo >> get.log
-for i in m4 autoconf xargs gcc git make; do
+for i in m4 make autoconf automake xargs gcc git wget; do
  if ! command_exists $i; then
   echo
   echo "error: $i not installed"
   echo "install the following packages using your favorite package manager:"
-  echo "m4 autoconf gcc git make"
+  echo "m4 make autoconf automake xargs gcc git wget"
   exit 1
  fi
 done
@@ -237,7 +237,7 @@ if test -z "$PETSC_DIR"; then
     cd petsc-petsc_version/
     export PETSC_DIR=$PWD
     export PETSC_ARCH=arch-linux2-c-opt
-    ./configure --download-fblaslapack --with-mpi=0 --with-debugging=0
+    ./configure --download-cblaslapack --with-mpi=0 --with-debugging=0
     make
     make test
     cat >> $HOME/.bashrc << EOF

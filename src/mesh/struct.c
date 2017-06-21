@@ -294,7 +294,7 @@ int mesh_create_structured(mesh_t *mesh) {
     mesh->top =    wasora_define_physical_entity("top",    0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_top);
   }
   
-  mesh->bulk = wasora_define_physical_entity("bulk", 0, mesh, mesh->bulk_dimensions, wasora_define_material("bulk"), NULL, 0);
+//  mesh->bulk = wasora_define_physical_entity("bulk", 0, mesh, mesh->bulk_dimensions, wasora_define_material("bulk"), NULL, 0);
   
   // elementos volumetricos
   mesh->element = calloc(mesh->n_elements, sizeof(element_t));
@@ -354,11 +354,7 @@ int mesh_create_structured(mesh_t *mesh) {
       sprintf(physical_entity->name, "%s-%d", physical_entity->material->name, physical_entity->id);
     }
     // si no tiene condicion de contorno se la asignamos a los elementos
-    if (physical_entity->bc_type_string == NULL &&
-        physical_entity->bc_type_math == 0 &&
-        physical_entity->bc_type_phys == 0 &&
-        physical_entity->struct_bc_direction == structured_direction_undefined) {
-      
+    if (physical_entity->material != NULL) {      
       if (physical_entity->dimension == 0) {
         physical_entity->dimension = mesh->bulk_dimensions; 
       }

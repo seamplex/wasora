@@ -9,29 +9,10 @@ The documentation of wasora is contained in a set of files that act as a source 
 
 ## Have pandoc support wasora
 
-From <https://bakerjd99.wordpress.com/2012/09/20/pandoc-based-j-syntax-highlighting/> and tweaked a little bit.
+You're in luck.  This gets much easier in the dev version of
+pandoc (to be released eventually as 2.0); you can just use
+a command line option --syntax-defintion=FILE.
 
-    # apt-get install cabal-install haskell-platform
-    $ cabal update
-    $ cabal install cabal-install
-    $ ~/.cabal/bin/cabal update
-    $ ~/.cabal/bin/cabal install pandoc
-    $ ~/.cabal/bin/pandoc --version
-    $ ~/.cabal/bin/cabal install base regex-posix hxt
-    $ ~/.cabal/bin/cabal unpack highlighting-kate
-    $ cd highlighting-kate-0.6.3
-    $ cp $HOME/.kde/share/apps/katepart/syntax/wasora.xml xml
-    $ cp /usr/share/kde4/apps/katepart/syntax/language.dtd xml
-    $ ~/.cabal/bin/cabal configure
-    $ ~/.cabal/bin/cabal build
-    $ runhaskell ParseSyntaxFiles.hs xml
-    $ ~/.cabal/bin/cabal build
-    $ ~/.cabal/bin/cabal copy
-    $ ~/.cabal/bin/cabal install --force-reinstalls
-    $ cd ..
-    $ ~/.cabal/bin/cabal unpack pandoc
-    $ cd pandoc-1.19.1
-    $ ~/.cabal/bin/cabal configure
-    $ ~/.cabal/bin/cabal build
-    $ ~/.cabal/bin/cabal install
-    $ ~/.cabal/bin/pandoc --version
+You might try getting a binary from
+pandoc-extras/pandoc-nightly, but be aware that there are
+many other changes as well.

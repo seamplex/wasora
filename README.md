@@ -174,7 +174,7 @@ Almost any single feature included in the code was needed at least once by [the 
 [milonga](https://www.seamplex.com/milonga)
 :   solves the multigroup neutron diffusion equation
 
-[waspy](https://bitbucket.org/wasora/wasora/waspy)
+[waspy](https://bitbucket.org/seamplex/waspy)
 :   runs Python code within wasora sharing variables, vectors and matrices
 
 [xdfrrpf](https://bitbucket.org/tenuc/wasora/xdfrrpf)

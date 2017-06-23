@@ -82,7 +82,7 @@ int wasora_instruction_mesh(void *arg) {
       first_neighbor_nodes = 1;  // el nodo mismo
       LL_FOREACH(mesh->node[j].associated_elements, associated_element) {
         if (associated_element->element->type->dim == mesh->bulk_dimensions) {
-          first_neighbor_nodes += (associated_element->element->type->nodes) - 1; // menos el nodo mismo
+          first_neighbor_nodes += (associated_element->element->type->nodes) - (associated_element->element->type->nodes_per_face);
         }
       }
       if (first_neighbor_nodes > mesh->max_first_neighbor_nodes) {
@@ -141,9 +141,11 @@ int wasora_instruction_mesh(void *arg) {
     }
   }
 
-  wasora_var(wasora_mesh.vars.cells) = (double)mesh->n_cells;
-  wasora_var(wasora_mesh.vars.nodes) = (double)mesh->n_nodes;
-  wasora_var(wasora_mesh.vars.elements) = (double)mesh->n_elements;
+  if (wasora_mesh.main_mesh == mesh) {
+    wasora_var(wasora_mesh.vars.cells) = (double)mesh->n_cells;
+    wasora_var(wasora_mesh.vars.nodes) = (double)mesh->n_nodes;
+    wasora_var(wasora_mesh.vars.elements) = (double)mesh->n_elements;
+  }
   
   // barremos todas las funciones, si encontramos alguna que tenga una malla la linkeamos a esta
   HASH_ITER(hh, wasora.functions, function, tmp_function) {

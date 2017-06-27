@@ -105,15 +105,15 @@ double mesh_three_node_line_dhdr(int k, int m, gsl_vector *arg) {
   switch(k) {
     case 0:
       if (m == 0) {
-        return 0.5*(1-r) - 0.5*r;
+        return r+0.5;
       }
       break;
     case 1:
       if (m == 0) {
-        return 0.5*(1+r) + 0.5*r;
+        return r-0.5;
       }
       break;
-    case 3:
+    case 2:
       if (m == 0) {
         return -2*r;
       }

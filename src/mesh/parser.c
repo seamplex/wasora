@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related parser routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -425,7 +425,7 @@ int wasora_mesh_parse_line(char *line) {
       }
       
       if (mesh_integrate->mesh == NULL) {
-        if ((mesh_integrate->mesh = wasora_mesh.meshes) == NULL) {
+        if ((mesh_integrate->mesh = wasora_mesh.main_mesh) == NULL) {
           wasora_push_error_message("no MESH defined for MESH_INTEGRATE");
           return WASORA_PARSER_ERROR;
         }

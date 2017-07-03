@@ -228,10 +228,12 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         }
         
         // agregamos uno a la cantidad de elementos asociados a la entidad fisica
-        if (mesh->element[i].tag != NULL && mesh->element[i].tag[0] != 0) {
-          HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
-          if (physical_entity != NULL) {
-            physical_entity->n_elements++;
+        if (mesh == wasora_mesh.main_mesh) {
+          if (mesh->element[i].tag != NULL && mesh->element[i].tag[0] != 0) {
+            HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
+            if (physical_entity != NULL) {
+              physical_entity->n_elements++;
+            }
           }
         }
         
@@ -559,6 +561,23 @@ int mesh_gmsh_write_mesh(mesh_t *mesh, FILE *file) {
   
   int i, j, n;
   physical_entity_t *physical_entity;
+
+  // tenemos que contar las physical entities primero
+  n = 0;
+  LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+    n++;
+  }
+  if (n != 0) {
+    fprintf(file, "$PhysicalNames\n");
+    fprintf(file, "%d\n", n);
+  
+    // y despues barrerlas
+    LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+      fprintf(file, "%d %d \"%s\"\n", physical_entity->dimension, physical_entity->id, physical_entity->name);
+    }
+    fprintf(file, "$EndPhysicalNames\n");
+  }
+  
   
   fprintf(file, "$Nodes\n");
   fprintf(file, "%d\n", mesh->n_nodes);
@@ -590,20 +609,6 @@ int mesh_gmsh_write_mesh(mesh_t *mesh, FILE *file) {
     fprintf(file, "\n");
   }
   fprintf(file, "$EndElements\n");
-
-  fprintf(file, "$PhysicalNames\n");
-  // tenemos que contarlas primero
-  n = 0;
-  LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-    n++;
-  }
-  fprintf(file, "%d\n", n);
-  
-  // y despues barrerlas
-  LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-    fprintf(file, "%d %d \"%s\"\n", physical_entity->dimension, physical_entity->id, physical_entity->name);
-  }
-  fprintf(file, "$EndPhysicalNames\n");
   
   return WASORA_RUNTIME_OK;
   

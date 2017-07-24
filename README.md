@@ -37,6 +37,7 @@ The code heavily relies on the numerical routines provided by the [GNU Scientifi
 Open a terminal in any GNU/Linux box (may be a VirtualBox box) and run:
 
 ```
+sudo apt-get install curl m4 make autoconf automake gcc git libgsl-dev libsundials-serial-dev wget findutils
 curl https://www.seamplex.com/wasora/get.sh | sh
 ```
 

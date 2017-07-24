@@ -12,7 +12,7 @@ define([GET_HEADER],[dnl
 
 # loosely based on docker’s get.sh script at https://get.docker.com/
 # jeremy theler
-[#] esyscmd([git describe])
+# esyscmd([git describe])
 
 # check for needed tools
 command_exists() {
@@ -37,7 +37,7 @@ for i in m4 make autoconf automake xargs gcc git wget; do
   echo
   echo "error: $i not installed"
   echo "install the following packages using your favorite package manager:"
-  echo "m4 make autoconf automake xargs gcc git wget"
+  echo "m4 make autoconf automake gcc git libgsl-dev libsundials-serial-dev wget findutils"
   exit 1
  fi
 done

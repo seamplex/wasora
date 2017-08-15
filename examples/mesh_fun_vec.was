@@ -1,7 +1,7 @@
 # read the mesh 'square.msh' and name it "square"
 MESH NAME square FILE_PATH square.msh DIMENSIONS 2
 
-# define a function defined over the mesh whose independent values
+# define a function defined over the mesh whose dependent values
 # are given by the contents of the vector "in" (the size is
 # automatically computed from the number of cells in the mesh)
 # to define f at the nodes, replace CELLS with NODES

@@ -323,6 +323,14 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
 
         HASH_FIND(hh_name, wasora_mesh.physical_entities_by_name, name, strlen(name), physical_entity);
         if (physical_entity == NULL) {
+          LL_FOREACH(wasora_mesh.physical_entities_by_id, physical_entity) {
+            if (physical_entity->id == id) {
+              break;
+            }
+          }
+        }        
+        
+        if (physical_entity == NULL) {
           // creamos una de prepo
           physical_entity = wasora_define_physical_entity(name, id, mesh, dimension, NULL, NULL, 0);
         } else {

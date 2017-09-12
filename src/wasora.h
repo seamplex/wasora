@@ -1693,6 +1693,7 @@ extern  double wasora_get_function_value(const char *name, double *arg);
 typedef struct physical_property_t physical_property_t;
 typedef struct property_data_t property_data_t;
 typedef struct material_t material_t;
+typedef struct material_list_item_t material_list_item_t;
 typedef struct mesh_post_t mesh_post_t;
 typedef struct mesh_post_dist_t mesh_post_dist_t;
 typedef struct mesh_fill_vector_t mesh_fill_vector_t;
@@ -1751,6 +1752,11 @@ struct material_t {
   UT_hash_handle hh;
 };
 
+struct material_list_item_t {
+  material_t *material;
+  material_list_item_t *next;
+};
+  
 struct physical_property_t {
   char *name;
   property_data_t *property_datums;
@@ -1817,6 +1823,7 @@ struct node_t {
   int *index;        // indice del vector incognita para cada uno de los grados de libertad
   
   element_list_item_t *associated_elements;
+  material_list_item_t *materials_list;
 };
 
 
@@ -2223,6 +2230,7 @@ extern int mesh_alloc_gauss(gauss_t *, element_type_t *, int);
 extern int mesh_init_shape_at_gauss(gauss_t *, element_type_t *);
 extern int mesh_create_element(element_t *, int, int, physical_entity_t *);
 extern int mesh_add_element_to_list(element_list_item_t **, element_t *);
+extern int mesh_add_material_to_list(material_list_item_t **, material_t *);
 extern int mesh_compute_element_barycenter(element_t *, double []);
 extern int mesh_node_indexes(mesh_t *, int);
 extern int mesh_compute_local_node_index(element_t *, int);

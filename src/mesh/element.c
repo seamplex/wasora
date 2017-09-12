@@ -264,6 +264,25 @@ int mesh_add_element_to_list(element_list_item_t **list, element_t *element) {
   
 }
 
+int mesh_add_material_to_list(material_list_item_t **list, material_t *material) {
+  
+  material_list_item_t *item;
+  
+  // solo agregamos el material si es que no esta en la lista
+  LL_FOREACH(*list, item) {
+    if (item->material == material) {
+      return WASORA_RUNTIME_OK;
+    }
+  }
+  
+  item = calloc(1, sizeof(material_list_item_t));
+  item->material = material;
+  LL_APPEND(*list, item);
+  
+  return WASORA_RUNTIME_OK;
+  
+}
+
 int mesh_compute_element_barycenter(element_t *element, double barycenter[]) {
   
   int j;

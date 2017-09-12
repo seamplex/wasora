@@ -231,7 +231,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         if (mesh == wasora_mesh.main_mesh) {
           if (mesh->element[i].tag != NULL && mesh->element[i].tag[0] != 0) {
             HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
-            if (physical_entity != NULL) {
+            if ((mesh->element[i].physical_entity = physical_entity) != NULL) {
               physical_entity->n_elements++;
             }
           }
@@ -269,6 +269,10 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           }
           mesh->element[id].node[j] = &mesh->node[node-1];
           mesh_add_element_to_list(&mesh->element[id].node[j]->associated_elements, &mesh->element[id]);
+          // habria que ver si la dimension es la del problema?
+          if (mesh->element[id].physical_entity != NULL && mesh->element[id].physical_entity->material != NULL) {
+            mesh_add_material_to_list(&mesh->element[id].node[j]->materials_list, mesh->element[id].physical_entity->material);
+          }
         }
       }
 

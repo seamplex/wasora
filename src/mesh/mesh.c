@@ -102,18 +102,11 @@ int wasora_instruction_mesh(void *arg) {
     }
   }
   
-  // TODO: esto esta mezclado!
-  for (i = 0; i < mesh->n_elements; i++) {
-    if (mesh->structured == 0) {
-      if (mesh->element[i].tag != NULL && mesh->element[i].tag[0] != 0) {
-        HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
-        mesh->element[i].physical_entity = physical_entity;
-      } else {
-        physical_entity = NULL;
-      }
-    } else {
-      physical_entity = mesh->element[i].physical_entity;
-    }      
+  // TODO: esto esta mezclado! (por que?)
+  // no se si se tiene que hacer siempre, capaz se puede meter dentro del gmsh_read o
+  // o del generador de structured
+  for (i = 0; i < mesh->n_elements; i++) { 
+    physical_entity = mesh->element[i].physical_entity;
     if (wasora_mesh.meshes == mesh) {
       if (physical_entity != NULL && physical_entity->i_element < physical_entity->n_elements) {
         physical_entity->element[physical_entity->i_element++] = i;

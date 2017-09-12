@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -263,7 +263,8 @@ element_t *mesh_find_element(mesh_t *mesh, const double *x) {
 int mesh_free(mesh_t *mesh) {
 
   physical_entity_t *physical_entity;
-  element_list_item_t *item, *tmp;
+  element_list_item_t *element_item, *element_tmp;
+  material_list_item_t *material_item, *material_tmp;
   int i, j, k;
 
   if (mesh->cell != NULL) {
@@ -295,10 +296,14 @@ int mesh_free(mesh_t *mesh) {
       free(mesh->element[i].tag);
       if (mesh->element[i].node != NULL) {
         for (j = 0; j < mesh->element[i].type->nodes; j++) {
-          LL_FOREACH_SAFE(mesh->element[i].node[j]->associated_elements, item, tmp) {
-            LL_DELETE(mesh->element[i].node[j]->associated_elements, item);
-            free(item);
-          }          
+          LL_FOREACH_SAFE(mesh->element[i].node[j]->associated_elements, element_item, element_tmp) {
+            LL_DELETE(mesh->element[i].node[j]->associated_elements, element_item);
+            free(element_item);
+          }
+          LL_FOREACH_SAFE(mesh->element[i].node[j]->materials_list, material_item, material_tmp) {
+            LL_DELETE(mesh->element[i].node[j]->materials_list, material_item);
+            free(material_item);
+          }
         }
         free(mesh->element[i].node);
       }

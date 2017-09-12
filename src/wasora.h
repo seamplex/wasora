@@ -1792,36 +1792,36 @@ struct {
     var_t *arr_x[3];   // x, y y z en un array de tamanio 3
     vector_t *vec_x;
     var_t *eps;
-    
+
     var_t *nodes;
     var_t *cells;
     var_t *elements;
   } vars;
-  
+
   // esto deberia ir en cada malla porque va a tener informacion sobre los puntos de gauss
   // en verdad deberia ir sobre un espacio fem, no sobre una malla
   element_type_t *element_type;
-  
+
   physical_entity_t *physical_entities;            // por orden de aparicion
   physical_entity_t *physical_entities_by_name;
   physical_entity_t *physical_entities_by_id;
-  
+
   material_t *materials;
   physical_property_t *physical_properties;
   mesh_post_t *posts;
   mesh_fill_vector_t *fill_vectors;
   mesh_find_max_t *find_maxs;
   mesh_integrate_t *integrates;
-  
+
 } wasora_mesh;
 
 // nodos
 struct node_t {
   int id;
-  
+
   double x[3];       // coordenadas espaciales del nodo
   int *index;        // indice del vector incognita para cada uno de los grados de libertad
-  
+
   element_list_item_t *associated_elements;
   material_list_item_t *materials_list;
 };

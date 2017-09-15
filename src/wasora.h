@@ -1824,6 +1824,7 @@ struct node_t {
 
   element_list_item_t *associated_elements;
   material_list_item_t *materials_list;
+  material_t *master_material;
 };
 
 

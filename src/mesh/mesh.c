@@ -33,6 +33,8 @@ int wasora_instruction_mesh(void *arg) {
   function_t *function, *tmp_function;
   element_list_item_t *associated_element;
   element_t *element;
+  material_t *material;
+  material_list_item_t *material_item;
   int i, j, d, v;
   int first_neighbor_nodes;
   double w, vol;
@@ -69,6 +71,18 @@ int wasora_instruction_mesh(void *arg) {
       }
       if (mesh->node[j].x[d] > x_max[d]) {
         x_max[d] = mesh->bounding_box_max.x[d] = mesh->node[j].x[d];
+      }
+    }
+    
+    // si hay muchos materiales asociados al nodo, buscamos el master
+    // que es el primer material definido en el input
+    if (mesh->node[j].materials_list != NULL) {
+      for (material = wasora_mesh.materials; mesh->node[j].master_material == NULL && material != NULL; material = material->hh.next) {
+        LL_FOREACH(mesh->node[j].materials_list, material_item) {
+          if (material_item->material == material) {
+            mesh->node[j].master_material = material;
+          }
+        }
       }
     }
   }

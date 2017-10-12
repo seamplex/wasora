@@ -213,6 +213,8 @@ int wasora_mesh_parse_line(char *line) {
       }
       free(mesh_name);
       
+      return WASORA_PARSER_OK;
+      
 
 // --- MESH_POST ------------------------------------------------------
     } else if (strcasecmp(token, "MESH_POST") == 0) {

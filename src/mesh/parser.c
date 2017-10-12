@@ -199,6 +199,21 @@ int wasora_mesh_parse_line(char *line) {
 
       return WASORA_PARSER_OK;
 
+// --- MESH_MAIN ------------------------------------------------------
+    } else if (strcasecmp(token, "MESH_MAIN") == 0) {
+      char *mesh_name;
+      
+///kw+MESH_MAIN+usage MESH_MAIN
+///kw+MESH_MAIN+usage [ <mesh_identifier> ]
+      wasora_call(wasora_parser_string(&mesh_name));
+      if ((wasora_mesh.main_mesh = wasora_get_mesh_ptr(mesh_name)) == NULL) {
+        wasora_push_error_message("unknown mesh '%s'", mesh_name);
+        free(mesh_name);
+        return WASORA_PARSER_ERROR;
+      }
+      free(mesh_name);
+      
+
 // --- MESH_POST ------------------------------------------------------
     } else if (strcasecmp(token, "MESH_POST") == 0) {
 

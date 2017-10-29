@@ -43,8 +43,8 @@ int mesh_twentyseven_node_hexaedron_init(void) {
   element_type->nodes_per_face = 9;
   element_type->h = mesh_twentyseven_node_hexahedron_h;
   element_type->dhdr = mesh_twentyseven_node_quad_dhdr;
-  element_type->point_in_element = mesh_point_in_hexahedron;   //Capas que cambia,
-  element_type->element_volume = mesh_hexahedron_vol;//Capas que cambia,
+  element_type->point_in_element = mesh_point_in_hexahedron;
+  element_type->element_volume = mesh_hexahedron_vol;
 
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
@@ -553,66 +553,5 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
   return 0;
 
 
-}
-
-
-
-int mesh_point_in_quadrangle(element_t *element, const double *x) {
-
-/*
-  double z1, z2, z3;
-
-  z1 = mesh_subtract_cross_2d(element->node[0]->x, element->node[1]->x, x);
-  z2 = mesh_subtract_cross_2d(element->node[1]->x, element->node[2]->x, x);
-  z3 = mesh_subtract_cross_2d(element->node[2]->x, element->node[0]->x, x);
-  
-  if ((GSL_SIGN(z1) == GSL_SIGN(z2) && GSL_SIGN(z2) == GSL_SIGN(z3)) ||
-      (fabs(z1) < 1e-4 && GSL_SIGN(z2) == GSL_SIGN(z3)) ||
-      (fabs(z2) < 1e-4 && GSL_SIGN(z1) == GSL_SIGN(z3)) ||          
-      (fabs(z3) < 1e-4 && GSL_SIGN(z1) == GSL_SIGN(z2)) ) {
-    return 1;
-  }
-  
-  
-  z1 = mesh_subtract_cross_2d(element->node[0]->x, element->node[2]->x, x);
-  z2 = mesh_subtract_cross_2d(element->node[2]->x, element->node[3]->x, x);
-  z3 = mesh_subtract_cross_2d(element->node[3]->x, element->node[0]->x, x);
-
-  if ((GSL_SIGN(z1) == GSL_SIGN(z2) && GSL_SIGN(z2) == GSL_SIGN(z3)) ||
-      (fabs(z1) < 1e-4 && GSL_SIGN(z2) == GSL_SIGN(z3)) ||
-      (fabs(z2) < 1e-4 && GSL_SIGN(z1) == GSL_SIGN(z3)) ||          
-      (fabs(z3) < 1e-4 && GSL_SIGN(z1) == GSL_SIGN(z2)) ) {
-    return 1;
-  }
-  
-  return 0;
-*/
-
-  int i, j;
-
-  element_t triang;
-
-  triang.type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE];
-  triang.node = calloc(triang.type->nodes, sizeof(node_t *));
-
-  for (i = 0; i < element->type->faces; i++) {
-    for (j = 0; j < triang.type->faces; j++) {
-      triang.node[j] = element->node[(i+j) % element->type->faces];
-    }
-    if (mesh_point_in_triangle(&triang, x)) {
-      free(triang.node);
-      return 1;
-    }
-  }
-
-  free(triang.node);
-
-  return 0;
-}
-
-double mesh_quad_vol(element_t *element) {
-  
-  return 0.5*(fabs(mesh_subtract_cross_2d(element->node[0]->x, element->node[1]->x, element->node[2]->x)) +
-              fabs(mesh_subtract_cross_2d(element->node[2]->x, element->node[3]->x, element->node[0]->x)) );
 }
 

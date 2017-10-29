@@ -120,62 +120,85 @@ double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r) {
 
   switch (j) {
     case 0:
-      return 0.25*(1-r)*(1-s);
+      return r*(r+1)*s*(s-1)*t*(t-1)/8.0;
       break;
     case 1:
-      return 0.25*(1+r)*(1-s);
+      return r*(r+1)*(1-s*s)*t*(t-1)/4.0;
       break;
     case 2:
-      return 0.25*(1+r)*(1+s);
+      return r*(r+1)*s*(s+1)*t*(t-1)/8.0;
       break;
     case 3:
-      return 0.25*(1-r)*(1+s);
+      return r*(r+1)*s*(s-1)*(1-t*t)/4.0;
       break;
     case 4:
+      return r*(r+1)*(1-s*s)*(1-t*t)/2.0;
       break;
     case 5:
+      return r*(r+1)*s*(s+1)*(1-t*t)/4.0;
       break;
     case 6:
+      return r*(r+1)*s*(s-1)*t*(t+1)/8.0;
       break;
     case 7:
+      return r*(r+1)*(1-s*s)*t*(t+1)/4.0;
       break;
     case 8:
+      return r*(r+1)*s*(s+1)*t*(t+1)/8.0;
       break;
     case 9:
+      return (1-r*r)*s*(s-1)*t*(t-1)/4.0;
       break;
     case 10:
+      return (1-r*r)*(1-s*s)*t*(t-1)/2.0;
       break;
     case 11:
+      return (1-r*r)*s*(s+1)*t*(t-1)/4.0;
       break;
     case 12:
+      return (1-r*r)*s*(s-1)*(1-t*t)/2.0;
       break;
     case 13:
+      return (1-r*r)*(1-s*s)*(1-t*t);
       break;
     case 14:
+      return (1-r*r)*s*(s+1)*(1-t*t)/2.0;
       break;
     case 15:
+      return (1-r*r)*s*(s-1)*t*(t+1)/4.0;
       break;
     case 16:
+      return (1-r*r)*(1-s*s)*t*(t+1)/2.0;
       break;
     case 17:
+      return (1-r*r)*s*(s+1)*t*(t+1)/4.0;
       break;
     case 18:
+      return r*(r-1)*s*(s-1)*t*(t-1)/8.0;
       break;
     case 19:
+      return r*(r-1)*(1-s*s)*t*(t-1)/4.0;
       break;
     case 20:
+      return r*(r-1)*s*(s+1)*t*(t-1)/8.0;
       break;
     case 21:
+      return r*(r-1)*s*(s-1)*(1-t*t)/4.0;
       break;
     case 22:
+      return r*(r-1)*(1-s*s)*(1-t*t)/2.0;
       break;
     case 23:
+      return r*(r-1)*s*(s+1)*(1-t*t)/4.0;
       break;
     case 24:
+      return r*(r-1)*s*(s-1)*t*(t+1)/8.0;
       break;
     case 25:
+      return r*(r-1)*(1-s*s)*t*(t+1)/4.0;
       break;
     case 26:
+      return r*(r-1)*s*(s+1)*t*(t+1)/8.0;
       break;
   }
 
@@ -183,43 +206,348 @@ double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r) {
 
 }
 
-double mesh_four_node_quad_dhdr(int j, int m, gsl_vector *gsl_r) {
+double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
   double r;
   double s;
+  double t;
 
   r = gsl_vector_get(gsl_r, 0);
   s = gsl_vector_get(gsl_r, 1);
+  t = gsl_vector_get(gsl_r, 2);
 
-  switch(j) {
+  switch (j) {
     case 0:
-      if (m == 0) {
-        return -0.25*(1-s);
-      } else {
-        return -0.25*(1-r);
+      switch(m) {
+        case 0:
+          return (2*r+1)*s*(s-1)*t*(t-1)/8.0;
+        break;
+        case 1:
+          return r*(r+1)*(2*s-1)*t*(t-1)/8.0;
+        break;
+        case 2:
+          return r*(r+1)*s*(s-1)*(2*t-1)/8.0;
+        break;
       }
-      break;
+    break;
     case 1:
-      if (m == 0) {
-        return 0.25*(1-s);
-      } else {
-        return -0.25*(1+r);
+      switch(m) {
+        case 0:
+          return (2*r+1)*(1-s*s)*t*(t-1)/4.0;
+        break;
+        case 1:
+          return -r*(r+1)*s*t*(t-1)/2.0;
+        break;
+        case 2:
+          return r*(r+1)*(1-s*s)*(2*t-1)/4.0;
+        break;
       }
-      break;
+    break;
     case 2:
-      if (m == 0) {
-        return 0.25*(1+s);
-      } else {
-        return 0.25*(1+r);
+      switch(m) {
+        case 0:
+          return (2*r+1)*s*(s+1)*t*(t-1)/8.0;
+        break;
+        case 1:
+          return r*(r+1)*(2*s+1)*t*(t-1)/8.0;
+        break;
+        case 2:
+          return r*(r+1)*s*(s+1)*(2*t-1)/8.0;
+        break;
       }
-      break;
+    break;
     case 3:
-      if (m == 0) {
-        return -0.25*(1+s);
-      } else {
-        return 0.25*(1-r);
+      switch(m) {
+        case 0:
+          return (2*r+1)*s*(s-1)*(1-t*t)/4.0;
+        break;
+        case 1:
+          return r*(r+1)*(2*s-1)*(1-t*t)/4.0;
+        break;
+        case 2:
+          return -r*(r+1)*s*(s-1)*t/2.0;
+        break;
       }
-      break;
-
+    break;
+    case 4:
+      switch(m) {
+        case 0:
+          return (2*r+1)*(1-s*s)*(1-t*t)/2.0;
+        break;
+        case 1:
+          return -r*(r+1)*s*(1-t*t);
+        break;
+        case 2:
+          return -r*(r+1)*(1-s*s)*t;
+        break;
+      }
+    break;
+    case 5:
+      switch(m) {
+        case 0:
+          return (2*r+1)*s*(s+1)*(1-t*t)/4.0;
+        break;
+        case 1:
+          return r*(r+1)*(2*s+1)*(1-t*t)/4.0;
+        break;
+        case 2:
+          return -r*(r+1)*s*(s+1)*t/2.0;
+        break;
+      }
+    break;
+    case 6:
+      switch(m) {
+        case 0:
+          return (2*r+1)*s*(s-1)*t*(t+1)/8.0;
+        break;
+        case 1:
+          return r*(r+1)*(2*s-1)*t*(t+1)/8.0;
+        break;
+        case 2:
+          return r*(r+1)*s*(s-1)*(2*t+1)/8.0;
+        break;
+      }
+    break;
+    case 7:
+      switch(m) {
+        case 0:
+          return (2*r+1)*(1-s*s)*t*(t+1)/4.0;
+        break;
+        case 1:
+          return -r*(r+1)*s*t*(t+1)/2.0;
+        break;
+        case 2:
+          return r*(r+1)*(1-s*s)*(2*t+1)/4.0;
+        break;
+      }
+    case 8:
+      switch(m) {
+        case 0:
+          return (2*r+1)*s*(s+1)*t*(t+1)/8.0;
+        break;
+        case 1:
+          return r*(r+1)*(2*s+1)*t*(t+1)/8.0;
+        break;
+        case 2:
+          return r*(r+1)*s*(s+1)*(2*t+1)/8.0;
+        break;
+      }
+    case 9:
+      switch(m) {
+        case 0:
+          return -r*s*(s-1)*t*(t-1)/2.0;
+        break;
+        case 1:
+          return (1-r*r)*(2*s-1)*t*(t-1)/4.0;
+        break;
+        case 2:
+          return (1-r*r)*s*(s-1)*(2*t-1)/4.0;
+        break;
+      }
+    case 10:
+      switch(m) {
+        case 0:
+          return -r*(1-s*s)*t*(t-1);
+        break;
+        case 1:
+          return -(1-r*r)*s*t*(t-1);
+        break;
+        case 2:
+          return (1-r*r)*(1-s*s)*(2*t-1)/2.0;
+        break;
+      }
+    case 11:
+      switch(m) {
+        case 0:
+          return -r*s*(s+1)*t*(t-1)/2.0;
+        break;
+        case 1:
+          return (1-r*r)*(2*s+1)*t*(t-1)/4.0;
+        break;
+        case 2:
+          return (1-r*r)*s*(s+1)*(2*t-1)/4.0;
+        break;
+      }
+    case 12:
+      switch(m) {
+        case 0:
+          return -r*s*(s-1)*(1-t*t);
+        break;
+        case 1:
+          return (1-r*r)*(2*s-1)*(1-t*t)/2.0;
+        break;
+        case 2:
+          return -(1-r*r)*s*(s-1)*t;
+        break;
+      }
+    case 13:
+      switch(m) {
+        case 0:
+          return -2*r*(1-s*s)*(1-t*t);
+        break;
+        case 1:
+          return -2*(1-r*r)*s*(1-t*t);
+        break;
+        case 2:
+          return -2*(1-r*r)*(1-s*s)*t;
+        break;
+      }
+    case 14:
+      switch(m) {
+        case 0:
+          return -r*s*(s+1)*(1-t*t);
+        break;
+        case 1:
+          return (1-r*r)*(2*s+1)*(1-t*t)/2.0;
+        break;
+        case 2:
+          return -(1-r*r)*s*(s+1)*t;
+        break;
+      }
+    case 15:
+      switch(m) {
+        case 0:
+          return -r*s*(s-1)*t*(t+1)/2.0;
+        break;
+        case 1:
+          return (1-r*r)*(2*s-1)*t*(t+1)/4.0;
+        break;
+        case 2:
+          return (1-r*r)*s*(s-1)*(2*t+1)/4.0;
+        break;
+      }
+    case 16:
+      switch(m) {
+        case 0:
+          return -r*(1-s*s)*t*(t+1);
+        break;
+        case 1:
+          return -(1-r*r)*s*t*(t+1);
+        break;
+        case 2:
+          return (1-r*r)*(1-s*s)*(2*t+1)/2.0;
+        break;
+      }
+    case 17:
+      switch(m) {
+        case 0:
+          return -r*s*(s+1)*t*(t+1)/2.0;
+        break;
+        case 1:
+          return (1-r*r)*(2*s+1)*t*(t+1)/4.0;
+        break;
+        case 2:
+          return (1-r*r)*s*(s+1)*(2*t+1)/4.0;
+        break;
+      }
+    case 18:
+      switch(m) {
+        case 0:
+          return (2*r-1)*s*(s-1)*t*(t-1)/8.0;
+        break;
+        case 1:
+          return r*(r-1)*(2*s-1)*t*(t-1)/8.0;
+        break;
+        case 2:
+          return r*(r-1)*s*(s-1)*(2*t-1)/8.0;
+        break;
+      }
+    case 19:
+      switch(m) {
+        case 0:
+          return (2*r-1)*(1-s*s)*t*(t-1)/4.0;
+        break;
+        case 1:
+          return -r*(r-1)*s*t*(t-1)/2.0;
+        break;
+        case 2:
+          return r*(r-1)*(1-s*s)*(2*t-1)/4.0;
+        break;
+      }
+    case 20:
+      switch(m) {
+        case 0:
+          return (2*r-1)*s*(s+1)*t*(t-1)/8.0;
+        break;
+        case 1:
+          return r*(r-1)*(2*s+1)*t*(t-1)/8.0;
+        break;
+        case 2:
+          return r*(r-1)*s*(s+1)*(2*t-1)/8.0;
+        break;
+      }
+    case 21:
+      switch(m) {
+        case 0:
+          return (2*r-1)*s*(s-1)*(1-t*t)/4.0;
+        break;
+        case 1:
+          return r*(r-1)*(2*s-1)*(1-t*t)/4.0;
+        break;
+        case 2:
+          return -r*(r-1)*s*(s-1)*t/2.0;
+        break;
+      }
+    case 22:
+      switch(m) {
+        case 0:
+          return (2*r-1)*(1-s*s)*(1-t*t)/2.0;
+        break;
+        case 1:
+          return -r*(r-1)*s*(1-t*t);
+        break;
+        case 2:
+          return -r*(r-1)*(1-s*s)*t;
+        break;
+      }
+    case 23:
+      switch(m) {
+        case 0:
+          return (2*r-1)*s*(s+1)*(1-t*t)/4.0;
+        break;
+        case 1:
+          return r*(r-1)*(2*s+1)*(1-t*t)/4.0;
+        break;
+        case 2:
+          return -r*(r-1)*s*(s+1)*t/2.0;
+        break;
+      }
+    case 24:
+      switch(m) {
+        case 0:
+          return (2*r-1)*s*(s-1)*t*(t+1)/8.0;
+        break;
+        case 1:
+          return r*(r-1)*(2*s-1)*t*(t+1)/8.0;
+        break;
+        case 2:
+          return r*(r-1)*s*(s-1)*(2*t+1)/8.0;
+        break;
+      }
+    case 25:
+      switch(m) {
+        case 0:
+          return (2*r-1)*(1-s*s)*t*(t+1)/4.0;
+        break;
+        case 1:
+          return -r*(r-1)*s*t*(t+1)/2.0;
+        break;
+        case 2:
+          return r*(r-1)*(1-s*s)*(2*t+1)/4.0;
+        break;
+      }
+    case 26:
+      switch(m) {
+        case 0:
+          return (2*r-1)*s*(s+1)*t*(t+1)/8.0;
+        break;
+        case 1:
+          return r*(r-1)*(2*s+1)*t*(t+1)/8.0;
+        break;
+        case 2:
+          return r*(r-1)*s*(s+1)*(2*t+1)/8.0;
+        break;
+      }
+    break;
   }
 
   return 0;

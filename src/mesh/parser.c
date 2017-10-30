@@ -268,6 +268,7 @@ int wasora_mesh_parse_line(char *line) {
           mesh_post->centering = centering_nodes;
 
 ///kw+MESH_POST+usage [ NO_PHYSICAL_ENTITIES ]
+        } else if (strcasecmp(token, "NO_PHYSICAL_ENTITIES") == 0) {
           mesh_post->no_physical_entities = 1;
           
 ///kw+MESH_POST+usage [ VECTOR <component_1> <component_2> <component_3> ]

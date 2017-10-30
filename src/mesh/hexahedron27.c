@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related hexahedron element routines
  *
- *  Copyright (C) 2014--2017 jeremy theler
+ *  Copyright (C) 2014--2017 C.P. Camusso.
  *
  *  This file is part of wasora.
  *
@@ -108,7 +108,39 @@ int mesh_twentyseven_node_hexaedron_init(void) {
   
   return WASORA_RUNTIME_OK;
 }
+/*
+Reference https://www.code-aster.org/V2/doc/v11/en/man_r/r3/r3.01.01.pdf
 
+                                        Coordinates
+Node here       Node reference        r        s        t
+19                 1                 -1       -1       -1
+ 1                 2                  1       -1       -1
+ 3                 3                  1        1       -1
+21                 4                 -1        1       -1
+25                 5                 -1       -1        1
+ 7                 6                  1       -1        1
+ 9                 7                  1        1        1
+27                 8                 -1        1        1
+10                 9                  0       -1       -1
+ 2                10                  1        0       -1
+12                11                  0        1       -1
+20                12                 -1        0       -1
+22                13                 -1       -1        0
+ 4                14                  1       -1        0
+ 6                15                  1        1        0
+24                16                 -1        1        0
+16                17                  0       -1        1
+ 8                18                  1        0        1
+18                19                  0        1        1
+26                20                 -1        0        1
+11                21                  0        0       -1
+13                22                  0       -1        0
+ 5                23                  1        0        0
+15                24                  0        1        0
+23                25                 -1        0        0
+17                26                  0        0        1
+14                27                  0        0        0
+*/
 double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r) {
   double r;
   double s;

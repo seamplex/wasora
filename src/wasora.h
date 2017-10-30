@@ -2153,10 +2153,11 @@ struct mesh_post_t {
     post_format_vtk,
   } format;
 
+  int no_physical_entities;
   centering_t centering;
   
   int (*write_header)(FILE *);
-  int (*write_mesh)(mesh_t *, FILE *);
+  int (*write_mesh)(mesh_t *, int, FILE *);
   int (*write_scalar)(mesh_post_t *, function_t *, centering_t);
   int (*write_vector)(mesh_post_t *, function_t **, centering_t);
   
@@ -2246,13 +2247,13 @@ extern void mesh_init_fem_objects(mesh_t *mesh);
 // gmsh.c
 extern int mesh_gmsh_readmesh(mesh_t *);
 extern int mesh_gmsh_write_header(FILE *);
-extern int mesh_gmsh_write_mesh(mesh_t *, FILE *);
+extern int mesh_gmsh_write_mesh(mesh_t *, int, FILE *);
 extern int mesh_gmsh_write_scalar(mesh_post_t *, function_t *, centering_t);
 extern int mesh_gmsh_write_vector(mesh_post_t *, function_t **, centering_t);
 
 // vtk.c
 extern int mesh_vtk_write_header(FILE *);
-extern int mesh_vtk_write_mesh(mesh_t *, FILE *);
+extern int mesh_vtk_write_mesh(mesh_t *, int, FILE *);
 extern int mesh_vtk_write_structured_mesh(mesh_t *, FILE *);
 extern int mesh_vtk_write_unstructured_mesh(mesh_t *, FILE *);
 extern int mesh_vtk_write_scalar(mesh_post_t *, function_t *, centering_t);

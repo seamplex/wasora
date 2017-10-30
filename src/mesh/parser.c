@@ -267,6 +267,9 @@ int wasora_mesh_parse_line(char *line) {
         } else if (strcasecmp(token, "NODES") == 0) {
           mesh_post->centering = centering_nodes;
 
+///kw+MESH_POST+usage [ NO_PHYSICAL_ENTITIES ]
+          mesh_post->no_physical_entities = 1;
+          
 ///kw+MESH_POST+usage [ VECTOR <component_1> <component_2> <component_3> ]
         } else if (strcasecmp(token, "VECTOR") == 0) {
           int i;

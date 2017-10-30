@@ -40,7 +40,7 @@ int wasora_instruction_mesh_post(void *arg) {
   if (ftell(mesh_post->file->pointer) == 0) {
     wasora_call(mesh_post->write_header(mesh_post->file->pointer));
     if (mesh_post->no_mesh == 0) {
-      wasora_call(mesh_post->write_mesh(mesh_post->mesh, mesh_post->file->pointer));
+      wasora_call(mesh_post->write_mesh(mesh_post->mesh, mesh_post->no_physical_entities, mesh_post->file->pointer));
     }
     mesh_post->point_init = 0;      // TODO: generalizar el nombre
   }

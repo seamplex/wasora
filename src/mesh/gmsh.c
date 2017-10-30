@@ -569,25 +569,27 @@ int mesh_gmsh_write_header(FILE *file) {
   return WASORA_RUNTIME_OK;
 }
 
-int mesh_gmsh_write_mesh(mesh_t *mesh, FILE *file) {
+int mesh_gmsh_write_mesh(mesh_t *mesh, int no_physical_entities, FILE *file) {
   
   int i, j, n;
   physical_entity_t *physical_entity;
 
-  // tenemos que contar las physical entities primero
-  n = 0;
-  LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-    n++;
-  }
-  if (n != 0) {
-    fprintf(file, "$PhysicalNames\n");
-    fprintf(file, "%d\n", n);
-  
-    // y despues barrerlas
+  if (no_physical_entities) {
+    // tenemos que contar las physical entities primero
+    n = 0;
     LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-      fprintf(file, "%d %d \"%s\"\n", physical_entity->dimension, physical_entity->id, physical_entity->name);
+      n++;
     }
-    fprintf(file, "$EndPhysicalNames\n");
+    if (n != 0) {
+      fprintf(file, "$PhysicalNames\n");
+      fprintf(file, "%d\n", n);
+  
+      // y despues barrerlas
+      LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+        fprintf(file, "%d %d \"%s\"\n", physical_entity->dimension, physical_entity->id, physical_entity->name);
+      }
+      fprintf(file, "$EndPhysicalNames\n");
+    }
   }
   
   

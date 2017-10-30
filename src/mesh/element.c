@@ -167,6 +167,8 @@ int wasora_mesh_element_types_init(void) {
   
   // hexahedron ---------------------------------------------------------------- 
   mesh_six_node_hexahedron_init();
+  mesh_twentyseven_node_hexaedron_init();
+  mesh_twenty_node_hexaedron_init();
     
   // prism ---------------------------------------------------------------------
   mesh_six_node_prism_init();
@@ -181,7 +183,7 @@ int wasora_mesh_element_types_init(void) {
   wasora_mesh.element_type[10].name = strdup("quad9");
   wasora_mesh.element_type[10].nodes = 9;
   
-  wasora_mesh.element_type[12].name = strdup("hexa27");
+//  wasora_mesh.element_type[12].name = strdup("hexa27");
   wasora_mesh.element_type[13].name = strdup("prism18");
   wasora_mesh.element_type[14].name = strdup("pyramid14");
 

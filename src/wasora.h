@@ -2353,6 +2353,14 @@ extern double mesh_eight_node_hexahedron_dhdr(int, int, gsl_vector *);
 extern int mesh_point_in_hexahedron(element_t *, const double *);
 extern double mesh_hexahedron_vol(element_t *);
 
+// hexahedron27.c
+extern double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r);
+extern double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
+
+// hexahedron20.c
+extern double mesh_twenty_node_hexahedron_h(int j, gsl_vector *gsl_r);
+extern double mesh_twenty_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
+
 // tetrahedron.c
 extern int mesh_four_node_tetrahedron_init(void);
 extern void mesh_tetrahedron_gauss_init(element_type_t *);

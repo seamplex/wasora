@@ -42,7 +42,7 @@ int mesh_twentyseven_node_hexaedron_init(void) {
   element_type->faces = 6;
   element_type->nodes_per_face = 9;
   element_type->h = mesh_twentyseven_node_hexahedron_h;
-  element_type->dhdr = mesh_twentyseven_node_quad_dhdr;
+  element_type->dhdr = mesh_twentyseven_node_hexahedron_dhdr;
   element_type->point_in_element = mesh_point_in_hexahedron;
   element_type->element_volume = mesh_hexahedron_vol;
 

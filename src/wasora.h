@@ -2153,7 +2153,7 @@ struct mesh_post_t {
     post_format_vtk,
   } format;
 
-  int no_physical_entities;
+  int no_physical_names;
   centering_t centering;
   
   int (*write_header)(FILE *);

@@ -1,7 +1,7 @@
 MESH NAME hex8  FILE_PATH hexa8.msh  DIMENSIONS 3
 MESH NAME hex27 FILE_PATH hexa27.msh DIMENSIONS 3
 
-PHYSICAL_ENTITY ID 17 NAME bulk
+PHYSICAL_ENTITY ID 1  NAME bulk
 
 
 MESH_INTEGRATE MESH hex8  EXPR 1   OVER bulk RESULT I10
@@ -25,7 +25,7 @@ PRINT TEXT "    z^3   "  %f I13  I23 1/120
 PRINT TEXT "------------+----------------+------------+----------------"
 
 
-#FUNCTION g(x,y) MESH tet10 VECTOR f NODES
-#f(i) = i
-#
-#MESH_POST MESH tet10 FILE_PATH tet10.vtk g x y z
+# FUNCTION g(x,y) MESH tet10 VECTOR f NODES
+# f(i) = i
+# 
+# MESH_POST MESH tet10 FILE_PATH tet10.vtk g x y z

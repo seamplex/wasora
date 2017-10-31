@@ -151,85 +151,85 @@ double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r) {
   t = gsl_vector_get(gsl_r, 2);
 
   switch (j) {
-    case 0:
+    case 1:
       return r*(r+1)*s*(s-1)*t*(t-1)/8.0;
       break;
-    case 1:
+    case 9:
       return r*(r+1)*(1-s*s)*t*(t-1)/4.0;
       break;
     case 2:
       return r*(r+1)*s*(s+1)*t*(t-1)/8.0;
       break;
-    case 3:
+    case 13:
       return r*(r+1)*s*(s-1)*(1-t*t)/4.0;
       break;
-    case 4:
+    case 22:
       return r*(r+1)*(1-s*s)*(1-t*t)/2.0;
       break;
-    case 5:
+    case 14:
       return r*(r+1)*s*(s+1)*(1-t*t)/4.0;
       break;
-    case 6:
+    case 5:
       return r*(r+1)*s*(s-1)*t*(t+1)/8.0;
       break;
-    case 7:
+    case 17:
       return r*(r+1)*(1-s*s)*t*(t+1)/4.0;
       break;
-    case 8:
+    case 6:
       return r*(r+1)*s*(s+1)*t*(t+1)/8.0;
       break;
-    case 9:
+    case 8:
       return (1-r*r)*s*(s-1)*t*(t-1)/4.0;
       break;
-    case 10:
+    case 20:
       return (1-r*r)*(1-s*s)*t*(t-1)/2.0;
       break;
-    case 11:
+    case 10:
       return (1-r*r)*s*(s+1)*t*(t-1)/4.0;
       break;
-    case 12:
+    case 21:
       return (1-r*r)*s*(s-1)*(1-t*t)/2.0;
       break;
-    case 13:
+    case 26:
       return (1-r*r)*(1-s*s)*(1-t*t);
       break;
-    case 14:
+    case 23:
       return (1-r*r)*s*(s+1)*(1-t*t)/2.0;
       break;
-    case 15:
+    case 16:
       return (1-r*r)*s*(s-1)*t*(t+1)/4.0;
       break;
-    case 16:
+    case 25:
       return (1-r*r)*(1-s*s)*t*(t+1)/2.0;
       break;
-    case 17:
+    case 18:
       return (1-r*r)*s*(s+1)*t*(t+1)/4.0;
       break;
-    case 18:
+    case 0:
       return r*(r-1)*s*(s-1)*t*(t-1)/8.0;
       break;
-    case 19:
+    case 11:
       return r*(r-1)*(1-s*s)*t*(t-1)/4.0;
       break;
-    case 20:
+    case 3:
       return r*(r-1)*s*(s+1)*t*(t-1)/8.0;
       break;
-    case 21:
+    case 12:
       return r*(r-1)*s*(s-1)*(1-t*t)/4.0;
       break;
-    case 22:
+    case 24:
       return r*(r-1)*(1-s*s)*(1-t*t)/2.0;
       break;
-    case 23:
+    case 15:
       return r*(r-1)*s*(s+1)*(1-t*t)/4.0;
       break;
-    case 24:
+    case 4:
       return r*(r-1)*s*(s-1)*t*(t+1)/8.0;
       break;
-    case 25:
+    case 19:
       return r*(r-1)*(1-s*s)*t*(t+1)/4.0;
       break;
-    case 26:
+    case 7:
       return r*(r-1)*s*(s+1)*t*(t+1)/8.0;
       break;
   }
@@ -248,7 +248,7 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
   t = gsl_vector_get(gsl_r, 2);
 
   switch (j) {
-    case 0:
+    case 1:
       switch(m) {
         case 0:
           return (2*r+1)*s*(s-1)*t*(t-1)/8.0;
@@ -261,7 +261,7 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
         break;
       }
     break;
-    case 1:
+    case 9:
       switch(m) {
         case 0:
           return (2*r+1)*(1-s*s)*t*(t-1)/4.0;
@@ -287,7 +287,7 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
         break;
       }
     break;
-    case 3:
+    case 13:
       switch(m) {
         case 0:
           return (2*r+1)*s*(s-1)*(1-t*t)/4.0;
@@ -300,7 +300,7 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
         break;
       }
     break;
-    case 4:
+    case 22:
       switch(m) {
         case 0:
           return (2*r+1)*(1-s*s)*(1-t*t)/2.0;
@@ -313,7 +313,7 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
         break;
       }
     break;
-    case 5:
+    case 14:
       switch(m) {
         case 0:
           return (2*r+1)*s*(s+1)*(1-t*t)/4.0;
@@ -326,7 +326,7 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
         break;
       }
     break;
-    case 6:
+    case 5:
       switch(m) {
         case 0:
           return (2*r+1)*s*(s-1)*t*(t+1)/8.0;
@@ -339,7 +339,7 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
         break;
       }
     break;
-    case 7:
+    case 17:
       switch(m) {
         case 0:
           return (2*r+1)*(1-s*s)*t*(t+1)/4.0;
@@ -351,7 +351,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return r*(r+1)*(1-s*s)*(2*t+1)/4.0;
         break;
       }
-    case 8:
+    break;
+    case 6:
       switch(m) {
         case 0:
           return (2*r+1)*s*(s+1)*t*(t+1)/8.0;
@@ -363,7 +364,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return r*(r+1)*s*(s+1)*(2*t+1)/8.0;
         break;
       }
-    case 9:
+    break;
+    case 8:
       switch(m) {
         case 0:
           return -r*s*(s-1)*t*(t-1)/2.0;
@@ -375,7 +377,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return (1-r*r)*s*(s-1)*(2*t-1)/4.0;
         break;
       }
-    case 10:
+    break;
+    case 20:
       switch(m) {
         case 0:
           return -r*(1-s*s)*t*(t-1);
@@ -387,7 +390,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return (1-r*r)*(1-s*s)*(2*t-1)/2.0;
         break;
       }
-    case 11:
+    break;
+    case 10:
       switch(m) {
         case 0:
           return -r*s*(s+1)*t*(t-1)/2.0;
@@ -399,7 +403,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return (1-r*r)*s*(s+1)*(2*t-1)/4.0;
         break;
       }
-    case 12:
+    break;
+    case 21:
       switch(m) {
         case 0:
           return -r*s*(s-1)*(1-t*t);
@@ -411,7 +416,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return -(1-r*r)*s*(s-1)*t;
         break;
       }
-    case 13:
+    break;
+    case 26:
       switch(m) {
         case 0:
           return -2*r*(1-s*s)*(1-t*t);
@@ -423,7 +429,7 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return -2*(1-r*r)*(1-s*s)*t;
         break;
       }
-    case 14:
+    case 23:
       switch(m) {
         case 0:
           return -r*s*(s+1)*(1-t*t);
@@ -435,7 +441,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return -(1-r*r)*s*(s+1)*t;
         break;
       }
-    case 15:
+    break;
+    case 16:
       switch(m) {
         case 0:
           return -r*s*(s-1)*t*(t+1)/2.0;
@@ -447,7 +454,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return (1-r*r)*s*(s-1)*(2*t+1)/4.0;
         break;
       }
-    case 16:
+    break;
+    case 25:
       switch(m) {
         case 0:
           return -r*(1-s*s)*t*(t+1);
@@ -459,7 +467,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return (1-r*r)*(1-s*s)*(2*t+1)/2.0;
         break;
       }
-    case 17:
+    break;
+    case 18:
       switch(m) {
         case 0:
           return -r*s*(s+1)*t*(t+1)/2.0;
@@ -471,7 +480,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return (1-r*r)*s*(s+1)*(2*t+1)/4.0;
         break;
       }
-    case 18:
+    break;
+    case 0:
       switch(m) {
         case 0:
           return (2*r-1)*s*(s-1)*t*(t-1)/8.0;
@@ -483,7 +493,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return r*(r-1)*s*(s-1)*(2*t-1)/8.0;
         break;
       }
-    case 19:
+    break;
+    case 11:
       switch(m) {
         case 0:
           return (2*r-1)*(1-s*s)*t*(t-1)/4.0;
@@ -495,7 +506,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return r*(r-1)*(1-s*s)*(2*t-1)/4.0;
         break;
       }
-    case 20:
+    break;
+    case 3:
       switch(m) {
         case 0:
           return (2*r-1)*s*(s+1)*t*(t-1)/8.0;
@@ -507,7 +519,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return r*(r-1)*s*(s+1)*(2*t-1)/8.0;
         break;
       }
-    case 21:
+    break;
+    case 12:
       switch(m) {
         case 0:
           return (2*r-1)*s*(s-1)*(1-t*t)/4.0;
@@ -519,7 +532,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return -r*(r-1)*s*(s-1)*t/2.0;
         break;
       }
-    case 22:
+    break;
+    case 24:
       switch(m) {
         case 0:
           return (2*r-1)*(1-s*s)*(1-t*t)/2.0;
@@ -531,7 +545,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return -r*(r-1)*(1-s*s)*t;
         break;
       }
-    case 23:
+    break;
+    case 15:
       switch(m) {
         case 0:
           return (2*r-1)*s*(s+1)*(1-t*t)/4.0;
@@ -543,7 +558,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return -r*(r-1)*s*(s+1)*t/2.0;
         break;
       }
-    case 24:
+    break;
+    case 4:
       switch(m) {
         case 0:
           return (2*r-1)*s*(s-1)*t*(t+1)/8.0;
@@ -555,7 +571,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return r*(r-1)*s*(s-1)*(2*t+1)/8.0;
         break;
       }
-    case 25:
+    break;
+    case 19:
       switch(m) {
         case 0:
           return (2*r-1)*(1-s*s)*t*(t+1)/4.0;
@@ -567,7 +584,8 @@ double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
           return r*(r-1)*(1-s*s)*(2*t+1)/4.0;
         break;
       }
-    case 26:
+    break;
+    case 7:
       switch(m) {
         case 0:
           return (2*r-1)*s*(s+1)*t*(t+1)/8.0;

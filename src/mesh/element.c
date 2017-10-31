@@ -166,7 +166,7 @@ int wasora_mesh_element_types_init(void) {
   mesh_ten_node_tetrahedron_init();
   
   // hexahedron ---------------------------------------------------------------- 
-  mesh_six_node_hexahedron_init();
+  mesh_eight_node_hexahedron_init();
   mesh_twentyseven_node_hexaedron_init();
   mesh_twenty_node_hexaedron_init();
     

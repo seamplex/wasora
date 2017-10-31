@@ -2347,7 +2347,7 @@ extern int mesh_point_in_quadrangle(element_t *, const double *);
 extern double mesh_quad_vol(element_t *);
 
 // hexahedron.c
-extern int mesh_six_node_hexahedron_init(void);
+extern int mesh_eight_node_hexahedron_init(void);
 extern double mesh_eight_node_hexahedron_h(int, gsl_vector *);
 extern double mesh_eight_node_hexahedron_dhdr(int, int, gsl_vector *);
 extern int mesh_point_in_hexahedron(element_t *, const double *);

@@ -27,7 +27,7 @@
 #include <assert.h>
 
 // conversion de gmsh a vtk
-int vtkfromgmsh_types[16] = {
+int vtkfromgmsh_types[18] = {
   0,    // ELEMENT_TYPE_UNDEFINED
   3,    // ELEMENT_TYPE_LINE
   5,    // ELEMENT_TYPE_TRIANGLE
@@ -43,9 +43,15 @@ int vtkfromgmsh_types[16] = {
   0,
   0,
   0,
-  1     // ELEMENT_TYPE_POINT
+  1,    // ELEMENT_TYPE_POINT
+  0,
+ 25
 };
-
+// conversion de gmsh a vtk
+int hexa20fromgmsh[20] = { 
+  0 , 1  , 2  , 3  , 4  , 5  , 6  , 7  ,
+  8 , 11 , 16 , 9  , 17 , 10 , 18 , 19 ,
+ 12 , 15 , 13 , 14 } ;
 
 int mesh_vtk_write_header(FILE *file) {
   fprintf(file, "# vtk DataFile Version 2.0\n");

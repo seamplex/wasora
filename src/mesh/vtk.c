@@ -45,13 +45,16 @@ int vtkfromgmsh_types[18] = {
   0,
   1,    // ELEMENT_TYPE_POINT
   0,
- 25
+ 25     // ELEMENT_TYPE_HEXAHEDRON20
 };
-// conversion de gmsh a vtk
+// conversion de gmsh a vtk (by reading files because by following the docs it did not work).
+// index  0 1 2 3 4 5 6 7 8  9 10 11 12 13 14 15 16 17 18 19
+// vtk    0 1 3 2 4 6 7 5 8 10 11  9 18 17 19 14 12 15 16 13
+// gmsh   0 1 3 2 4 6 7 5 8  9 12 10 15 11 16 13 18 14 17 19
 int hexa20fromgmsh[20] = { 
-  0 , 1  , 2  , 3  , 4  , 5  , 6  , 7  ,
-  8 , 11 , 16 , 9  , 17 , 10 , 18 , 19 ,
- 12 , 15 , 13 , 14 } ;
+  0 , 1  , 2  ,  3 , 4  , 5  , 6  , 7  ,
+  8 , 11 , 13 ,  9 , 16 , 18 , 19 , 17 ,
+ 10 , 12 , 14 , 15 } ;
 
 int mesh_vtk_write_header(FILE *file) {
   fprintf(file, "# vtk DataFile Version 2.0\n");
@@ -133,21 +136,40 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
   fprintf(file, "CELLS %d %d\n", volumelements, size);
   for (i = 0; i < mesh->n_elements; i++) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
-      fprintf(file, "%d ", mesh->element[i].type->nodes);
-      // ojo! capaz que no funcione si no estan ordenados los indices
-      for (j = 0; j < mesh->element[i].type->nodes; j++) {
-        // el tet10 es diferente!
-        if (vtkfromgmsh_types[mesh->element[i].type->id] == 24 && (j == 8 || j == 9)) {
-          if (j == 8) {
-            fprintf(file, " %d", mesh->element[i].node[9]->id-1);
-          } else if (j == 9) {
-            fprintf(file, " %d", mesh->element[i].node[8]->id-1);
-          }
-        } else {
-          fprintf(file, " %d", mesh->element[i].node[j]->id-1);
+//To be done: if ELEMENT_TYPE_HEXAHEDRON27 support is required, the number of points change and have to be calculated. It has to be
+//done before POINTS n is done.
+//So far it triggers and error.
+      if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27)
+        {
+        wasora_push_error_message("Cell type ELEMENT_TYPE_HEXAHEDRON27 is not supported by vtk");
+        return WASORA_RUNTIME_ERROR;
         }
+      if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON20)
+        {
+        fprintf(file, "%d ", 20);
+        for(j = 0; j < 20 ; ++j)
+          {
+          fprintf(file, " %d", mesh->element[i].node[hexa20fromgmsh[j]]->id-1);
+          }
+        fprintf(file, "\n");
+        }
+      else {
+        fprintf(file, "%d ", mesh->element[i].type->nodes);
+        // ojo! capaz que no funcione si no estan ordenados los indices
+        for (j = 0; j < mesh->element[i].type->nodes; j++) {
+          // el tet10 es diferente!
+          if (vtkfromgmsh_types[mesh->element[i].type->id] == 24 && (j == 8 || j == 9)) {
+            if (j == 8) {
+              fprintf(file, " %d", mesh->element[i].node[9]->id-1);
+            } else if (j == 9) {
+              fprintf(file, " %d", mesh->element[i].node[8]->id-1);
+            }
+          } else {
+            fprintf(file, " %d", mesh->element[i].node[j]->id-1);
+          }
+        }
+        fprintf(file, "\n");
       }
-      fprintf(file, "\n");
     }
   }
   fprintf(file, "\n");

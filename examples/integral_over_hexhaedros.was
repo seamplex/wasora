@@ -1,4 +1,5 @@
 MESH NAME hex8  FILE_PATH hexa8.msh  DIMENSIONS 3
+MESH NAME hex20 FILE_PATH hexa20.msh DIMENSIONS 3
 MESH NAME hex27 FILE_PATH hexa27.msh DIMENSIONS 3
 
 PHYSICAL_ENTITY ID 1  NAME bulk
@@ -9,26 +10,35 @@ MESH_INTEGRATE MESH hex8  EXPR x   OVER bulk RESULT I11
 MESH_INTEGRATE MESH hex8  EXPR y^2 OVER bulk RESULT I12
 MESH_INTEGRATE MESH hex8  EXPR z^3 OVER bulk RESULT I13
 
+MESH_INTEGRATE MESH hex20 EXPR 1   OVER bulk RESULT I30
+MESH_INTEGRATE MESH hex20 EXPR x   OVER bulk RESULT I31
+MESH_INTEGRATE MESH hex20 EXPR y^2 OVER bulk RESULT I32
+MESH_INTEGRATE MESH hex20 EXPR z^3 OVER bulk RESULT I33
+
 MESH_INTEGRATE MESH hex27 EXPR 1   OVER bulk RESULT I20
 MESH_INTEGRATE MESH hex27 EXPR x   OVER bulk RESULT I21
 MESH_INTEGRATE MESH hex27 EXPR y^2 OVER bulk RESULT I22
 MESH_INTEGRATE MESH hex27 EXPR z^3 OVER bulk RESULT I23
 
 
-PRINT TEXT "------------+----------------+------------+----------------"
-PRINT TEXT " integrand        hex8            hex27        analytical  "
-PRINT TEXT "------------+----------------+------------+----------------"
-PRINT TEXT "     1    "  %f I10  I20 1
-PRINT TEXT "     x    "  %f I11  I21 1/2
-PRINT TEXT "    y^2   "  %f I12  I22 1/3
-PRINT TEXT "    z^3   "  %f I13  I23 1/4
+PRINT TEXT "------------+----------------+------------+----------------+-------------"
+PRINT TEXT " integrand        hex8           hex20          hex27        analytical  "
+PRINT TEXT "------------+----------------+------------+----------------+-------------"
+PRINT TEXT "     1    "  %f I10  I30  I20 1
+PRINT TEXT "     x    "  %f I11  I31  I21 1/2
+PRINT TEXT "    y^2   "  %f I12  I32  I22 1/3
+PRINT TEXT "    z^3   "  %f I13  I33  I23 1/4
 PRINT TEXT "------------+----------------+------------+----------------"
 
 
-FUNCTION g(x,y) MESH hex8  VECTOR f NODES
-f(i) = i
-FUNCTION h(x,y) MESH hex27 VECTOR ff NODES
-ff(i) = i
+#FUNCTION g(x,y,z) MESH hex8  VECTOR f NODES
+#f(i) = i
+FUNCTION g(x,y,z) = x*x+y*y+z*z
+#FUNCTION h(x,y) MESH hex20 VECTOR ff NODES
+#ff(i) = x*x+y*y+z*z
+#FUNCTION h27(x,y) MESH hex27 VECTOR fff NODES
+#fff(i) = x*x+y*y+z*z
 
 MESH_POST MESH hex8  FILE_PATH hex8.vtk g x y z
-MESH_POST MESH hex27 FILE_PATH hex27.vtk h x y z
+MESH_POST MESH hex20 FILE_PATH hex20.vtk g x y z
+#MESH_POST MESH hex27 FILE_PATH hex27.vtk g x y z

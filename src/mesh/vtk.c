@@ -65,7 +65,7 @@ int mesh_vtk_write_header(FILE *file) {
 }
 
 
-int mesh_vtk_write_mesh(mesh_t *mesh, FILE *file) {
+int mesh_vtk_write_mesh(mesh_t *mesh, int dummy, FILE *file) {
   
   if (mesh->structured) {
     wasora_call(mesh_vtk_write_structured_mesh(mesh, file));

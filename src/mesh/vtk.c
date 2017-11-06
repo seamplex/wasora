@@ -132,7 +132,12 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
       volumelements++;
     }
   }
-  
+
+  for (i = 0; i < mesh->n_elements; i++) {
+    if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27)
+      size-=7;
+  }
+ 
   fprintf(file, "CELLS %d %d\n", volumelements, size);
   for (i = 0; i < mesh->n_elements; i++) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {

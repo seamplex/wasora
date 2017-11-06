@@ -44,3 +44,4 @@ MESH_POST MESH hex20 FILE_PATH hex20.vtk g x y z
 MESH_POST MESH hex8  FILE_PATH hex8.pos g x y z
 MESH_POST MESH hex20 FILE_PATH hex20.pos g x y z
 MESH_POST MESH hex27 FILE_PATH hex27.pos g x y z
+MESH_POST MESH hex27 FILE_PATH hex27.vtk g x y z

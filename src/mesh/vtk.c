@@ -136,15 +136,7 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
   fprintf(file, "CELLS %d %d\n", volumelements, size);
   for (i = 0; i < mesh->n_elements; i++) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
-//To be done: if ELEMENT_TYPE_HEXAHEDRON27 support is required, the number of points change and have to be calculated. It has to be
-//done before POINTS n is done.
-//So far it triggers and error.
-      if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27)
-        {
-        wasora_push_error_message("Cell type ELEMENT_TYPE_HEXAHEDRON27 is not supported by vtk");
-        return WASORA_RUNTIME_ERROR;
-        }
-      if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON20)
+      if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON20 || mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27)
         {
         fprintf(file, "%d ", 20);
         for(j = 0; j < 20 ; ++j)
@@ -177,7 +169,12 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
   fprintf(file, "CELL_TYPES %d\n", volumelements);
   for (i = 0; i < mesh->n_elements; i++) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
-      fprintf(file, "%d\n", vtkfromgmsh_types[mesh->element[i].type->id]);
+      if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27)
+        {
+        fprintf(file, "%d\n", 25 );
+        }
+      else
+        fprintf(file, "%d\n", vtkfromgmsh_types[mesh->element[i].type->id]);
     }
   }
   

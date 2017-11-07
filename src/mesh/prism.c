@@ -54,37 +54,36 @@ int mesh_six_node_prism_init(void) {
   // ---- seis puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
     mesh_alloc_gauss(gauss, element_type, 6);
-  
-    // http://www-opale.inrialpes.fr/Aerochina/info/en/html-version/gid_17.html    
-    gauss->w[0] = 0.5 * 1.0/6.0;
+   
+    gauss->w[0] = 1.0/6.0;
     gauss->r[0][0] = 1.0/6.0;
     gauss->r[0][1] = 1.0/6.0;
-    gauss->r[0][2] = 0.5-1/(2*M_SQRT3);
+    gauss->r[0][2] = -1/M_SQRT3;
   
-    gauss->w[1] = 0.5 * 1.0/6.0;
+    gauss->w[1] = 1.0/6.0;
     gauss->r[1][0] = 2.0/3.0;
     gauss->r[1][1] = 1.0/6.0;
-    gauss->r[1][2] = 0.5-1/(2*M_SQRT3);
+    gauss->r[1][2] = -1/M_SQRT3;
   
-    gauss->w[2] = 0.5 * 1.0/6.0;
+    gauss->w[2] = 1.0/6.0;
     gauss->r[2][0] = 1.0/6.0;
     gauss->r[2][1] = 2.0/3.0;
-    gauss->r[2][2] = 0.5-1/(2*M_SQRT3);
+    gauss->r[2][2] = -1/M_SQRT3;
 
-    gauss->w[3] = 0.5 * 1.0/6.0;
+    gauss->w[3] = 1.0/6.0;
     gauss->r[3][0] = 1.0/6.0;
     gauss->r[3][1] = 1.0/6.0;
-    gauss->r[3][2] = 0.5+1/(2*M_SQRT3);
+    gauss->r[3][2] = +1/M_SQRT3;
   
-    gauss->w[4] = 0.5 * 1.0/6.0;
+    gauss->w[4] = 1.0/6.0;
     gauss->r[4][0] = 2.0/3.0;
     gauss->r[4][1] = 1.0/6.0;
-    gauss->r[4][2] = 0.5+1/(2*M_SQRT3);
+    gauss->r[4][2] = +1/M_SQRT3;
   
-    gauss->w[5] = 0.5 * 1.0/6.0;
+    gauss->w[5] = 1.0/6.0;
     gauss->r[5][0] = 1.0/6.0;
     gauss->r[5][1] = 2.0/3.0;
-    gauss->r[5][2] = 0.5+1/(2*M_SQRT3);
+    gauss->r[5][2] = +1/M_SQRT3;
     
     mesh_init_shape_at_gauss(gauss, element_type);
     
@@ -150,22 +149,22 @@ double mesh_six_node_prism_h(int j, gsl_vector *gsl_r) {
 
   switch (j) {
     case 0:
-      return 1.0/8.0*(1-r)*(1-s)*(1-t);
+      return 1.0/2.0*((1-r-s)*(1-t));
       break;
     case 1:
-      return 1.0/8.0*(1+r)*(1-s)*(1-t);
+      return 1.0/2.0*(r*(1-t));
       break;
     case 2:
-      return 1.0/4.0*(1+s)*(1-t);
+      return 1.0/2.0*(s*(1-t));
       break;
     case 3:
-      return 1.0/8.0*(1-r)*(1-s)*(1+t);
+      return 1.0/2.0*((1-r-s)*(1+t));
       break;
     case 4:
-      return 1.0/8.0*(1+r)*(1-s)*(1+t);
+      return 1.0/2.0*(r*(1+t));
       break;
     case 5:
-      return 1.0/4.0*(1+s)*(1+t);
+      return 1.0/2.0*(s*(1+t));
       break;
   }
 
@@ -186,26 +185,26 @@ double mesh_six_node_prism_dhdr(int j, int m, gsl_vector *gsl_r) {
     case 0:
       switch(m) {
         case 0:
-          return -1.0/8.0*(1-s)*(1-t);
+          return -1.0/2.0*(1-t);
         break;
         case 1:
-          return -1.0/8.0*(1-r)*(1-t);
+          return -1.0/2.0*(1-t);
         break;
         case 2:
-          return -1.0/8.0*(1-r)*(1-s);
+          return -1.0/2.0*(1-r-s);
         break;
       }
     break;
     case 1:
       switch(m) {
         case 0:
-          return +1.0/8.0*(1-s)*(1-t);
+          return 1.0/2.0*(1-t);
         break;
         case 1:
-          return -1.0/8.0*(1+r)*(1-t);
+          return 0;
         break;
         case 2:
-          return -1.0/8.0*(1+r)*(1-s);
+          return -1.0/2.0*r;
         break;
       }
     break;
@@ -215,36 +214,36 @@ double mesh_six_node_prism_dhdr(int j, int m, gsl_vector *gsl_r) {
           return 0;
         break;
         case 1:
-          return +1.0/4.0*(1-t);
+          return 1.0/2.0*(1-t);
         break;
         case 2:
-          return -1.0/4.0*(1+s);
+          return -1.0/2.0*s;
         break;
       }
     break;
     case 3:
       switch(m) {
         case 0:
-          return -1.0/8.0*(1-s)*(1+t);
+          return -1.0/2.0*(1+t);
         break;
         case 1:
-          return -1.0/8.0*(1-r)*(1+t);
+          return -1.0/2.0*(1+t);
         break;
         case 2:
-          return +1.0/8.0*(1-r)*(1-s);
+          return +1.0/2.0*(1-r-s);
         break;
       }
     break;
     case 4:
       switch(m) {
         case 0:
-          return +1.0/8.0*(1-s)*(1+t);
+          return 1.0/2.0*(1+t);
         break;
         case 1:
-          return -1.0/8.0*(1+r)*(1+t);
+          return 0;
         break;
         case 2:
-          return +1.0/8.0*(1+r)*(1-s);
+          return +1.0/2.0*r;
         break;
       }
     break;
@@ -254,10 +253,10 @@ double mesh_six_node_prism_dhdr(int j, int m, gsl_vector *gsl_r) {
           return 0;
         break;
         case 1:
-          return +1.0/4.0*(1+t);
+          return 1.0/2.0*(1+t);
         break;
         case 2:
-          return +1.0/4.0*(1+s);
+          return +1.0/2.0*s;
         break;
       }
     break;

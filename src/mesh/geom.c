@@ -98,17 +98,27 @@ int mesh_compute_outward_normal(element_t *element, double *n) {
   if (element->type->dim == 0) {
     wasora_push_error_message("trying to compute the outward normal of a point (element %d)", element->id);
     return WASORA_RUNTIME_ERROR;
+  } else if (element->type->dim == 1) {
+
+    // OJO que no camina con lineas que no estan en el plano xy!!
+    double module = mesh_subtract_module(element->node[1]->x, element->node[0]->x);
+    n[0] = -(element->node[1]->x[1] - element->node[0]->x[1])/module;
+    n[1] = +(element->node[1]->x[0] - element->node[0]->x[0])/module;
+    n[2] = 0;
+  
+  } else if (element->type->dim == 2) {
+    
+    // este algoritmo viene de sn_elements_compute_outward_normal
+    mesh_subtract(element->node[0]->x, element->node[1]->x, a);
+    mesh_subtract(element->node[0]->x, element->node[2]->x, b);
+    mesh_normalized_cross(a, b, n);
+
   } else if (element->type->dim == 3) {
     wasora_push_error_message("trying to compute the outward normal of a volume (element %d)", element->id);
     return WASORA_RUNTIME_ERROR;
   }
+
   
-  // este algoritmo viene de sn_elements_compute_outward_normal
-  // calculamos el vector normal para tener las variables nx ny y nx
-  mesh_subtract(element->node[0]->x, element->node[1]->x, a);
-  mesh_subtract(element->node[0]->x, element->node[2]->x, b);
-  mesh_normalized_cross(a, b, n);
-    
   // ahora tenemos que ver si la normal que elegimos es efectivamente la outward
   // para eso primero calculamos el centro del elemento de superficie
   wasora_call(mesh_compute_element_barycenter(element, surface_center));

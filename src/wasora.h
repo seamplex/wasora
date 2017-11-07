@@ -2345,6 +2345,8 @@ extern double mesh_six_node_triang_dhdr(int, int, gsl_vector *);
 extern int mesh_four_node_quadrangle_init(void);
 extern double mesh_four_node_quad_h(int, gsl_vector *);
 extern double mesh_four_node_quad_dhdr(int, int, gsl_vector *);
+extern double mesh_nine_node_quad_h(int , gsl_vector *);
+extern double mesh_nine_node_quad_dhdr(int , int , gsl_vector *);
 extern int mesh_point_in_quadrangle(element_t *, const double *);
 extern double mesh_quad_vol(element_t *);
 

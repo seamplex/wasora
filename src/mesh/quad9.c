@@ -26,7 +26,7 @@
 // --------------------------------------------------------------
 // cuadrangulo de cuatro nodos
 // --------------------------------------------------------------
-int mesh_four_node_quadrangle_init(void) {
+int mesh_nine_node_quadrangle_init(void) {
   
   element_type_t *element_type;
   gauss_t *gauss;

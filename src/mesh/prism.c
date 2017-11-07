@@ -59,32 +59,32 @@ int mesh_six_node_prism_init(void) {
     gauss->w[0] = 0.5 * 1.0/6.0;
     gauss->r[0][0] = 1.0/6.0;
     gauss->r[0][1] = 1.0/6.0;
-    gauss->r[0][2] = 0.21132486;
+    gauss->r[0][2] = 0.5-1/(2*M_SQRT3);
   
     gauss->w[1] = 0.5 * 1.0/6.0;
     gauss->r[1][0] = 2.0/3.0;
     gauss->r[1][1] = 1.0/6.0;
-    gauss->r[1][2] = 0.21132486;
+    gauss->r[1][2] = 0.5-1/(2*M_SQRT3);
   
     gauss->w[2] = 0.5 * 1.0/6.0;
     gauss->r[2][0] = 1.0/6.0;
     gauss->r[2][1] = 2.0/3.0;
-    gauss->r[2][2] = 0.21132486;
+    gauss->r[2][2] = 0.5-1/(2*M_SQRT3);
 
     gauss->w[3] = 0.5 * 1.0/6.0;
     gauss->r[3][0] = 1.0/6.0;
     gauss->r[3][1] = 1.0/6.0;
-    gauss->r[3][2] = 1-0.21132486;
+    gauss->r[3][2] = 0.5+1/(2*M_SQRT3);
   
     gauss->w[4] = 0.5 * 1.0/6.0;
     gauss->r[4][0] = 2.0/3.0;
     gauss->r[4][1] = 1.0/6.0;
-    gauss->r[4][2] = 1-0.21132486;
+    gauss->r[4][2] = 0.5+1/(2*M_SQRT3);
   
     gauss->w[5] = 0.5 * 1.0/6.0;
     gauss->r[5][0] = 1.0/6.0;
     gauss->r[5][1] = 2.0/3.0;
-    gauss->r[5][2] = 1-0.21132486;
+    gauss->r[5][2] = 0.5+1/(2*M_SQRT3);
     
     mesh_init_shape_at_gauss(gauss, element_type);
     

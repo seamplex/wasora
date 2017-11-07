@@ -181,13 +181,11 @@ int wasora_mesh_element_types_init(void) {
   element_type->nodes = 0;
 
   wasora_mesh.element_type[10].name = strdup("quad9");
-//  wasora_mesh.element_type[10].nodes = 0;
   
 //  wasora_mesh.element_type[12].name = strdup("hexa27");
   wasora_mesh.element_type[13].name = strdup("prism18");
   wasora_mesh.element_type[14].name = strdup("pyramid14");
   wasora_mesh.element_type[16].name = strdup("quad8");
-//  wasora_mesh.element_type[16].nodes = 0;
 
   
   // point

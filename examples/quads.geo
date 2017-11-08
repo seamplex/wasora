@@ -18,7 +18,7 @@ Line Loop(29) = {-1, -2, -3, -4};
 Plane Surface(30) = {29};
 Physical Surface(1) = {30};
 
+//Mesh.ElementOrder = 2;
 Mesh.RecombineAll = 1;
 Mesh.RecombinationAlgorithm = 1 ;
-Mesh.Recombine3DLevel = 0;
-Mesh.ElementOrder = 2;
+//Mesh.SecondOrderIncomplete = 1;

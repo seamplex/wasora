@@ -31,14 +31,14 @@ int mesh_eight_node_quadrangle_init(void) {
   element_type_t *element_type;
   gauss_t *gauss;
   
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE9];
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE8];
   element_type->name = strdup("quadrangle8");
-  element_type->id = ELEMENT_TYPE_QUADRANGLE9;
+  element_type->id = ELEMENT_TYPE_QUADRANGLE8;
   element_type->dim = 2;
   element_type->order = 2;
   element_type->nodes = 8;
   element_type->faces = 4;
-  element_type->nodes_per_face = 2;
+  element_type->nodes_per_face = 3;
   element_type->h = mesh_eight_node_quad_h;
   element_type->dhdr = mesh_eight_node_quad_dhdr;
   element_type->point_in_element = mesh_point_in_quadrangle;

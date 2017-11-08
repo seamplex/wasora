@@ -151,7 +151,6 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
       switch(mesh->element[i].type->id)
         {
-        case ELEMENT_TYPE_HEXAHEDRON20: 
         case ELEMENT_TYPE_HEXAHEDRON27: 
           fprintf(file, "%d ", 20);
           for(j = 0; j < 20 ; ++j)
@@ -160,7 +159,6 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
             }
           fprintf(file, "\n");
         break;
-        case ELEMENT_TYPE_QUADRANGLE8:
         case ELEMENT_TYPE_QUADRANGLE9:
           fprintf(file, "%d ", 8 );
           for(j = 0; j < 8  ; ++j)
@@ -195,15 +193,18 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
   for (i = 0; i < mesh->n_elements; i++) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
 //The vtk unsupported cell types go here.
-      if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27 || mesh->element[i].type->id == ELEMENT_TYPE_QUADRANGLE9)
+      switch(mesh->element[i].type->id)
         {
-        if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27)
+        case ELEMENT_TYPE_HEXAHEDRON27:
           fprintf(file, "%d\n", 25 );
-        if(mesh->element[i].type->id == ELEMENT_TYPE_QUADRANGLE9)
+        break;
+        case ELEMENT_TYPE_QUADRANGLE9:
           fprintf(file, "%d\n", 23 );
+        break;
+        default:
+          fprintf(file, "%d\n", vtkfromgmsh_types[mesh->element[i].type->id]);
+        break;
         }
-      else
-        fprintf(file, "%d\n", vtkfromgmsh_types[mesh->element[i].type->id]);
     }
   }
   

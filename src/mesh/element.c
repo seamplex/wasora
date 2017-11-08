@@ -160,6 +160,7 @@ int wasora_mesh_element_types_init(void) {
   
   // quadrangle ----------------------------------------------------------------
   mesh_four_node_quadrangle_init();
+  mesh_eight_node_quadrangle_init();
   mesh_nine_node_quadrangle_init();
   
   // tetrahedra  ---------------------------------------------------------------
@@ -181,12 +182,8 @@ int wasora_mesh_element_types_init(void) {
   element_type->id = ELEMENT_TYPE_PYRAMID;
   element_type->nodes = 0;
 
-//  wasora_mesh.element_type[10].name = strdup("quad9");
-  
-//  wasora_mesh.element_type[12].name = strdup("hexa27");
   wasora_mesh.element_type[13].name = strdup("prism18");
   wasora_mesh.element_type[14].name = strdup("pyramid14");
-  wasora_mesh.element_type[16].name = strdup("quad8");
 
   
   // point

@@ -75,6 +75,7 @@ wasora_SOURCES = \
 ./mesh/post.c \
 ./mesh/gmsh.c \
 ./mesh/quad.c \
+./mesh/quad8.c \
 ./mesh/quad9.c \
 ./mesh/mesh.c \
 ./mesh/gauss.c \

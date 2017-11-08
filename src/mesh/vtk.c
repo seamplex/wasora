@@ -149,34 +149,46 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
   fprintf(file, "CELLS %d %d\n", volumelements, size);
   for (i = 0; i < mesh->n_elements; i++) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
-      if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON20 || mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27)
+      switch(mesh->element[i].type->id)
         {
-        fprintf(file, "%d ", 20);
-        for(j = 0; j < 20 ; ++j)
-          {
-          fprintf(file, " %d", mesh->element[i].node[hexa20fromgmsh[j]]->id-1);
-          }
-        fprintf(file, "\n");
-        }
-      else {
-        fprintf(file, "%d ", mesh->element[i].type->nodes);
-        // ojo! capaz que no funcione si no estan ordenados los indices
-        for (j = 0; j < mesh->element[i].type->nodes; j++) {
-          // el tet10 es diferente!
-          if (vtkfromgmsh_types[mesh->element[i].type->id] == 24 && (j == 8 || j == 9)) {
-            if (j == 8) {
-              fprintf(file, " %d", mesh->element[i].node[9]->id-1);
-            } else if (j == 9) {
-              fprintf(file, " %d", mesh->element[i].node[8]->id-1);
+        case ELEMENT_TYPE_HEXAHEDRON20: 
+        case ELEMENT_TYPE_HEXAHEDRON27: 
+          fprintf(file, "%d ", 20);
+          for(j = 0; j < 20 ; ++j)
+            {
+            fprintf(file, " %d", mesh->element[i].node[hexa20fromgmsh[j]]->id-1);
             }
-          } else {
-            fprintf(file, " %d", mesh->element[i].node[j]->id-1);
+          fprintf(file, "\n");
+        break;
+        case ELEMENT_TYPE_QUADRANGLE8:
+        case ELEMENT_TYPE_QUADRANGLE9:
+          fprintf(file, "%d ", 8 );
+          for(j = 0; j < 8  ; ++j)
+            {
+            fprintf(file, " %d", mesh->element[i].node[hexa20fromgmsh[j]]->id-1);
+            }
+          fprintf(file, "\n");
+        break;
+        default:
+          fprintf(file, "%d ", mesh->element[i].type->nodes);
+          // ojo! capaz que no funcione si no estan ordenados los indices
+          for (j = 0; j < mesh->element[i].type->nodes; j++) {
+            // el tet10 es diferente!
+            if (vtkfromgmsh_types[mesh->element[i].type->id] == 24 && (j == 8 || j == 9)) {
+              if (j == 8) {
+                fprintf(file, " %d", mesh->element[i].node[9]->id-1);
+              } else if (j == 9) {
+                fprintf(file, " %d", mesh->element[i].node[8]->id-1);
+              }
+            } else {
+              fprintf(file, " %d", mesh->element[i].node[j]->id-1);
+            }
           }
+          fprintf(file, "\n");
+        break;
         }
-        fprintf(file, "\n");
       }
     }
-  }
   fprintf(file, "\n");
   
   fprintf(file, "CELL_TYPES %d\n", volumelements);

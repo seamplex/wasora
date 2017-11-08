@@ -40,11 +40,11 @@ int vtkfromgmsh_types[18] = {
  22,    // ELEMENT_TYPE_TRIANGLE6
   0,
  24,    // ELEMENT_TYPE_TETRAHEDRON10
-  0,
+  0,    // 
   0,
   0,
   1,    // ELEMENT_TYPE_POINT
-  0,
+ 23,    // ELEMENT_TYPE_QUADRANGLE8    16
  25     // ELEMENT_TYPE_HEXAHEDRON20
 };
 // conversion de gmsh a vtk (by reading files because by following the docs it did not work).
@@ -133,9 +133,17 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
     }
   }
 
+// Here there are the cell types not supported by vtk but are shown as other cell.
   for (i = 0; i < mesh->n_elements; i++) {
-    if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27)
-      size-=7;
+    switch (mesh->element[i].type->id)
+      {
+      case ELEMENT_TYPE_HEXAHEDRON27:
+        size-=7;
+      break;
+      case ELEMENT_TYPE_QUADRANGLE9:
+        size-=1;
+      break;
+      }
   }
  
   fprintf(file, "CELLS %d %d\n", volumelements, size);
@@ -174,9 +182,13 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
   fprintf(file, "CELL_TYPES %d\n", volumelements);
   for (i = 0; i < mesh->n_elements; i++) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
-      if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27)
+//The vtk unsupported cell types go here.
+      if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27 || mesh->element[i].type->id == ELEMENT_TYPE_QUADRANGLE9)
         {
-        fprintf(file, "%d\n", 25 );
+        if(mesh->element[i].type->id == ELEMENT_TYPE_HEXAHEDRON27)
+          fprintf(file, "%d\n", 25 );
+        if(mesh->element[i].type->id == ELEMENT_TYPE_QUADRANGLE9)
+          fprintf(file, "%d\n", 23 );
         }
       else
         fprintf(file, "%d\n", vtkfromgmsh_types[mesh->element[i].type->id]);

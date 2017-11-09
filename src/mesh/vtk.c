@@ -135,15 +135,17 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
 
 // Here there are the cell types not supported by vtk but are shown as other cell.
   for (i = 0; i < mesh->n_elements; i++) {
-    switch (mesh->element[i].type->id)
-      {
-      case ELEMENT_TYPE_HEXAHEDRON27:
-        size-=7;
-      break;
-      case ELEMENT_TYPE_QUADRANGLE9:
-        size-=1;
-      break;
-      }
+    if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
+      switch (mesh->element[i].type->id)
+        {
+        case ELEMENT_TYPE_HEXAHEDRON27:
+          size-=7;
+        break;
+        case ELEMENT_TYPE_QUADRANGLE9:
+          size-=1;
+        break;
+        }
+    }
   }
  
   fprintf(file, "CELLS %d %d\n", volumelements, size);

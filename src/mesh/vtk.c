@@ -165,7 +165,7 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
           fprintf(file, "%d ", 8 );
           for(j = 0; j < 8  ; ++j)
             {
-            fprintf(file, " %d", mesh->element[i].node[hexa20fromgmsh[j]]->id-1);
+            fprintf(file, " %d", mesh->element[i].node[j]->id-1);
             }
           fprintf(file, "\n");
         break;

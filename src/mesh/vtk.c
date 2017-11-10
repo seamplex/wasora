@@ -39,7 +39,7 @@ int vtkfromgmsh_types[18] = {
  14,    // ELEMENT_TYPE_PYRAMID 
   0,
  22,    // ELEMENT_TYPE_TRIANGLE6
-  0,
+ 28,    // ELEMENT_TYPE_QUADRANGLE9    10
  24,    // ELEMENT_TYPE_TETRAHEDRON10
  29,    // ELEMENT_TYPE_HEXAHEDRON27   12 
   0,
@@ -140,19 +140,19 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
   }
 
 // Here there are the cell types not supported by vtk but are shown as other cell.
-  for (i = 0; i < mesh->n_elements; i++) {
-    if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
-      switch (mesh->element[i].type->id)
-        {
+//  for (i = 0; i < mesh->n_elements; i++) {
+//    if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
+//      switch (mesh->element[i].type->id)
+//        {
 //        case ELEMENT_TYPE_HEXAHEDRON27:
 //          size-=7;
 //        break;
-        case ELEMENT_TYPE_QUADRANGLE9:
-          size-=1;
-        break;
-        }
-    }
-  }
+//        case ELEMENT_TYPE_QUADRANGLE9:
+//          size-=1;
+//        break;
+//        }
+//    }
+//  }
  
   fprintf(file, "CELLS %d %d\n", volumelements, size);
   for (i = 0; i < mesh->n_elements; i++) {
@@ -172,14 +172,6 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
           for(j = 0; j < 20 ; ++j)
             {
             fprintf(file, " %d", mesh->element[i].node[hexa20fromgmsh[j]]->id-1);
-            }
-          fprintf(file, "\n");
-        break;
-        case ELEMENT_TYPE_QUADRANGLE9:
-          fprintf(file, "%d ", 8 );
-          for(j = 0; j < 8  ; ++j)
-            {
-            fprintf(file, " %d", mesh->element[i].node[j]->id-1);
             }
           fprintf(file, "\n");
         break;
@@ -214,9 +206,9 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
 //        case ELEMENT_TYPE_HEXAHEDRON27:
 //          fprintf(file, "%d\n", 25 );
 //        break;
-        case ELEMENT_TYPE_QUADRANGLE9:
-          fprintf(file, "%d\n", 23 );
-        break;
+//        case ELEMENT_TYPE_QUADRANGLE9:
+//          fprintf(file, "%d\n", 23 );
+//        break;
         default:
           fprintf(file, "%d\n", vtkfromgmsh_types[mesh->element[i].type->id]);
         break;

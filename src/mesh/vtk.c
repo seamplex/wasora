@@ -153,6 +153,7 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
       switch(mesh->element[i].type->id)
         {
+        case ELEMENT_TYPE_HEXAHEDRON20:  //It is needed to get a good order.
         case ELEMENT_TYPE_HEXAHEDRON27: 
           fprintf(file, "%d ", 20);
           for(j = 0; j < 20 ; ++j)

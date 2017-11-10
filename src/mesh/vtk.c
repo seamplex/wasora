@@ -27,6 +27,7 @@
 #include <assert.h>
 
 // conversion de gmsh a vtk
+//Sacado de https://github.com/Kitware/VTK/blob/master/Common/DataModel/vtkCellType.h
 int vtkfromgmsh_types[18] = {
   0,    // ELEMENT_TYPE_UNDEFINED
   3,    // ELEMENT_TYPE_LINE
@@ -40,12 +41,12 @@ int vtkfromgmsh_types[18] = {
  22,    // ELEMENT_TYPE_TRIANGLE6
   0,
  24,    // ELEMENT_TYPE_TETRAHEDRON10
-  0,    // 
+ 29,    // ELEMENT_TYPE_HEXAHEDRON27   12 
   0,
   0,
   1,    // ELEMENT_TYPE_POINT
  23,    // ELEMENT_TYPE_QUADRANGLE8    16
- 25     // ELEMENT_TYPE_HEXAHEDRON20
+ 25,    // ELEMENT_TYPE_HEXAHEDRON20
 };
 // conversion de gmsh a vtk (by reading files because by following the docs it did not work).
 // index  0 1 2 3 4 5 6 7 8  9 10 11 12 13 14 15 16 17 18 19
@@ -55,6 +56,11 @@ int hexa20fromgmsh[20] = {
   0 , 1  , 2  ,  3 , 4  , 5  , 6  , 7  ,
   8 , 11 , 13 ,  9 , 16 , 18 , 19 , 17 ,
  10 , 12 , 14 , 15 } ;
+int hexa27fromgmsh[27] = { 
+  0 , 1  , 2  ,  3 , 4  , 5  , 6  , 7  ,
+  8 , 11 , 13 ,  9 , 16 , 18 , 19 , 17 ,
+ 10 , 12 , 14 , 15 , 22 , 23 , 21 , 24 ,
+ 20 , 25 , 26} ;
 
 int mesh_vtk_write_header(FILE *file) {
   fprintf(file, "# vtk DataFile Version 2.0\n");
@@ -138,9 +144,9 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
       switch (mesh->element[i].type->id)
         {
-        case ELEMENT_TYPE_HEXAHEDRON27:
-          size-=7;
-        break;
+//        case ELEMENT_TYPE_HEXAHEDRON27:
+//          size-=7;
+//        break;
         case ELEMENT_TYPE_QUADRANGLE9:
           size-=1;
         break;
@@ -153,8 +159,15 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
       switch(mesh->element[i].type->id)
         {
-        case ELEMENT_TYPE_HEXAHEDRON20:  //It is needed to get a good order.
         case ELEMENT_TYPE_HEXAHEDRON27: 
+          fprintf(file, "%d ", 27);
+          for(j = 0; j < 27 ; ++j)
+            {
+            fprintf(file, " %d", mesh->element[i].node[hexa27fromgmsh[j]]->id-1);
+            }
+          fprintf(file, "\n");
+        break;
+        case ELEMENT_TYPE_HEXAHEDRON20:  //It is needed to get a good order.
           fprintf(file, "%d ", 20);
           for(j = 0; j < 20 ; ++j)
             {
@@ -198,9 +211,9 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
 //The vtk unsupported cell types go here.
       switch(mesh->element[i].type->id)
         {
-        case ELEMENT_TYPE_HEXAHEDRON27:
-          fprintf(file, "%d\n", 25 );
-        break;
+//        case ELEMENT_TYPE_HEXAHEDRON27:
+//          fprintf(file, "%d\n", 25 );
+//        break;
         case ELEMENT_TYPE_QUADRANGLE9:
           fprintf(file, "%d\n", 23 );
         break;

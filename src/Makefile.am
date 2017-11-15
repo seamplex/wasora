@@ -69,10 +69,14 @@ wasora_SOURCES = \
 ./mesh/tetrahedron.c \
 ./mesh/tet10.c \
 ./mesh/hexahedron.c \
+./mesh/hexahedron27.c \
+./mesh/hexahedron20.c \
 ./mesh/struct.c \
 ./mesh/post.c \
 ./mesh/gmsh.c \
 ./mesh/quad.c \
+./mesh/quad8.c \
+./mesh/quad9.c \
 ./mesh/mesh.c \
 ./mesh/gauss.c \
 ./mesh/define.c \

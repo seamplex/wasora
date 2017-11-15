@@ -27,7 +27,8 @@
 #include <assert.h>
 
 // conversion de gmsh a vtk
-int vtkfromgmsh_types[16] = {
+//Sacado de https://github.com/Kitware/VTK/blob/master/Common/DataModel/vtkCellType.h
+int vtkfromgmsh_types[18] = {
   0,    // ELEMENT_TYPE_UNDEFINED
   3,    // ELEMENT_TYPE_LINE
   5,    // ELEMENT_TYPE_TRIANGLE
@@ -38,14 +39,28 @@ int vtkfromgmsh_types[16] = {
  14,    // ELEMENT_TYPE_PYRAMID 
   0,
  22,    // ELEMENT_TYPE_TRIANGLE6
-  0,
+ 28,    // ELEMENT_TYPE_QUADRANGLE9    10
  24,    // ELEMENT_TYPE_TETRAHEDRON10
+ 29,    // ELEMENT_TYPE_HEXAHEDRON27   12 
   0,
   0,
-  0,
-  1     // ELEMENT_TYPE_POINT
+  1,    // ELEMENT_TYPE_POINT
+ 23,    // ELEMENT_TYPE_QUADRANGLE8    16
+ 25,    // ELEMENT_TYPE_HEXAHEDRON20
 };
-
+// conversion de gmsh a vtk (by reading files because by following the docs it did not work).
+// index  0 1 2 3 4 5 6 7 8  9 10 11 12 13 14 15 16 17 18 19
+// vtk    0 1 3 2 4 6 7 5 8 10 11  9 18 17 19 14 12 15 16 13
+// gmsh   0 1 3 2 4 6 7 5 8  9 12 10 15 11 16 13 18 14 17 19
+int hexa20fromgmsh[20] = { 
+  0 , 1  , 2  ,  3 , 4  , 5  , 6  , 7  ,
+  8 , 11 , 13 ,  9 , 16 , 18 , 19 , 17 ,
+ 10 , 12 , 14 , 15 } ;
+int hexa27fromgmsh[27] = { 
+  0 , 1  , 2  ,  3 , 4  , 5  , 6  , 7  ,
+  8 , 11 , 13 ,  9 , 16 , 18 , 19 , 17 ,
+ 10 , 12 , 14 , 15 , 22 , 23 , 21 , 24 ,
+ 20 , 25 , 26} ;
 
 int mesh_vtk_write_header(FILE *file) {
   fprintf(file, "# vtk DataFile Version 2.0\n");
@@ -123,33 +138,81 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
       volumelements++;
     }
   }
-  
+
+// Here there are the cell types not supported by vtk but are shown as other cell.
+//  for (i = 0; i < mesh->n_elements; i++) {
+//    if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
+//      switch (mesh->element[i].type->id)
+//        {
+//        case ELEMENT_TYPE_HEXAHEDRON27:
+//          size-=7;
+//        break;
+//        case ELEMENT_TYPE_QUADRANGLE9:
+//          size-=1;
+//        break;
+//        }
+//    }
+//  }
+ 
   fprintf(file, "CELLS %d %d\n", volumelements, size);
   for (i = 0; i < mesh->n_elements; i++) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
-      fprintf(file, "%d ", mesh->element[i].type->nodes);
-      // ojo! capaz que no funcione si no estan ordenados los indices
-      for (j = 0; j < mesh->element[i].type->nodes; j++) {
-        // el tet10 es diferente!
-        if (vtkfromgmsh_types[mesh->element[i].type->id] == 24 && (j == 8 || j == 9)) {
-          if (j == 8) {
-            fprintf(file, " %d", mesh->element[i].node[9]->id-1);
-          } else if (j == 9) {
-            fprintf(file, " %d", mesh->element[i].node[8]->id-1);
+      switch(mesh->element[i].type->id)
+        {
+        case ELEMENT_TYPE_HEXAHEDRON27: 
+          fprintf(file, "%d ", 27);
+          for(j = 0; j < 27 ; ++j)
+            {
+            fprintf(file, " %d", mesh->element[i].node[hexa27fromgmsh[j]]->id-1);
+            }
+          fprintf(file, "\n");
+        break;
+        case ELEMENT_TYPE_HEXAHEDRON20:  //It is needed to get a good order.
+          fprintf(file, "%d ", 20);
+          for(j = 0; j < 20 ; ++j)
+            {
+            fprintf(file, " %d", mesh->element[i].node[hexa20fromgmsh[j]]->id-1);
+            }
+          fprintf(file, "\n");
+        break;
+        default:
+          fprintf(file, "%d ", mesh->element[i].type->nodes);
+          // ojo! capaz que no funcione si no estan ordenados los indices
+          for (j = 0; j < mesh->element[i].type->nodes; j++) {
+            // el tet10 es diferente!
+            if (vtkfromgmsh_types[mesh->element[i].type->id] == 24 && (j == 8 || j == 9)) {
+              if (j == 8) {
+                fprintf(file, " %d", mesh->element[i].node[9]->id-1);
+              } else if (j == 9) {
+                fprintf(file, " %d", mesh->element[i].node[8]->id-1);
+              }
+            } else {
+              fprintf(file, " %d", mesh->element[i].node[j]->id-1);
+            }
           }
-        } else {
-          fprintf(file, " %d", mesh->element[i].node[j]->id-1);
+          fprintf(file, "\n");
+        break;
         }
       }
-      fprintf(file, "\n");
     }
-  }
   fprintf(file, "\n");
   
   fprintf(file, "CELL_TYPES %d\n", volumelements);
   for (i = 0; i < mesh->n_elements; i++) {
     if (mesh->element[i].type->dim == mesh->bulk_dimensions) {
-      fprintf(file, "%d\n", vtkfromgmsh_types[mesh->element[i].type->id]);
+//The vtk unsupported cell types go here.
+      switch(mesh->element[i].type->id)
+        {
+//        case ELEMENT_TYPE_HEXAHEDRON27:
+//          fprintf(file, "%d\n", 25 );
+//        break;
+//        case ELEMENT_TYPE_QUADRANGLE9:
+//          fprintf(file, "%d\n", 23 );
+//        break;
+        default:
+          fprintf(file, "%d\n", vtkfromgmsh_types[mesh->element[i].type->id]);
+        break;
+        }
     }
   }
   

@@ -1734,8 +1734,12 @@ typedef enum {
 #define ELEMENT_TYPE_PYRAMID        7
 #define ELEMENT_TYPE_LINE3          8
 #define ELEMENT_TYPE_TRIANGLE6      9
+#define ELEMENT_TYPE_QUADRANGLE9    10
 #define ELEMENT_TYPE_TETRAHEDRON10  11
+#define ELEMENT_TYPE_HEXAHEDRON27   12 
 #define ELEMENT_TYPE_POINT          15
+#define ELEMENT_TYPE_QUADRANGLE8    16
+#define ELEMENT_TYPE_HEXAHEDRON20   17 
 
 #define GAUSS_POINTS_SINGLE       0
 #define GAUSS_POINTS_CANONICAL    1
@@ -2342,15 +2346,27 @@ extern double mesh_six_node_triang_dhdr(int, int, gsl_vector *);
 extern int mesh_four_node_quadrangle_init(void);
 extern double mesh_four_node_quad_h(int, gsl_vector *);
 extern double mesh_four_node_quad_dhdr(int, int, gsl_vector *);
+extern double mesh_eight_node_quad_h(int , gsl_vector *);
+extern double mesh_eight_node_quad_dhdr(int , int , gsl_vector *);
+extern double mesh_nine_node_quad_h(int , gsl_vector *);
+extern double mesh_nine_node_quad_dhdr(int , int , gsl_vector *);
 extern int mesh_point_in_quadrangle(element_t *, const double *);
 extern double mesh_quad_vol(element_t *);
 
 // hexahedron.c
-extern int mesh_six_node_hexahedron_init(void);
+extern int mesh_eight_node_hexahedron_init(void);
 extern double mesh_eight_node_hexahedron_h(int, gsl_vector *);
 extern double mesh_eight_node_hexahedron_dhdr(int, int, gsl_vector *);
 extern int mesh_point_in_hexahedron(element_t *, const double *);
 extern double mesh_hexahedron_vol(element_t *);
+
+// hexahedron27.c
+extern double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r);
+extern double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
+
+// hexahedron20.c
+extern double mesh_twenty_node_hexahedron_h(int j, gsl_vector *gsl_r);
+extern double mesh_twenty_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
 
 // tetrahedron.c
 extern int mesh_four_node_tetrahedron_init(void);

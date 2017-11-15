@@ -29,7 +29,7 @@
 // hexahedro de ocho nodos
 // --------------------------------------------------------------
 
-int mesh_six_node_hexahedron_init(void) {
+int mesh_eight_node_hexahedron_init(void) {
   
   element_type_t *element_type;
   gauss_t *gauss;

@@ -203,7 +203,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         if (fscanf(mesh->file->pointer, "%d", &type) == 0) {
           return WASORA_RUNTIME_ERROR;
         }
-        if (type > 15) {
+        if (type > 17) {
           wasora_push_error_message("elements of type '%d' are not supported in this version :-(", type);
           return WASORA_RUNTIME_ERROR;
         }

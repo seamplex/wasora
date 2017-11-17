@@ -2329,7 +2329,7 @@ extern int mesh_three_node_line_init(void);
 extern double mesh_three_node_line_h(int, gsl_vector *);
 extern double mesh_three_node_line_dhdr(int, int, gsl_vector *);
 
-// triang.c
+// triang3.c
 extern int mesh_three_node_triangle_init(void);
 extern double mesh_three_node_triang_h(int, gsl_vector *);
 extern double mesh_three_node_triang_dhdr(int, int, gsl_vector *);
@@ -2342,33 +2342,42 @@ extern int mesh_six_node_triangle_init(void);
 extern double mesh_six_node_triang_h(int, gsl_vector *);
 extern double mesh_six_node_triang_dhdr(int, int, gsl_vector *);
 
-// quad.c
+// quad4.c
 extern int mesh_four_node_quadrangle_init(void);
 extern double mesh_four_node_quad_h(int, gsl_vector *);
 extern double mesh_four_node_quad_dhdr(int, int, gsl_vector *);
-extern double mesh_eight_node_quad_h(int , gsl_vector *);
-extern double mesh_eight_node_quad_dhdr(int , int , gsl_vector *);
-extern double mesh_nine_node_quad_h(int , gsl_vector *);
-extern double mesh_nine_node_quad_dhdr(int , int , gsl_vector *);
 extern int mesh_point_in_quadrangle(element_t *, const double *);
 extern double mesh_quad_vol(element_t *);
 
-// hexahedron.c
+// quad8.c
+extern int mesh_eight_node_quadrangle_init(void);
+extern double mesh_eight_node_quad_h(int , gsl_vector *);
+extern double mesh_eight_node_quad_dhdr(int , int , gsl_vector *);
+
+// quad9.c
+extern int mesh_nine_node_quadrangle_init(void);
+extern double mesh_nine_node_quad_h(int , gsl_vector *);
+extern double mesh_nine_node_quad_dhdr(int , int , gsl_vector *);
+
+
+// hexahedron8.c
 extern int mesh_eight_node_hexahedron_init(void);
 extern double mesh_eight_node_hexahedron_h(int, gsl_vector *);
 extern double mesh_eight_node_hexahedron_dhdr(int, int, gsl_vector *);
 extern int mesh_point_in_hexahedron(element_t *, const double *);
 extern double mesh_hexahedron_vol(element_t *);
 
-// hexahedron27.c
-extern double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r);
-extern double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
-
 // hexahedron20.c
+extern int mesh_twenty_node_hexaedron_init(void);
 extern double mesh_twenty_node_hexahedron_h(int j, gsl_vector *gsl_r);
 extern double mesh_twenty_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
 
-// tetrahedron.c
+// hexahedron27.c
+extern int mesh_twentyseven_node_hexaedron_init(void);
+extern double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r);
+extern double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
+
+// tet4.c
 extern int mesh_four_node_tetrahedron_init(void);
 extern void mesh_tetrahedron_gauss_init(element_type_t *);
 extern double mesh_four_node_tetrahedron_h(int, gsl_vector *);

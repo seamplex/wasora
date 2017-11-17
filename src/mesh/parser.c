@@ -457,6 +457,77 @@ int wasora_mesh_parse_line(char *line) {
       LL_APPEND(wasora_mesh.integrates, mesh_integrate);
       wasora_define_instruction(wasora_instruction_mesh_integrate, mesh_integrate);
       return WASORA_PARSER_OK;
+
+// --- MESH_EVALUATE --------------------------------------------------------
+    } else if (strcasecmp(token, "MESH_EVALUATE") == 0) {
+///kw+MESH_EVALUATE+usage MESH_EVALUATE
+      
+      mesh_evaluate_t *mesh_evaluate = calloc(1, sizeof(mesh_evaluate_t));
+      
+      while ((token = wasora_get_next_token(NULL)) != NULL) {
+///kw+MESH_EVALUATE+usage { FUNCTION <function>
+        if (strcasecmp(token, "FUNCTION") == 0) {
+          wasora_call(wasora_parser_function(&mesh_evaluate->function));
+
+///kw+MESH_EVALUATE+usage | EXPRESSION <expr> }
+        } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
+          wasora_call(wasora_parser_expression(&mesh_evaluate->expr));
+        
+///kw+MESH_EVALUATE+usage OVER <physical_entity>
+        } else if (strcasecmp(token, "OVER") == 0) {
+          char *name;
+          wasora_call(wasora_parser_string(&name));
+          if ((mesh_evaluate->physical_entity = wasora_get_physical_entity_ptr(name)) == NULL) {
+            wasora_push_error_message("unknown physical entity '%s'", name);
+            free(name);
+            return WASORA_PARSER_ERROR;
+          }
+          
+///kw+MESH_EVALUATE+usage [ MESH <mesh_identifier> ]
+        } else if (strcasecmp(token, "MESH") == 0) {
+          char *mesh_name;
+          wasora_call(wasora_parser_string(&mesh_name));
+          if ((mesh_evaluate->mesh = wasora_get_mesh_ptr(mesh_name)) == NULL) {
+            wasora_push_error_message("unknown mesh '%s'", mesh_name);
+            free(mesh_name);
+            return WASORA_PARSER_ERROR;
+          }
+          free(mesh_name);
+          
+///kw+MESH_EVALUATE+usage [ NODES
+        } else if (strcasecmp(token, "NODES") == 0) {
+            mesh_evaluate->centering = centering_nodes;
+///kw+MESH_EVALUATE+usage | CELLS ]
+          } else if (strcasecmp(token, "CELLS") == 0) {
+            mesh_evaluate->centering = centering_cells;
+
+        } else {
+          wasora_push_error_message("unknown keyword '%s'", token);
+          return WASORA_PARSER_ERROR;
+        }
+      }
+      
+      if (mesh_evaluate->expr.n_tokens == 0 && mesh_evaluate->function == NULL) {
+        wasora_push_error_message("either EXPR of FUNCTION needed");
+        return WASORA_PARSER_ERROR;
+      }
+      if (mesh_evaluate->physical_entity == NULL) {
+        wasora_push_error_message("MESH_EVALUATE needs a OVER physical_entity");
+        return WASORA_PARSER_ERROR;
+      }
+      
+      if (mesh_evaluate->mesh == NULL) {
+        if ((mesh_evaluate->mesh = wasora_mesh.main_mesh) == NULL) {
+          wasora_push_error_message("no MESH defined for MESH_EVALUATE");
+          return WASORA_PARSER_ERROR;
+        }
+      }
+         
+      
+      
+      LL_APPEND(wasora_mesh.evaluates, mesh_evaluate);
+      wasora_define_instruction(wasora_instruction_mesh_evaluate, mesh_evaluate);
+      return WASORA_PARSER_OK;
       
 // --- MESH_FILL_VECTOR ------------------------------------------------------
     } else if (strcasecmp(token, "MESH_FILL_VECTOR") == 0) {

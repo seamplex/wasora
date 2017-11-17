@@ -158,7 +158,7 @@ int wasora_mesh_element_types_init(void) {
   mesh_three_node_triangle_init();
   mesh_six_node_triangle_init();
   
-  // quadrangle ----------------------------------------------------------------
+  // quadrangles ----------------------------------------------------------------
   mesh_four_node_quadrangle_init();
   mesh_eight_node_quadrangle_init();
   mesh_nine_node_quadrangle_init();
@@ -167,10 +167,10 @@ int wasora_mesh_element_types_init(void) {
   mesh_four_node_tetrahedron_init();
   mesh_ten_node_tetrahedron_init();
   
-  // hexahedron ---------------------------------------------------------------- 
+  // hexahedra ---------------------------------------------------------------- 
   mesh_eight_node_hexahedron_init();
-  mesh_twentyseven_node_hexaedron_init();
   mesh_twenty_node_hexaedron_init();
+  mesh_twentyseven_node_hexaedron_init();
     
   // prism ---------------------------------------------------------------------
   mesh_six_node_prism_init();

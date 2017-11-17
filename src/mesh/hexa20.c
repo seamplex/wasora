@@ -244,7 +244,6 @@ double mesh_twenty_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
         break;
         case 2:
           return -0.125*(r+1)*(1-s)*(-t-s+r-2)-0.125*(r+1)*(1-s)*(1-t);
-          return ;
         break;
       }
     break;
@@ -258,7 +257,6 @@ double mesh_twenty_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
         break;
         case 2:
           return -0.125*(r+1)*(1+s)*(-t+s+r-2)-0.125*(r+1)*(s+1)*(1-t);
-          return ;
         break;
       }
     break;

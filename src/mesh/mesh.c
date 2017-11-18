@@ -176,7 +176,7 @@ int wasora_instruction_mesh(void *arg) {
   
   // calculamos el volumen (o superficie o longitud) y el centro de masa de las physical entities
   // solo para la primera malla
-  if (wasora_mesh.meshes == mesh && mesh->bulk_dimensions != 0) {
+  if (mesh == wasora_mesh.main_mesh && mesh->bulk_dimensions != 0) {
     LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
       vol = cog[0] = cog[1] = cog[2] = 0;
       for (i = 0; i < physical_entity->n_elements; i++) {

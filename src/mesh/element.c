@@ -135,7 +135,7 @@ int wasora_mesh_element_types_init(void) {
   element_type_t *element_type;
 //  int v, j, m;
   
-  wasora_mesh.element_type = calloc(16, sizeof(element_type_t));
+  wasora_mesh.element_type = calloc(18, sizeof(element_type_t));
 
   // undefined  ----------------------------------------------------------------
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_UNDEFINED];

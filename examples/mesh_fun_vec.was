@@ -5,7 +5,7 @@ MESH NAME square FILE_PATH square.msh DIMENSIONS 2
 # are given by the contents of the vector "in" (the size is
 # automatically computed from the number of cells in the mesh)
 # to define f at the nodes, replace CELLS with NODES
-FUNCTION f(x,y) MESH square VECTOR in CELLS 
+FUNCTION f(x,y) MESH square VECTOR in CELLS
 
 # fill in the values of the vector T (probably by reading them
 # from a file or from shared memory)

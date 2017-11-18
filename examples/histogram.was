@@ -8,15 +8,15 @@ n = $3    # number of bins
 a = $4    # lower end of range
 b = $5    # upper end of range
 
-VECTOR x SIZE N     # vector with the actual data
+VECTOR data SIZE N     # vector with the actual data
 VECTOR hist SIZE n  # histogram bins
 
 # either read data from a file 
-READ x ASCII_FILE_PATH $1
+READ data ASCII_FILE_PATH $1
 # or generate some random data
-# x(i) = random_gauss(0.5,0.2)
+# data(i) = random_gauss(0.5,0.2)
 
 s = (b-a)/n
-hist(i) = sum(is_in_interval(x(j), a+(i-1)*s, a+i*s), j, 1, N)
+hist(i) = sum(is_in_interval(data(j), a+(i-1)*s, a+i*s), j, 1, N)
 
 PRINT_VECTOR FORMAT %g a+(i-1/2)*s hist 

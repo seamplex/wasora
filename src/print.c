@@ -172,6 +172,7 @@ int wasora_instruction_print_function(void *arg) {
   print_token_t *print_token;
   
   int j, k;
+  int flag = 0;
   double *x, *x_min, *x_max, *x_step;
   
   if (print_function->file->pointer == NULL) {
@@ -277,56 +278,70 @@ int wasora_instruction_print_function(void *arg) {
 
   } else if (print_function->first_function != NULL && print_function->first_function->data_size > 0) {
 
+
     // imprimimos en los puntos de definicion de la primera
     x = calloc(print_function->first_function->n_arguments, sizeof(double));
 
     for (j = 0; j < print_function->first_function->data_size; j++) {
 
-      // los argumentos de la primera funcion
-      for (k = 0; k < print_function->first_function->n_arguments; k++) {
-        // nos acordamos los argumentos para las otras funciones que vienen despues
-        x[k] = print_function->first_function->data_argument[k][j];
-        fprintf(print_function->file->pointer, print_function->format, x[k]);
-        fprintf(print_function->file->pointer, "%s", print_function->separator);
+      if (print_function->physical_entity != NULL) {
+        element_list_item_t *element_list_item;
+        flag = 0;
+        LL_FOREACH(wasora_mesh.main_mesh->node[j].associated_elements, element_list_item) {
+          if (element_list_item->element->physical_entity == print_function->physical_entity) {
+            flag = 1;
+          }
+        }
       }
-
-      // las cosas que nos pidieron
-      LL_FOREACH(print_function->tokens, print_token) {
+          
+      if (print_function->physical_entity == NULL || flag) {
       
-        // imprimimos lo que nos pidieron
-        if (print_token->function != NULL) {
-          if (print_token->function == print_function->first_function) {
-            // la primera funcion tiene los puntos posta asi que no hay que interpolar
-            fprintf(print_function->file->pointer, print_function->format, print_token->function->data_value[j]);
+        // los argumentos de la primera funcion
+        for (k = 0; k < print_function->first_function->n_arguments; k++) {
+          // nos acordamos los argumentos para las otras funciones que vienen despues
+          x[k] = print_function->first_function->data_argument[k][j];
+          fprintf(print_function->file->pointer, print_function->format, x[k]);
+          fprintf(print_function->file->pointer, "%s", print_function->separator);
+        }
+
+        // las cosas que nos pidieron
+        LL_FOREACH(print_function->tokens, print_token) {
+
+          // imprimimos lo que nos pidieron
+          if (print_token->function != NULL) {
+            if (print_token->function == print_function->first_function || print_token->function->data_size == print_function->first_function->data_size) {
+              // la primera funcion tiene los puntos posta asi que no hay que interpolar
+              fprintf(print_function->file->pointer, print_function->format, print_token->function->data_value[j]);
+            } else {
+              fprintf(print_function->file->pointer, print_function->format, wasora_evaluate_function(print_token->function, x));
+            }
+
+          } else if (print_token->expression.n_tokens != 0) {
+            wasora_set_function_args(print_function->first_function, x);
+            fprintf(print_function->file->pointer, print_function->format, wasora_evaluate_expression(&print_token->expression));
+
+          }
+
+          if (print_token->next != NULL) {
+            fprintf(print_function->file->pointer, "%s", print_function->separator);
           } else {
-            fprintf(print_function->file->pointer, print_function->format, wasora_evaluate_function(print_token->function, x));
+            fprintf(print_function->file->pointer, "\n");
+            // siempre flusheamos
+            fflush(print_function->file->pointer);
           }
           
-        } else if (print_token->expression.n_tokens != 0) {
-          wasora_set_function_args(print_function->first_function, x);
-          fprintf(print_function->file->pointer, print_function->format, wasora_evaluate_expression(&print_token->expression));
+          // si estamos en 2d y cambiamos los dos primeros argumentos imprimimos una linea
+          // en blanco para que plotear con gnuplot with lines salga lindo        
+          if (print_token->next == NULL &&
+              print_function->first_function->n_arguments == 2 &&
+              print_function->first_function->rectangular_mesh &&
+              j != print_function->first_function->data_size &&
+              gsl_fcmp(print_function->first_function->data_argument[0][j], print_function->first_function->data_argument[0][j+1], print_function->first_function->multidim_threshold) != 0 &&
+              gsl_fcmp(print_function->first_function->data_argument[1][j], print_function->first_function->data_argument[1][j+1], print_function->first_function->multidim_threshold) != 0) {
+            fprintf(print_function->file->pointer, "\n");
+          }
           
         }
-        
-        if (print_token->next != NULL) {
-          fprintf(print_function->file->pointer, "%s", print_function->separator);
-        } else {
-          fprintf(print_function->file->pointer, "\n");
-          // siempre flusheamos
-          fflush(print_function->file->pointer);
-        }
-
-        // si estamos en 2d y cambiamos los dos primeros argumentos imprimimos una linea
-        // en blanco para que plotear con gnuplot with lines salga lindo        
-        if (print_token->next == NULL &&
-            print_function->first_function->n_arguments == 2 &&
-            print_function->first_function->rectangular_mesh &&
-            j != print_function->first_function->data_size &&
-            gsl_fcmp(print_function->first_function->data_argument[0][j], print_function->first_function->data_argument[0][j+1], print_function->first_function->multidim_threshold) != 0 &&
-            gsl_fcmp(print_function->first_function->data_argument[1][j], print_function->first_function->data_argument[1][j+1], print_function->first_function->multidim_threshold) != 0) {
-          fprintf(print_function->file->pointer, "\n");
-        }
-
       }
 //      fprintf(print_function->file->pointer, "\n");
 

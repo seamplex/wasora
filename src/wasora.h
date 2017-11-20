@@ -205,6 +205,7 @@ typedef struct builtin_functional_t builtin_functional_t;
 
 typedef struct multidim_range_t multidim_range_t;
 
+typedef struct physical_entity_t physical_entity_t;
 typedef struct mesh_t mesh_t;
 
 
@@ -802,6 +803,9 @@ struct print_function_t {
 
   // rango explicito donde hay que imprimir la funcion
   multidim_range_t range;
+  
+  // entidad fisica donde hay que evaluar la funcion
+  physical_entity_t *physical_entity;
 
   // flag para saber que estamos imprimiendo
   int header;
@@ -1627,7 +1631,6 @@ extern  int wasora_instruction_mesh_post(void *);
 extern  int wasora_instruction_mesh_fill_vector(void *);
 extern  int wasora_instruction_mesh_find_max(void *);
 extern  int wasora_instruction_mesh_integrate(void *arg);
-extern  int wasora_instruction_mesh_evaluate(void *arg);
 
 
 // interface.h
@@ -1700,9 +1703,9 @@ typedef struct mesh_post_dist_t mesh_post_dist_t;
 typedef struct mesh_fill_vector_t mesh_fill_vector_t;
 typedef struct mesh_find_max_t mesh_find_max_t;
 typedef struct mesh_integrate_t mesh_integrate_t;
-typedef struct mesh_evaluate_t mesh_evaluate_t;
 
-typedef struct physical_entity_t physical_entity_t;
+// es esta mas arriba porque se necesita en print_function
+//typedef struct physical_entity_t physical_entity_t;
 typedef struct physical_name_t physical_name_t;
 
 typedef struct node_t node_t;
@@ -1818,7 +1821,6 @@ struct {
   mesh_fill_vector_t *fill_vectors;
   mesh_find_max_t *find_maxs;
   mesh_integrate_t *integrates;
-  mesh_evaluate_t *evaluates;
 
 } wasora_mesh;
 
@@ -2217,16 +2219,6 @@ struct mesh_integrate_t {
   int gauss_points;
 
   var_t *result;
-
-  mesh_integrate_t *next;
-};
-
-struct mesh_evaluate_t {
-  mesh_t *mesh;
-  function_t *function;
-  expr_t expr;
-  physical_entity_t *physical_entity;
-  centering_t centering;
 
   mesh_integrate_t *next;
 };

@@ -213,7 +213,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           return WASORA_RUNTIME_ERROR;
         }
 
-        // cada elemento tiene un tag que es una array de enteros
+        // cada elemento tiene un tag que es un array de enteros
         // el primero es el id de la entidad fisica
         // el segundo es el id de la entidad geometrica (no nos interesa)
         // despues siguen cosas opcionales como particiones, padres, dominios, etc

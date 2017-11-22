@@ -1939,6 +1939,8 @@ struct bc_string_based_t {
   int bc_type_phys;  
   int dof;
   
+  physical_entity_t *mimic_to;
+  
   expr_t expr;
   
   bc_string_based_t *next;

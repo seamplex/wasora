@@ -1,12 +1,12 @@
 % Wasora reference sheet
 % Jeremy Theler
 
-This reference sheet is for [wasora](index.html) v0.5.80-g1a6df88
+This reference sheet is for [wasora](index.html) v0.5.160-g53c190f
 .
 
 ~~~
 $ wasora
-wasora v0.5.77-gfed3831+Δ 
+wasora v0.5.159-g4df4130 
 wasora’s an advanced suite for optimization & reactor analysis
 $
 ~~~
@@ -348,7 +348,7 @@ to choose how to skip printing and may be useful for non-constant time-step prob
 Prints one or more functions as a table of values of dependent and independent variables.
 
 ~~~wasora
-PRINT_FUNCTION <function_1> [ { function_2 | expr_1 } ... { function_n | expr_n-1 } ] [ FILE <file_id> | FILE_PATH <file_path> ] [ HEADER ] [ MIN <expr_1> <expr_2> ... <expr_m> ] [ MAX <expr_1> <expr_2> ... <expr_m> ] [ STEP <expr_1> <expr_2> ... <expr_m> ] [ NSTEPs <expr_1> <expr_2> ... <expr_m> ] [ FORMAT <print_format> ]
+PRINT_FUNCTION <function_1> [ { function_2 | expr_1 } ... { function_n | expr_n-1 } ] [ FILE <file_id> | FILE_PATH <file_path> ] [ HEADER ] [ MIN <expr_1> <expr_2> ... <expr_m> ] [ MAX <expr_1> <expr_2> ... <expr_m> ] [ STEP <expr_1> <expr_2> ... <expr_m> ] [ NSTEPs <expr_1> <expr_2> ... <expr_m> ] [ FORMAT <print_format> ] [ PHYSICAL_ENTITY <name> ]
 ~~~
 
 
@@ -494,11 +494,20 @@ MESH_INTEGRATE { FUNCTION <function> | EXPRESSION <expr> } OVER <physical_entity
 
 
 
+##  `MESH_MAIN`
+
+
+~~~wasora
+MESH_MAIN [ <mesh_identifier> ]
+~~~
+
+
+
 ##  `MESH_POST`
 
 
 ~~~wasora
-MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ NO_MESH ] [ FORMAT { gmsh | vtk } ] [ CELLS | ] NODE ] [ VECTOR <component_1> <component_2> <component_3> ] [ <scalar_1> ] [ <scalar_2> ] ...
+MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ NO_MESH ] [ FORMAT { gmsh | vtk } ] [ CELLS | ] NODE ] [ NO_PHYSICAL_NAMES ] [ VECTOR <component_1> <component_2> <component_3> ] [ <scalar_1> ] [ <scalar_2> ] ...
 ~~~
 
 

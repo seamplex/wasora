@@ -50,8 +50,6 @@ double wasora_vector_get_initial_transient(vector_t *vector, const size_t i) {
 }
 
 
-// no convendra chequear aca adentro si ya esta inicializado en lugar de
-// poner ifs por todos lados al llamar a esta funcion?
 int wasora_vector_init(vector_t *vector) {
 
   int size;

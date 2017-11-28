@@ -196,6 +196,16 @@ int wasora_instruction_mesh(void *arg) {
       physical_entity->cog[0] = cog[0]/vol;
       physical_entity->cog[1] = cog[1]/vol;
       physical_entity->cog[2] = cog[2]/vol;
+      
+      if (physical_entity->vector_cog != NULL) {
+        if (!physical_entity->vector_cog->initialized) {
+          wasora_call(wasora_vector_init(physical_entity->vector_cog));
+        }
+        gsl_vector_set(physical_entity->vector_cog->value, 0, physical_entity->cog[0]);
+        gsl_vector_set(physical_entity->vector_cog->value, 1, physical_entity->cog[1]);
+        gsl_vector_set(physical_entity->vector_cog->value, 2, physical_entity->cog[2]);
+      }
+      
     }
   }
   

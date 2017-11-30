@@ -1946,7 +1946,7 @@ struct bc_string_based_t {
   // estos son ints y no enums porque desde wasora no sabemos que va a haber
   int bc_type_math;
   int bc_type_phys;  
-  int dof;
+  int dof;   // este puede tener valores altos que quieran decir cosas (i.e. dof=213 es Mx)
   
   physical_entity_t *mimic_to;
   

@@ -234,6 +234,10 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             if ((mesh->element[i].physical_entity = physical_entity) != NULL) {
               physical_entity->n_elements++;
             }
+            // ponemos la dimension de la entidad fisica
+            if (mesh->element[i].type->dim > physical_entity->dimension) {
+              physical_entity->dimension = mesh->element[i].type->dim;
+            }
           }
         }
         

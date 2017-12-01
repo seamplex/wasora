@@ -386,7 +386,7 @@ int wasora_mesh_parse_line(char *line) {
         } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
           wasora_call(wasora_parser_expression(&mesh_integrate->expr));
         
-///kw+MESH_INTEGRATE+usage OVER <physical_entity>
+///kw+MESH_INTEGRATE+usage OVER <physical_entity_name>
         } else if (strcasecmp(token, "OVER") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
@@ -746,7 +746,14 @@ int wasora_mesh_parse_line(char *line) {
         free(pos);
       }
 
-      if (physical_entity->name != NULL) {
+      if (physical_entity->name != NULL && wasora_check_name(name) == WASORA_PARSER_OK) {
+        // volumen (o area o longitud)
+        asprintf(&dummy_aux, "%s_vol", physical_entity->name);
+        if ((physical_entity->var_vol = wasora_define_variable(dummy_aux)) == NULL) {
+          return WASORA_PARSER_ERROR;
+        }
+        free(dummy_aux);
+        
         // centro de gravedad
         asprintf(&dummy_aux, "%s_cog", physical_entity->name);
         if ((physical_entity->vector_cog = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {

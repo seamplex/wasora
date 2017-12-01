@@ -197,6 +197,12 @@ int wasora_instruction_mesh(void *arg) {
       physical_entity->cog[1] = cog[1]/vol;
       physical_entity->cog[2] = cog[2]/vol;
       
+      
+      // las pasamos a wasora para que esten disponibles en el input
+      if (physical_entity->var_vol != NULL) {
+        wasora_var_value(physical_entity->var_vol) = vol;
+      }
+      
       if (physical_entity->vector_cog != NULL) {
         if (!physical_entity->vector_cog->initialized) {
           wasora_call(wasora_vector_init(physical_entity->vector_cog));

@@ -1918,6 +1918,7 @@ struct physical_entity_t {
   double F[3];  // momento de orden cero (i.e. fuerza)
   double M[3];  // momento de orden uno  (i.e. momento)
   
+  var_t *var_vol;
   vector_t *vector_cog;
   vector_t *vector_R0;
   vector_t *vector_R1;

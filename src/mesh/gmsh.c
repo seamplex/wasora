@@ -233,10 +233,10 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
             if ((mesh->element[i].physical_entity = physical_entity) != NULL) {
               physical_entity->n_elements++;
-            }
-            // ponemos la dimension de la entidad fisica
-            if (mesh->element[i].type->dim > physical_entity->dimension) {
-              physical_entity->dimension = mesh->element[i].type->dim;
+              // ponemos la dimension de la entidad fisica
+              if (mesh->element[i].type->dim > physical_entity->dimension) {
+                physical_entity->dimension = mesh->element[i].type->dim;
+              }
             }
           }
         }

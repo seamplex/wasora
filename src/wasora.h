@@ -2208,6 +2208,7 @@ struct mesh_fill_vector_t {
 
 struct mesh_find_max_t {
   mesh_t *mesh;
+  physical_entity_t *physical_entity;
   function_t *function;
   expr_t expr;
   centering_t centering;

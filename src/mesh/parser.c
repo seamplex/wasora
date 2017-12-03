@@ -552,6 +552,17 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
           free(mesh_name);
+
+///kw+MESH_FIND_MAX+usage [ PHYSICAL_ENTITY <physical_entity_name> ]
+        } else if (strcasecmp(token, "PHYSICAL_ENTITY") == 0) {
+          char *name;
+          wasora_call(wasora_parser_string(&name));
+          if ((mesh_find_max->physical_entity = wasora_get_physical_entity_ptr(name)) == NULL) {
+            wasora_push_error_message("unknown physical entity '%s'", name);
+            free(name);
+            return WASORA_PARSER_ERROR;
+          }
+          free(name);
           
 ///kw+MESH_FIND_MAX+usage [ NODES
         } else if (strcasecmp(token, "NODES") == 0) {

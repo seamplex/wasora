@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora vector routines
  *
- *  Copyright (C) 2015 jeremy theler
+ *  Copyright (C) 2015--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -47,6 +47,17 @@ double wasora_vector_get_initial_transient(vector_t *vector, const size_t i) {
   }
   
   return gsl_vector_get(vector->initial_transient, i);
+}
+
+int wasora_vector_set(vector_t *vector, const size_t i, double value) {
+  
+  if (!vector->initialized) {
+    wasora_call(wasora_vector_init(vector));
+  }
+  
+  gsl_vector_set(wasora_value_ptr(vector), i, value);
+  
+  return 0;
 }
 
 

@@ -1590,6 +1590,7 @@ extern  void wasora_siman_print_real(void *);
 extern  double wasora_vector_get(vector_t *, const size_t);
 extern  double wasora_vector_get_initial_transient(vector_t *, const size_t);
 extern  double wasora_vector_get_initial_static(vector_t *, const size_t);
+extern  int wasora_vector_set(vector_t *, const size_t, double);
 extern  int wasora_vector_init(vector_t *);
 
 // version.c

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora text output routines
  *
- *  Copyright (C) 2009--2015 jeremy theler
+ *  Copyright (C) 2009--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -216,16 +216,21 @@ int wasora_instruction_print_function(void *arg) {
 
     for (j = 0; j < print_function->first_function->n_arguments; j++) {
       x_min[j] = wasora_evaluate_expression(&print_function->range.min[j]);
-      x_max[j] = wasora_evaluate_expression(&print_function->range.max[j]);
-      x_step[j] = (print_function->range.step != NULL) ? wasora_evaluate_expression(&print_function->range.step[j]) :
-                                   (x_max[j]-x_min[j])/wasora_evaluate_expression(&print_function->range.nsteps[j]);
+      if (wasora_evaluate_expression(&print_function->range.nsteps[j]) != 1) {
+        x_max[j] = wasora_evaluate_expression(&print_function->range.max[j]);
+        x_step[j] = (print_function->range.step != NULL) ? wasora_evaluate_expression(&print_function->range.step[j]) :
+                                     (x_max[j]-x_min[j])/wasora_evaluate_expression(&print_function->range.nsteps[j]);
+      } else {
+        x_max[j] = x_min[j] + 0.1;
+        x_step[j] = 1;
+      }
 
       x[j] = x_min[j];
     }
 
     // hasta que el primer argumento llegue al maximo y se pase un
     // poquito para evitar que por el redondeo se nos escape el ultimo punto
-    while (x[0] <= x_max[0] + wasora_value(wasora_special_var(zero))) {
+    while (x[0] < x_max[0] * (1 + wasora_value(wasora_special_var(zero)))) {
 
       // imprimimos los argumentos
       for (j = 0; j < print_function->first_function->n_arguments; j++) {
@@ -257,7 +262,7 @@ int wasora_instruction_print_function(void *arg) {
       x[print_function->first_function->n_arguments-1] += x_step[print_function->first_function->n_arguments-1];
       // y vamos mirando si hay que reiniciarlos
       for (j = print_function->first_function->n_arguments-2; j >= 0; j--) {
-        if (x[j+1] > x_max[j+1]) {
+        if (x[j+1] > (x_max[j+1] + 0.1*x_step[j+1])) {
           x[j+1] = x_min[j+1];
           x[j] += x_step[j];
 

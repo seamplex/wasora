@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora common framework header
  *
- *  Copyright (C) 2009--2017 jeremy theler
+ *  Copyright (C) 2009--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -1850,6 +1850,8 @@ struct element_type_t {
   int faces;           // superficies == cantidad de vecinos
   int nodes_per_face;  // cantidad de nodos en las caras
 
+  double **node;
+  
   // apuntadores a funciones de forma y sus derivadas
   double (*h)(int, gsl_vector *);
   double (*dhdr)(int, int, gsl_vector *);

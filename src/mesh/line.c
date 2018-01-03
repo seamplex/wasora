@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related line element routines
  *
- *  Copyright (C) 2014--2017 jeremy theler
+ *  Copyright (C) 2014--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -32,6 +32,7 @@ int mesh_two_node_line_init(void) {
 
   element_type_t *element_type;
   gauss_t *gauss;
+  int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE];
   element_type->name = strdup("line");
@@ -46,6 +47,20 @@ int mesh_two_node_line_init(void) {
   element_type->point_in_element = mesh_point_in_line;
   element_type->element_volume = mesh_line_vol;
 
+  // coordenadas de los nodos
+/*
+Line:              
+                   
+0----------1 --> u   
+*/
+  
+  element_type->node = calloc(element_type->nodes, sizeof(double *));
+  for (j = 0; j < element_type->nodes; j++) {
+    element_type->node[j] = calloc(element_type->dim, sizeof(double));  
+  }
+  element_type->node[0][0] = 0;  
+  element_type->node[1][0] = 1;
+  
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   

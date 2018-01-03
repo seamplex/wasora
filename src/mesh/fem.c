@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related FEM routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -365,89 +365,17 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
 
 
 int mesh_compute_r_at_node(element_t *element, int j, gsl_vector *r) {
-
-  switch (element->type->id) {
-    case ELEMENT_TYPE_TETRAHEDRON:
-      switch(j) {
-        case 0:
-         gsl_vector_set(r, 0, 0);
-         gsl_vector_set(r, 1, 0);
-         gsl_vector_set(r, 2, 0);
-        break;
-        case 1:
-         gsl_vector_set(r, 0, 1);
-         gsl_vector_set(r, 1, 0);
-         gsl_vector_set(r, 2, 0);
-        break;
-        case 2:
-         gsl_vector_set(r, 0, 0);
-         gsl_vector_set(r, 1, 1);
-         gsl_vector_set(r, 2, 0);
-        break;
-        case 3:
-         gsl_vector_set(r, 0, 0);
-         gsl_vector_set(r, 1, 0);
-         gsl_vector_set(r, 2, 1);
-        break;
-      }
-    break;
-    
-    case ELEMENT_TYPE_TETRAHEDRON10:
-      switch(j) {
-        case 0:
-         gsl_vector_set(r, 0, 0);
-         gsl_vector_set(r, 1, 0);
-         gsl_vector_set(r, 2, 0);
-        break;
-        case 1:
-         gsl_vector_set(r, 0, 1);
-         gsl_vector_set(r, 1, 0);
-         gsl_vector_set(r, 2, 0);
-        break;
-        case 2:
-         gsl_vector_set(r, 0, 0);
-         gsl_vector_set(r, 1, 1);
-         gsl_vector_set(r, 2, 0);
-        break;
-        case 3:
-         gsl_vector_set(r, 0, 0);
-         gsl_vector_set(r, 1, 0);
-         gsl_vector_set(r, 2, 1);
-        break;
-        case 4:
-         gsl_vector_set(r, 0, 0.5);
-         gsl_vector_set(r, 1, 0);
-         gsl_vector_set(r, 2, 0);
-        break;
-        case 5:
-         gsl_vector_set(r, 0, 0.5);
-         gsl_vector_set(r, 1, 0.5);
-         gsl_vector_set(r, 2, 0);
-        break;
-        case 6:
-         gsl_vector_set(r, 0, 0);
-         gsl_vector_set(r, 1, 0.5);
-         gsl_vector_set(r, 2, 0);
-        break;
-        case 7:
-         gsl_vector_set(r, 0, 0);
-         gsl_vector_set(r, 1, 0);
-         gsl_vector_set(r, 2, 0.5);
-        break;
-        case 8:
-         gsl_vector_set(r, 0, 0);
-         gsl_vector_set(r, 1, 0.5);
-         gsl_vector_set(r, 2, 0.5);
-        break;
-        case 9:
-         gsl_vector_set(r, 0, 0.5);
-         gsl_vector_set(r, 1, 0);
-         gsl_vector_set(r, 2, 0.5);
-        break;
-      }
-    break;
+  int d;
+  
+  if (element->type->node == NULL) {
+    wasora_push_error_message("element type %d does not have information about nodes", element->type->id);
+    return WASORA_RUNTIME_ERROR;
   }
-
+  
+  for (d = 0; d < element->type->dim; d++) {
+    gsl_vector_set(r, d, element->type->node[j][d]);
+  }
+ 
   return WASORA_RUNTIME_OK;
 }
 

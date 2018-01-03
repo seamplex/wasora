@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related point element routines
  *
- *  Copyright (C) 2014--2017 jeremy theler
+ *  Copyright (C) 2014--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -43,7 +43,8 @@ int mesh_one_node_point_init(void) {
   element_type->dhdr = mesh_one_node_point_dhdr;
   element_type->element_volume = mesh_point_vol;
   element_type->point_in_element = NULL;
-
+  
+  // puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // el primero es el default

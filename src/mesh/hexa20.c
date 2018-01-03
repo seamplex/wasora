@@ -32,6 +32,7 @@ int mesh_twenty_node_hexaedron_init(void) {
   
   element_type_t *element_type;
   gauss_t *gauss;
+  int j;
 
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON20];
   element_type->name = strdup("hexahedron");
@@ -45,6 +46,106 @@ int mesh_twenty_node_hexaedron_init(void) {
   element_type->dhdr = mesh_twenty_node_hexahedron_dhdr;
   element_type->point_in_element = mesh_point_in_hexahedron;
   element_type->element_volume = mesh_hexahedron_vol;
+
+  // coordenadas de los nodos
+/*
+  Hexahedron20:     
+
+  3----13----2      
+  |\         |\     
+  | 15       | 14   
+  9  \       11 \   
+  |   7----19+---6  
+  |   |      |   |  
+  0---+-8----1   |  
+   \  17      \  18 
+   10 |        12|  
+     \|         \|  
+      4----16----5  
+*/     
+  element_type->node = calloc(element_type->nodes, sizeof(double *));
+  for (j = 0; j < element_type->nodes; j++) {
+    element_type->node[j] = calloc(element_type->dim, sizeof(double));  
+  }
+  element_type->node[0][0] = -1;
+  element_type->node[0][1] = -1;
+  element_type->node[0][2] = -1;
+  
+  element_type->node[1][0] = +1;  
+  element_type->node[1][1] = -1;
+  element_type->node[1][2] = -1;
+  
+  element_type->node[2][0] = +1;  
+  element_type->node[2][1] = +1;
+  element_type->node[2][2] = -1;
+
+  element_type->node[3][0] = -1;
+  element_type->node[3][1] = +1;
+  element_type->node[3][2] = -1;
+ 
+  element_type->node[4][0] = -1;
+  element_type->node[4][1] = -1;
+  element_type->node[4][2] = +1;
+  
+  element_type->node[5][0] = +1;  
+  element_type->node[5][1] = -1;
+  element_type->node[5][2] = +1;
+  
+  element_type->node[6][0] = +1;  
+  element_type->node[6][1] = +1;
+  element_type->node[6][2] = +1;
+
+  element_type->node[7][0] = -1;
+  element_type->node[7][1] = +1;
+  element_type->node[7][2] = +1;
+  
+  element_type->node[8][0] = -1;
+  element_type->node[8][1] = -1;
+  element_type->node[8][2] = -1;
+  
+  element_type->node[9][0] = -1;  
+  element_type->node[9][1] = 0;
+  element_type->node[9][2] = -1;
+  
+  element_type->node[10][0] = -1;  
+  element_type->node[10][1] = -1;
+  element_type->node[10][2] = 0;
+
+  element_type->node[11][0] = +1;
+  element_type->node[11][1] = 0;
+  element_type->node[11][2] = -1;
+ 
+  element_type->node[12][0] = +1;
+  element_type->node[12][1] = -1;
+  element_type->node[12][2] = 0;
+  
+  element_type->node[13][0] = 0;  
+  element_type->node[13][1] = +1;
+  element_type->node[13][2] = -1;
+  
+  element_type->node[14][0] = +1;  
+  element_type->node[14][1] = +1;
+  element_type->node[14][2] = 0;
+
+  element_type->node[15][0] = -1;
+  element_type->node[15][1] = +1;
+  element_type->node[15][2] = 0;
+ 
+  element_type->node[16][0] = 0;
+  element_type->node[16][1] = -1;
+  element_type->node[16][2] = +1; 
+ 
+  element_type->node[17][0] = -1;
+  element_type->node[17][1] = 0;
+  element_type->node[17][2] = +1; 
+ 
+  element_type->node[18][0] = +1;
+  element_type->node[18][1] = 0;
+  element_type->node[18][2] = +1; 
+ 
+  element_type->node[19][0] = 0;
+  element_type->node[19][1] = +1;
+  element_type->node[19][2] = +1; 
 
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));

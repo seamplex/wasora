@@ -30,6 +30,7 @@ int mesh_nine_node_quadrangle_init(void) {
   
   element_type_t *element_type;
   gauss_t *gauss;
+  int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE9];
   element_type->name = strdup("quadrangle9");
@@ -44,6 +45,49 @@ int mesh_nine_node_quadrangle_init(void) {
   element_type->point_in_element = mesh_point_in_quadrangle;
   element_type->element_volume = mesh_quad_vol;
 
+  // coordenadas de los nodos
+/*
+ Quadrangle9:
+
+ 3-----6-----2
+ |           |
+ |           |
+ 7     8     5
+ |           |
+ |           |
+ 0-----4-----1   
+*/     
+  element_type->node = calloc(element_type->nodes, sizeof(double *));
+  for (j = 0; j < element_type->nodes; j++) {
+    element_type->node[j] = calloc(element_type->dim, sizeof(double));  
+  }
+  element_type->node[0][0] = -1;
+  element_type->node[0][1] = -1;
+  
+  element_type->node[1][0] = +1;  
+  element_type->node[1][1] = -1;
+  
+  element_type->node[2][0] = +1;  
+  element_type->node[2][1] = +1;
+
+  element_type->node[3][0] = -1;
+  element_type->node[3][1] = +1;
+
+  element_type->node[4][0] = 0;
+  element_type->node[4][1] = -1;
+  
+  element_type->node[5][0] = +1;  
+  element_type->node[5][1] = 0;
+  
+  element_type->node[6][0] = 0;  
+  element_type->node[6][1] = +1;
+
+  element_type->node[7][0] = -1;
+  element_type->node[7][1] = 0;
+  
+  element_type->node[8][0] = 0;
+  element_type->node[8][1] = 0;
+  
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   

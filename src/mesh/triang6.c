@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related second-order triangle element routines
  *
- *  Copyright (C) 2017 jeremy theler
+ *  Copyright (C) 2017--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -27,6 +27,7 @@ int mesh_six_node_triangle_init(void) {
 
   element_type_t *element_type;
   gauss_t *gauss;
+  int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE6];
   element_type->name = strdup("triangle6");
@@ -41,7 +42,41 @@ int mesh_six_node_triangle_init(void) {
   element_type->point_in_element = mesh_point_in_triangle;
   element_type->element_volume = mesh_triang_vol;
 
-  // tres juegos de puntos de gauss
+  // coordenadas de los nodos
+/*
+Triangle6:    
+    
+2             
+|`\           
+|  `\         
+5    `4       
+|      `\     
+|        `\   
+0-----3----1  
+*/     
+  element_type->node = calloc(element_type->nodes, sizeof(double *));
+  for (j = 0; j < element_type->nodes; j++) {
+    element_type->node[j] = calloc(element_type->dim, sizeof(double));  
+  }
+  element_type->node[0][0] = 0;
+  element_type->node[0][1] = 0;
+  
+  element_type->node[1][0] = 1;  
+  element_type->node[1][1] = 0;
+  
+  element_type->node[2][0] = 0;  
+  element_type->node[2][1] = 1;
+
+  element_type->node[3][0] = 0.5;
+  element_type->node[3][1] = 0;
+  
+  element_type->node[4][0] = 0.5;  
+  element_type->node[4][1] = 0.5;
+  
+  element_type->node[5][0] = 0;  
+  element_type->node[5][1] = 0.5;
+    
+  // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // ---- un punto de Gauss sobre el elemento unitario ----  

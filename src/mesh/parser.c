@@ -773,13 +773,13 @@ int wasora_mesh_parse_line(char *line) {
         free(dummy_aux);
 
         // reacciones
-        asprintf(&dummy_aux, "%s_F", physical_entity->name);
+        asprintf(&dummy_aux, "%s_RF", physical_entity->name);
         if ((physical_entity->vector_R0 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
           return WASORA_PARSER_ERROR;
         }
         free(dummy_aux);
 
-        asprintf(&dummy_aux, "%s_M", physical_entity->name);
+        asprintf(&dummy_aux, "%s_RM", physical_entity->name);
         if ((physical_entity->vector_R1 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
           return WASORA_PARSER_ERROR;
         }

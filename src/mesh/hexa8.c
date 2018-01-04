@@ -66,41 +66,51 @@ Hexahedron:
     4----------5      
 
 */     
-  element_type->node = calloc(element_type->nodes, sizeof(double *));
+  element_type->node_coords = calloc(element_type->nodes, sizeof(double *));
+  element_type->node_parents = calloc(element_type->nodes, sizeof(node_relative_t *));
   for (j = 0; j < element_type->nodes; j++) {
-    element_type->node[j] = calloc(element_type->dim, sizeof(double));  
+    element_type->node_coords[j] = calloc(element_type->dim, sizeof(double));  
   }
-  element_type->node[0][0] = -1;
-  element_type->node[0][1] = -1;
-  element_type->node[0][2] = -1;
   
-  element_type->node[1][0] = +1;  
-  element_type->node[1][1] = -1;
-  element_type->node[1][2] = -1;
-  
-  element_type->node[2][0] = +1;  
-  element_type->node[2][1] = +1;
-  element_type->node[2][2] = -1;
+  element_type->first_order_nodes++;  
+  element_type->node_coords[0][0] = -1;
+  element_type->node_coords[0][1] = -1;
+  element_type->node_coords[0][2] = -1;
 
-  element_type->node[3][0] = -1;
-  element_type->node[3][1] = +1;
-  element_type->node[3][2] = -1;
+  element_type->first_order_nodes++;  
+  element_type->node_coords[1][0] = +1;  
+  element_type->node_coords[1][1] = -1;
+  element_type->node_coords[1][2] = -1;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[2][0] = +1;  
+  element_type->node_coords[2][1] = +1;
+  element_type->node_coords[2][2] = -1;
+
+  element_type->first_order_nodes++;
+  element_type->node_coords[3][0] = -1;
+  element_type->node_coords[3][1] = +1;
+  element_type->node_coords[3][2] = -1;
  
-  element_type->node[4][0] = -1;
-  element_type->node[4][1] = -1;
-  element_type->node[4][2] = +1;
+  element_type->first_order_nodes++;
+  element_type->node_coords[4][0] = -1;
+  element_type->node_coords[4][1] = -1;
+  element_type->node_coords[4][2] = +1;
   
-  element_type->node[5][0] = +1;  
-  element_type->node[5][1] = -1;
-  element_type->node[5][2] = +1;
+  element_type->first_order_nodes++;
+  element_type->node_coords[5][0] = +1;  
+  element_type->node_coords[5][1] = -1;
+  element_type->node_coords[5][2] = +1;
   
-  element_type->node[6][0] = +1;  
-  element_type->node[6][1] = +1;
-  element_type->node[6][2] = +1;
+  element_type->first_order_nodes++;
+  element_type->node_coords[6][0] = +1;  
+  element_type->node_coords[6][1] = +1;
+  element_type->node_coords[6][2] = +1;
 
-  element_type->node[7][0] = -1;
-  element_type->node[7][1] = +1;
-  element_type->node[7][2] = +1;
+  element_type->first_order_nodes++;
+  element_type->node_coords[7][0] = -1;
+  element_type->node_coords[7][1] = +1;
+  element_type->node_coords[7][2] = +1;
   
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));

@@ -54,28 +54,37 @@ Triangle6:
 |        `\   
 0-----3----1  
 */     
-  element_type->node = calloc(element_type->nodes, sizeof(double *));
+  element_type->node_coords = calloc(element_type->nodes, sizeof(double *));
+  element_type->node_parents = calloc(element_type->nodes, sizeof(node_relative_t *));
   for (j = 0; j < element_type->nodes; j++) {
-    element_type->node[j] = calloc(element_type->dim, sizeof(double));  
+    element_type->node_coords[j] = calloc(element_type->dim, sizeof(double));  
   }
-  element_type->node[0][0] = 0;
-  element_type->node[0][1] = 0;
   
-  element_type->node[1][0] = 1;  
-  element_type->node[1][1] = 0;
+  element_type->first_order_nodes++;
+  element_type->node_coords[0][0] = 0;
+  element_type->node_coords[0][1] = 0;
   
-  element_type->node[2][0] = 0;  
-  element_type->node[2][1] = 1;
+  element_type->first_order_nodes++;
+  element_type->node_coords[1][0] = 1;  
+  element_type->node_coords[1][1] = 0;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[2][0] = 0;  
+  element_type->node_coords[2][1] = 1;
 
-  element_type->node[3][0] = 0.5;
-  element_type->node[3][1] = 0;
+  wasora_mesh_add_node_parent(element_type->node_parents[3], 0);
+  wasora_mesh_add_node_parent(element_type->node_parents[3], 1);
+  wasora_mesh_compute_coords_from_parent(element_type, 3);
+ 
+  wasora_mesh_add_node_parent(element_type->node_parents[4], 1);
+  wasora_mesh_add_node_parent(element_type->node_parents[4], 2);
+  wasora_mesh_compute_coords_from_parent(element_type, 4);
   
-  element_type->node[4][0] = 0.5;  
-  element_type->node[4][1] = 0.5;
+  wasora_mesh_add_node_parent(element_type->node_parents[5], 2);
+  wasora_mesh_add_node_parent(element_type->node_parents[5], 0);
+  wasora_mesh_compute_coords_from_parent(element_type, 5); 
   
-  element_type->node[5][0] = 0;  
-  element_type->node[5][1] = 0.5;
-    
+  
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   

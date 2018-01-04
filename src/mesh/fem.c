@@ -367,13 +367,13 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
 int mesh_compute_r_at_node(element_t *element, int j, gsl_vector *r) {
   int d;
   
-  if (element->type->node == NULL) {
+  if (element->type->node_coords == NULL) {
     wasora_push_error_message("element type %d does not have information about nodes", element->type->id);
     return WASORA_RUNTIME_ERROR;
   }
   
   for (d = 0; d < element->type->dim; d++) {
-    gsl_vector_set(r, d, element->type->node[j][d]);
+    gsl_vector_set(r, d, element->type->node_coords[j][d]);
   }
  
   return WASORA_RUNTIME_OK;

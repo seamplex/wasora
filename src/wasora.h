@@ -1710,6 +1710,7 @@ typedef struct mesh_integrate_t mesh_integrate_t;
 typedef struct physical_name_t physical_name_t;
 
 typedef struct node_t node_t;
+typedef struct node_relative_t node_relative_t;
 typedef struct element_t element_t;
 typedef struct element_list_item_t element_list_item_t;
 typedef struct element_type_t element_type_t;
@@ -1838,6 +1839,11 @@ struct node_t {
 };
 
 
+struct node_relative_t {
+  int index;
+  node_relative_t *next;
+};
+
 // estructura fija con tipos de elementos, incluyendo apuntadores a las funciones de forma
 // los numeros son los propuestos por gmsh (ver abajo la lista)
 struct element_type_t {
@@ -1847,10 +1853,12 @@ struct element_type_t {
   int dim;             // dimensiones espaciales del elemento
   int order;           // eso
   int nodes;           // cantidad de nodos en el elemento
+  int first_order_nodes;
   int faces;           // superficies == cantidad de vecinos
   int nodes_per_face;  // cantidad de nodos en las caras
 
-  double **node;
+  double **node_coords;
+  node_relative_t **node_parents;
   
   // apuntadores a funciones de forma y sus derivadas
   double (*h)(int, gsl_vector *);
@@ -2285,6 +2293,8 @@ extern int mesh_vtk_write_vector(mesh_post_t *, function_t **, centering_t);
 
 // init.c
 extern int wasora_mesh_init_before_parser(void);
+extern void wasora_mesh_add_node_parent(node_relative_t *, int);
+extern void wasora_mesh_compute_coords_from_parent(element_type_t *, int);
 
 // interpolate.c
 extern double mesh_interpolate_function_node(function_t *, const double *);

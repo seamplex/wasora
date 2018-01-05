@@ -65,8 +65,8 @@ Line3:
   element_type->first_order_nodes++;
   element_type->node_coords[1][0] = 1;
   
-  wasora_mesh_add_node_parent(element_type->node_parents[2], 0);
-  wasora_mesh_add_node_parent(element_type->node_parents[2], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[2], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[2], 1);
   wasora_mesh_compute_coords_from_parent(element_type, 2);
 
   // dos juegos de puntos de gauss

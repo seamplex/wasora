@@ -95,28 +95,28 @@ Tetrahedron10:
   element_type->node_coords[3][1] = 0;
   element_type->node_coords[3][2] = 1;
   
-  wasora_mesh_add_node_parent(element_type->node_parents[4], 0);
-  wasora_mesh_add_node_parent(element_type->node_parents[4], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[4], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[4], 1);
   wasora_mesh_compute_coords_from_parent(element_type, 4);
   
-  wasora_mesh_add_node_parent(element_type->node_parents[5], 1);
-  wasora_mesh_add_node_parent(element_type->node_parents[5], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[5], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[5], 2);
   wasora_mesh_compute_coords_from_parent(element_type, 5); 
  
-  wasora_mesh_add_node_parent(element_type->node_parents[6], 2);
-  wasora_mesh_add_node_parent(element_type->node_parents[6], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[6], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[6], 0);
   wasora_mesh_compute_coords_from_parent(element_type, 6);   
  
-  wasora_mesh_add_node_parent(element_type->node_parents[7], 3);
-  wasora_mesh_add_node_parent(element_type->node_parents[7], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[7], 3);
+  wasora_mesh_add_node_parent(&element_type->node_parents[7], 0);
   wasora_mesh_compute_coords_from_parent(element_type, 7);
 
-  wasora_mesh_add_node_parent(element_type->node_parents[8], 2);
-  wasora_mesh_add_node_parent(element_type->node_parents[8], 3);
+  wasora_mesh_add_node_parent(&element_type->node_parents[8], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[8], 3);
   wasora_mesh_compute_coords_from_parent(element_type, 8);
 
-  wasora_mesh_add_node_parent(element_type->node_parents[9], 3);
-  wasora_mesh_add_node_parent(element_type->node_parents[9], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[9], 3);
+  wasora_mesh_add_node_parent(&element_type->node_parents[9], 1);
   wasora_mesh_compute_coords_from_parent(element_type, 9);  
   
   mesh_tetrahedron_gauss_init(element_type);

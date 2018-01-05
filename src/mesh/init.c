@@ -80,10 +80,10 @@ int wasora_mesh_init_before_parser(void) {
   return WASORA_RUNTIME_OK;
 }
 
-void wasora_mesh_add_node_parent(node_relative_t *parents, int index) {
+void wasora_mesh_add_node_parent(node_relative_t **parents, int index) {
   node_relative_t *parent = calloc(1, sizeof(node_relative_t));
   parent->index = index;
-  LL_APPEND(parents, parent);
+  LL_APPEND(*parents, parent);
   return;
 }
 
@@ -100,6 +100,9 @@ void wasora_mesh_compute_coords_from_parent(element_type_t *element_type, int j)
   }
   
   for (m = 0; m < element_type->dim; m++) {
+    if (den == 0) {
+      fprintf(stderr, "le tomaron la leche al gato\n");
+    }
     element_type->node_coords[j][m] /= den;
   }
   return;

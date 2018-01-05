@@ -72,16 +72,16 @@ Triangle6:
   element_type->node_coords[2][0] = 0;  
   element_type->node_coords[2][1] = 1;
 
-  wasora_mesh_add_node_parent(element_type->node_parents[3], 0);
-  wasora_mesh_add_node_parent(element_type->node_parents[3], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[3], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[3], 1);
   wasora_mesh_compute_coords_from_parent(element_type, 3);
  
-  wasora_mesh_add_node_parent(element_type->node_parents[4], 1);
-  wasora_mesh_add_node_parent(element_type->node_parents[4], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[4], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[4], 2);
   wasora_mesh_compute_coords_from_parent(element_type, 4);
   
-  wasora_mesh_add_node_parent(element_type->node_parents[5], 2);
-  wasora_mesh_add_node_parent(element_type->node_parents[5], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[5], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[5], 0);
   wasora_mesh_compute_coords_from_parent(element_type, 5); 
   
   

@@ -31,7 +31,6 @@
 int mesh_two_node_line_init(void) {
 
   element_type_t *element_type;
-  node_relative_t *parent;
   gauss_t *gauss;
   int j;
   

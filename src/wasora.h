@@ -2293,7 +2293,7 @@ extern int mesh_vtk_write_vector(mesh_post_t *, function_t **, centering_t);
 
 // init.c
 extern int wasora_mesh_init_before_parser(void);
-extern void wasora_mesh_add_node_parent(node_relative_t *, int);
+extern void wasora_mesh_add_node_parent(node_relative_t **, int);
 extern void wasora_mesh_compute_coords_from_parent(element_type_t *, int);
 
 // interpolate.c

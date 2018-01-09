@@ -146,13 +146,13 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           }
         }
         
-        if (spatial_dimensions == 0 && mesh->node[id].x[0] != 0) {
+        if (spatial_dimensions < 1 && fabs(mesh->node[id].x[0]) > 1e-6) {
           spatial_dimensions = 1;
         }
-        if (spatial_dimensions == 1 && mesh->node[id].x[1] != 0) {
+        if (spatial_dimensions < 2 && fabs(mesh->node[id].x[1]) > 1e-6) {
           spatial_dimensions = 2;
         }
-        if (spatial_dimensions == 2 && mesh->node[id].x[2] != 0) {
+        if (spatial_dimensions < 3 && fabs(mesh->node[id].x[2]) > 1e-6) {
           spatial_dimensions = 3;
         }
       }

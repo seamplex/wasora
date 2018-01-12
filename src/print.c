@@ -216,10 +216,15 @@ int wasora_instruction_print_function(void *arg) {
 
     for (j = 0; j < print_function->first_function->n_arguments; j++) {
       x_min[j] = wasora_evaluate_expression(&print_function->range.min[j]);
-      if (wasora_evaluate_expression(&print_function->range.nsteps[j]) != 1) {
+      if (print_function->range.nsteps != NULL &&
+          wasora_evaluate_expression(&print_function->range.nsteps[j]) != 1) {
         x_max[j] = wasora_evaluate_expression(&print_function->range.max[j]);
         x_step[j] = (print_function->range.step != NULL) ? wasora_evaluate_expression(&print_function->range.step[j]) :
                                      (x_max[j]-x_min[j])/wasora_evaluate_expression(&print_function->range.nsteps[j]);
+      } else if (print_function->range.step != NULL) {
+        x_max[j] = wasora_evaluate_expression(&print_function->range.max[j]);
+        x_step[j] = wasora_evaluate_expression(&print_function->range.step[j]);
+       
       } else {
         x_max[j] = x_min[j] + 0.1;
         x_step[j] = 1;

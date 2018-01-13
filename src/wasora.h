@@ -140,7 +140,7 @@ extern  const char factorseparators[];
 
 
 #define DEFAULT_ROOT_MAX_TER               1024
-#define DEFAULT_ROOT_TOLERANCE             (9.5367431640625e-7)  // (1/2)^-20
+#define DEFAULT_ROOT_TOLERANCE             (9.765625e-4)         // (1/2)^-10
 
 #define DEFAULT_INTEGRATION_INTERVALS      1024
 #define DEFAULT_INTEGRATION_TOLERANCE      (9.765625e-4)         // (1/2)^-10

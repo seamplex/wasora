@@ -175,8 +175,8 @@ int wasora_instruction_mesh(void *arg) {
   }
   
   // calculamos el volumen (o superficie o longitud) y el centro de masa de las physical entities
-  // solo para la primera malla
-  if (mesh == wasora_mesh.main_mesh && mesh->bulk_dimensions != 0) {
+  // solo para la primera malla (y no la principal!)
+  if (mesh == wasora_mesh.meshes && mesh->bulk_dimensions != 0) {
     LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
       vol = cog[0] = cog[1] = cog[2] = 0;
       for (i = 0; i < physical_entity->n_elements; i++) {
@@ -196,6 +196,22 @@ int wasora_instruction_mesh(void *arg) {
       physical_entity->cog[0] = cog[0]/vol;
       physical_entity->cog[1] = cog[1]/vol;
       physical_entity->cog[2] = cog[2]/vol;
+      
+      
+      // las pasamos a wasora para que esten disponibles en el input
+      if (physical_entity->var_vol != NULL) {
+        wasora_var_value(physical_entity->var_vol) = vol;
+      }
+      
+      if (physical_entity->vector_cog != NULL) {
+        if (!physical_entity->vector_cog->initialized) {
+          wasora_call(wasora_vector_init(physical_entity->vector_cog));
+        }
+        gsl_vector_set(physical_entity->vector_cog->value, 0, physical_entity->cog[0]);
+        gsl_vector_set(physical_entity->vector_cog->value, 1, physical_entity->cog[1]);
+        gsl_vector_set(physical_entity->vector_cog->value, 2, physical_entity->cog[2]);
+      }
+      
     }
   }
   

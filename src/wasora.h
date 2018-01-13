@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora common framework header
  *
- *  Copyright (C) 2009--2017 jeremy theler
+ *  Copyright (C) 2009--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -140,7 +140,7 @@ extern  const char factorseparators[];
 
 
 #define DEFAULT_ROOT_MAX_TER               1024
-#define DEFAULT_ROOT_TOLERANCE             (9.5367431640625e-7)  // (1/2)^-20
+#define DEFAULT_ROOT_TOLERANCE             (9.765625e-4)         // (1/2)^-10
 
 #define DEFAULT_INTEGRATION_INTERVALS      1024
 #define DEFAULT_INTEGRATION_TOLERANCE      (9.765625e-4)         // (1/2)^-10
@@ -205,6 +205,7 @@ typedef struct builtin_functional_t builtin_functional_t;
 
 typedef struct multidim_range_t multidim_range_t;
 
+typedef struct physical_entity_t physical_entity_t;
 typedef struct mesh_t mesh_t;
 
 
@@ -802,6 +803,9 @@ struct print_function_t {
 
   // rango explicito donde hay que imprimir la funcion
   multidim_range_t range;
+  
+  // entidad fisica donde hay que evaluar la funcion
+  physical_entity_t *physical_entity;
 
   // flag para saber que estamos imprimiendo
   int header;
@@ -1586,6 +1590,7 @@ extern  void wasora_siman_print_real(void *);
 extern  double wasora_vector_get(vector_t *, const size_t);
 extern  double wasora_vector_get_initial_transient(vector_t *, const size_t);
 extern  double wasora_vector_get_initial_static(vector_t *, const size_t);
+extern  int wasora_vector_set(vector_t *, const size_t, double);
 extern  int wasora_vector_init(vector_t *);
 
 // version.c
@@ -1627,7 +1632,6 @@ extern  int wasora_instruction_mesh_post(void *);
 extern  int wasora_instruction_mesh_fill_vector(void *);
 extern  int wasora_instruction_mesh_find_max(void *);
 extern  int wasora_instruction_mesh_integrate(void *arg);
-extern  int wasora_instruction_mesh_evaluate(void *arg);
 
 
 // interface.h
@@ -1700,12 +1704,13 @@ typedef struct mesh_post_dist_t mesh_post_dist_t;
 typedef struct mesh_fill_vector_t mesh_fill_vector_t;
 typedef struct mesh_find_max_t mesh_find_max_t;
 typedef struct mesh_integrate_t mesh_integrate_t;
-typedef struct mesh_evaluate_t mesh_evaluate_t;
 
-typedef struct physical_entity_t physical_entity_t;
+// es esta mas arriba porque se necesita en print_function
+//typedef struct physical_entity_t physical_entity_t;
 typedef struct physical_name_t physical_name_t;
 
 typedef struct node_t node_t;
+typedef struct node_relative_t node_relative_t;
 typedef struct element_t element_t;
 typedef struct element_list_item_t element_list_item_t;
 typedef struct element_type_t element_type_t;
@@ -1818,7 +1823,6 @@ struct {
   mesh_fill_vector_t *fill_vectors;
   mesh_find_max_t *find_maxs;
   mesh_integrate_t *integrates;
-  mesh_evaluate_t *evaluates;
 
 } wasora_mesh;
 
@@ -1835,6 +1839,11 @@ struct node_t {
 };
 
 
+struct node_relative_t {
+  int index;
+  node_relative_t *next;
+};
+
 // estructura fija con tipos de elementos, incluyendo apuntadores a las funciones de forma
 // los numeros son los propuestos por gmsh (ver abajo la lista)
 struct element_type_t {
@@ -1844,9 +1853,13 @@ struct element_type_t {
   int dim;             // dimensiones espaciales del elemento
   int order;           // eso
   int nodes;           // cantidad de nodos en el elemento
+  int first_order_nodes;
   int faces;           // superficies == cantidad de vecinos
   int nodes_per_face;  // cantidad de nodos en las caras
 
+  double **node_coords;
+  node_relative_t **node_parents;
+  
   // apuntadores a funciones de forma y sus derivadas
   double (*h)(int, gsl_vector *);
   double (*dhdr)(int, int, gsl_vector *);
@@ -1910,7 +1923,17 @@ struct physical_entity_t {
   expr_t pos[6];
   
   double volume;
+  // centro de gravedad
   double cog[3];
+  // reacciones
+  double F[3];  // momento de orden cero (i.e. fuerza)
+  double M[3];  // momento de orden uno  (i.e. momento)
+  
+  var_t *var_vol;
+  vector_t *vector_cog;
+  vector_t *vector_R0;
+  vector_t *vector_R1;
+  
   
   // una linked list es muy cara
 //  element_list_item_t *elements;
@@ -1935,7 +1958,9 @@ struct bc_string_based_t {
   // estos son ints y no enums porque desde wasora no sabemos que va a haber
   int bc_type_math;
   int bc_type_phys;  
-  int dof;
+  int dof;   // este puede tener valores altos que quieran decir cosas (i.e. dof=213 es Mx)
+  
+  physical_entity_t *mimic_to;
   
   expr_t expr;
   
@@ -2194,6 +2219,7 @@ struct mesh_fill_vector_t {
 
 struct mesh_find_max_t {
   mesh_t *mesh;
+  physical_entity_t *physical_entity;
   function_t *function;
   expr_t expr;
   centering_t centering;
@@ -2217,16 +2243,6 @@ struct mesh_integrate_t {
   int gauss_points;
 
   var_t *result;
-
-  mesh_integrate_t *next;
-};
-
-struct mesh_evaluate_t {
-  mesh_t *mesh;
-  function_t *function;
-  expr_t expr;
-  physical_entity_t *physical_entity;
-  centering_t centering;
 
   mesh_integrate_t *next;
 };
@@ -2277,6 +2293,8 @@ extern int mesh_vtk_write_vector(mesh_post_t *, function_t **, centering_t);
 
 // init.c
 extern int wasora_mesh_init_before_parser(void);
+extern void wasora_mesh_add_node_parent(node_relative_t **, int);
+extern void wasora_mesh_compute_coords_from_parent(element_type_t *, int);
 
 // interpolate.c
 extern double mesh_interpolate_function_node(function_t *, const double *);

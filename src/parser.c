@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora parser
  *
- *  Copyright (C) 2009--2016 jeremy theler
+ *  Copyright (C) 2009--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -1901,6 +1901,16 @@ if (strcasecmp(token, "FROM") == 0) {
 ///kw+PRINT_FUNCTION+usage [ FORMAT <print_format> ]
         } else if (strcasecmp(token, "FORMAT") == 0) {
           if (wasora_parser_string(&print_function->format) != WASORA_PARSER_OK) {
+            return WASORA_PARSER_ERROR;
+          }
+          
+///kw+PRINT_FUNCTION+usage [ PHYSICAL_ENTITY <name> ]
+        } else if (strcasecmp(token, "PHYSICAL_ENTITY") == 0) {
+          char *name;
+          wasora_call(wasora_parser_string(&name));
+          if ((print_function->physical_entity = wasora_get_physical_entity_ptr(name)) == NULL) {
+            wasora_push_error_message("unknown physical entity '%s'", name);
+            free(name);
             return WASORA_PARSER_ERROR;
           }
 

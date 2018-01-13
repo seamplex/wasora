@@ -363,10 +363,13 @@ char *wasora_get_next_token(char *line) {
 
   // esto casi nunca pasa, pero si nos quedamos sin tokens entonces otra vez
   // internal apunta a cualquier lado 
+  // OJO! a partir de algun update de la libc si dejamos esto tenemos segfault cuando
+  // algun primary keyword consume todas las keywords de la linea como PHYSICAL_ENTITY BC strings
+/*  
   if (token == NULL) {
     wasora.strtok_internal = NULL;
   }
-
+*/
   return token;
 
 }

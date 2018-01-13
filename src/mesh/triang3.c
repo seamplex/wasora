@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related triangle element routines
  *
- *  Copyright (C) 2014-2016 jeremy theler
+ *  Copyright (C) 2014-2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -28,6 +28,7 @@ int mesh_three_node_triangle_init(void) {
 
   element_type_t *element_type;
   gauss_t *gauss;
+  int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE];
   element_type->name = strdup("triangle");
@@ -42,6 +43,39 @@ int mesh_three_node_triangle_init(void) {
   element_type->point_in_element = mesh_point_in_triangle;
   element_type->element_volume = mesh_triang_vol;
 
+  // coordenadas de los nodos
+/*
+Triangle:         
+
+v                 
+^                 
+|                 
+2                 
+|`\               
+|  `\             
+|    `\           
+|      `\         
+|        `\       
+0----------1 --> u 
+*/   
+  element_type->node_coords = calloc(element_type->nodes, sizeof(double *));
+  element_type->node_parents = calloc(element_type->nodes, sizeof(node_relative_t *));    
+  for (j = 0; j < element_type->nodes; j++) {
+    element_type->node_coords[j] = calloc(element_type->dim, sizeof(double));  
+  }
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[0][0] = 0;
+  element_type->node_coords[0][1] = 0;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[1][0] = 1;  
+  element_type->node_coords[1][1] = 0;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[2][0] = 0;  
+  element_type->node_coords[2][1] = 1;
+  
   // tres juegos de puntos de gauss
   element_type->gauss = calloc(3, sizeof(gauss_t));
   

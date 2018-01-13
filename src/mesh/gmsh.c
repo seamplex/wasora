@@ -146,13 +146,13 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           }
         }
         
-        if (spatial_dimensions == 0 && mesh->node[id].x[0] != 0) {
+        if (spatial_dimensions < 1 && fabs(mesh->node[id].x[0]) > 1e-6) {
           spatial_dimensions = 1;
         }
-        if (spatial_dimensions == 1 && mesh->node[id].x[1] != 0) {
+        if (spatial_dimensions < 2 && fabs(mesh->node[id].x[1]) > 1e-6) {
           spatial_dimensions = 2;
         }
-        if (spatial_dimensions == 2 && mesh->node[id].x[2] != 0) {
+        if (spatial_dimensions < 3 && fabs(mesh->node[id].x[2]) > 1e-6) {
           spatial_dimensions = 3;
         }
       }
@@ -213,7 +213,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           return WASORA_RUNTIME_ERROR;
         }
 
-        // cada elemento tiene un tag que es una array de enteros
+        // cada elemento tiene un tag que es un array de enteros
         // el primero es el id de la entidad fisica
         // el segundo es el id de la entidad geometrica (no nos interesa)
         // despues siguen cosas opcionales como particiones, padres, dominios, etc
@@ -233,6 +233,10 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             HASH_FIND(hh_id, wasora_mesh.physical_entities_by_id, &mesh->element[i].tag[0], sizeof(int), physical_entity);
             if ((mesh->element[i].physical_entity = physical_entity) != NULL) {
               physical_entity->n_elements++;
+              // ponemos la dimension de la entidad fisica
+              if (mesh->element[i].type->dim > physical_entity->dimension) {
+                physical_entity->dimension = mesh->element[i].type->dim;
+              }
             }
           }
         }

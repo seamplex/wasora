@@ -21,8 +21,6 @@
  */
 #include <wasora.h>
 
-#include <stdio.h>
-
 int wasora_instruction_mesh_integrate(void *arg) {
 
   double integral = 0;
@@ -96,14 +94,9 @@ int wasora_instruction_mesh_integrate(void *arg) {
         element = &mesh->element[physical_entity->element[i]];
         for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
           w = mesh_integration_weight(mesh, element, v);
-
-          xi = 0;
-          for (j = 0; j < element->type->nodes; j++) {
-            mesh_update_coord_vars(element->node[j]->x);
-            xi += gsl_vector_get(mesh->fem.h, j) * wasora_evaluate_expression(expr);
-          }
-
-          integral += w * xi;
+          mesh_compute_x(element, mesh->fem.r, mesh->fem.x);
+          mesh_update_coord_vars(gsl_vector_ptr(mesh->fem.x, 0));
+          integral += w * wasora_evaluate_expression(expr);
         }
       }
     }

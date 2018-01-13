@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related second-order tetrahedron element routines
  *
- *  Copyright (C) 2017 jeremy theler
+ *  Copyright (C) 2017--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -30,6 +30,7 @@
 int mesh_ten_node_tetrahedron_init(void) {
   
   element_type_t *element_type;
+  int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON10];
   element_type->name = strdup("tetrahedron10");
@@ -43,6 +44,80 @@ int mesh_ten_node_tetrahedron_init(void) {
   element_type->dhdr = mesh_ten_node_tetrahedron_dhdr;
   element_type->point_in_element = mesh_point_in_tetrahedron;
   element_type->element_volume = mesh_tetrahedron_vol;
+
+  // coordenadas de los nodos
+/*
+Tetrahedron10:
+
+
+
+
+
+           2                  
+         ,/|`\                
+       ,/  |  `\       
+     ,6    '.   `5     
+   ,/       8     `\   
+ ,/         |       `\ 
+0--------4--'.--------1
+ `\.         |      ,/ 
+    `\.      |    ,9   
+       `7.   '. ,/     
+          `\. |/       
+             `3        
+
+
+
+*/     
+  element_type->node_coords = calloc(element_type->nodes, sizeof(double *));
+  element_type->node_parents = calloc(element_type->nodes, sizeof(node_relative_t *));  
+  for (j = 0; j < element_type->nodes; j++) {
+    element_type->node_coords[j] = calloc(element_type->dim, sizeof(double));  
+  }
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[0][0] = 0;
+  element_type->node_coords[0][1] = 0;
+  element_type->node_coords[0][2] = 0;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[1][0] = 1;  
+  element_type->node_coords[1][1] = 0;
+  element_type->node_coords[1][2] = 0;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[2][0] = 0;  
+  element_type->node_coords[2][1] = 1;
+  element_type->node_coords[2][2] = 0;
+
+  element_type->first_order_nodes++;
+  element_type->node_coords[3][0] = 0;  
+  element_type->node_coords[3][1] = 0;
+  element_type->node_coords[3][2] = 1;
+  
+  wasora_mesh_add_node_parent(&element_type->node_parents[4], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[4], 1);
+  wasora_mesh_compute_coords_from_parent(element_type, 4);
+  
+  wasora_mesh_add_node_parent(&element_type->node_parents[5], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[5], 2);
+  wasora_mesh_compute_coords_from_parent(element_type, 5); 
+ 
+  wasora_mesh_add_node_parent(&element_type->node_parents[6], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[6], 0);
+  wasora_mesh_compute_coords_from_parent(element_type, 6);   
+ 
+  wasora_mesh_add_node_parent(&element_type->node_parents[7], 3);
+  wasora_mesh_add_node_parent(&element_type->node_parents[7], 0);
+  wasora_mesh_compute_coords_from_parent(element_type, 7);
+
+  wasora_mesh_add_node_parent(&element_type->node_parents[8], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[8], 3);
+  wasora_mesh_compute_coords_from_parent(element_type, 8);
+
+  wasora_mesh_add_node_parent(&element_type->node_parents[9], 3);
+  wasora_mesh_add_node_parent(&element_type->node_parents[9], 1);
+  wasora_mesh_compute_coords_from_parent(element_type, 9);  
   
   mesh_tetrahedron_gauss_init(element_type);
 

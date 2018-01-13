@@ -1,2 +1,12 @@
+# read data from .msh and store it as a wasora function f(x,y)
 MESH FILE_PATH tiny.msh DIMENSIONS 2 READ_FUNCTION f AS f
+
+# with no arguments, print definition points of f(x,y) to stdout
 PRINT_FUNCTION f
+
+# with this line, the function is evaluated (using the apropriate shape functions)
+# in a cartesian regular grid and written to a file
+# plot it in gnuplot with
+# > plot "tiny-rect.dat" w image
+PRINT_FUNCTION f MIN 0 0 MAX 2 1 STEP 0.05 0.1 FILE_PATH tiny-rect.dat
+

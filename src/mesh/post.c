@@ -50,11 +50,6 @@ int wasora_instruction_mesh_post(void *arg) {
       wasora_call(mesh_element2cell(mesh_post->mesh));
     }
     
-    if (mesh_post_dist->scalar != NULL && mesh_post_dist->scalar->initialized == 0) {
-      wasora_call(wasora_function_init(mesh_post_dist->scalar));
-    }
-        
-    
     if (mesh_post_dist->scalar != NULL) {
       if (mesh_post_dist->scalar->initialized == 0) {
         wasora_call(wasora_function_init(mesh_post_dist->scalar));

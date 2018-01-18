@@ -108,7 +108,7 @@ extern  const char factorseparators[];
 #define STEP_AFTER_DAE                     3
 
 // defaults razonables 
-#define DEFAULT_PRINT_FORMAT               "%e"
+#define DEFAULT_PRINT_FORMAT               "%g"
 #define DEFAULT_PRINT_SEPARATOR            "\t"
 
 #define DEFAULT_M4_FORMAT                  "%g"
@@ -2038,6 +2038,12 @@ struct mesh_t {
   int initialized;
   
   file_t *file;
+  enum  {
+    mesh_format_fromextension,
+    mesh_format_gmsh,
+    mesh_format_vtk,
+    mesh_format_frd,
+  } format;
   
   int spatial_dimensions;        // dimensiones espaciales
   int bulk_dimensions;           // dimension del mayor elemento

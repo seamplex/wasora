@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora text output routines
  *
- *  Copyright (C) 2009--2015 jeremy theler
+ *  Copyright (C) 2009--2017 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -172,6 +172,7 @@ int wasora_instruction_print_function(void *arg) {
   print_token_t *print_token;
   
   int j, k;
+  int flag = 0;
   double *x, *x_min, *x_max, *x_step;
   
   if (print_function->file->pointer == NULL) {
@@ -215,16 +216,26 @@ int wasora_instruction_print_function(void *arg) {
 
     for (j = 0; j < print_function->first_function->n_arguments; j++) {
       x_min[j] = wasora_evaluate_expression(&print_function->range.min[j]);
-      x_max[j] = wasora_evaluate_expression(&print_function->range.max[j]);
-      x_step[j] = (print_function->range.step != NULL) ? wasora_evaluate_expression(&print_function->range.step[j]) :
-                                   (x_max[j]-x_min[j])/wasora_evaluate_expression(&print_function->range.nsteps[j]);
+      if (print_function->range.nsteps != NULL &&
+          wasora_evaluate_expression(&print_function->range.nsteps[j]) != 1) {
+        x_max[j] = wasora_evaluate_expression(&print_function->range.max[j]);
+        x_step[j] = (print_function->range.step != NULL) ? wasora_evaluate_expression(&print_function->range.step[j]) :
+                                     (x_max[j]-x_min[j])/wasora_evaluate_expression(&print_function->range.nsteps[j]);
+      } else if (print_function->range.step != NULL) {
+        x_max[j] = wasora_evaluate_expression(&print_function->range.max[j]);
+        x_step[j] = wasora_evaluate_expression(&print_function->range.step[j]);
+       
+      } else {
+        x_max[j] = x_min[j] + 0.1;
+        x_step[j] = 1;
+      }
 
       x[j] = x_min[j];
     }
 
     // hasta que el primer argumento llegue al maximo y se pase un
     // poquito para evitar que por el redondeo se nos escape el ultimo punto
-    while (x[0] <= x_max[0] + wasora_value(wasora_special_var(zero))) {
+    while (x[0] < x_max[0] * (1 + wasora_value(wasora_special_var(zero)))) {
 
       // imprimimos los argumentos
       for (j = 0; j < print_function->first_function->n_arguments; j++) {
@@ -256,7 +267,7 @@ int wasora_instruction_print_function(void *arg) {
       x[print_function->first_function->n_arguments-1] += x_step[print_function->first_function->n_arguments-1];
       // y vamos mirando si hay que reiniciarlos
       for (j = print_function->first_function->n_arguments-2; j >= 0; j--) {
-        if (x[j+1] > x_max[j+1]) {
+        if (x[j+1] > (x_max[j+1] + 0.1*x_step[j+1])) {
           x[j+1] = x_min[j+1];
           x[j] += x_step[j];
 
@@ -277,56 +288,70 @@ int wasora_instruction_print_function(void *arg) {
 
   } else if (print_function->first_function != NULL && print_function->first_function->data_size > 0) {
 
+
     // imprimimos en los puntos de definicion de la primera
     x = calloc(print_function->first_function->n_arguments, sizeof(double));
 
     for (j = 0; j < print_function->first_function->data_size; j++) {
 
-      // los argumentos de la primera funcion
-      for (k = 0; k < print_function->first_function->n_arguments; k++) {
-        // nos acordamos los argumentos para las otras funciones que vienen despues
-        x[k] = print_function->first_function->data_argument[k][j];
-        fprintf(print_function->file->pointer, print_function->format, x[k]);
-        fprintf(print_function->file->pointer, "%s", print_function->separator);
+      if (print_function->physical_entity != NULL) {
+        element_list_item_t *element_list_item;
+        flag = 0;
+        LL_FOREACH(wasora_mesh.main_mesh->node[j].associated_elements, element_list_item) {
+          if (element_list_item->element->physical_entity == print_function->physical_entity) {
+            flag = 1;
+          }
+        }
       }
-
-      // las cosas que nos pidieron
-      LL_FOREACH(print_function->tokens, print_token) {
+          
+      if (print_function->physical_entity == NULL || flag) {
       
-        // imprimimos lo que nos pidieron
-        if (print_token->function != NULL) {
-          if (print_token->function == print_function->first_function) {
-            // la primera funcion tiene los puntos posta asi que no hay que interpolar
-            fprintf(print_function->file->pointer, print_function->format, print_token->function->data_value[j]);
+        // los argumentos de la primera funcion
+        for (k = 0; k < print_function->first_function->n_arguments; k++) {
+          // nos acordamos los argumentos para las otras funciones que vienen despues
+          x[k] = print_function->first_function->data_argument[k][j];
+          fprintf(print_function->file->pointer, print_function->format, x[k]);
+          fprintf(print_function->file->pointer, "%s", print_function->separator);
+        }
+
+        // las cosas que nos pidieron
+        LL_FOREACH(print_function->tokens, print_token) {
+
+          // imprimimos lo que nos pidieron
+          if (print_token->function != NULL) {
+            if (print_token->function == print_function->first_function || print_token->function->data_size == print_function->first_function->data_size) {
+              // la primera funcion tiene los puntos posta asi que no hay que interpolar
+              fprintf(print_function->file->pointer, print_function->format, print_token->function->data_value[j]);
+            } else {
+              fprintf(print_function->file->pointer, print_function->format, wasora_evaluate_function(print_token->function, x));
+            }
+
+          } else if (print_token->expression.n_tokens != 0) {
+            wasora_set_function_args(print_function->first_function, x);
+            fprintf(print_function->file->pointer, print_function->format, wasora_evaluate_expression(&print_token->expression));
+
+          }
+
+          if (print_token->next != NULL) {
+            fprintf(print_function->file->pointer, "%s", print_function->separator);
           } else {
-            fprintf(print_function->file->pointer, print_function->format, wasora_evaluate_function(print_token->function, x));
+            fprintf(print_function->file->pointer, "\n");
+            // siempre flusheamos
+            fflush(print_function->file->pointer);
           }
           
-        } else if (print_token->expression.n_tokens != 0) {
-          wasora_set_function_args(print_function->first_function, x);
-          fprintf(print_function->file->pointer, print_function->format, wasora_evaluate_expression(&print_token->expression));
+          // si estamos en 2d y cambiamos los dos primeros argumentos imprimimos una linea
+          // en blanco para que plotear con gnuplot with lines salga lindo        
+          if (print_token->next == NULL &&
+              print_function->first_function->n_arguments == 2 &&
+              print_function->first_function->rectangular_mesh &&
+              j != print_function->first_function->data_size &&
+              gsl_fcmp(print_function->first_function->data_argument[0][j], print_function->first_function->data_argument[0][j+1], print_function->first_function->multidim_threshold) != 0 &&
+              gsl_fcmp(print_function->first_function->data_argument[1][j], print_function->first_function->data_argument[1][j+1], print_function->first_function->multidim_threshold) != 0) {
+            fprintf(print_function->file->pointer, "\n");
+          }
           
         }
-        
-        if (print_token->next != NULL) {
-          fprintf(print_function->file->pointer, "%s", print_function->separator);
-        } else {
-          fprintf(print_function->file->pointer, "\n");
-          // siempre flusheamos
-          fflush(print_function->file->pointer);
-        }
-
-        // si estamos en 2d y cambiamos los dos primeros argumentos imprimimos una linea
-        // en blanco para que plotear con gnuplot with lines salga lindo        
-        if (print_token->next == NULL &&
-            print_function->first_function->n_arguments == 2 &&
-            print_function->first_function->rectangular_mesh &&
-            j != print_function->first_function->data_size &&
-            gsl_fcmp(print_function->first_function->data_argument[0][j], print_function->first_function->data_argument[0][j+1], print_function->first_function->multidim_threshold) != 0 &&
-            gsl_fcmp(print_function->first_function->data_argument[1][j], print_function->first_function->data_argument[1][j+1], print_function->first_function->multidim_threshold) != 0) {
-          fprintf(print_function->file->pointer, "\n");
-        }
-
       }
 //      fprintf(print_function->file->pointer, "\n");
 

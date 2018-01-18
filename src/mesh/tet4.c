@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related tetrahedron element routines
  *
- *  Copyright (C) 2015--2017 jeremy theler
+ *  Copyright (C) 2015--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -65,6 +65,7 @@ double mesh_four_node_tetrahedron_h(int j, gsl_vector *gsl_r) {
 int mesh_four_node_tetrahedron_init(void) {
   
   element_type_t *element_type;
+  int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON];
   element_type->name = strdup("tetrahedron");
@@ -78,6 +79,57 @@ int mesh_four_node_tetrahedron_init(void) {
   element_type->dhdr = mesh_four_node_tetrahedron_dhdr;
   element_type->point_in_element = mesh_point_in_tetrahedron;
   element_type->element_volume = mesh_tetrahedron_vol;
+
+
+  // coordenadas de los nodos
+/*
+Tetrahedron:                     
+
+                   v
+                 .
+               ,/
+              /
+           2                     
+         ,/|`\                   
+       ,/  |  `\                 
+     ,/    '.   `\               
+   ,/       |     `\             
+ ,/         |       `\           
+0-----------'.--------1 --> u    
+ `\.         |      ,/           
+    `\.      |    ,/             
+       `\.   '. ,/               
+          `\. |/                 
+             `3                  
+                `\.
+                   ` w
+
+*/     
+  element_type->node_coords = calloc(element_type->nodes, sizeof(double *));
+  element_type->node_parents = calloc(element_type->nodes, sizeof(node_relative_t *));  
+  for (j = 0; j < element_type->nodes; j++) {
+    element_type->node_coords[j] = calloc(element_type->dim, sizeof(double));  
+  }
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[0][0] = 0;
+  element_type->node_coords[0][1] = 0;
+  element_type->node_coords[0][2] = 0;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[1][0] = 1;  
+  element_type->node_coords[1][1] = 0;
+  element_type->node_coords[1][2] = 0;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[2][0] = 0;  
+  element_type->node_coords[2][1] = 1;
+  element_type->node_coords[2][2] = 0;
+
+  element_type->first_order_nodes++;
+  element_type->node_coords[3][0] = 0;  
+  element_type->node_coords[3][1] = 0;
+  element_type->node_coords[3][2] = 1;
   
   mesh_tetrahedron_gauss_init(element_type);
 

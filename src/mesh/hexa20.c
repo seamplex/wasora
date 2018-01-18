@@ -32,6 +32,7 @@ int mesh_twenty_node_hexaedron_init(void) {
   
   element_type_t *element_type;
   gauss_t *gauss;
+  int j;
 
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON20];
   element_type->name = strdup("hexahedron");
@@ -46,6 +47,117 @@ int mesh_twenty_node_hexaedron_init(void) {
   element_type->point_in_element = mesh_point_in_hexahedron;
   element_type->element_volume = mesh_hexahedron_vol;
 
+  // coordenadas de los nodos
+/*
+  Hexahedron20:     
+
+  3----13----2      
+  |\         |\     
+  | 15       | 14   
+  9  \       11 \   
+  |   7----19+---6  
+  |   |      |   |  
+  0---+-8----1   |  
+   \  17      \  18 
+   10 |        12|  
+     \|         \|  
+      4----16----5  
+*/     
+  element_type->node_coords = calloc(element_type->nodes, sizeof(double *));
+  element_type->node_parents = calloc(element_type->nodes, sizeof(node_relative_t *));  
+  for (j = 0; j < element_type->nodes; j++) {
+    element_type->node_coords[j] = calloc(element_type->dim, sizeof(double));  
+  }
+
+  
+  element_type->first_order_nodes++;  
+  element_type->node_coords[0][0] = -1;
+  element_type->node_coords[0][1] = -1;
+  element_type->node_coords[0][2] = -1;
+
+  element_type->first_order_nodes++;  
+  element_type->node_coords[1][0] = +1;  
+  element_type->node_coords[1][1] = -1;
+  element_type->node_coords[1][2] = -1;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[2][0] = +1;  
+  element_type->node_coords[2][1] = +1;
+  element_type->node_coords[2][2] = -1;
+
+  element_type->first_order_nodes++;
+  element_type->node_coords[3][0] = -1;
+  element_type->node_coords[3][1] = +1;
+  element_type->node_coords[3][2] = -1;
+ 
+  element_type->first_order_nodes++;
+  element_type->node_coords[4][0] = -1;
+  element_type->node_coords[4][1] = -1;
+  element_type->node_coords[4][2] = +1;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[5][0] = +1;  
+  element_type->node_coords[5][1] = -1;
+  element_type->node_coords[5][2] = +1;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[6][0] = +1;  
+  element_type->node_coords[6][1] = +1;
+  element_type->node_coords[6][2] = +1;
+
+  element_type->first_order_nodes++;
+  element_type->node_coords[7][0] = -1;
+  element_type->node_coords[7][1] = +1;
+  element_type->node_coords[7][2] = +1;
+  
+  wasora_mesh_add_node_parent(&element_type->node_parents[8], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[8], 1);
+  wasora_mesh_compute_coords_from_parent(element_type, 8);
+  
+  wasora_mesh_add_node_parent(&element_type->node_parents[9], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[9], 3);
+  wasora_mesh_compute_coords_from_parent(element_type, 9); 
+ 
+  wasora_mesh_add_node_parent(&element_type->node_parents[10], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[10], 4);
+  wasora_mesh_compute_coords_from_parent(element_type, 10);   
+ 
+  wasora_mesh_add_node_parent(&element_type->node_parents[11], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[11], 2);
+  wasora_mesh_compute_coords_from_parent(element_type, 11);
+
+  wasora_mesh_add_node_parent(&element_type->node_parents[12], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[12], 5);
+  wasora_mesh_compute_coords_from_parent(element_type, 12);
+
+  wasora_mesh_add_node_parent(&element_type->node_parents[13], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[13], 3);
+  wasora_mesh_compute_coords_from_parent(element_type, 13);  
+
+  wasora_mesh_add_node_parent(&element_type->node_parents[14], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[14], 6);
+  wasora_mesh_compute_coords_from_parent(element_type, 14);   
+ 
+  wasora_mesh_add_node_parent(&element_type->node_parents[15], 3);
+  wasora_mesh_add_node_parent(&element_type->node_parents[15], 7);
+  wasora_mesh_compute_coords_from_parent(element_type, 15);
+
+  wasora_mesh_add_node_parent(&element_type->node_parents[16], 4);
+  wasora_mesh_add_node_parent(&element_type->node_parents[16], 5);
+  wasora_mesh_compute_coords_from_parent(element_type, 16);
+
+  wasora_mesh_add_node_parent(&element_type->node_parents[17], 4);
+  wasora_mesh_add_node_parent(&element_type->node_parents[17], 7);
+  wasora_mesh_compute_coords_from_parent(element_type, 17);    
+
+  wasora_mesh_add_node_parent(&element_type->node_parents[18], 5);
+  wasora_mesh_add_node_parent(&element_type->node_parents[18], 6);
+  wasora_mesh_compute_coords_from_parent(element_type, 18);
+
+  wasora_mesh_add_node_parent(&element_type->node_parents[19], 6);
+  wasora_mesh_add_node_parent(&element_type->node_parents[19], 7);
+  wasora_mesh_compute_coords_from_parent(element_type, 19);    
+  
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   

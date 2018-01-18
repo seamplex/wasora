@@ -30,6 +30,7 @@ int mesh_nine_node_quadrangle_init(void) {
   
   element_type_t *element_type;
   gauss_t *gauss;
+  int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE9];
   element_type->name = strdup("quadrangle9");
@@ -44,6 +45,64 @@ int mesh_nine_node_quadrangle_init(void) {
   element_type->point_in_element = mesh_point_in_quadrangle;
   element_type->element_volume = mesh_quad_vol;
 
+  // coordenadas de los nodos
+/*
+ Quadrangle9:
+
+ 3-----6-----2
+ |           |
+ |           |
+ 7     8     5
+ |           |
+ |           |
+ 0-----4-----1   
+*/ 
+  
+  element_type->node_coords = calloc(element_type->nodes, sizeof(double *));
+  element_type->node_parents = calloc(element_type->nodes, sizeof(node_relative_t *));  
+  for (j = 0; j < element_type->nodes; j++) {
+    element_type->node_coords[j] = calloc(element_type->dim, sizeof(double));  
+  }
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[0][0] = -1;
+  element_type->node_coords[0][1] = -1;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[1][0] = +1;  
+  element_type->node_coords[1][1] = -1;
+  
+  element_type->first_order_nodes++;
+  element_type->node_coords[2][0] = +1;  
+  element_type->node_coords[2][1] = +1;
+
+  element_type->first_order_nodes++;
+  element_type->node_coords[3][0] = -1;
+  element_type->node_coords[3][1] = +1;
+
+ 
+  wasora_mesh_add_node_parent(&element_type->node_parents[4], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[4], 1);
+  wasora_mesh_compute_coords_from_parent(element_type, 4);
+  
+  wasora_mesh_add_node_parent(&element_type->node_parents[5], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[5], 2);
+  wasora_mesh_compute_coords_from_parent(element_type, 5); 
+ 
+  wasora_mesh_add_node_parent(&element_type->node_parents[6], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[6], 3);
+  wasora_mesh_compute_coords_from_parent(element_type, 6);   
+ 
+  wasora_mesh_add_node_parent(&element_type->node_parents[7], 3);
+  wasora_mesh_add_node_parent(&element_type->node_parents[7], 0);
+  wasora_mesh_compute_coords_from_parent(element_type, 7);
+
+  wasora_mesh_add_node_parent(&element_type->node_parents[8], 0);
+  wasora_mesh_add_node_parent(&element_type->node_parents[8], 1);
+  wasora_mesh_add_node_parent(&element_type->node_parents[8], 2);
+  wasora_mesh_add_node_parent(&element_type->node_parents[8], 3);
+  wasora_mesh_compute_coords_from_parent(element_type, 8);  
+  
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   

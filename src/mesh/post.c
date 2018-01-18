@@ -51,6 +51,9 @@ int wasora_instruction_mesh_post(void *arg) {
     }
     
     if (mesh_post_dist->scalar != NULL) {
+      if (mesh_post_dist->scalar->initialized == 0) {
+        wasora_call(wasora_function_init(mesh_post_dist->scalar));
+      }
       wasora_call(mesh_post->write_scalar(mesh_post, mesh_post_dist->scalar, mesh_post_dist->centering));
     } else {
       wasora_call(mesh_post->write_vector(mesh_post, mesh_post_dist->vector, mesh_post_dist->centering));

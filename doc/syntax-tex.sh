@@ -1,7 +1,7 @@
 #!/bin/sh
-# 
-# $ ./syntax-tex.sh > ../syntax.tex
-# 
+#  Generate keywords.tex with
+#    $ ./syntax-tex.sh > keywords.tex
+#  and then include syntax.tex (which includes keywords.tex) in your preamble
 
 . ./keywords.sh
 

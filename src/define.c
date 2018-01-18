@@ -107,6 +107,13 @@ var_t *wasora_define_variable(char *name) {
 vector_t *wasora_define_vector(char *name, int size, expr_t *size_expr, expr_t *datas) {
 
   vector_t *vector;
+  char *dummy;
+  
+  // como hay cosas que pueden venir de physical names que pueden tener espacios, los
+  // reemplazamos por underscores
+  while ((dummy = strchr(name, ' ')) != NULL) {
+    *dummy = '_';
+  }
 
   if (wasora_check_name(name) != WASORA_PARSER_OK) {
     return NULL;

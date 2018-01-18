@@ -214,47 +214,147 @@ int mesh_twentyseven_node_hexaedron_init(void) {
   // el primero es el default
   // ---- ocho puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 8);
+    mesh_alloc_gauss(gauss, element_type, 27);
 
-    gauss->w[0] = 8 * 1.0/8.0;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-    gauss->r[0][1] = -1.0/M_SQRT3;
-    gauss->r[0][2] = -1.0/M_SQRT3;
+//Reference https://www.code-aster.org/V2/doc/v11/en/man_r/r3/r3.01.01.pdf
+    double const alpha = sqrt(3.0/5.0);  
+    double const c1 = 5.0/0.9;
+    double const c2 = 8.0/0.9;
 
-    gauss->w[1] = 8 * 1.0/8.0;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-    gauss->r[1][1] = -1.0/M_SQRT3;
-    gauss->r[1][2] = -1.0/M_SQRT3;
+    gauss->w[0] = c1 * c1 * c1;
+    gauss->r[0][0] = -alpha;
+    gauss->r[0][1] = -alpha;
+    gauss->r[0][2] = -alpha;
 
-    gauss->w[2] = 8 * 1.0/8.0;
-    gauss->r[2][0] = +1.0/M_SQRT3;
-    gauss->r[2][1] = +1.0/M_SQRT3;
-    gauss->r[2][2] = -1.0/M_SQRT3;
+    gauss->w[1] = c1 * c1 * c2;
+    gauss->r[1][0] = -alpha;
+    gauss->r[1][1] = -alpha;
+    gauss->r[1][2] =  0.0;
 
-    gauss->w[3] = 8 * 1.0/8.0;
-    gauss->r[3][0] = -1.0/M_SQRT3;
-    gauss->r[3][1] = +1.0/M_SQRT3;
-    gauss->r[3][2] = -1.0/M_SQRT3;
+    gauss->w[2] = c1 * c1 * c1;
+    gauss->r[2][0] = -alpha;
+    gauss->r[2][1] = -alpha;
+    gauss->r[2][2] = +alpha;
 
-    gauss->w[4] = 8 * 1.0/8.0;
-    gauss->r[4][0] = -1.0/M_SQRT3;
-    gauss->r[4][1] = -1.0/M_SQRT3;
-    gauss->r[4][2] = +1.0/M_SQRT3;
+    gauss->w[3] = c1 * c1 * c2;
+    gauss->r[3][0] = -alpha;
+    gauss->r[3][1] =  0.0;
+    gauss->r[3][2] = -alpha;
 
-    gauss->w[5] = 8 * 1.0/8.0;
-    gauss->r[5][0] = +1.0/M_SQRT3;
-    gauss->r[5][1] = -1.0/M_SQRT3;
-    gauss->r[5][2] = +1.0/M_SQRT3;
+    gauss->w[4] = c1 * c2 * c2;
+    gauss->r[4][0] = -alpha;
+    gauss->r[4][1] = 0.0;
+    gauss->r[4][2] = 0.0;
 
-    gauss->w[6] = 8 * 1.0/8.0;
-    gauss->r[6][0] = +1.0/M_SQRT3;
-    gauss->r[6][1] = +1.0/M_SQRT3;
-    gauss->r[6][2] = +1.0/M_SQRT3;
+    gauss->w[5] = c1 * c1 * c2;
+    gauss->r[5][0] = -alpha;
+    gauss->r[5][1] =  0.0;
+    gauss->r[5][2] = +alpha;
 
-    gauss->w[7] = 8 * 1.0/8.0;
-    gauss->r[7][0] = -1.0/M_SQRT3;
-    gauss->r[7][1] = +1.0/M_SQRT3;
-    gauss->r[7][2] = +1.0/M_SQRT3;
+    gauss->w[6] = c1 * c1 * c1;
+    gauss->r[6][0] = -alpha;
+    gauss->r[6][1] = +alpha;
+    gauss->r[6][2] = -alpha;
+
+    gauss->w[7] = c1 * c1 * c2;
+    gauss->r[7][0] = -alpha;
+    gauss->r[7][1] = +alpha;
+    gauss->r[7][2] =  0.0;
+  
+    gauss->w[8] = c1 * c1 * c1;
+    gauss->r[8][0] = -alpha;
+    gauss->r[8][1] = +alpha;
+    gauss->r[8][2] = +alpha;
+  
+    gauss->w[9] = c1 * c1 * c2;
+    gauss->r[9][0] =  0.0;
+    gauss->r[9][1] = -alpha;
+    gauss->r[9][2] = -alpha;
+  
+    gauss->w[10] = c1 * c2 * c2;
+    gauss->r[10][0] =  0.0;
+    gauss->r[10][1] = -alpha;
+    gauss->r[10][2] =  0.0;
+  
+    gauss->w[11] = c1 * c1 * c2;
+    gauss->r[11][0] =  0.0;
+    gauss->r[11][1] = -alpha;
+    gauss->r[11][2] = +alpha;
+  
+    gauss->w[12] = c1 * c2 * c2;
+    gauss->r[12][0] =  0.0;
+    gauss->r[12][1] =  0.0;
+    gauss->r[12][2] = -alpha;
+  
+    gauss->w[13] = c1 * c2 * c2;
+    gauss->r[13][0] =  0.0;
+    gauss->r[13][1] =  0.0;
+    gauss->r[13][2] =  0.0;
+  
+    gauss->w[14] = c1 * c2 * c2;
+    gauss->r[14][0] =  0.0;
+    gauss->r[14][1] =  0.0;
+    gauss->r[14][2] = +alpha;
+  
+    gauss->w[15] = c1 * c1 * c2;
+    gauss->r[15][0] =  0.0;
+    gauss->r[15][1] = +alpha;
+    gauss->r[15][2] = -alpha;
+  
+    gauss->w[16] = c1 * c2 * c2;
+    gauss->r[16][0] =  0.0;
+    gauss->r[16][1] = +alpha;
+    gauss->r[16][2] =  0.0;
+  
+    gauss->w[17] = c1 * c1 * c2;
+    gauss->r[17][0] =  0.0;
+    gauss->r[17][1] = +alpha;
+    gauss->r[17][2] = +alpha;
+  
+    gauss->w[18] = c1 * c1 * c1;
+    gauss->r[18][0] = +alpha;
+    gauss->r[18][1] = -alpha;
+    gauss->r[18][2] = -alpha;
+  
+    gauss->w[19] = c1 * c1 * c2;
+    gauss->r[19][0] = +alpha;
+    gauss->r[19][1] = -alpha;
+    gauss->r[19][2] =  0.0;
+  
+    gauss->w[20] = c1 * c1 * c1;
+    gauss->r[20][0] = +alpha;
+    gauss->r[20][1] = -alpha;
+    gauss->r[20][2] = +alpha;
+  
+    gauss->w[21] = c1 * c1 * c2;
+    gauss->r[21][0] = +alpha;
+    gauss->r[21][1] =  0.0;
+    gauss->r[21][2] = -alpha;
+  
+    gauss->w[22] = c1 * c2 * c2;
+    gauss->r[22][0] = +alpha;
+    gauss->r[22][1] =  0.0;
+    gauss->r[22][2] =  0.0;
+  
+    gauss->w[23] = c1 * c1 * c2;
+    gauss->r[23][0] = +alpha;
+    gauss->r[23][1] =  0.0;
+    gauss->r[23][2] = +alpha;
+  
+    gauss->w[24] = c1 * c1 * c1;
+    gauss->r[24][0] = +alpha;
+    gauss->r[24][1] = +alpha;
+    gauss->r[24][2] = -alpha;
+  
+    gauss->w[25] = c1 * c1 * c2;
+    gauss->r[25][0] = +alpha;
+    gauss->r[25][1] = +alpha;
+    gauss->r[25][2] =  0.0;
+  
+    gauss->w[26] = c1 * c1 * c1;
+    gauss->r[26][0] = +alpha;
+    gauss->r[26][1] = +alpha;
+    gauss->r[26][2] = +alpha;
   
     mesh_init_shape_at_gauss(gauss, element_type);
     

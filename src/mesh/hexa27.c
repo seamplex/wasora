@@ -286,7 +286,7 @@ int mesh_twentyseven_node_hexaedron_init(void) {
     gauss->r[12][1] =  0.0;
     gauss->r[12][2] = -alpha;
   
-    gauss->w[13] = c1 * c2 * c2;
+    gauss->w[13] = c2 * c2 * c2;
     gauss->r[13][0] =  0.0;
     gauss->r[13][1] =  0.0;
     gauss->r[13][2] =  0.0;

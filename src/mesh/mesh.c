@@ -49,8 +49,13 @@ int wasora_instruction_mesh(void *arg) {
   
   if (mesh->structured) {
     wasora_call(mesh_create_structured(mesh));
-  } else {
+  } else if (mesh->format == mesh_format_gmsh) {
     wasora_call(mesh_gmsh_readmesh(mesh));
+  } else if (mesh->format == mesh_format_frd) {
+    wasora_call(mesh_frd_readmesh(mesh));
+  } else {
+    wasora_push_error_message("unsupported format");
+    return WASORA_RUNTIME_ERROR;
   }
   
   // barremos los nodos y definimos la bounding box (capaz se pueda meter esto en el loop del kd_tree)

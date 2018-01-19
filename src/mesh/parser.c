@@ -195,6 +195,22 @@ int wasora_mesh_parse_line(char *line) {
         mesh->node_datas = node_datas;
       }
       
+      if (mesh->format == mesh_format_fromextension) {
+        char *ext = mesh->file->format + strlen(mesh->file->format) - 4;
+        
+               if (strcasecmp(ext, ".msh") == 0) {
+          mesh->format = mesh_format_gmsh;
+        } else if (strcasecmp(ext, ".vtk") == 0) {
+          mesh->format = mesh_format_vtk;
+        } else if (strcasecmp(ext, ".frd") == 0) {
+          mesh->format = mesh_format_frd;
+        } else {
+          wasora_push_error_message("unknown extension '%s' and no FORMAT given", ext);
+          return WASORA_PARSER_ERROR;
+        }
+      }
+      
+      
       if (wasora_define_instruction(wasora_instruction_mesh, mesh) == NULL) {
         return WASORA_PARSER_ERROR;
       }

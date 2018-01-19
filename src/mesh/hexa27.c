@@ -223,9 +223,11 @@ void mesh_hexa_gauss27_init(element_type_t *element_type) {
     mesh_alloc_gauss(gauss, element_type, 27);
 
 //Reference https://www.code-aster.org/V2/doc/v11/en/man_r/r3/r3.01.01.pdf
+//          https://www.code-aster.org/V2/doc/default/en/man_r/r3/r3.01.01.pdf
+    
     double const alpha = sqrt(3.0/5.0);  
-    double const c1 = 5.0/0.9;
-    double const c2 = 8.0/0.9;
+    double const c1 = 5.0/9.0;
+    double const c2 = 8.0/9.0;
 
     gauss->w[0] = c1 * c1 * c1;
     gauss->r[0][0] = -alpha;

@@ -31,7 +31,6 @@
 int mesh_twentyseven_node_hexaedron_init(void) {
   
   element_type_t *element_type;
-  gauss_t *gauss;
   int j;
 
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON27];
@@ -206,13 +205,20 @@ int mesh_twentyseven_node_hexaedron_init(void) {
   wasora_mesh_add_node_parent(&element_type->node_parents[26], 7);
   wasora_mesh_compute_coords_from_parent(element_type, 26);    
 
+  mesh_hexa_gauss27_init(element_type);
   
-  
+  return WASORA_RUNTIME_OK;
+}
+
+
+void mesh_hexa_gauss27_init(element_type_t *element_type) {
+  gauss_t *gauss;
+
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // el primero es el default
-  // ---- ocho puntos de Gauss sobre el elemento unitario ----  
+  // ---- tres puntos de Gauss en cada direccion ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
     mesh_alloc_gauss(gauss, element_type, 27);
 
@@ -367,9 +373,10 @@ int mesh_twentyseven_node_hexaedron_init(void) {
     gauss->r[0][1] = 0;
 
     mesh_init_shape_at_gauss(gauss, element_type);  
-  
-  return WASORA_RUNTIME_OK;
+    
+  return;
 }
+
 /*
 Reference https://www.code-aster.org/V2/doc/v11/en/man_r/r3/r3.01.01.pdf
 

@@ -2410,6 +2410,7 @@ extern double mesh_twenty_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
 
 // hexahedron27.c
 extern int mesh_twentyseven_node_hexaedron_init(void);
+extern void mesh_hexa_gauss27_init(element_type_t *);
 extern double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r);
 extern double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
 

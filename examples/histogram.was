@@ -1,7 +1,7 @@
 # compute an histogram representation of individual samples
 # call this input as
 # wasora histogram.was histogram-samples 300 15 2.25 2.55 | qdp --with histeps
-# wasora histogram.was histogram-samples 15 2.25 2.55 | gnuplot -p -e "plot '< cat' with histeps"
+# wasora histogram.was histogram-samples 15 5 2.25 2.55 | gnuplot -p -e "plot '< cat' with histeps"
 
 N = $2    # number of samples
 n = $3    # number of bins

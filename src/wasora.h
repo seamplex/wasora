@@ -2289,6 +2289,9 @@ extern int mesh_gmsh_write_mesh(mesh_t *, int, FILE *);
 extern int mesh_gmsh_write_scalar(mesh_post_t *, function_t *, centering_t);
 extern int mesh_gmsh_write_vector(mesh_post_t *, function_t **, centering_t);
 
+// frd.c
+extern int mesh_frd_readmesh(mesh_t *);
+
 // vtk.c
 extern int mesh_vtk_write_header(FILE *);
 extern int mesh_vtk_write_mesh(mesh_t *, int, FILE *);

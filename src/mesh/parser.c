@@ -195,7 +195,7 @@ int wasora_mesh_parse_line(char *line) {
         mesh->node_datas = node_datas;
       }
       
-      if (mesh->format == mesh_format_fromextension) {
+      if (mesh->format == mesh_format_fromextension && mesh->file != NULL) {
         char *ext = mesh->file->format + strlen(mesh->file->format) - 4;
         
                if (strcasecmp(ext, ".msh") == 0) {

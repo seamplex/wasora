@@ -293,6 +293,9 @@ int mesh_vtk_write_vector(mesh_post_t *mesh_post, function_t **function, centeri
     return WASORA_RUNTIME_ERROR;
   }
   
+  if (function == NULL || function[0]->data_value == NULL) {
+    return WASORA_RUNTIME_OK;
+  }
   
   if (centering == centering_cells) {
     if (mesh_post->cell_init == 0) {

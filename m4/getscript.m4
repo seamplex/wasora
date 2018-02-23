@@ -203,6 +203,7 @@ define([GET_FOOTER],[dnl
 echo
 if command_exists name; then
   echo "congratulations! name compiled and installed correctly!"
+  echo "you might need to log out and in again to see it working"
   echo "type ‘name’ (without the quotes) if you do not believe me."
 else
   echo "something went wrong as name does not run :-("

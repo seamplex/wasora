@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related neighbor routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -52,7 +52,7 @@ element_t *mesh_find_element_volumetric_neighbor(element_t *element) {
   for (j = 0; j < element->type->nodes; j++) {
     LL_FOREACH(element->node[j]->associated_elements, associated_element) {
       if (element->type->dim == (associated_element->element->type->dim-1)) {  // los vecinos volumetricos
-        if (mesh_count_common_nodes(element, associated_element->element, NULL) == element->type->nodes) {
+        if (mesh_count_common_nodes(element, associated_element->element, NULL) >= element->type->dim) {
           return associated_element->element;
         }
       }
@@ -96,27 +96,28 @@ int mesh_find_neighbors(mesh_t *mesh) {
       LL_FOREACH(mesh->cell[i].element->node[j]->associated_elements, associated_element) {
 
         memset(nodes, 0, sizeof(nodes));
-        l = associated_element->element->id;
-        if (mesh_count_common_nodes(mesh->cell[i].element, &mesh->element[l-1], nodes) == mesh->cell[i].element->type->nodes_per_face) {
+        if ((l = associated_element->element->id) != mesh->cell[i].element->id) {
+          if (mesh_count_common_nodes(mesh->cell[i].element, &mesh->element[l-1], nodes) >= mesh->cell[i].element->type->dim) {
 
-          flag = 1;
-          for (m = 0; m < n; m++) {
-            if (mesh->cell[i].ineighbor[m] == l) {
-              flag = 0;
+            flag = 1;
+            for (m = 0; m < n; m++) {
+              if (mesh->cell[i].ineighbor[m] == l) {
+                flag = 0;
+              }
             }
-          }
           
-          if (flag) {
-            if (n == mesh->cell[i].element->type->faces) {
-              wasora_push_error_message("mesh inconsistency, element %d has at least one more neighbor than faces (%d)", mesh->cell[i].element->id, n);
-              return WASORA_RUNTIME_ERROR;
-            }
+            if (flag) {
+              if (n == mesh->cell[i].element->type->faces) {
+                wasora_push_error_message("mesh inconsistency, element %d has at least one more neighbor than faces (%d)", mesh->cell[i].element->id, n);
+                return WASORA_RUNTIME_ERROR;
+              }
 
-            mesh->cell[i].ifaces[n] = calloc(mesh->cell[i].element->type->nodes_per_face, sizeof(int));
-            memcpy(mesh->cell[i].ifaces[n], nodes, sizeof(int)*mesh->cell[i].element->type->nodes_per_face);
-            mesh->cell[i].ineighbor[n] = l;
+              mesh->cell[i].ifaces[n] = calloc(mesh->cell[i].element->type->nodes_per_face, sizeof(int));
+              memcpy(mesh->cell[i].ifaces[n], nodes, sizeof(int)*mesh->cell[i].element->type->nodes_per_face);
+              mesh->cell[i].ineighbor[n] = l;
           
-            n++;
+              n++;
+            }
           }
         }
       }

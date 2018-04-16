@@ -109,20 +109,4 @@ else
 fi
 echo "done"
 )dnl
-
-define([PLUGIN_README_INSTALL],
-echo -n "formatting readme & install... "
-if test ! -z "`which pandoc`"; then
- ./markdown.sh 
-else
- fmt -s README.md > README
- fmt -s INSTALL.md > INSTALL
- fmt -s ${WASORA_PATH}/PLUGINS.md > PLUGINS
-fi
-# these are needed by make so we touch them
-touch doc/README.pdf doc/README.html
-touch doc/INSTALL.pdf doc/INSTALL.html
-touch doc/PLUGINS.pdf doc/PLUGINS.html
-echo "done"
-)dnl
 divert(0)

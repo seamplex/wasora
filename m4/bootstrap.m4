@@ -2,13 +2,12 @@ dnl This file is part of wasora and/or one of its plugins
 dnl GPL v3+ (c) 2009-2016 jeremy theler
 dnl <http://bitbucket.org/wasora/wasora>
 dnl
-
-changequote([,]) dnl esto es para poder usar los backticks de bash
-
+changequote([,])dnl esto es para poder usar los backticks de bash
+divert(-1)dnl
 define([WASORA_CHECK_VCS],
 if test -d ".git"; then
  if test "`which git`" = ""; then
-  echo "this tree uses git it is not installed" 
+  echo "this tree uses git but git is not installed"
   exit 1
  fi
  vcs=git
@@ -102,16 +101,12 @@ fi
 define([WASORA_README_INSTALL],
 echo -n "formatting readme & install... "
 if test ! -z "`which pandoc`"; then
-# TODO: yaml + hash
- ./markdown.sh
+ pandoc README.md -t plain -o README
+ pandoc INSTALL.md -t plain -o INSTALL
 else
  fmt -s README.md > README
  fmt -s INSTALL.md > INSTALL
 fi
-# these are needed by make so we touch them
-touch doc/README.pdf doc/README.html
-touch doc/INSTALL.pdf doc/INSTALL.html
-touch doc/wasora_full.html
 echo "done"
 )dnl
 
@@ -130,3 +125,4 @@ touch doc/INSTALL.pdf doc/INSTALL.html
 touch doc/PLUGINS.pdf doc/PLUGINS.html
 echo "done"
 )dnl
+divert(0)

@@ -3,62 +3,16 @@
 ![wasora](doc/logo.svg){.img-responsive}\ 
 
 
-[Wasora](https://www.seamplex.com/wasora) is a convenient high-level interface to perform mathematical computations. It also provides a framework which other [particular computational codes](#plugins) can use. It is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing
+[Wasora](https://www.seamplex.com/wasora) is a convenient (relatively) high-level tool to perform mathematical computations. It also provides a framework which other [particular computational codes](#plugins) can use. It is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing
 
  * algebraic expressions,
  * data for function interpolation,
  * differential equations, and
  * output instructions
 
-amongst other facilities. At a first glance, it may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical calculation. For example, see [here](https://www.seamplex.com/wasora/realbook/real-._realbook006.html) to find how the famous [Lorenz system](http://en.wikipedia.org/wiki/Lorenz_system) may be solved by writing the three differential equations into a plain-text input file as humanly-friendly as possible.
+amongst other facilities.
 
-Although its ultimate subject is optimization, it may hopefully help you with the tough calculations that usually appear when working with problems that have some kind of complexity, allowing the user to focus on what humans perform best---expert judgment and reaching conclusions. Some of its main features include
-
-  * evaluation of [algebraic expressions](https://www.seamplex.com/wasora/realbook/real-002-expressions.html)
-  * [one](https://www.seamplex.com/wasora/realbook/real-007-functions.html) and [multi-dimensional](https://www.seamplex.com/wasora/realbook/real-010-2dfunctions.html) function interpolation
-  * [scalar](https://www.seamplex.com/wasora/realbook/real-001-peano.html), [vector](https://www.seamplex.com/wasora/realbook/real-006-fibonacci.html) and matrix operations
-  * numerical [integration](https://www.seamplex.com/wasora/realbook/real-008-integrals.html), [differentiation](https://www.seamplex.com/wasora/realbook/real-017-double-pendulum.html) and [root finding](https://www.seamplex.com/wasora/realbook/real-020-gsl.html) of functions
-  * possibility to solve [iterative](https://www.seamplex.com/wasora/realbook/real-030-buffon.html) and/or [time-dependent](https://www.seamplex.com/wasora/realbook/real-003-lag.html) problems
-  * adaptive [integration of systems of differential-algebraic equations](https://www.seamplex.com/wasora/realbook/real-018-waterwheel.html)
-  * I/O from files and shared-memory objects (with optional synchronization using semaphores)
-  * execution of [arbitrary code](https://www.seamplex.com/wasora/realbook/real-015-primes) provided as shared object files
-  * [parametric runs using quasi-random sequence numbers](https://www.seamplex.com/wasora/realbook/real-025-mathace.html) to efficiently sweep a sub-space of parameter space 
-  * solution of systems of non-linear algebraic equations
-  * non-linear fit of scattered data to [one](https://www.seamplex.com/wasora/realbook/real-020-gsl.html) or [multidimensional](https://www.seamplex.com/wasora/realbook/real-028-mass.html) functions
-  * [non-linear multidimensional optimization](https://www.seamplex.com/wasora/realbook/real-020-gsl.html)
-  * management of unstructured grids
-  * complex extensions by means of [Plugins]
-
-The code heavily relies on the numerical routines provided by the [GNU Scientific Library](http://www.gnu.org/software/gsl/), whose installation is mandatory. In fact, wasora can be seen as a high-level front-end to GSL's numerical procedures. The solution of differential-algebraic systems of equations is performed using the [SUNDIALS IDA Library](http://computation.llnl.gov/casc/sundials/main.html), although this feature usage is optional. See the file `INSTALL` for details about compilation and installation.
-
-
-# Quick-start
-
-Open a terminal in any GNU/Linux box (may be a VirtualBox box) and run:
-
-```
-sudo apt-get install curl m4 make autoconf automake gcc git libgsl-dev libsundials-serial-dev wget findutils
-curl https://www.seamplex.com/wasora/get.sh | sh
-```
-
-If `curl` is not installed, use `wget`:
-
-```
-wget -O- https://www.seamplex.com/wasora/get.sh | sh
-```
-
-
-If you are behind a proxy, that both `http_proxy` and `https_proxy` are properly set. If you get any error, either
-
- a. See the detailed explanation in [INSTALL](INSTALL.md)  
- b. Ask for help in the mailing list at <https://groups.google.com/a/seamplex.com/forum/#!forum/wasora>
-
-Should these instructions be non-sense, go directly to point b.
-
-
-## The Lorenz system
-
-As an illustration, let us solve the chaotic [Lorenz’ dynamical system](http://en.wikipedia.org/wiki/Lorenz_system)---that of the butterfly. The differential equations are
+For example, the famous chaotic [Lorenz’ dynamical system](http://en.wikipedia.org/wiki/Lorenz_system)---the one of the butterfly---whose differential equations are
 
 $$
 \begin{align*}
@@ -67,10 +21,7 @@ $$
 \dot{z} &= xy - bz\\
 \end{align*}
 $$
-
-where $\sigma=10$, $b=8/3$ and $r=28$ are the classical parameters that generate the butterfly as presented by Edward Lorenz back in his seminal 1963 paper [Deterministic non-periodic flow](http://journals.ametsoc.org/doi/abs/10.1175/1520-0469%281963%29020%3C0130%3ADNF%3E2.0.CO%3B2).
-
-Wasora can be used to solve it by writing the equations in the input file as naturally as possible, as illustrated in the input file that follows:
+where $\sigma=10$, $b=8/3$ and $r=28$ are the classical parameters that generate the butterfly as presented by Edward Lorenz back in his seminal 1963 paper [Deterministic non-periodic flow](http://journals.ametsoc.org/doi/abs/10.1175/1520-0469%281963%29020%3C0130%3ADNF%3E2.0.CO%3B2), can be solved with wasoraby writing the equations in the input file as naturally as possible, as illustrated in the input file that follows:
 
 ```wasora
 # lorenz’ seminal dynamical system
@@ -94,13 +45,62 @@ z_dot .= x*y - b*z
 PRINT t x y z HEADER
 ```
 
-We can pipe wasora’s standard output to [Gnuplot](http://gnuplot.info/) and obtain a beautiful figure:
+Following the [UNIX Philosophy](https://en.wikipedia.org/wiki/Unix_philosophy), wasora’s output can be piped to [Gnuplot](http://gnuplot.info/) in order to obtain a beautiful figure:
 
 ```
 wasora lorenz.was | gnuplot -e "set terminal svg; set output 'lorenz.svg'; set ticslevel 0; splot '-' u 2:3:4 w l ti ''"
 
 ```
 ![wasora](examples/lorenz.svg){.img-responsive}\ 
+
+
+At a first glance, wasora may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical calculation. For example, see [here](https://www.seamplex.com/wasora/realbook/real-._realbook006.html) to find how the famous [Lorenz system](http://en.wikipedia.org/wiki/Lorenz_system) may be solved by writing the three differential equations into a plain-text input file as humanly-friendly as possible.
+
+Although its ultimate subject is optimization, it may hopefully help you with the tough calculations that usually appear when working with problems that have some kind of complexity, allowing the user to focus on what humans perform best---expert judgment and reaching conclusions. Some of its main features include
+
+  * evaluation of [algebraic expressions](https://www.seamplex.com/wasora/realbook/real-002-expressions.html)
+  * [one](https://www.seamplex.com/wasora/realbook/real-007-functions.html) and [multi-dimensional](https://www.seamplex.com/wasora/realbook/real-010-2dfunctions.html) function interpolation
+  * [scalar](https://www.seamplex.com/wasora/realbook/real-001-peano.html), [vector](https://www.seamplex.com/wasora/realbook/real-006-fibonacci.html) and matrix operations
+  * numerical [integration](https://www.seamplex.com/wasora/realbook/real-008-integrals.html), [differentiation](https://www.seamplex.com/wasora/realbook/real-017-double-pendulum.html) and [root finding](https://www.seamplex.com/wasora/realbook/real-020-gsl.html) of functions
+  * possibility to solve [iterative](https://www.seamplex.com/wasora/realbook/real-030-buffon.html) and/or [time-dependent](https://www.seamplex.com/wasora/realbook/real-003-lag.html) problems
+  * adaptive [integration of systems of differential-algebraic equations](https://www.seamplex.com/wasora/realbook/real-018-waterwheel.html)
+  * I/O from files and shared-memory objects (with optional synchronization using semaphores)
+  * execution of [arbitrary code](https://www.seamplex.com/wasora/realbook/real-015-primes) provided as shared object files
+  * [parametric runs using quasi-random sequence numbers](https://www.seamplex.com/wasora/realbook/real-025-mathace.html) to efficiently sweep a sub-space of parameter space 
+  * solution of systems of non-linear algebraic equations
+  * non-linear fit of scattered data to [one](https://www.seamplex.com/wasora/realbook/real-020-gsl.html) or [multidimensional](https://www.seamplex.com/wasora/realbook/real-028-mass.html) functions
+  * [non-linear multidimensional optimization](https://www.seamplex.com/wasora/realbook/real-020-gsl.html)
+  * management of unstructured grids
+  * complex extensions by means of [Plugins]
+
+The code heavily relies on the numerical routines provided by the [GNU Scientific Library](http://www.gnu.org/software/gsl/), whose installation is mandatory. In fact, wasora can be seen as a high-level front-end to GSL's numerical procedures. The solution of differential-algebraic systems of equations is performed using the [SUNDIALS IDA Library](http://computation.llnl.gov/casc/sundials/main.html), although this feature usage is optional.
+
+
+# Quick-start
+
+> It is really worth any amount of time and effort to get away from Windows
+if you are doing computational science.
+> <https://lists.mcs.anl.gov/pipermail/petsc-users/2015-July/026388.html>
+
+Open a terminal in any GNU/Linux box (may be a VirtualBox box) and make sure you install the following packages:
+
+```
+sudo apt-get install m4 make autoconf automake gcc git findutils libgsl-dev libsundials-serial-dev libreadline-dev
+```
+
+Clone the wasora repository, bootstrap, configure, compile and check:
+
+```
+git clone https://bitbucket.org/seamplex/wasora/
+cd wasora
+./autogen.sh
+./configure
+make
+make check
+```
+
+If you get any error, ask for help in the mailing list at <https://www.seamplex.com/lists.html>.
+
 
 # Running wasora
 
@@ -226,7 +226,7 @@ Follow us: [Twitter](https://twitter.com/seamplex/) [YouTube](https://www.youtub
 
 ----------------------------------------------------
 
-wasora is copyright (C) 2009--2016 Jeremy Theler  
+wasora is copyright (C) 2009--2018 Jeremy Theler  
 wasora is licensed under [GNU GPL version 3](http://www.gnu.org/copyleft/gpl.html) or (at your option) any later version.  
 wasora is free software: you are free to change and redistribute it.  
 There is NO WARRANTY, to the extent permitted by law.  

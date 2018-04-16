@@ -80,9 +80,10 @@ The code heavily relies on the numerical routines provided by the [GNU Scientifi
 
 > It is really worth any amount of time and effort to get away from Windows
 if you are doing computational science.
+>
 > <https://lists.mcs.anl.gov/pipermail/petsc-users/2015-July/026388.html>
 
-Open a terminal in any GNU/Linux box (may be a VirtualBox box) and make sure you install the following packages:
+Open a terminal in a GNU/Linux box (may be a VirtualBox box) and make sure you install the following packages:
 
 ```
 sudo apt-get install m4 make autoconf automake gcc git findutils libgsl-dev libsundials-serial-dev libreadline-dev
@@ -99,7 +100,7 @@ make
 make check
 ```
 
-If you get any error, ask for help in the mailing list at <https://www.seamplex.com/lists.html>.
+If you get any error, including packages not found or other any issue, ask for help in the mailing list at <https://www.seamplex.com/lists.html>.
 
 
 # Running wasora

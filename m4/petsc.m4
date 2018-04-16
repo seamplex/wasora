@@ -1,8 +1,7 @@
 dnl This file is part of wasora and/or one of its plugins
-dnl GPL v3+ (c) 2009-2015 jeremy theler
-dnl <http://bitbucket.org/wasora/wasora>
+dnl GPL v3+ (c) 2009-2018 jeremy theler
+dnl <https://bitbucket.org/seamplex/wasora>
 dnl
-
 AC_DEFUN([WASORA_CHECK_PETSC],[
 
 petsc_required=m4_default([$1],[optional])
@@ -16,18 +15,14 @@ petsc_found=1
 
 AC_MSG_CHECKING([for PETSc dir])
 AS_IF([ test -z "$PETSC_DIR" ], [
-    AC_MSG_RESULT([empty])
-    AS_IF([ test "x${petsc_required}" = "xrequired" ], [
-      AC_MSG_ERROR([PETSC_DIR variable not set.
-I need to know where I can find the PETSc library so please set the variable like
-export PETSC_DIR=$HOME/libs/petsc-3.6.0
-to the directory where the PETSc library is and configure me again.])
-    ])
-    petsc_found=0
-  ],[ test ! -d "$PETSC_DIR" ], [
+    AC_MSG_RESULT([empty, trying /usr/lib/petsc])
+    export PETSC_DIR=/usr/lib/petsc
+  ])
+AS_IF([ test ! -d "$PETSC_DIR" ], [
     AC_MSG_RESULT([no])
     AS_IF([ test "x${petsc_required}" = "xrequired" ], [
-      AC_MSG_ERROR([PETSc not found; PETSC_DIR=$PETSC_DIR does not exist])
+      AC_MSG_ERROR([PETSc not found; PETSC_DIR=$PETSC_DIR does not exist.
+Do you have a working PETSc installation?])
     ])
     petsc_found=0
   ], [ test ! -d "$PETSC_DIR/include" ], [
@@ -51,13 +46,13 @@ AC_MSG_CHECKING([for PETSc arch])
 AS_IF([ test ! -e "${PETSC_DIR}/${PETSC_ARCH}/lib/petsc/conf/petscvariables" ], [
     AC_MSG_RESULT([broken])
     AS_IF([ test "x${petsc_required}" = "xrequired" ], [
-      AC_MSG_ERROR([cannot find ${PETSC_DIR}/${PETSC_ARCH}/lib/petsc/conf/petscvariables
-(did you upgrade to PETSC 3.6.0?)])
+      AC_MSG_ERROR([cannot find ${PETSC_DIR}/${PETSC_ARCH}/lib/petsc/conf/petscvariables.
+Do you have a working PETSc > 3.6.0 installation?])
     ])
     petsc_found=0
   ],[
     AC_MSG_RESULT([$PETSC_ARCH])
-  ])  
+  ])
 
 AS_IF([ test ${petsc_found} -eq 1 ], [
   AC_DEFINE(HAVE_PETSC)
@@ -93,15 +88,10 @@ AC_ARG_VAR(SLEPC_DIR, [location of SLEPc installation])
 
 AC_MSG_CHECKING([for SLEPc dir])
 AS_IF([ test -z "$SLEPC_DIR" ], [
-    AC_MSG_RESULT([empty])
-    AS_IF([ test "x${slepc_required}" = "xrequired" ], [
-      AC_MSG_ERROR([SLEPC_DIR variable not set.
-I need to know where I can find the SLEPc library so please set the variable like
-export SLEPC_DIR=$HOME/libs/slepc-3.6.0
-to the directory where the SLEPc library is and configure me again.])
-    ])
-    slepc_found=0
-  ],[ test ! -d "$SLEPC_DIR" ], [
+    AC_MSG_RESULT([empty, trying /usr/lib/slepc])
+    export SLEPC_DIR=/usr/lib/petsc
+  ])
+AS_IF([ test ! -d "$SLEPC_DIR" ], [
     AC_MSG_RESULT([no])
     AS_IF([ test "x${slepc_required}" = "xrequired" ], [
       AC_MSG_ERROR([SLEPc not found; SLEPC_DIR=$SLEPC_DIR does not exist])

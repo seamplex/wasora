@@ -1,7 +1,7 @@
 dnl This file is part of wasora and/or one of its plugins
-dnl GPL v3+ (c) 2009-2015 jeremy theler
+dnl GPL v3+ (c) 2009-2018 jeremy theler
+dnl <https://bitbucket.org/seamplex/wasora>
 dnl
-
 AC_DEFUN([WASORA_PLUGIN_INIT_C],[
 AM_INIT_AUTOMAKE
 AC_PROG_INSTALL

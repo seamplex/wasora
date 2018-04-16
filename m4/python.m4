@@ -1,8 +1,7 @@
 dnl This file is part of wasora and/or one of its plugins
-dnl GPL v3+ (c) 2009-2015 jeremy theler
-dnl <http://bitbucket.org/wasora/wasora>
+dnl GPL v3+ (c) 2009-2018 jeremy theler
+dnl <https://bitbucket.org/seamplex/wasora>
 dnl
-
 AC_DEFUN([AC_PYTHON_DEVEL],[
         #
         # should allow for checking of python version here...

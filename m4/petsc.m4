@@ -89,7 +89,7 @@ AC_ARG_VAR(SLEPC_DIR, [location of SLEPc installation])
 AC_MSG_CHECKING([for SLEPc dir])
 AS_IF([ test -z "$SLEPC_DIR" ], [
     AC_MSG_RESULT([empty, trying /usr/lib/slepc])
-    export SLEPC_DIR=/usr/lib/petsc
+    export SLEPC_DIR=/usr/lib/slepc
   ])
 AS_IF([ test ! -d "$SLEPC_DIR" ], [
     AC_MSG_RESULT([no])

@@ -358,14 +358,10 @@ struct function_t {
   
   // cantidad de argumentos que toma la funcion 
   int n_arguments;
-  
-  // los nombres de los argumentos, se usa temporalmente para parsear y
-  // despues ya no se usa
-  // TODO: ver si no se puede sacar de la estructura
-  char **arg_name;
 
   // arreglo de apuntadores a variables (ya existen) que son los argumentos 
   var_t **var_argument;
+  int var_argument_alloced;
 
 
   // ----------- --------- --------- ----   --     -

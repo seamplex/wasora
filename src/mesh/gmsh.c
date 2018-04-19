@@ -362,8 +362,10 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           physical_entity->material = material;
         }
 
+        free(name);
+
       }
-          
+      
 
       // la linea $EndPhysicalNames
       if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {

@@ -96,7 +96,8 @@ var_t *wasora_define_variable(char *name) {
 
   var = calloc(1, sizeof(var_t));
   var->name = strdup(name);
-  wasora_value_ptr(var) = calloc(1, sizeof(double));
+//  wasora_value_ptr(var) = calloc(1, sizeof(double));
+  var->value = calloc(1, sizeof(double));
   var->initial_transient = calloc(1, sizeof(double));
   var->initial_static = calloc(1, sizeof(double));
   HASH_ADD_KEYPTR(hh, wasora.vars, var->name, strlen(var->name), var);

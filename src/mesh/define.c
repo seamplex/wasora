@@ -24,9 +24,10 @@
 mesh_t *wasora_define_mesh(char *name, file_t *file, int bulk_dimensions, int spatial_dimensions, int degrees, int ordering, int structured, expr_t *scale_factor, expr_t *offsets, expr_t *ncells, expr_t *lengths, expr_t *deltas) {
 
   mesh_t *mesh;
+  char default_name[] = "mesh";
 
   if (name == NULL) {
-    name = strdup("mesh");
+    name = default_name;
   }
 
   if (wasora_get_mesh_ptr(name) != NULL) {

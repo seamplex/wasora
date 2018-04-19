@@ -795,10 +795,13 @@ if (strcasecmp(token, "FROM") == 0) {
 ///kw+FUNCTION+desc Defines a function of one or more variables.
     } else if (strcasecmp(token, "FUNCTION") == 0 || ((dummy = strchr(wasora.line, '=')) != NULL && *(dummy-1) == ':')) {
 
-      function_t *function;
-      char *argument, *dummy_argument;
-      char *backup1, *backup2;
-      char char_backup;
+      function_t *function = NULL;
+      char *argument = NULL;
+      char *dummy_argument = NULL;
+      char **arg_name = NULL;
+      char *backup1 = NULL;
+      char *backup2 = NULL;
+      char char_backup = 0;
       int level, nargs;
 
 ///kw+FUNCTION+usage <name>(<var_1>[,var2,...,var_n])
@@ -833,9 +836,10 @@ if (strcasecmp(token, "FROM") == 0) {
         return WASORA_PARSER_ERROR;
       }
 
-      function->arg_name = malloc(nargs * sizeof(char *));
-      function->var_argument = malloc(nargs * sizeof(var_t *));
-      function->column = malloc((nargs+1) * sizeof(int));
+      arg_name = calloc(nargs, sizeof(char *));
+      function->var_argument = calloc(nargs, sizeof(var_t *));
+      function->var_argument_alloced = 1;
+      function->column = calloc((nargs+1), sizeof(int));
       // por default ponemos en las columnas 1 2 3 4 ...
       for (i = 0; i < nargs+1; i++) {
         function->column[i] = i+1;
@@ -845,8 +849,8 @@ if (strcasecmp(token, "FROM") == 0) {
 
       if (nargs == 1) {
         // si la funcion toma un solo argumento es facil
-        function->arg_name[0] = strdup(argument+1);
-        if ((dummy = strchr(function->arg_name[0], ')')) == NULL) {
+        arg_name[0] = strdup(argument+1);
+        if ((dummy = strchr(arg_name[0], ')')) == NULL) {
           wasora_push_error_message("expected ')' after function name (no spaces allowed)");
           return WASORA_PARSER_ERROR;
         }
@@ -895,7 +899,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 
           // en dummy_argument+1 tenemos el argumento i-esimo
-          function->arg_name[i] = strdup(dummy_argument+1);
+          arg_name[i] = strdup(dummy_argument+1);
 
 
           if (i != nargs-1) {
@@ -909,7 +913,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
       // linkeamos los argumentos a las variables correctas
       for (i = 0; i < nargs; i++) {
-        if ((function->var_argument[i] = wasora_get_or_define_variable_ptr(function->arg_name[i])) == NULL) {
+        if ((function->var_argument[i] = wasora_get_or_define_variable_ptr(arg_name[i])) == NULL) {
           return WASORA_PARSER_ERROR;
         }
       }
@@ -1333,6 +1337,13 @@ if (strcasecmp(token, "FROM") == 0) {
 
       }
 
+      if (arg_name != NULL) {
+        for (i = 0; i < nargs; i++) {
+          free(arg_name[i]);
+        }
+        free(arg_name);
+      }
+      
       return WASORA_PARSER_OK;
 
 // --- FILE -----------------------------------------------------
@@ -1365,10 +1376,12 @@ if (strcasecmp(token, "FROM") == 0) {
         return WASORA_PARSER_ERROR;
       }
 
-      arg = calloc(n_args, sizeof(expr_t));
-      for (i = 0; i < n_args; i++) {
-        if (wasora_parser_expression(&arg[i]) != WASORA_PARSER_OK) {
-          return WASORA_PARSER_ERROR;
+      if (n_args != 0) {
+        arg = calloc(n_args, sizeof(expr_t));
+        for (i = 0; i < n_args; i++) {
+          if (wasora_parser_expression(&arg[i]) != WASORA_PARSER_OK) {
+            return WASORA_PARSER_ERROR;
+          }
         }
       }
 
@@ -2341,8 +2354,8 @@ if (strcasecmp(token, "FROM") == 0) {
         return WASORA_PARSER_ERROR;
       }
       // proposed by rvignolo
-      history->function->arg_name = malloc(1 * sizeof(char *));
-      history->function->arg_name[0] = strdup(wasora.special_vars.t->name);
+//      history->function->arg_name = malloc(1 * sizeof(char *));
+//      history->function->arg_name[0] = strdup(wasora.special_vars.t->name);
 
       if (wasora_define_instruction(wasora_instruction_history, history) == NULL) {
         return WASORA_PARSER_ERROR;

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora cleanup routines
  *
- *  Copyright (C) 2009--2015 jeremy theler
+ *  Copyright (C) 2009--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -95,10 +95,6 @@ void wasora_free_function(function_t *function) {
   int i;
   
   for (i = 0; i < function->n_arguments; i++) {
-    if (function->arg_name != NULL) {
-      free(function->arg_name[i]);
-    }
-    
     // si es de vectores o de mallas despues se libera en otro lado
     if (function->vector_argument == NULL) {
       if (function->data_argument != NULL && function->mesh == NULL) {
@@ -121,9 +117,11 @@ void wasora_free_function(function_t *function) {
   }
   
   free(function->data_file);
-//  free(function->var_argument);
   free(function->column);
-  
+// este free es problematico
+  if (function->var_argument_alloced) {
+    free(function->var_argument);
+  }
   
   if (function->interp != NULL) {
     gsl_interp_free(function->interp);
@@ -131,7 +129,6 @@ void wasora_free_function(function_t *function) {
   if (function->interp_accel != NULL) {
     gsl_interp_accel_free(function->interp_accel);    
   }
-  free(function->arg_name);
   free(function->name);
   
   HASH_DEL(wasora.functions, function);
@@ -144,9 +141,9 @@ void wasora_free_function(function_t *function) {
 void wasora_free_var(var_t *var) {
   if (var->realloced == 0) {
     free(wasora_value_ptr(var));
-    free(var->initial_transient);
-    free(var->initial_static);
   }
+  free(var->initial_transient);
+  free(var->initial_static);
   free(var->name);
 
   HASH_DEL(wasora.vars, var);

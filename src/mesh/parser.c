@@ -802,6 +802,7 @@ int wasora_mesh_parse_line(char *line) {
         free(dummy_aux);
       }
       
+      free(name);
       return WASORA_PARSER_OK;
 
 // ---- MATERIAL ----------------------------------------------------

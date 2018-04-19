@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora main function
  *
- *  Copyright (C) 2009--2018 jeremy theler
+ *  Copyright (C) 2009--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -165,7 +165,7 @@ int main(int argc, char **argv) {
   }
 
   // bye bye
-  wasora_finalize();
+//  wasora_finalize();
   
   return WASORA_RUNTIME_OK;
 

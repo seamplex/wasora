@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora parser
  *
- *  Copyright (C) 2009--2017 jeremy theler
+ *  Copyright (C) 2009--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -1268,9 +1268,11 @@ if (strcasecmp(token, "FROM") == 0) {
           function->data_size /= (nargs+1);
 
           function->data_argument = calloc(nargs, sizeof(double *));
+          function->data_argument_alloced = 1;
           for (i = 0; i < nargs; i++) {
             function->data_argument[i] = calloc(function->data_size, sizeof(double));
           }
+          
           function->data_value = calloc(function->data_size, sizeof(double));
 
           // leemos la informacion

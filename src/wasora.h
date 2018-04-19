@@ -375,6 +375,7 @@ struct function_t {
 
   // arreglos con los datos
   double **data_argument;
+  int data_argument_alloced;
   double *data_value;
 
   // ayudita por si la malla es regular
@@ -539,6 +540,7 @@ struct conditional_block_t {
 struct instruction_t {
   int (*routine)(void *);
   void *argument;
+  int argument_alloced;
 
   instruction_t *next;
 };

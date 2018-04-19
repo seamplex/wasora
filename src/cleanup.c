@@ -94,19 +94,11 @@ void wasora_free_function(function_t *function) {
   
   int i;
   
-  for (i = 0; i < function->n_arguments; i++) {
-    // si es de vectores o de mallas despues se libera en otro lado
-    if (function->vector_argument == NULL) {
-      if (function->data_argument != NULL && function->mesh == NULL) {
-        free(function->data_argument[i]);
-        function->data_argument = NULL;
-      }
+  if (function->data_argument_alloced) {
+    for (i = 0; i < function->n_arguments; i++) {
+      free(function->data_argument[i]);
+      function->data_argument = NULL;
     }
-  }
-
-  
-  // si es de vectores o de mallas despues se libera en otro lado
-  if (function->vector_argument == NULL && function->mesh == NULL) {
     free(function->data_argument);
     function->data_argument = NULL;
   }
@@ -392,6 +384,9 @@ void wasora_free_instructions(void) {
 
   LL_FOREACH_SAFE(wasora.instructions, instruction, tmp) {
     LL_DELETE(wasora.instructions, instruction);
+    if (instruction->argument_alloced) {
+      free(instruction->argument);
+    }
     free(instruction);
   }
   

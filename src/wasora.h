@@ -1832,8 +1832,8 @@ struct node_t {
   int *index;        // indice del vector incognita para cada uno de los grados de libertad
 
   element_list_item_t *associated_elements;
-  material_list_item_t *materials_list;
-  material_t *master_material;
+//  material_list_item_t *materials_list;
+//  material_t *master_material;
 };
 
 

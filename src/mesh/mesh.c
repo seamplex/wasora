@@ -33,8 +33,8 @@ int wasora_instruction_mesh(void *arg) {
   function_t *function, *tmp_function;
   element_list_item_t *associated_element;
   element_t *element;
-  material_t *material;
-  material_list_item_t *material_item;
+//  material_t *material;
+//  material_list_item_t *material_item;
   int i, j, d, v;
   int first_neighbor_nodes;
   double w, vol;
@@ -81,6 +81,7 @@ int wasora_instruction_mesh(void *arg) {
     
     // si hay muchos materiales asociados al nodo, buscamos el master
     // que es el primer material definido en el input
+/*    
     if (mesh->node[j].materials_list != NULL) {
       for (material = wasora_mesh.materials; mesh->node[j].master_material == NULL && material != NULL; material = material->hh.next) {
         LL_FOREACH(mesh->node[j].materials_list, material_item) {
@@ -90,6 +91,7 @@ int wasora_instruction_mesh(void *arg) {
         }
       }
     }
+ */
   }
 
   // armamos un kd-tree de nodos y miramos cual es la mayor cantidad de vecinos que tiene un nodo
@@ -299,7 +301,7 @@ int mesh_free(mesh_t *mesh) {
 
   physical_entity_t *physical_entity;
   element_list_item_t *element_item, *element_tmp;
-  material_list_item_t *material_item, *material_tmp;
+//  material_list_item_t *material_item, *material_tmp;
   int i, j, k;
 
   if (mesh->cell != NULL) {
@@ -335,10 +337,12 @@ int mesh_free(mesh_t *mesh) {
             LL_DELETE(mesh->element[i].node[j]->associated_elements, element_item);
             free(element_item);
           }
+/*          
           LL_FOREACH_SAFE(mesh->element[i].node[j]->materials_list, material_item, material_tmp) {
             LL_DELETE(mesh->element[i].node[j]->materials_list, material_item);
             free(material_item);
           }
+ */
         }
         free(mesh->element[i].node);
       }

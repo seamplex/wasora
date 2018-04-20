@@ -270,9 +270,11 @@ int mesh_frd_readmesh(mesh_t *mesh) {
           mesh->element[id].node[j] = &mesh->node[node-1];
           mesh_add_element_to_list(&mesh->element[id].node[j]->associated_elements, &mesh->element[id]);
           // habria que ver si la dimension es la del problema?
+/*          
           if (mesh->element[id].physical_entity != NULL && mesh->element[id].physical_entity->material != NULL) {
             mesh_add_material_to_list(&mesh->element[id].node[j]->materials_list, mesh->element[id].physical_entity->material);
           }
+ */
         }
       }
 

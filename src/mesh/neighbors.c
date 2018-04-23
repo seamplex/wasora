@@ -47,12 +47,17 @@ int mesh_count_common_nodes(element_t *e1, element_t *e2, int *nodes) {
 
 element_t *mesh_find_element_volumetric_neighbor(element_t *element) {
   int j;
+  int target;
   element_list_item_t *associated_element;
-  
+
+  // en mallas de primer orden esto sirve para mezclar elementos raros
+  // en segundo hay que hacerlo completo
+  target = (element->type->order == 1)?element->type->dim:element->type->nodes;
+
   for (j = 0; j < element->type->nodes; j++) {
     LL_FOREACH(element->node[j]->associated_elements, associated_element) {
       if (element->type->dim == (associated_element->element->type->dim-1)) {  // los vecinos volumetricos
-        if (mesh_count_common_nodes(element, associated_element->element, NULL) >= element->type->dim) {
+        if (mesh_count_common_nodes(element, associated_element->element, NULL) >= target) {
           return associated_element->element;
         }
       }

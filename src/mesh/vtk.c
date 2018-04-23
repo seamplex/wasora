@@ -263,8 +263,14 @@ int mesh_vtk_write_scalar(mesh_post_t *mesh_post, function_t *function, centerin
   
     if (function->type == type_pointwise_mesh_node && function->data_size == mesh_post->mesh->n_nodes) {
       wasora_function_init(function);
-      for (i = 0; i < function->data_size; i++) {
-        fprintf(mesh_post->file->pointer, "%g\n", function->data_value[i]);
+      if (function->data_value != NULL) {
+        for (i = 0; i < function->data_size; i++) {
+          fprintf(mesh_post->file->pointer, "%g\n", function->data_value[i]);
+        } 
+      } else {
+        for (i = 0; i < function->data_size; i++) {
+          fprintf(mesh_post->file->pointer, "%g\n", 0.0);
+        } 
       }
     } else {
       for (i = 0; i < mesh->n_nodes; i++) {

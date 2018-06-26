@@ -119,9 +119,12 @@ int main(int argc, char **argv) {
    
   // nos arcordamos de los argumentos de la linea de comandos y del indice 
   // desde donde empieza el input (y despues los argumentos a reemplazar)
+  // alocamos y copiamos oprque despues los podemos toquetear con DEFAULT_ARGUMENT_VALUE
   wasora.argc = argc;
-  wasora.argv = argv;
+  wasora.argv = malloc(sizeof(char *)*argc);
+  memcpy(wasora.argv, argv, sizeof(char *)*argc);
   wasora.optind = optind;
+  
   // nos acordamos del directorio del input para intentar
   // otras alternativas al abrir files
   wasora.main_input_dirname_aux = strdup(argv[optind]);
@@ -165,7 +168,7 @@ int main(int argc, char **argv) {
   }
 
   // bye bye
-//  wasora_finalize();
+  wasora_finalize();
   
   return WASORA_RUNTIME_OK;
 

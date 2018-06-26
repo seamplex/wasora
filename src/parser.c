@@ -169,7 +169,6 @@ int wasora_parse_first_pass(const char *filepath, int from, int to) {
         } else if (strcasecmp(token, "DEFAULT_ARGUMENT_VALUE") == 0) {
 
           int n;
-          char **newargv;
       
           if ((token = wasora_get_next_token(NULL)) == NULL) {
             wasora_push_error_message("expected argument number");
@@ -190,14 +189,9 @@ int wasora_parse_first_pass(const char *filepath, int from, int to) {
           }
           
           if (wasora.optind+n >= wasora.argc) {
-            newargv = calloc(wasora.optind+n + 1, sizeof(char *));
-            memcpy(newargv, wasora.argv, wasora.argc*sizeof(char *));
-            // creo que no vale hacer free de argv[]
-            wasora.argv = newargv;
+            // solo si no nos lo dieron!
+            wasora.argv = realloc(wasora.argv, sizeof(char *)*(wasora.optind+n + 1));
             wasora.argc = wasora.optind+n + 1;
-          }
-      
-          if (wasora.argv[wasora.optind+n] == NULL) {
             wasora.argv[wasora.optind+n] = strdup(token);
           }
           

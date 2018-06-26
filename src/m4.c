@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora M4 routines
  *
- *  Copyright (C) 2015 jeremy theler
+ *  Copyright (C) 2015--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -82,6 +82,8 @@ int wasora_instruction_m4(void *arg) {
   free(templ);
   free(delta);
   free(commandline);
+  free(input_file_path);
+  free(output_file_path);
   
   return WASORA_RUNTIME_OK;
   

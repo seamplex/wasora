@@ -64,6 +64,7 @@ void wasora_free_shm(void) {
 
 void wasora_free_files(void) {
   file_t *file, *tmp;
+  int i;
   
   HASH_ITER(hh, wasora.files, file, tmp) {
     if (file->pointer != stdin && file->pointer != stdout) {
@@ -73,6 +74,11 @@ void wasora_free_files(void) {
     free(file->format);
     free(file->path);
     free(file->mode);
+    for (i = 0; i < file->n_args; i++) {
+      wasora_destroy_expression(&file->arg[i]);  
+    }
+    free(file->arg);
+    
     HASH_DEL(wasora.files, file);
     free(file);
   }
@@ -319,6 +325,25 @@ void wasora_free_solves(void) {
   return;
 }
 
+void wasora_free_m4(void) {
+  m4_t *m4, *tmp;
+  m4_macro_t *m4_macro, *tmp2;
+
+  LL_FOREACH_SAFE(wasora.m4s, m4, tmp) {
+    LL_FOREACH_SAFE(m4->macros, m4_macro, tmp2) {
+      free(m4_macro->name);
+      free(m4_macro->print_token.format);
+      wasora_destroy_expression(&m4_macro->print_token.expression);
+      LL_DELETE(m4->macros, m4_macro);
+      free(m4_macro);
+    }
+    
+    LL_DELETE(wasora.m4s, m4);
+    free(m4);
+  }
+  
+  return;
+}
 void wasora_free_dae(void) {
 
 #ifdef HAVE_IDA
@@ -515,6 +540,8 @@ void wasora_finalize(void) {
   wasora_free_vectors();
   wasora_free_matrices();  
 
+  wasora_free_m4();
+  
   free(wasora.error);
   free(wasora.line);
 

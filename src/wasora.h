@@ -85,8 +85,8 @@ extern const char factorseparators[];
 #define UNQUOTED_DELIM    " \t\n"
 #define QUOTED_DELIM      "\""
 
-extern  const char operators[];
-extern  const char factorseparators[];
+extern const char operators[];
+extern const char factorseparators[];
 
 // tipo de componentes del phase space (los numeros son de la sundials), no cambiar 
 #define DAE_ALGEBRAIC                      0.0
@@ -1271,9 +1271,9 @@ struct {
 } wasora_dae;
 
 
-extern  builtin_function_t builtin_function[N_BUILTIN_FUNCTIONS];
-extern  builtin_vectorfunction_t builtin_vectorfunction[N_BUILTIN_VECTOR_FUNCTIONS];
-extern  builtin_functional_t builtin_functional[N_BUILTIN_FUNCTIONALS];
+extern builtin_function_t builtin_function[N_BUILTIN_FUNCTIONS];
+extern builtin_vectorfunction_t builtin_vectorfunction[N_BUILTIN_VECTOR_FUNCTIONS];
+extern builtin_functional_t builtin_functional[N_BUILTIN_FUNCTIONALS];
 
 
 
@@ -1312,380 +1312,388 @@ extern  builtin_functional_t builtin_functional[N_BUILTIN_FUNCTIONALS];
 
 
 // algebra.c 
-extern  int wasora_parse_expression(const char *, struct expr_t *);
-extern  int wasora_parse_madeup_expression(char *, struct factor_t *);
-extern  int wasora_parse_factor(char *, struct factor_t *);
+extern int wasora_parse_expression(const char *, struct expr_t *);
+extern int wasora_parse_madeup_expression(char *, struct factor_t *);
+extern int wasora_parse_factor(char *, struct factor_t *);
 
-extern  double wasora_evaluate_expression(struct expr_t *);
-extern  double wasora_evaluate_expression_in_string(const char *);
+extern double wasora_evaluate_expression(struct expr_t *);
+extern double wasora_evaluate_expression_in_string(const char *);
 
-extern  int wasora_count_divisions(expr_t *);
+extern int wasora_count_divisions(expr_t *);
 
 // assignment.c 
-extern  void wasora_check_initial_variable(struct var_t *);
-extern  void wasora_check_initial_vector(struct vector_t *);
-extern  void wasora_check_initial_matrix(struct matrix_t *);
-extern  int wasora_assign_scalar(struct assignment_t *, int, int);
-extern  struct var_t *wasora_get_assignment_variable(struct assignment_t *, int, int);
-extern  int wasora_get_assignment_array_boundaries(assignment_t *, int *, int *, int *, int *);
-extern  int wasora_get_assignment_rowcol(assignment_t *, int, int, int *, int *);
+extern void wasora_check_initial_variable(struct var_t *);
+extern void wasora_check_initial_vector(struct vector_t *);
+extern void wasora_check_initial_matrix(struct matrix_t *);
+extern int wasora_assign_scalar(struct assignment_t *, int, int);
+extern struct var_t *wasora_get_assignment_variable(struct assignment_t *, int, int);
+extern int wasora_get_assignment_array_boundaries(assignment_t *, int *, int *, int *, int *);
+extern int wasora_get_assignment_rowcol(assignment_t *, int, int, int *, int *);
 
 
 // builtinfunctionals.c 
-extern  double wasora_gsl_function(double, void *);
+extern double wasora_gsl_function(double, void *);
 
 // builtinvectorfunctions 
 
 // call.c 
 
 // cleanup.c 
-extern  void wasora_polite_exit(int);
-extern  void wasora_free_shm(void);
-extern  void wasora_destroy_expression(struct expr_t *);
-extern  void wasora_finalize(void);
+extern void wasora_polite_exit(int);
+extern void wasora_free_shm(void);
+extern void wasora_destroy_expression(struct expr_t *);
+extern void wasora_free_print_vectors(void);
+extern void wasora_free_print_functions(void);
+extern void wasora_free_prints(void);
+extern void wasora_free_solves(void);
+extern void wasora_free_m4(void);
+extern void wasora_free_dae(void);
+extern void wasora_free_assignments(void);
 
-extern  void wasora_free_function(function_t *);
-extern  void wasora_free_functions(void);
-extern  void wasora_free_var(var_t *);
-extern  void wasora_free_vars(void);
-extern  void wasora_free_vector(vector_t *);
-extern  void wasora_free_vectors(void);
-extern  void wasora_free_matrix(matrix_t *);
-extern  void wasora_free_matrices(void);
+extern void wasora_finalize(void);
+
+extern void wasora_free_function(function_t *);
+extern void wasora_free_functions(void);
+extern void wasora_free_var(var_t *);
+extern void wasora_free_vars(void);
+extern void wasora_free_vector(vector_t *);
+extern void wasora_free_vectors(void);
+extern void wasora_free_matrix(matrix_t *);
+extern void wasora_free_matrices(void);
 
 
 
 // wasora.c 
-extern  int wasora_standard_run(void);
-extern  int wasora_step(int);
+extern int wasora_standard_run(void);
+extern int wasora_step(int);
 
 // parser.c 
-extern  int wasora_allocate_objects(void);
-extern  int wasora_parse_line(char *);
-extern  int wasora_parse_main_input_file(char *);
-extern  int wasora_parse_input_file(char *, int, int);
-extern  char *wasora_get_nth_token(char *, int);
+extern int wasora_allocate_objects(void);
+extern int wasora_parse_line(char *);
+extern int wasora_parse_main_input_file(char *);
+extern int wasora_parse_input_file(char *, int, int);
+extern char *wasora_get_nth_token(char *, int);
 
 // dae.c 
-extern  int wasora_dae_init(void);
-extern  int wasora_dae_ic(void);
+extern int wasora_dae_init(void);
+extern int wasora_dae_ic(void);
 #if HAVE_IDA
-extern  int wasora_ida_dae(realtype, N_Vector, N_Vector, N_Vector, void *);
+extern int wasora_ida_dae(realtype, N_Vector, N_Vector, N_Vector, void *);
 #else
-extern  int wasora_ida_dae(void);
+extern int wasora_ida_dae(void);
 #endif
 
 // debug.c 
-extern  void wasora_debug_printerror(void);
-extern  void wasora_debug(void);
-extern  char **wasora_rl_completion(const char *, int, int);
-extern  char *wasora_rl_symbol_generator(const char *, int);
-extern  void wasora_list_symbols(void);
+extern void wasora_debug_printerror(void);
+extern void wasora_debug(void);
+extern char **wasora_rl_completion(const char *, int, int);
+extern char *wasora_rl_symbol_generator(const char *, int);
+extern void wasora_list_symbols(void);
 
 // dyncall.c 
 typedef double (*user_func_t)(const double*);
-extern  user_func_t set_dyn_call_so(const char *, const char *);
-extern  user_func_t get_dyn_call_so(const char *);
+extern user_func_t set_dyn_call_so(const char *, const char *);
+extern user_func_t get_dyn_call_so(const char *);
 
 // error.c 
-extern  void wasora_push_error_message(const char *, ...);
-extern  void wasora_pop_error_message(void);
-extern  void wasora_pop_errors(void);
-extern  void wasora_runtime_error(void);
-extern  void wasora_nan_error(void);
-extern  void wasora_gsl_handler (const char *, const char *, int, int);
+extern void wasora_push_error_message(const char *, ...);
+extern void wasora_pop_error_message(void);
+extern void wasora_pop_errors(void);
+extern void wasora_runtime_error(void);
+extern void wasora_nan_error(void);
+extern void wasora_gsl_handler (const char *, const char *, int, int);
 
 // file.c 
-extern  char *wasora_evaluate_string(char *, int, expr_t *);
-extern  FILE *wasora_fopen(const char *, const char *);
+extern char *wasora_evaluate_string(char *, int, expr_t *);
+extern FILE *wasora_fopen(const char *, const char *);
 
 
 // fit.c 
-extern  int wasora_fit_run();
-extern  void wasora_fit_read_params_from_solver(const gsl_vector *);
-extern  int wasora_fit_compute_f(gsl_vector *);
-extern  void wasora_fit_compute_analytical_df(gsl_matrix *);
-extern  int wasora_fit_compute_numerical_df(gsl_matrix *);
-extern  int wasora_gsl_fit_f(const gsl_vector *m, void *, gsl_vector *);
-extern  int wasora_gsl_fit_df(const gsl_vector *, void *, gsl_matrix *);
-extern  int wasora_gsl_fit_fdf(const gsl_vector *, void *, gsl_vector *, gsl_matrix *);
-extern  void wasora_fit_print_state(int iter, int status, gsl_multifit_fdfsolver *s);
+extern int wasora_fit_run();
+extern void wasora_fit_read_params_from_solver(const gsl_vector *);
+extern int wasora_fit_compute_f(gsl_vector *);
+extern void wasora_fit_compute_analytical_df(gsl_matrix *);
+extern int wasora_fit_compute_numerical_df(gsl_matrix *);
+extern int wasora_gsl_fit_f(const gsl_vector *m, void *, gsl_vector *);
+extern int wasora_gsl_fit_df(const gsl_vector *, void *, gsl_matrix *);
+extern int wasora_gsl_fit_fdf(const gsl_vector *, void *, gsl_vector *, gsl_matrix *);
+extern void wasora_fit_print_state(int iter, int status, gsl_multifit_fdfsolver *s);
 
 // function.c 
-extern  void wasora_set_function_args(function_t *, double *);
-extern  double wasora_evaluate_factor_function(struct factor_t *);
-extern  int wasora_function_init(function_t *);
-extern  double wasora_evaluate_function(function_t *, const double *);
-extern  int wasora_structured_scalar_index(int, int *, int *, int);
+extern void wasora_set_function_args(function_t *, double *);
+extern double wasora_evaluate_factor_function(struct factor_t *);
+extern int wasora_function_init(function_t *);
+extern double wasora_evaluate_function(function_t *, const double *);
+extern int wasora_structured_scalar_index(int, int *, int *, int);
 
-extern  double mesh_interpolate_function_node_dummy(function_t *, const double *);
-extern  double mesh_interpolate_function_cell_dummy(function_t *, const double *);
-extern  double mesh_interpolate_function_property_dummy(function_t *, const double *);
+extern double mesh_interpolate_function_node_dummy(function_t *, const double *);
+extern double mesh_interpolate_function_cell_dummy(function_t *, const double *);
+extern double mesh_interpolate_function_property_dummy(function_t *, const double *);
 
 
-extern  double mesh_interpolate_function_node(function_t *, const double *);
-extern  double mesh_interpolate_function_cell(function_t *, const double *);
+extern double mesh_interpolate_function_node(function_t *, const double *);
+extern double mesh_interpolate_function_cell(function_t *, const double *);
 
 // getptr.c 
-extern  var_t *wasora_get_variable_ptr(const char *);
-extern  vector_t *wasora_get_vector_ptr(const char *);
-extern  matrix_t *wasora_get_matrix_ptr(const char *);
-extern  function_t *wasora_get_function_ptr(const char *);
-extern  builtin_function_t *wasora_get_builtin_function_ptr(const char *);
-extern  builtin_vectorfunction_t *wasora_get_builtin_vectorfunction_ptr(const char *);
-extern  builtin_functional_t *wasora_get_builtin_functional_ptr(const char *);
-extern  file_t  *wasora_get_file_ptr(const char *);
-extern  loadable_routine_t *wasora_get_loadable_routine(const char *);
-extern  double (*wasora_get_routine_ptr(const char *))(const double *);
-extern  struct semaphore_t *wasora_get_sem_ptr(char *);
-extern  vector_t *wasora_get_first_vector(const char *);
-extern  matrix_t *wasora_get_first_matrix(const char *);
-extern  char *wasora_get_first_dot(const char *s);
+extern var_t *wasora_get_variable_ptr(const char *);
+extern vector_t *wasora_get_vector_ptr(const char *);
+extern matrix_t *wasora_get_matrix_ptr(const char *);
+extern function_t *wasora_get_function_ptr(const char *);
+extern builtin_function_t *wasora_get_builtin_function_ptr(const char *);
+extern builtin_vectorfunction_t *wasora_get_builtin_vectorfunction_ptr(const char *);
+extern builtin_functional_t *wasora_get_builtin_functional_ptr(const char *);
+extern file_t  *wasora_get_file_ptr(const char *);
+extern loadable_routine_t *wasora_get_loadable_routine(const char *);
+extern double (*wasora_get_routine_ptr(const char *))(const double *);
+extern struct semaphore_t *wasora_get_sem_ptr(char *);
+extern vector_t *wasora_get_first_vector(const char *);
+extern matrix_t *wasora_get_first_matrix(const char *);
+extern char *wasora_get_first_dot(const char *s);
 
 // handler.c 
-extern  void wasora_signal_handler(int);
+extern void wasora_signal_handler(int);
 
 // history.c 
-extern  void wasora_init_history(history_t *);
+extern void wasora_init_history(history_t *);
 
 // init.c 
-extern  int wasora_init_before_parser(void);
-extern  int wasora_init_after_parser(void);
-extern  int wasora_init_before_run(void);
-extern  int wasora_is_structured_grid_2d(double *, double *, int, int *, int *);
-extern  int wasora_is_structured_grid_3d(double *, double *, double *, int, int *, int *, int *);
+extern int wasora_init_before_parser(void);
+extern int wasora_init_after_parser(void);
+extern int wasora_init_before_run(void);
+extern int wasora_is_structured_grid_2d(double *, double *, int, int *, int *);
+extern int wasora_is_structured_grid_3d(double *, double *, double *, int, int *, int *, int *);
 
 // io.c 
-extern  int wasora_io_init(io_t *);
-extern  int wasora_io_read_shm(io_t *, double *, int);
-extern  int wasora_io_write_shm(io_t *, double *, int);
-extern  int wasora_io_read_ascii_file(io_t *, double *, int);
-extern  int wasora_io_write_ascii_file(io_t *, double *, int);
-extern  int wasora_io_read_binary_file(io_t *, double *, int);
-extern  int wasora_io_write_binary_file(io_t *, double *, int);
+extern int wasora_io_init(io_t *);
+extern int wasora_io_read_shm(io_t *, double *, int);
+extern int wasora_io_write_shm(io_t *, double *, int);
+extern int wasora_io_read_ascii_file(io_t *, double *, int);
+extern int wasora_io_write_ascii_file(io_t *, double *, int);
+extern int wasora_io_read_binary_file(io_t *, double *, int);
+extern int wasora_io_write_binary_file(io_t *, double *, int);
 
 
 // matrix.c
-extern  double wasora_matrix_get(matrix_t *, const size_t, const size_t);
-extern  double wasora_matrix_get_initial_transient(matrix_t *, const size_t,  const size_t);
-extern  double wasora_matrix_get_initial_static(matrix_t *, const size_t,  const size_t);
-extern  int wasora_matrix_init(matrix_t *);
+extern double wasora_matrix_get(matrix_t *, const size_t, const size_t);
+extern double wasora_matrix_get_initial_transient(matrix_t *, const size_t,  const size_t);
+extern double wasora_matrix_get_initial_static(matrix_t *, const size_t,  const size_t);
+extern int wasora_matrix_init(matrix_t *);
 
 // minimize.c 
-extern  int wasora_min_run();
-extern  void wasora_min_read_params_from_solver(const gsl_vector *) ;
-extern  double wasora_min_compute_f(const double *);
-extern  double wasora_gsl_min_f(const gsl_vector *, void *);
-extern  void wasora_gsl_min_df(const gsl_vector *, void *, gsl_vector *);
-extern  void wasora_gsl_min_fdf(const gsl_vector *, void *, double *, gsl_vector *);
+extern int wasora_min_run();
+extern void wasora_min_read_params_from_solver(const gsl_vector *) ;
+extern double wasora_min_compute_f(const double *);
+extern double wasora_gsl_min_f(const gsl_vector *, void *);
+extern void wasora_gsl_min_df(const gsl_vector *, void *, gsl_vector *);
+extern void wasora_gsl_min_fdf(const gsl_vector *, void *, double *, gsl_vector *);
 
 // multiminf.c 
 void wasora_min_multiminf(gsl_vector *);
-extern  void wasora_multiminf_print_state(int, gsl_multimin_fminimizer *);
+extern void wasora_multiminf_print_state(int, gsl_multimin_fminimizer *);
 
 // multiminfdf.c 
 void wasora_min_multiminfdf(gsl_vector *);
-extern  void wasora_multiminfdf_print_state(int, gsl_multimin_fdfminimizer *);
+extern void wasora_multiminfdf_print_state(int, gsl_multimin_fdfminimizer *);
 
 // multirootc
-extern  int wasora_gsl_solve_f(const gsl_vector *x, void *params, gsl_vector *f);
+extern int wasora_gsl_solve_f(const gsl_vector *x, void *params, gsl_vector *f);
 
 // parametric.c 
-extern  int wasora_parametric_run();
-extern  void wasora_parametric_run_parallel();
+extern int wasora_parametric_run();
+extern void wasora_parametric_run_parallel();
 
 
 // parser.c
-extern  int wasora_parse_first_pass(const char *, int, int);
+extern int wasora_parse_first_pass(const char *, int, int);
 
 // parseaux.c 
-extern  int wasora_parser_expression(expr_t *);
-extern  int wasora_parser_expressions(expr_t *[], size_t);
-extern  int wasora_parser_expression_in_string(double *);
-extern  int wasora_parser_match_keyword_expression(char *, char *[], expr_t *[], size_t);
-extern  int wasora_parser_string(char **);
-extern  int wasora_parser_string_format(char **, int *);
-extern  int wasora_parser_file(file_t **);
-extern  int wasora_parser_file_path(file_t **, char *);
-extern  int wasora_parser_function(function_t **);
-extern  int wasora_parser_vector(vector_t **);
-extern  int wasora_parser_variable(var_t **);
-extern  int wasora_parser_keywords_ints(char *[], int *, int *);
-extern  int wasora_parse_assignment(char *, assignment_t *);
+extern int wasora_parser_expression(expr_t *);
+extern int wasora_parser_expressions(expr_t *[], size_t);
+extern int wasora_parser_expression_in_string(double *);
+extern int wasora_parser_match_keyword_expression(char *, char *[], expr_t *[], size_t);
+extern int wasora_parser_string(char **);
+extern int wasora_parser_string_format(char **, int *);
+extern int wasora_parser_file(file_t **);
+extern int wasora_parser_file_path(file_t **, char *);
+extern int wasora_parser_function(function_t **);
+extern int wasora_parser_vector(vector_t **);
+extern int wasora_parser_variable(var_t **);
+extern int wasora_parser_keywords_ints(char *[], int *, int *);
+extern int wasora_parse_assignment(char *, assignment_t *);
 
-extern  void wasora_realloc_variable_ptr(var_t *, double *, int);
-extern  void wasora_realloc_vector_ptr(vector_t *, double *, int);
-extern  void wasora_realloc_matrix_ptr(matrix_t *, double *, int);
-extern  var_t *wasora_define_variable(char *);
-extern  vector_t *wasora_define_vector(char *, int, expr_t *, expr_t *);
-extern  matrix_t *wasora_define_matrix(char *, int, expr_t *, int, expr_t *, expr_t *);
-extern  function_t *wasora_define_function(const char *, int);
-extern  file_t *wasora_define_file(char *, char *, int, expr_t *, char *, int);
+extern void wasora_realloc_variable_ptr(var_t *, double *, int);
+extern void wasora_realloc_vector_ptr(vector_t *, double *, int);
+extern void wasora_realloc_matrix_ptr(matrix_t *, double *, int);
+extern var_t *wasora_define_variable(char *);
+extern vector_t *wasora_define_vector(char *, int, expr_t *, expr_t *);
+extern matrix_t *wasora_define_matrix(char *, int, expr_t *, int, expr_t *, expr_t *);
+extern function_t *wasora_define_function(const char *, int);
+extern file_t *wasora_define_file(char *, char *, int, expr_t *, char *, int);
 
-extern  loadable_routine_t *wasora_define_loadable_routine(char *, void *);
-extern  instruction_t *wasora_define_instruction(int (*)(void *), void *);
-extern  var_t *wasora_get_or_define_variable_ptr(char *);
-extern  char *wasora_get_next_token(char *);
-extern  int wasora_check_name(const char *);
-extern  int wasora_parse_range(char *, const char, const char, const char, struct expr_t *, struct expr_t *);
+extern loadable_routine_t *wasora_define_loadable_routine(char *, void *);
+extern instruction_t *wasora_define_instruction(int (*)(void *), void *);
+extern var_t *wasora_get_or_define_variable_ptr(char *);
+extern char *wasora_get_next_token(char *);
+extern int wasora_check_name(const char *);
+extern int wasora_parse_range(char *, const char, const char, const char, struct expr_t *, struct expr_t *);
 
-extern  int wasora_parse_factor(char *, struct factor_t *);
-extern  int wasora_read_line(FILE *);
-extern  int wasora_read_data_line(FILE *, char *);
-extern  void wasora_strip_blanks(char *);
-extern  void wasora_strip_brackets(char *);
-extern  void wasora_add_leading_zeros(char **);
-extern  int wasora_replace_arguments(char **);
-extern  int wasora_count_arguments(char *);
-extern  void wasora_syntax_error(char *, int);
+extern int wasora_parse_factor(char *, struct factor_t *);
+extern int wasora_read_line(FILE *);
+extern int wasora_read_data_line(FILE *, char *);
+extern void wasora_strip_blanks(char *);
+extern void wasora_strip_brackets(char *);
+extern void wasora_add_leading_zeros(char **);
+extern int wasora_replace_arguments(char **);
+extern int wasora_count_arguments(char *);
+extern void wasora_syntax_error(char *, int);
 
-extern  char *wasora_ends_in_zero(char *);
-extern  char *wasora_ends_in_init(char *);
-extern  char *wasora_ends_in_i(char *);
-extern  char *wasora_is_vector_underscore_something(char *);
-extern  char *wasora_is_matrix_underscore_something(char *, char **, char **);
+extern char *wasora_ends_in_zero(char *);
+extern char *wasora_ends_in_init(char *);
+extern char *wasora_ends_in_i(char *);
+extern char *wasora_is_vector_underscore_something(char *);
+extern char *wasora_is_matrix_underscore_something(char *, char **, char **);
 
 
 
 // plugin.c
-extern  int wasora_load_hardcoded_plugin(void);
-extern  int wasora_load_plugin(const char *);
-extern  void *wasora_dlopen(const char *);
-extern  int wasora_dlopen_try(const char *, const char *, const char *, void **);
+extern int wasora_load_hardcoded_plugin(void);
+extern int wasora_load_plugin(const char *);
+extern void *wasora_dlopen(const char *);
+extern int wasora_dlopen_try(const char *, const char *, const char *, void **);
 
 
 // print.c
 
 // randomline.c
-extern  void wasora_print_random_line(FILE *, int);
+extern void wasora_print_random_line(FILE *, int);
 
 // realtime.c
-extern  void wasora_init_realtime(void);
-extern  void wasora_wait_realtime(void);
+extern void wasora_init_realtime(void);
+extern void wasora_wait_realtime(void);
 
 // shell.c
 
 
 // shmem.c
-extern  void *wasora_get_shared_pointer(char *, size_t);
-extern  void wasora_free_shared_pointer(void *, char *, size_t);
-extern  sem_t *wasora_get_semaphore(char *);
-extern  void wasora_free_semaphore(sem_t *, char *);
-extern  int wasora_create_lock(char *, int);
-extern  void wasora_remove_lock(char *, int);
+extern void *wasora_get_shared_pointer(char *, size_t);
+extern void wasora_free_shared_pointer(void *, char *, size_t);
+extern sem_t *wasora_get_semaphore(char *);
+extern void wasora_free_semaphore(sem_t *, char *);
+extern int wasora_create_lock(char *, int);
+extern void wasora_remove_lock(char *, int);
 
 // siman.c
 void wasora_min_siman(gsl_vector *);
-extern  double wasora_siman_Efunc_real(void *);
-extern  double wasora_siman_metric_real(void *, void *);
-extern  void wasora_siman_step_real(const gsl_rng *, void *, double);
-extern  void *wasora_siman_copy_construct_real(void *);
-extern  void wasora_siman_copy_real(void *, void *);
-extern  void wasora_siman_destroy_real(void *);
-extern  void wasora_siman_print_real(void *);
+extern double wasora_siman_Efunc_real(void *);
+extern double wasora_siman_metric_real(void *, void *);
+extern void wasora_siman_step_real(const gsl_rng *, void *, double);
+extern void *wasora_siman_copy_construct_real(void *);
+extern void wasora_siman_copy_real(void *, void *);
+extern void wasora_siman_destroy_real(void *);
+extern void wasora_siman_print_real(void *);
 
 // vector.c
-extern  double wasora_vector_get(vector_t *, const size_t);
-extern  double wasora_vector_get_initial_transient(vector_t *, const size_t);
-extern  double wasora_vector_get_initial_static(vector_t *, const size_t);
-extern  int wasora_vector_set(vector_t *, const size_t, double);
-extern  int wasora_vector_init(vector_t *);
+extern double wasora_vector_get(vector_t *, const size_t);
+extern double wasora_vector_get_initial_transient(vector_t *, const size_t);
+extern double wasora_vector_get_initial_static(vector_t *, const size_t);
+extern int wasora_vector_set(vector_t *, const size_t, double);
+extern int wasora_vector_init(vector_t *);
 
 // version.c
-extern  void wasora_show_help();
-extern  void wasora_show_version(int);
-extern  void wasora_shortversion(void);
-extern  void wasora_longversion(void);
+extern void wasora_show_help();
+extern void wasora_show_version(int);
+extern void wasora_shortversion(void);
+extern void wasora_longversion(void);
 
 // str_replace.c
 char *str_replace (const char *, const char *, const char *);
 
 // instructions
-extern  int wasora_instruction_if(void *);
-extern  int wasora_instruction_else(void *);
-extern  int wasora_instruction_endif(void *);
-extern  int wasora_instruction_parametric(void *);
+extern int wasora_instruction_if(void *);
+extern int wasora_instruction_else(void *);
+extern int wasora_instruction_endif(void *);
+extern int wasora_instruction_parametric(void *);
 
 
-extern  int wasora_instruction_alias(void *);
-extern  int wasora_instruction_sem(void *);
-extern  int wasora_instruction_io(void *);
-extern  int wasora_instruction_history(void *);
-extern  int wasora_instruction_print(void *);
-extern  int wasora_instruction_print_function(void *);
-extern  int wasora_instruction_print_vector(void *);
-extern  int wasora_instruction_print_matrix(void *);
-extern  int wasora_instruction_m4(void *);
-extern  int wasora_instruction_shell(void *);
-extern  int wasora_instruction_solve(void *);
-extern  int wasora_instruction_call(void *);
-extern  int wasora_instruction_assignment(void *);
-extern  int wasora_instruction_dae(void *);
-extern  int wasora_instruction_file(void *);
-extern  int wasora_instruction_open_file(void *);
-extern  int wasora_instruction_close_file(void *);
-extern  int wasora_instruction_abort(void *);
-extern  int wasora_instruction_mesh(void *);
-extern  int wasora_instruction_mesh_post(void *);
-extern  int wasora_instruction_mesh_fill_vector(void *);
-extern  int wasora_instruction_mesh_find_max(void *);
-extern  int wasora_instruction_mesh_integrate(void *arg);
+extern int wasora_instruction_alias(void *);
+extern int wasora_instruction_sem(void *);
+extern int wasora_instruction_io(void *);
+extern int wasora_instruction_history(void *);
+extern int wasora_instruction_print(void *);
+extern int wasora_instruction_print_function(void *);
+extern int wasora_instruction_print_vector(void *);
+extern int wasora_instruction_print_matrix(void *);
+extern int wasora_instruction_m4(void *);
+extern int wasora_instruction_shell(void *);
+extern int wasora_instruction_solve(void *);
+extern int wasora_instruction_call(void *);
+extern int wasora_instruction_assignment(void *);
+extern int wasora_instruction_dae(void *);
+extern int wasora_instruction_file(void *);
+extern int wasora_instruction_open_file(void *);
+extern int wasora_instruction_close_file(void *);
+extern int wasora_instruction_abort(void *);
+extern int wasora_instruction_mesh(void *);
+extern int wasora_instruction_mesh_post(void *);
+extern int wasora_instruction_mesh_fill_vector(void *);
+extern int wasora_instruction_mesh_find_max(void *);
+extern int wasora_instruction_mesh_integrate(void *arg);
 
 
 // interface.h
 // variable-related functions
-extern  int wasora_exists_var(const char *);
-extern  double wasora_get_var_value(const char *);
-extern  double *wasora_get_var_value_ptr(const char *);
-extern  void wasora_set_var_value(const char *, double);
+extern int wasora_exists_var(const char *);
+extern double wasora_get_var_value(const char *);
+extern double *wasora_get_var_value_ptr(const char *);
+extern void wasora_set_var_value(const char *, double);
 
 // vector-related functions
-extern  int wasora_exists_vector(const char *);
-extern  double wasora_get_vector_value(const char *, int);
-extern  gsl_vector *wasora_get_vector_gsl_ptr(const char *);
-extern  void wasora_set_vector_value(const char *, int, double);
-extern  double *wasora_get_crisp_pointer(const char *);
-extern  int wasora_get_vector_size(const char *);
+extern int wasora_exists_vector(const char *);
+extern double wasora_get_vector_value(const char *, int);
+extern gsl_vector *wasora_get_vector_gsl_ptr(const char *);
+extern void wasora_set_vector_value(const char *, int, double);
+extern double *wasora_get_crisp_pointer(const char *);
+extern int wasora_get_vector_size(const char *);
 
 // function-related functions
-extern  int wasora_exists_function(const char *);
-extern  double wasora_get_function_value(const char *name, double *arg);
+extern int wasora_exists_function(const char *);
+extern double wasora_get_function_value(const char *name, double *arg);
 
-extern  int wasora_exists_var(const char *);
-extern  double wasoraexistsvar_(const char *, int);
-extern  double wasora_get_var_value(const char *);
-extern  double wasoragetvarvalue_(const char *, int);
-extern  void wasora_set_var_value(const char *, double);
-extern  int wasorasetvarvalue_(const char *, double *, int);
+extern int wasora_exists_var(const char *);
+extern double wasoraexistsvar_(const char *, int);
+extern double wasora_get_var_value(const char *);
+extern double wasoragetvarvalue_(const char *, int);
+extern void wasora_set_var_value(const char *, double);
+extern int wasorasetvarvalue_(const char *, double *, int);
 
-extern  int wasora_exists_vector(const char *);
-extern  double wasoraexistsvector_(const char *, int);
-extern  double wasora_get_vector_value(const char *, int);
-extern  double wasoragetvectorvalue_(const char *, int *, int);
-extern  void wasora_set_vector_value(const char *, int, double);
-extern  int wasorasetvectorvalue_(const char *, int *, double *, int);
-extern  double *wasora_get_crisp_pointer(const char *);
-extern  int wasora_get_vector_size(const char *);
-extern  int wasoragetvectorsize_(const char *, int);
+extern int wasora_exists_vector(const char *);
+extern double wasoraexistsvector_(const char *, int);
+extern double wasora_get_vector_value(const char *, int);
+extern double wasoragetvectorvalue_(const char *, int *, int);
+extern void wasora_set_vector_value(const char *, int, double);
+extern int wasorasetvectorvalue_(const char *, int *, double *, int);
+extern double *wasora_get_crisp_pointer(const char *);
+extern int wasora_get_vector_size(const char *);
+extern int wasoragetvectorsize_(const char *, int);
 
-extern  int wasora_exists_matrix(const char *);
-extern  double wasoraexistsmatrix_(const char *, int);
-extern  double wasora_get_matrix_value(const char *, int , int);
-extern  gsl_matrix *wasora_get_matrix_gsl_ptr(const char *);
-extern  double wasoragetmatrixvalue_(const char *, int *, int *, int);
-extern  void wasora_set_matrix_value(const char *, int , int , double);
-extern  int wasorasetmatrixvalue_(const char *, int *, int *, double *, int);
-extern  double *wasora_get_matrix_crisp_pointer(const char *);
-extern  int wasora_get_matrix_rows(const char *);
-extern  int wasora_get_matrix_cols(const char *);
-extern  int wasoragetmatrixcols_(const char *, int);
-extern  int wasoragetmatrixrows_(const char *, int);
+extern int wasora_exists_matrix(const char *);
+extern double wasoraexistsmatrix_(const char *, int);
+extern double wasora_get_matrix_value(const char *, int , int);
+extern gsl_matrix *wasora_get_matrix_gsl_ptr(const char *);
+extern double wasoragetmatrixvalue_(const char *, int *, int *, int);
+extern void wasora_set_matrix_value(const char *, int , int , double);
+extern int wasorasetmatrixvalue_(const char *, int *, int *, double *, int);
+extern double *wasora_get_matrix_crisp_pointer(const char *);
+extern int wasora_get_matrix_rows(const char *);
+extern int wasora_get_matrix_cols(const char *);
+extern int wasoragetmatrixcols_(const char *, int);
+extern int wasoragetmatrixrows_(const char *, int);
 
 
-extern  int wasora_exists_function(const char *);
-extern  double wasoraexistsfunction_(const char *, int);
-extern  double wasoragetfunctionvalue(const char *, double *, int);
-extern  double wasora_get_function_value(const char *name, double *arg);
+extern int wasora_exists_function(const char *);
+extern double wasoraexistsfunction_(const char *, int);
+extern double wasoragetfunctionvalue(const char *, double *, int);
+extern double wasora_get_function_value(const char *name, double *arg);
 
 
 

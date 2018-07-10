@@ -132,10 +132,10 @@ Pyramid:                     Pyramid13:                   Pyramid14:
 
 int wasora_mesh_element_types_init(void) {
 
+  int i, j, d;
   element_type_t *element_type;
-//  int v, j, m;
   
-  wasora_mesh.element_type = calloc(18, sizeof(element_type_t));
+  wasora_mesh.element_type = calloc(NUMBER_ELEMENT_TYPE, sizeof(element_type_t));
 
   // undefined  ----------------------------------------------------------------
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_UNDEFINED];
@@ -188,6 +188,21 @@ int wasora_mesh_element_types_init(void) {
   
   // point
   mesh_one_node_point_init();
+  
+  // calculamos el baricentro en el espacio de las r
+  for (i = 0; i < NUMBER_ELEMENT_TYPE; i++) {
+    if (wasora_mesh.element_type[i].node_coords != NULL) {
+      wasora_mesh.element_type[i].barycenter_coords = calloc(wasora_mesh.element_type[i].dim, sizeof(double));
+      for (j = 0; j < wasora_mesh.element_type[i].nodes; j++) {
+        for (d = 0; d < wasora_mesh.element_type[i].dim; d++) {
+          wasora_mesh.element_type[i].barycenter_coords[d] += wasora_mesh.element_type[i].node_coords[j][d];
+        }
+      }
+      for (d = 0; d < wasora_mesh.element_type[i].dim; d++) {
+        wasora_mesh.element_type[i].barycenter_coords[d] /= wasora_mesh.element_type[i].nodes;
+      }
+    }
+  }
   
   return WASORA_RUNTIME_OK;
   

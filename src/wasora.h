@@ -1753,6 +1753,7 @@ typedef enum {
 #define ELEMENT_TYPE_POINT          15
 #define ELEMENT_TYPE_QUADRANGLE8    16
 #define ELEMENT_TYPE_HEXAHEDRON20   17 
+#define NUMBER_ELEMENT_TYPE         18  
 
 #define GAUSS_POINTS_SINGLE       0
 #define GAUSS_POINTS_CANONICAL    1
@@ -1863,6 +1864,7 @@ struct element_type_t {
   int faces;           // superficies == cantidad de vecinos
   int nodes_per_face;  // cantidad de nodos en las caras
 
+  double *barycenter_coords;
   double **node_coords;
   node_relative_t **node_parents;
   

@@ -3,6 +3,9 @@ ACLOCAL_AMFLAGS = $(ACLOCAL_FLAGS)
 bin_PROGRAMS = wasora
 wasora_LDADD = $(WASORALIBS) $(all_libraries) 
 
+# para exportar simbolos para los shared objects
+# wasora_LDFLAGS = -rdynamic
+
 wasora_SOURCES = \
 ./history.c \
 ./io.c \

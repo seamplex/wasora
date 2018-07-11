@@ -86,6 +86,7 @@ wasora_SOURCES = \
 ./mesh/define.c \
 ./mesh/triang3.c \
 ./mesh/triang6.c \
+./mesh/quality.c \
 ./plugin.c \
 ./define.c \
 ./wasora.c

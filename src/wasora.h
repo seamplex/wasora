@@ -2351,6 +2351,9 @@ extern element_t *mesh_find_node_neighbor_of_dim(node_t *, int);
 // parser.c
 extern int wasora_mesh_parse_line(char *);
 
+// quality.c
+extern double mesh_compute_quality(mesh_t *, element_t *);
+
 // struct.c
 extern int mesh_create_structured(mesh_t *);
 extern void wasora_mesh_struct_init_rectangular_for_cells(mesh_t *);

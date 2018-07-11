@@ -155,7 +155,7 @@ int mesh_nine_node_quadrangle_init(void) {
     gauss->r[2][0] = +a;
     gauss->r[2][1] = +a;
 
-    gauss->w[3] = w2;
+    gauss->w[3] = w1;
     gauss->r[3][0] = -a;
     gauss->r[3][1] = +a;
     

@@ -1,24 +1,13 @@
 //
-a = 1 ;
+SetFactory("OpenCASCADE");
+a = 1;
 
-lc = a/1;        // element characteristic length
-
-Point(1) = { 0,  0, 0, lc};
-Point(2) = {+a,  0, 0, lc};
-Point(3) = {+a, +a, 0, lc};
-Point(4) = { 0, +a, 0, lc};
-
-Line(1) = {1, 2};
-Line(2) = {2, 3};
-Line(3) = {3, 4};
-Line(4) = {4, 1};
-
-
-Line Loop(29) = {-1, -2, -3, -4};
-Plane Surface(30) = {29};
-Physical Surface(1) = {30};
+Rectangle(1) = {-a/2, -a/2, 0, a, a};
+Physical Surface(1) = {1};
 
 //Mesh.ElementOrder = 2;
 Mesh.RecombineAll = 1;
 Mesh.RecombinationAlgorithm = 1 ;
 //Mesh.SecondOrderIncomplete = 1;
+
+Mesh.CharacteristicLengthMax = a/2;

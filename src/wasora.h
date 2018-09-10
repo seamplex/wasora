@@ -206,6 +206,7 @@ typedef struct builtin_functional_t builtin_functional_t;
 typedef struct multidim_range_t multidim_range_t;
 
 typedef struct physical_entity_t physical_entity_t;
+typedef struct geometrical_entity_t geometrical_entity_t;
 typedef struct mesh_t mesh_t;
 
 
@@ -1954,6 +1955,15 @@ struct physical_entity_t {
   UT_hash_handle hh_name;
 };
 
+struct geometrical_entity_t {
+  int dimension;
+  int tag;
+  double boxMinX, boxMinY, boxMinZ, boxMaxX, boxMaxY, boxMaxZ;
+  int num_physicals;
+  int *physical;
+  int num_bounding;
+  int *bounding;
+};
 
 struct elementary_entity_t {
   int id;
@@ -2063,6 +2073,9 @@ struct mesh_t {
   int degrees_of_freedom;        // grados de libertad por incognita
   int order;                     // mayor orden de algun elemento
   
+  // cantidad de entidades geometricas
+  int points, curves, surfaces, volumes;
+  geometrical_entity_t *geometrical_entity;
   
   enum  {
     ordering_node_based,

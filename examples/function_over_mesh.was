@@ -1,0 +1,5 @@
+MESH FILE_PATH quads.msh
+
+f(x,y) := x+y
+
+MESH_POST FILE_PATH out.msh f

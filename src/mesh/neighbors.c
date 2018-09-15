@@ -34,7 +34,7 @@ int mesh_count_common_nodes(element_t *e1, element_t *e2, int *nodes) {
     for (j = 0; j < e2->type->nodes; j++) {
       if (e1->node[i] == e2->node[j]) {
         if (nodes != NULL) {
-          nodes[k] = e1->node[i]->id;
+          nodes[k] = e1->node[i]->tag;
         }
         k++;
       }
@@ -74,7 +74,7 @@ element_t *mesh_find_node_neighbor_of_dim(node_t *node, int dim) {
   LL_FOREACH(node->associated_elements, associated_element) {
     if (dim == associated_element->element->type->dim) {
       for (j = 0; j < associated_element->element->type->nodes; j++) {
-        if (node->id == associated_element->element->node[j]->id) {
+        if (node->tag == associated_element->element->node[j]->tag) {
           return associated_element->element;
         }
       }
@@ -101,7 +101,7 @@ int mesh_find_neighbors(mesh_t *mesh) {
       LL_FOREACH(mesh->cell[i].element->node[j]->associated_elements, associated_element) {
 
         memset(nodes, 0, sizeof(nodes));
-        if ((l = associated_element->element->id) != mesh->cell[i].element->id) {
+        if ((l = associated_element->element->tag) != mesh->cell[i].element->tag) {
           if (mesh_count_common_nodes(mesh->cell[i].element, &mesh->element[l-1], nodes) >= mesh->cell[i].element->type->dim) {
 
             flag = 1;
@@ -113,7 +113,7 @@ int mesh_find_neighbors(mesh_t *mesh) {
           
             if (flag) {
               if (n == mesh->cell[i].element->type->faces) {
-                wasora_push_error_message("mesh inconsistency, element %d has at least one more neighbor than faces (%d)", mesh->cell[i].element->id, n);
+                wasora_push_error_message("mesh inconsistency, element %d has at least one more neighbor than faces (%d)", mesh->cell[i].element->type, n);
                 return WASORA_RUNTIME_ERROR;
               }
 
@@ -129,7 +129,7 @@ int mesh_find_neighbors(mesh_t *mesh) {
     }
     
     if ((mesh->cell[i].n_neighbors = n) != mesh->cell[i].element->type->faces) {
-      wasora_push_error_message("mesh inconsistency, element %d has less neighbors (%d) than faces (%d)", mesh->cell[i].element->id, n, mesh->cell[i].element->type->faces);
+      wasora_push_error_message("mesh inconsistency, element %d has less neighbors (%d) than faces (%d)", mesh->cell[i].element->tag, n, mesh->cell[i].element->type->faces);
       return WASORA_RUNTIME_ERROR;
     }
 

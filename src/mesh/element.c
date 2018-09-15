@@ -259,9 +259,9 @@ int mesh_init_shape_at_gauss(gauss_t *gauss, element_type_t *element_type) {
 
 
 // esta no rellena los nodos!
-int mesh_create_element(element_t *element, int id, int type, physical_entity_t *physical_entity) {
+int mesh_create_element(element_t *element, int tag, int type, physical_entity_t *physical_entity) {
  
-  element->id = id;
+  element->tag = tag;
   element->type = &(wasora_mesh.element_type[type]);
   element->node  = calloc(element->type->nodes, sizeof(node_t *));
   element->physical_entity = physical_entity;
@@ -324,18 +324,18 @@ int mesh_node_indexes(mesh_t *mesh, int dofs) {
   switch (mesh->ordering) {
     case ordering_node_based:
       for (j = 0; j < mesh->n_nodes; j++) {
-        mesh->node[j].index = malloc(mesh->degrees_of_freedom*sizeof(int));
+        mesh->node[j].index_dof = malloc(mesh->degrees_of_freedom*sizeof(int));
         for (g = 0; g < mesh->degrees_of_freedom; g++) {
-          mesh->node[j].index[g] = mesh->degrees_of_freedom*j + g;
+          mesh->node[j].index_dof[g] = mesh->degrees_of_freedom*j + g;
         }
       }  
     break;    
     
     case ordering_unknown_based:
       for (j = 0; j < mesh->n_nodes; j++) {
-        mesh->node[j].index = malloc(mesh->degrees_of_freedom*sizeof(int));
+        mesh->node[j].index_dof = malloc(mesh->degrees_of_freedom*sizeof(int));
         for (g = 0; g < mesh->degrees_of_freedom; g++) {
-          mesh->node[j].index[g] = mesh->n_nodes*g + j;
+          mesh->node[j].index_dof[g] = mesh->n_nodes*g + j;
         }
       }  
     break;
@@ -352,7 +352,7 @@ int mesh_compute_local_node_index(element_t *element, int global_index) {
   
   // buscamos a que indice local i corresponde el j global
   for (j = 0; j < element->type->nodes; j++) {
-    if (element->node[j]->id == global_index+1) {
+    if (element->node[j]->tag == global_index+1) {
       local_index = j;
       break;
     }

@@ -33,10 +33,10 @@ int wasora_instruction_mesh(void *arg) {
   function_t *function, *tmp_function;
   element_list_item_t *associated_element;
   element_t *element;
-//  material_t *material;
-//  material_list_item_t *material_item;
   int i, j, d, v;
   int first_neighbor_nodes;
+  double scale_factor;
+  double offset[3];
   double w, vol;
   double cog[3];
   double x_min[3];
@@ -54,23 +54,44 @@ int wasora_instruction_mesh(void *arg) {
   } else if (mesh->format == mesh_format_frd) {
     wasora_call(mesh_frd_readmesh(mesh));
   } else {
-    wasora_push_error_message("unsupported format");
+    wasora_push_error_message("unsupported mesh format");
     return WASORA_RUNTIME_ERROR;
   }
   
   // barremos los nodos y definimos la bounding box (capaz se pueda meter esto en el loop del kd_tree)
-  mesh->bounding_box_min.id = -1;
-  mesh->bounding_box_max.id = -1;
-  mesh->bounding_box_min.index = NULL;
-  mesh->bounding_box_max.index = NULL;
+  mesh->bounding_box_min.index = -1;
+  mesh->bounding_box_max.index = -1;
+  mesh->bounding_box_min.index_dof = NULL;
+  mesh->bounding_box_max.index_dof = NULL;
   mesh->bounding_box_min.associated_elements = NULL;
   mesh->bounding_box_max.associated_elements = NULL;
+  
   for (d = 0; d < 3; d++) {
     x_min[d] = mesh->node[0].x[d];
     x_max[d] = mesh->node[0].x[d];
   }
+  
+  scale_factor = wasora_evaluate_expression(mesh->scale_factor);
+  offset[0] = wasora_evaluate_expression(mesh->offset_x);
+  offset[1] = wasora_evaluate_expression(mesh->offset_y);
+  offset[2] = wasora_evaluate_expression(mesh->offset_z);
+  
   for (j = 0; j < mesh->n_nodes; j++) {
     for (d = 0; d < 3; d++) {
+      if (scale_factor != 0 || offset[d] != 0) {
+        mesh->node[j].x[j] = scale_factor*mesh->node[j].x[j] - offset[j];
+      }
+      
+      if (mesh->spatial_dimensions < 1 && fabs(mesh->node[j].x[0]) > 1e-6) {
+        mesh->spatial_dimensions = 1;
+      }
+      if (mesh->spatial_dimensions < 2 && fabs(mesh->node[j].x[1]) > 1e-6) {
+        mesh->spatial_dimensions = 2;
+      }
+      if (mesh->spatial_dimensions < 3 && fabs(mesh->node[j].x[2]) > 1e-6) {
+        mesh->spatial_dimensions = 3;
+      }
+      
       if (mesh->node[j].x[d] < x_min[d]) {
         x_min[d] = mesh->bounding_box_min.x[d] = mesh->node[j].x[d];
       }
@@ -78,20 +99,6 @@ int wasora_instruction_mesh(void *arg) {
         x_max[d] = mesh->bounding_box_max.x[d] = mesh->node[j].x[d];
       }
     }
-    
-    // si hay muchos materiales asociados al nodo, buscamos el master
-    // que es el primer material definido en el input
-/*    
-    if (mesh->node[j].materials_list != NULL) {
-      for (material = wasora_mesh.materials; mesh->node[j].master_material == NULL && material != NULL; material = material->hh.next) {
-        LL_FOREACH(mesh->node[j].materials_list, material_item) {
-          if (material_item->material == material) {
-            mesh->node[j].master_material = material;
-          }
-        }
-      }
-    }
- */
   }
 
   // armamos un kd-tree de nodos y miramos cual es la mayor cantidad de vecinos que tiene un nodo
@@ -112,7 +119,6 @@ int wasora_instruction_mesh(void *arg) {
     }
   }
   
-  
   // barremos los elementos y resolvemos la physical entity asociada
   // esto lo hacemos solo para la primera malla
   if (wasora_mesh.meshes == mesh) {
@@ -121,14 +127,9 @@ int wasora_instruction_mesh(void *arg) {
         physical_entity->element = malloc(physical_entity->n_elements * sizeof(int));
       }
     }
-  }
   
-  // TODO: esto esta mezclado! (por que?)
-  // no se si se tiene que hacer siempre, capaz se puede meter dentro del gmsh_read o
-  // o del generador de structured
-  for (i = 0; i < mesh->n_elements; i++) { 
-    physical_entity = mesh->element[i].physical_entity;
-    if (wasora_mesh.meshes == mesh) {
+    for (i = 0; i < mesh->n_elements; i++) { 
+      physical_entity = mesh->element[i].physical_entity;
       if (physical_entity != NULL && physical_entity->i_element < physical_entity->n_elements) {
         physical_entity->element[physical_entity->i_element++] = i;
       }
@@ -330,7 +331,6 @@ int mesh_free(mesh_t *mesh) {
 
   if (mesh->element != NULL) {
     for (i = 0; i < mesh->n_elements; i++) {
-      free(mesh->element[i].tag);
       if (mesh->element[i].node != NULL) {
         for (j = 0; j < mesh->element[i].type->nodes; j++) {
           LL_FOREACH_SAFE(mesh->element[i].node[j]->associated_elements, element_item, element_tmp) {
@@ -360,8 +360,8 @@ int mesh_free(mesh_t *mesh) {
 
   if (mesh->node != NULL) {
     for (k = 0; k < mesh->n_nodes; k++) {
-      if (mesh->node[k].index != NULL) {
-        free (mesh->node[k].index);
+      if (mesh->node[k].index_dof != NULL) {
+        free (mesh->node[k].index_dof);
       }
     }
     free(mesh->node);

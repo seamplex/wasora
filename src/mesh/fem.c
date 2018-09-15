@@ -414,7 +414,7 @@ int mesh_compute_l(mesh_t *mesh, element_t *element) {
   // armamos el vector l que indica como ensamblar
   for (j = 0; j < element->type->nodes; j++) {
     for (d = 0; d < mesh->degrees_of_freedom; d++) {
-      mesh->fem.l[mesh->degrees_of_freedom*j + d] = element->node[j]->index[d];
+      mesh->fem.l[mesh->degrees_of_freedom*j + d] = element->node[j]->index_dof[d];
     }
   }
   

@@ -96,7 +96,7 @@ int mesh_compute_outward_normal(element_t *element, double *n) {
   element_t *volumetric_neighbor;
 
   if (element->type->dim == 0) {
-    wasora_push_error_message("trying to compute the outward normal of a point (element %d)", element->id);
+    wasora_push_error_message("trying to compute the outward normal of a point (element %d)", element->tag);
     return WASORA_RUNTIME_ERROR;
   } else if (element->type->dim == 1) {
 
@@ -114,7 +114,7 @@ int mesh_compute_outward_normal(element_t *element, double *n) {
     mesh_normalized_cross(a, b, n);
 
   } else if (element->type->dim == 3) {
-    wasora_push_error_message("trying to compute the outward normal of a volume (element %d)", element->id);
+    wasora_push_error_message("trying to compute the outward normal of a volume (element %d)", element->tag);
     return WASORA_RUNTIME_ERROR;
   }
 
@@ -125,7 +125,7 @@ int mesh_compute_outward_normal(element_t *element, double *n) {
 
   // y despues el centro del elemento de volumen
   if ((volumetric_neighbor = mesh_find_element_volumetric_neighbor(element)) == NULL) {
-    wasora_push_error_message("cannot find any volumetric neighbor for surface element %d", element->id);
+    wasora_push_error_message("cannot find any volumetric neighbor for surface element %d", element->tag);
     return WASORA_RUNTIME_ERROR;
   }
     

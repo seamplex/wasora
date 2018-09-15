@@ -56,17 +56,17 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
     switch (m->spatial_dimensions) {
       case 1:
         if ((dist2 = gsl_pow_2(fabs(x[0]-x_nearest[0]))) < gsl_pow_2(f->multidim_threshold)) {
-          return f->data_value[nearest_node->id - 1];
+          return f->data_value[nearest_node->index];
         }
       break;
       case 2:
         if ((dist2 = (mesh_subtract_squared_module2d(x, x_nearest))) < gsl_pow_2(f->multidim_threshold)) {
-          return f->data_value[nearest_node->id - 1];
+          return f->data_value[nearest_node->index];
         }
       break;
       case 3:
         if ((dist2 = (mesh_subtract_squared_module(x, x_nearest))) < gsl_pow_2(f->multidim_threshold)) {
-          return f->data_value[nearest_node->id - 1];
+          return f->data_value[nearest_node->index];
         }
       break;
     }
@@ -100,7 +100,7 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
     
     // fallback: si asi y todo no lo encontramos, le ponemos el nearest
     if (chosen_element == NULL && nearest_node != NULL) {
-      return f->data_value[nearest_node->id - 1];
+      return f->data_value[nearest_node->index];
     }
     
   } else {
@@ -109,17 +109,17 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
       switch (m->spatial_dimensions) {
         case 1:
           if (fabs(x[0]-m->node[i].x[0]) < f->multidim_threshold) {
-            return f->data_value[m->node[i].id - 1];
+            return f->data_value[m->node[i].index];
           }
         break;
         case 2:
           if (mesh_subtract_squared_module2d(x, m->node[i].x) < gsl_pow_2(f->multidim_threshold)) {
-            return f->data_value[m->node[i].id - 1];
+            return f->data_value[m->node[i].index];
           }
         break;
         case 3:
           if (mesh_subtract_squared_module(x, m->node[i].x) < gsl_pow_2(f->multidim_threshold)) {
-            return f->data_value[m->node[i].id - 1];
+            return f->data_value[m->node[i].index];
           }
         break;
       }
@@ -151,7 +151,7 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   // calculamos el valor de y
   y = 0;
   for (j = 0; j < chosen_element->type->nodes; j++) {
-    y += chosen_element->type->h(j, r) * f->data_value[chosen_element->node[j]->id - 1];
+    y += chosen_element->type->h(j, r) * f->data_value[chosen_element->node[j]->tag - 1];
   }
   
   gsl_vector_free(r);

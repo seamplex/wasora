@@ -47,11 +47,12 @@ int mesh_frd_readmesh(mesh_t *mesh) {
   char tmp[BUFFER_SIZE];
   double scale_factor;
   double offset[3];
-  int i, j, k;
+  int i, j;
   int id;
   int type;
+  int tags[2];
   int node;
-  int dimension;
+//  int dimension;
   int cell_id;
   int spatial_dimensions;
   int bulk_dimensions;
@@ -62,9 +63,6 @@ int mesh_frd_readmesh(mesh_t *mesh) {
   
   char *dummy;
   char *name;
-  physical_entity_t *physical_entity;
-  material_t *material;
-
   
   if (mesh->file->pointer == NULL) {
     wasora_call(wasora_instruction_open_file(mesh->file));
@@ -119,7 +117,8 @@ int mesh_frd_readmesh(mesh_t *mesh) {
         }
         // nuestros id son de C
         id--;
-        mesh->node[id].id = id+1;
+        mesh->node[id].index = id;
+        mesh->node[id].tag = id+1;
 
         for (j = 0; j < 3; j++) {
           if (fscanf(mesh->file->pointer, "%lf", &mesh->node[id].x[j]) == 0) {
@@ -185,7 +184,8 @@ int mesh_frd_readmesh(mesh_t *mesh) {
           return WASORA_RUNTIME_ERROR;
         }
         id--; // nuestras id son de C
-        mesh->element[id].id = id+1;
+        mesh->element[id].tag = id+1;
+        mesh->element[id].index = id;
     
         if (fscanf(mesh->file->pointer, "%d", &type) == 0) {
           return WASORA_RUNTIME_ERROR;
@@ -200,16 +200,8 @@ int mesh_frd_readmesh(mesh_t *mesh) {
           return WASORA_RUNTIME_ERROR;
         }
 
-        // en gmsh cada elemento tiene un tag que es un array de enteros
-        // el primero es el id de la entidad fisica
-        // el segundo es el id de la entidad geometrica (no nos interesa)
-        // aca ponemos siempre dos tags, uno para el "grupo" y otro para el "material"
-        mesh->element[id].ntags = 2;
-        mesh->element[id].tag = malloc(mesh->element[id].ntags * sizeof(int));
-        for (j = 0; j < mesh->element[id].ntags; j++) {
-          if (fscanf(mesh->file->pointer, "%d", &mesh->element[id].tag[j]) == 0) {
-            return WASORA_RUNTIME_ERROR;
-          }
+        if (fscanf(mesh->file->pointer, "%d %d", &tags[0], &tags[1]) < 2) {
+          return WASORA_RUNTIME_ERROR;
         }
         
         // agregamos uno a la cantidad de elementos asociados a la entidad fisica
@@ -287,244 +279,7 @@ int mesh_frd_readmesh(mesh_t *mesh) {
         wasora_push_error_message("expected minus three as line starter", buffer);
         return WASORA_RUNTIME_ERROR;
       }
-      
-    // ------------------------------------------------------      
-    } else if (strncmp("$PhysicalNames", buffer, 14) == 0) {
-
-      // si hay physical names entonces definimos implicitamente physical
-      // entities (si es que no existen ya, si existen chequeamos los ids)
-
-      // la cantidad de cosas
-      if (fscanf(mesh->file->pointer, "%d", &mesh->n_physical_names) == 0) {
-        return WASORA_RUNTIME_ERROR;
-      }
-      for (i = 0; i < mesh->n_physical_names; i++) {
-
-        if (fscanf(mesh->file->pointer, "%d", &dimension) == 0) {
-          return WASORA_RUNTIME_ERROR;
-        }
-        if (fscanf(mesh->file->pointer, "%d", &id) == 0) {
-          return WASORA_RUNTIME_ERROR;
-        }
-        if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
-          wasora_push_error_message("corrupted mesh file '%s'", mesh->file->path);
-          return WASORA_RUNTIME_ERROR;
-        }
-        if ((dummy = strrchr(buffer, '\"')) == NULL) {
-          wasora_push_error_message("end quote not found in physical name %d in '%s'", id, mesh->file->path);
-          return WASORA_RUNTIME_ERROR;
-        }
-        *dummy = '\0';
-        if ((dummy = strchr(buffer, '\"')) == NULL) {
-          wasora_push_error_message("beginning quote not found in physical name %d in '%s'", id, mesh->file->path);
-          return WASORA_RUNTIME_ERROR;
-        }
-        name = strdup(dummy+1);
-
-        HASH_FIND(hh_name, wasora_mesh.physical_entities_by_name, name, strlen(name), physical_entity);
-        if (physical_entity == NULL) {
-          LL_FOREACH(wasora_mesh.physical_entities_by_id, physical_entity) {
-            if (physical_entity->id == id) {
-              break;
-            }
-          }
-        }        
-        
-        if (physical_entity == NULL) {
-          // creamos una de prepo
-          physical_entity = wasora_define_physical_entity(name, id, mesh, dimension, NULL, NULL, 0);
-        } else {
-          // verificamos que no tenga id numerica
-          if (physical_entity->id == 0) {
-            physical_entity->id = id;
-            // y lo agregamos al hash de enteros
-            HASH_ADD(hh_id, wasora_mesh.physical_entities_by_id, id, sizeof(int), physical_entity);
-          } else if (physical_entity->id != id) {
-            // o que tenga la correcta
-            wasora_push_error_message("physical entity '%s' has id %d in input and %d in mesh", name, physical_entity->id, id);
-            return WASORA_PARSER_ERROR;
-          }
-        }
-
-        // si la physical entity no tiene material, buscamos uno que se llame igual
-        if (physical_entity->material == NULL) {
-          HASH_FIND_STR(wasora_mesh.materials, name, material);
-          // si es NULL es porque la physical entity es una BC o algo,
-          // pero eso no nos molesta, las BCs las vemos despues
-          physical_entity->material = material;
-        }
-
-      }
-          
-
-      // la linea $EndPhysicalNames
-      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
-        wasora_push_error_message("corrupted mesh file '%s'", mesh->file->path);
-        return -3;
-      } 
-      if (strncmp("$EndPhysicalNames", buffer, 17) != 0) {
-        wasora_push_error_message("$EndPhysicalNames not found in mesh file '%s'", mesh->file->path);
-        return -2;
-      }
-      
-    // ------------------------------------------------------      
-    } else if (strncmp("$ElementData", buffer, 12) == 0) {
-      
-      // TODO!
-      
-    // ------------------------------------------------------      
-    } else if (strncmp("$ElementNodeData", buffer, 16) == 0 || strncmp("$NodeData", buffer, 9) == 0) {
-      
-      node_data_t *node_data;
-      function_t *function = NULL;
-      double time, value;
-      int j, id, timestep, dofs, nodes;
-      int n_string_tags, n_real_tags, n_integer_tags;
-      char *string_tag = NULL;
-      
-      // string-tags
-      fscanf(mesh->file->pointer, "%d", &n_string_tags);
-      if (n_string_tags != 1) {
-        continue;
-      }
-      fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer); // el \n
-      fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
-      string_tag = strtok(buffer, "\"");
-      
-      LL_FOREACH(mesh->node_datas, node_data) {
-        if (strcmp(string_tag, node_data->name_in_mesh) == 0) {
-          function = node_data->function;
-        }
-      }
-      
-      if (function == NULL) {
-        continue;
-      }
-      
-      // real-tags
-      fscanf(mesh->file->pointer, "%d", &n_real_tags);
-      if (n_real_tags != 1) {
-        continue;
-      }
-      fscanf(mesh->file->pointer, "%lf", &time);
-      
-      // integer-tags
-      fscanf(mesh->file->pointer, "%d", &n_integer_tags);
-      if (n_integer_tags != 3) {
-        continue;
-      }
-      fscanf(mesh->file->pointer, "%d", &timestep);
-      fscanf(mesh->file->pointer, "%d", &dofs);
-      fscanf(mesh->file->pointer, "%d", &nodes);
-      
-      if (dofs != 1 || nodes != mesh->n_nodes) {
-        continue;
-      }
-      
-      // si llegamos hasta aca, tenemos una funcion
-      function->type = type_pointwise_mesh_node;
-      function->mesh = mesh;
-      function->data_argument = mesh->nodes_argument;
-      function->data_size = nodes;
-      function->data_value = calloc(nodes, sizeof(double));
-      
-      for (j = 0; j < nodes; j++) {
-        fscanf(mesh->file->pointer, "%d %lf", &id, &value);
-        function->data_value[id-1] = value;
-      }
-
-      // el newline
-      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
-        wasora_push_error_message("corrupted mesh file '%s'", mesh->file->path);
-        return -3;
-      } 
-
-      // la linea $ElementNodeData
-      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
-        wasora_push_error_message("corrupted mesh file '%s'", mesh->file->path);
-        return -3;
-      } 
-      if (strncmp("$EndElementNodeData", buffer, 19) != 0 && strncmp("$EndNodeData", buffer, 12) != 0) {
-        wasora_push_error_message("$EndElementNodeData not found in mesh file '%s'", mesh->file->path);
-        return -2;
-      }
-
-  
-    // ------------------------------------------------------      
-    // extension nuestra!
-    } else if (strncmp("$Neighbors", buffer, 10) == 0 || strncmp("$Neighbours", buffer, 11) == 0) {
-
-      int element_id;
-      
-      // la cantidad de celdas
-      if (fscanf(mesh->file->pointer, "%d", &(mesh->n_cells)) == 0) {
-        return WASORA_RUNTIME_ERROR;
-      }
-      if (mesh->n_cells == 0) {
-        wasora_push_error_message("no cells found in mesh file '%s'", mesh->file->path);
-        return -2;
-      }
-      mesh->cell = calloc(mesh->n_cells, sizeof(cell_t));
-
-      for (i = 0; i < mesh->n_cells; i++) {
-    
-        if (fscanf(mesh->file->pointer, "%d", &cell_id) == 0) {
-          return WASORA_RUNTIME_ERROR;
-        }
-        if (cell_id != i+1) {
-          wasora_push_error_message("cells in mesh file '%s' are not sorted", mesh->file->path);
-          return -2;
-        }
-        mesh->cell[i].id = cell_id;
-        
-        if (fscanf(mesh->file->pointer, "%d", &element_id) == 0) {
-          return WASORA_RUNTIME_ERROR;
-        }
-        mesh->cell[i].element = &mesh->element[element_id - 1];
-        
-        if (fscanf(mesh->file->pointer, "%d", &mesh->cell[i].n_neighbors) == 0) {
-          return WASORA_RUNTIME_ERROR;
-        }
-        if (fscanf(mesh->file->pointer, "%d", &j) == 0) {
-          return WASORA_RUNTIME_ERROR;
-        }
-        if (j != mesh->cell[i].element->type->nodes_per_face) {
-          wasora_push_error_message("mesh file '%s' has inconsistencies in the neighbors section", mesh->file->path);
-          return -2;
-        }
-
-        mesh->cell[i].ineighbor = malloc(mesh->cell[i].n_neighbors * sizeof(int));
-        mesh->cell[i].ifaces = malloc(mesh->cell[i].n_neighbors * sizeof(int *));
-        for (j = 0; j < mesh->cell[i].n_neighbors; j++) {
-          if (fscanf(mesh->file->pointer, "%d", &mesh->cell[i].ineighbor[j]) == 0) {
-            return WASORA_RUNTIME_ERROR;
-          }
-          mesh->cell[i].ifaces[j] = malloc(mesh->cell[i].element->type->nodes_per_face);
-          for (k = 0; k < mesh->cell[i].element->type->nodes_per_face; k++) {
-            if (fscanf(mesh->file->pointer, "%d", &mesh->cell[i].ifaces[j][k]) == 0) {
-              return WASORA_RUNTIME_ERROR;
-            }
-          }
-        }
-      }
-        
-      
-      // el newline
-      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
-        wasora_push_error_message("corrupted mesh file '%s'", mesh->file->path);
-        return -3;
-      } 
-
-      // la linea $EndNeighbors
-      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
-        wasora_push_error_message("corrupted mesh file '%s'", mesh->file->path);
-        return -3;
-      } 
-      if (strncmp("$EndNeighbors", buffer, 13) != 0 && strncmp("$EndNeighbours", buffer, 14) != 0) {
-        wasora_push_error_message("$EndNeighbors not found in mesh file '%s'", mesh->file->path);
-        return -2;
-      }
-      
+       
     // ------------------------------------------------------      
     }
   }

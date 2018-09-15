@@ -226,7 +226,8 @@ int mesh_create_structured(mesh_t *mesh) {
       mesh->node = calloc(mesh->n_nodes, sizeof(node_t));
       i_node = 0;
       for (i = 0; i < mesh->ncells_x+1; i++) {
-        mesh->node[i_node].id = i_node+1;
+        mesh->node[i_node].tag = i_node+1;
+        mesh->node[i_node].index = i_node;
         mesh->node[i_node].x[0] = mesh->nodes_x[i];
         i_node++;
       }
@@ -244,7 +245,8 @@ int mesh_create_structured(mesh_t *mesh) {
       i_node = 0;
       for (j = 0; j < mesh->ncells_y+1; j++) {
         for (i = 0; i < mesh->ncells_x+1; i++) {
-          mesh->node[i_node].id = i_node+1;
+          mesh->node[i_node].tag = i_node+1;
+          mesh->node[i_node].index = i_node;
           mesh->node[i_node].x[0] = mesh->nodes_x[i];
           mesh->node[i_node].x[1] = mesh->nodes_y[j];
           i_node++;
@@ -265,7 +267,8 @@ int mesh_create_structured(mesh_t *mesh) {
       for (k = 0; k < mesh->ncells_z+1; k++) {
         for (j = 0; j < mesh->ncells_y+1; j++) {
           for (i = 0; i < mesh->ncells_x+1; i++) {
-            mesh->node[i_node].id = i_node+1;
+            mesh->node[i_node].tag = i_node+1;
+            mesh->node[i_node].index = i_node;
             mesh->node[i_node].x[0] = mesh->nodes_x[i];
             mesh->node[i_node].x[1] = mesh->nodes_y[j];
             mesh->node[i_node].x[2] = mesh->nodes_z[k];
@@ -281,17 +284,23 @@ int mesh_create_structured(mesh_t *mesh) {
   }    
   
   // entidades fisicas de prepo
-  mesh->origin = wasora_define_physical_entity("origin", 0, mesh, 0, NULL, NULL, 0);
+  mesh->origin = wasora_define_physical_entity("origin", mesh, 0);
   
-  mesh->left =   wasora_define_physical_entity("left",   0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_left);
-  mesh->right =  wasora_define_physical_entity("right",  0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_right);
+  mesh->left =   wasora_define_physical_entity("left",  mesh, mesh->bulk_dimensions-1);
+  mesh->left->struct_bc_direction = structured_direction_left;
+  mesh->right =  wasora_define_physical_entity("right", mesh, mesh->bulk_dimensions-1);
+  mesh->left->struct_bc_direction = structured_direction_right;
   if (mesh->bulk_dimensions > 1) {
-    mesh->front =  wasora_define_physical_entity("front",  0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_front);
-    mesh->back =   wasora_define_physical_entity("back",   0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_rear);
+    mesh->front =  wasora_define_physical_entity("front", mesh, mesh->bulk_dimensions-1);
+    mesh->front->struct_bc_direction = structured_direction_front;
+    mesh->rear =   wasora_define_physical_entity("rear",  mesh, mesh->bulk_dimensions-1);
+    mesh->rear->struct_bc_direction = structured_direction_rear;
   }
   if (mesh->bulk_dimensions > 2) {
-    mesh->bottom = wasora_define_physical_entity("bottom", 0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_bottom);
-    mesh->top =    wasora_define_physical_entity("top",    0, mesh, mesh->bulk_dimensions-1, NULL, NULL, structured_direction_top);
+    mesh->bottom = wasora_define_physical_entity("bottom", mesh, mesh->bulk_dimensions-1);
+    mesh->bottom->struct_bc_direction = structured_direction_bottom;
+    mesh->top =    wasora_define_physical_entity("top",    mesh, mesh->bulk_dimensions-1);
+    mesh->top->struct_bc_direction = structured_direction_top;
   }
   
 //  mesh->bulk = wasora_define_physical_entity("bulk", 0, mesh, mesh->bulk_dimensions, wasora_define_material("bulk"), NULL, 0);
@@ -334,7 +343,7 @@ int mesh_create_structured(mesh_t *mesh) {
           }
           
           mesh->element[i_element].node[i_node] = &mesh->node[node_index];
-          mesh->element[i_element].physical_entity = mesh->bulk;
+//          mesh->element[i_element].physical_entity = mesh->bulk;
           mesh_add_element_to_list(&mesh->element[i_element].node[i_node]->associated_elements, &mesh->element[i_element]);
         }
                 
@@ -346,12 +355,12 @@ int mesh_create_structured(mesh_t *mesh) {
   // barremos las physical entities que no tengan bcs y las aplicamos a los elementos
   i_entity = 0;
   LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-    if (physical_entity->id == 0) {
-      physical_entity->id = ++i_entity;
+    if (physical_entity->tag == 0) {
+      physical_entity->tag = ++i_entity;
     }
     if (physical_entity->name == NULL) {
       physical_entity->name = malloc(strlen(physical_entity->material->name)+32);
-      sprintf(physical_entity->name, "%s-%d", physical_entity->material->name, physical_entity->id);
+      sprintf(physical_entity->name, "%s-%d", physical_entity->material->name, physical_entity->tag);
     }
     // si no tiene condicion de contorno se la asignamos a los elementos
     if (physical_entity->material != NULL) {      
@@ -361,11 +370,11 @@ int mesh_create_structured(mesh_t *mesh) {
 
       if (physical_entity->pos[structured_direction_left-1].n_tokens != 0 || physical_entity->pos[structured_direction_right-1].n_tokens != 0) {
         if ((i_min = wasora_mesh_struct_find_cell(mesh->ncells_x, mesh->cells_x, mesh->delta_x, wasora_evaluate_expression(&physical_entity->pos[0])+halfeps)) < 0) {
-          wasora_push_error_message("plane x = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[0]), physical_entity->id, physical_entity->name);
+          wasora_push_error_message("plane x = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[0]), physical_entity->tag, physical_entity->name);
           return WASORA_RUNTIME_ERROR;
         }
         if ((i_max = wasora_mesh_struct_find_cell(mesh->ncells_x, mesh->cells_x, mesh->delta_x, wasora_evaluate_expression(&physical_entity->pos[1])-halfeps)) < 0) {
-          wasora_push_error_message("plane x = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[1]), physical_entity->id, physical_entity->name);
+          wasora_push_error_message("plane x = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[1]), physical_entity->tag, physical_entity->name);
           return WASORA_RUNTIME_ERROR;
         }
       } else {
@@ -374,11 +383,11 @@ int mesh_create_structured(mesh_t *mesh) {
       }
       if (physical_entity->pos[structured_direction_front-1].n_tokens != 0 || physical_entity->pos[structured_direction_rear-1].n_tokens != 0) {
         if ((j_min = wasora_mesh_struct_find_cell(mesh->ncells_y, mesh->cells_y, mesh->delta_y, wasora_evaluate_expression(&physical_entity->pos[2])+halfeps)) < 0) {
-          wasora_push_error_message("plane y = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[2]), physical_entity->id, physical_entity->name);
+          wasora_push_error_message("plane y = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[2]), physical_entity->tag, physical_entity->name);
           return WASORA_RUNTIME_ERROR;
         }
         if ((j_max = wasora_mesh_struct_find_cell(mesh->ncells_y, mesh->cells_y, mesh->delta_y, wasora_evaluate_expression(&physical_entity->pos[3])-halfeps)) < 0) {
-          wasora_push_error_message("plane y = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[3]), physical_entity->id, physical_entity->name);
+          wasora_push_error_message("plane y = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[3]), physical_entity->tag, physical_entity->name);
           return WASORA_RUNTIME_ERROR;
         }
       } else {
@@ -387,11 +396,11 @@ int mesh_create_structured(mesh_t *mesh) {
       }
       if (physical_entity->pos[structured_direction_bottom-1].n_tokens != 0 || physical_entity->pos[structured_direction_top-1].n_tokens != 0) {
         if ((k_min = wasora_mesh_struct_find_cell(mesh->ncells_z, mesh->cells_z, mesh->delta_z, wasora_evaluate_expression(&physical_entity->pos[4])+halfeps)) < 0) {
-          wasora_push_error_message("plane z = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[4]), physical_entity->id, physical_entity->name);
+          wasora_push_error_message("plane z = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[4]), physical_entity->tag, physical_entity->name);
           return WASORA_RUNTIME_ERROR;
         }
         if ((k_max = wasora_mesh_struct_find_cell(mesh->ncells_z, mesh->cells_z, mesh->delta_z, wasora_evaluate_expression(&physical_entity->pos[5])-halfeps)) < 0) {
-          wasora_push_error_message("plane z = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[5]), physical_entity->id, physical_entity->name);
+          wasora_push_error_message("plane z = %g of entity %d '%s' does not coincide with a cell border", wasora_evaluate_expression(&physical_entity->pos[5]), physical_entity->tag, physical_entity->name);
           return WASORA_RUNTIME_ERROR;
         }
       } else {
@@ -575,7 +584,7 @@ int mesh_create_structured(mesh_t *mesh) {
               neighbor->cell = &mesh->cell[flat_index(i,j+1,k)];
               neighbor->element = neighbor->cell->element;
             } else {
-              mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->back);
+              mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->rear);
               // en 2d los nodos 2 y 3
               mesh->element[i_element].node[0] = mesh->cell[i_cell].element->node[2];
               mesh_add_element_to_list(&mesh->element[i_element].node[0]->associated_elements, &mesh->element[i_element]);                

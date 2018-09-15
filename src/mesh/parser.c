@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related parser routines
  *
- *  Copyright (C) 2014--2017 jeremy theler
+ *  Copyright (C) 2014--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -182,10 +182,23 @@ int wasora_mesh_parse_line(char *line) {
         }
       }
 
+      // si no tenemos nombre 
+      if (name == NULL) {
+        if (wasora_mesh.meshes == NULL) {
+          // y es la primera malla, la llamamos main
+          name = strdup("main");
+        } else {
+          // y es otra malla, nos quejamos
+          wasora_push_error_message("when defining multiples MESHEs, a NAME is mandatory");
+          return WASORA_PARSER_ERROR;
+        }
+      }
+
       if (file == NULL && structured == 0) {
         wasora_push_error_message("either FILE, FILE_PATH or STRUCTURED should be given to MESH");
         return WASORA_PARSER_ERROR;
       }
+      
 
       if ((mesh = wasora_define_mesh(name, file, dimensions, dimensions, degrees, ordering, structured, scale_factor, offsets, ncells, lengths, deltas)) == NULL) {
         return WASORA_PARSER_ERROR;
@@ -407,9 +420,10 @@ int wasora_mesh_parse_line(char *line) {
           char *name;
           wasora_call(wasora_parser_string(&name));
           if ((mesh_integrate->physical_entity = wasora_get_physical_entity_ptr(name)) == NULL) {
-            wasora_push_error_message("unknown physical entity '%s'", name);
-            free(name);
-            return WASORA_PARSER_ERROR;
+            if ((mesh_integrate->physical_entity = wasora_define_physical_entity(name, NULL, 0)) == NULL) {
+              free(name);
+              return WASORA_PARSER_ERROR;
+            }
           }
           
 ///kw+MESH_INTEGRATE+usage RESULT <variable>
@@ -574,9 +588,10 @@ int wasora_mesh_parse_line(char *line) {
           char *name;
           wasora_call(wasora_parser_string(&name));
           if ((mesh_find_max->physical_entity = wasora_get_physical_entity_ptr(name)) == NULL) {
-            wasora_push_error_message("unknown physical entity '%s'", name);
-            free(name);
-            return WASORA_PARSER_ERROR;
+            if ((mesh_find_max->physical_entity = wasora_define_physical_entity(name, NULL, 0)) == NULL) {
+              free(name);
+              return WASORA_PARSER_ERROR;
+            }
           }
           free(name);
           
@@ -637,9 +652,7 @@ int wasora_mesh_parse_line(char *line) {
 
 ///kw+PHYSICAL_ENTITY+usage PHYSICAL_ENTITY
       char *name = NULL;
-      char *dummy_aux = NULL;
       double xi = 0;
-      int id = 0;
       mesh_t *mesh = NULL;
       int dimension = 0;
       material_t *material = NULL;
@@ -650,20 +663,20 @@ int wasora_mesh_parse_line(char *line) {
 
       while ((token = wasora_get_next_token(NULL)) != NULL) {
 
-///kw+PHYSICAL_ENTITY+usage [ NAME <name> ]
+///kw+PHYSICAL_ENTITY+usage NAME <name>
         if (strcasecmp(token, "NAME") == 0) {
           if (wasora_parser_string(&name) != WASORA_PARSER_OK) {
             return WASORA_PARSER_ERROR;
           }
           
-///kw+PHYSICAL_ENTITY+usage [ ID <expr> ]
-        } else if (strcasecmp(token, "ID") == 0) {
+///kw+PHYSICAL_ENTITY+usage [ DIMENSION <expr> ]
+        } else if (strcasecmp(token, "DIMENSION") == 0 || strcasecmp(token, "DIM") == 0) {
           if (wasora_parser_expression_in_string(&xi) != WASORA_PARSER_OK) {
             return WASORA_PARSER_ERROR;
           }
-          id = (int)(xi);
+          dimension = (int)(xi);          
 
-///kw+PHYSICAL_ENTITY+usage [ MESH <identifier> ]
+///kw+PHYSICAL_ENTITY+usage [ MESH <<name> ]
         } else if (strcasecmp(token, "MESH") == 0) {
           
           if ((token = wasora_get_next_token(NULL)) == NULL) {
@@ -756,50 +769,25 @@ int wasora_mesh_parse_line(char *line) {
         } 
       }
       
-/*      
-      if (id == 0) {
-        
-      }
-      
       if (name == NULL) {
-        name = malloc(strlen(material->name)+32);
-        sprintf(name, "%s-%d", material->name, >id);
+        wasora_push_error_message("NAME is mandatory for PHYSICAL_ENTIY");
+        return WASORA_PARSER_ERROR;
       }
-*/    
+      if ((physical_entity = wasora_define_physical_entity(name, mesh, dimension)) == NULL) {
+        return WASORA_PARSER_ERROR;
+      }
       
-      physical_entity = wasora_define_physical_entity(name, id, mesh, dimension, material, bc_strings, structured_direction_undefined);
+      if (material != NULL) {
+        physical_entity->material = material;
+      }
+      
+      if (bc_strings != NULL) {
+        physical_entity->bc_strings = bc_strings;
+      }
+      
       if (pos != NULL) {
         memcpy(&physical_entity->pos, pos, 6*sizeof(expr_t));
         free(pos);
-      }
-
-      if (physical_entity->name != NULL && wasora_check_name(name) == WASORA_PARSER_OK) {
-        // volumen (o area o longitud)
-        asprintf(&dummy_aux, "%s_vol", physical_entity->name);
-        if ((physical_entity->var_vol = wasora_define_variable(dummy_aux)) == NULL) {
-          return WASORA_PARSER_ERROR;
-        }
-        free(dummy_aux);
-        
-        // centro de gravedad
-        asprintf(&dummy_aux, "%s_cog", physical_entity->name);
-        if ((physical_entity->vector_cog = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
-          return WASORA_PARSER_ERROR;
-        }
-        free(dummy_aux);
-
-        // reacciones
-        asprintf(&dummy_aux, "%s_RF", physical_entity->name);
-        if ((physical_entity->vector_R0 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
-          return WASORA_PARSER_ERROR;
-        }
-        free(dummy_aux);
-
-        asprintf(&dummy_aux, "%s_RM", physical_entity->name);
-        if ((physical_entity->vector_R1 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
-          return WASORA_PARSER_ERROR;
-        }
-        free(dummy_aux);
       }
       
       free(name);

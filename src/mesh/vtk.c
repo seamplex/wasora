@@ -163,7 +163,7 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
           fprintf(file, "%d ", 27);
           for(j = 0; j < 27 ; ++j)
             {
-            fprintf(file, " %d", mesh->element[i].node[hexa27fromgmsh[j]]->id-1);
+            fprintf(file, " %d", mesh->element[i].node[hexa27fromgmsh[j]]->tag-1);
             }
           fprintf(file, "\n");
         break;
@@ -171,7 +171,7 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
           fprintf(file, "%d ", 20);
           for(j = 0; j < 20 ; ++j)
             {
-            fprintf(file, " %d", mesh->element[i].node[hexa20fromgmsh[j]]->id-1);
+            fprintf(file, " %d", mesh->element[i].node[hexa20fromgmsh[j]]->tag-1);
             }
           fprintf(file, "\n");
         break;
@@ -182,12 +182,12 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
             // el tet10 es diferente!
             if (vtkfromgmsh_types[mesh->element[i].type->id] == 24 && (j == 8 || j == 9)) {
               if (j == 8) {
-                fprintf(file, " %d", mesh->element[i].node[9]->id-1);
+                fprintf(file, " %d", mesh->element[i].node[9]->tag-1);
               } else if (j == 9) {
-                fprintf(file, " %d", mesh->element[i].node[8]->id-1);
+                fprintf(file, " %d", mesh->element[i].node[8]->tag-1);
               }
             } else {
-              fprintf(file, " %d", mesh->element[i].node[j]->id-1);
+              fprintf(file, " %d", mesh->element[i].node[j]->tag-1);
             }
           }
           fprintf(file, "\n");

@@ -1821,9 +1821,8 @@ struct {
   // en verdad deberia ir sobre un espacio fem, no sobre una malla
   element_type_t *element_type;
 
-  physical_entity_t *physical_entities;            // por orden de aparicion
-  physical_entity_t *physical_entities_by_name;
-  physical_entity_t *physical_entities_by_id;
+  physical_entity_t *physical_entities;            // linked list por orden de aparicion
+  physical_entity_t *physical_entities_by_name;    // hash table
 
   material_t *materials;
   physical_property_t *physical_properties;
@@ -1836,14 +1835,13 @@ struct {
 
 // nodos
 struct node_t {
-  int id;
+  int tag;
+  int index;
 
-  double x[3];       // coordenadas espaciales del nodo
-  int *index;        // indice del vector incognita para cada uno de los grados de libertad
+  double x[3];           // coordenadas espaciales del nodo
+  int *index_dof;        // indice del vector incognita para cada uno de los grados de libertad
 
   element_list_item_t *associated_elements;
-//  material_list_item_t *materials_list;
-//  material_t *master_material;
 };
 
 
@@ -1891,7 +1889,7 @@ struct gauss_t {
 
 struct physical_entity_t {
   char *name;
-  int id;
+  int tag;
   int dimension;
   
   mesh_t *mesh;
@@ -1956,7 +1954,6 @@ struct physical_entity_t {
 };
 
 struct geometrical_entity_t {
-  int dimension;
   int tag;
   double boxMinX, boxMinY, boxMinZ, boxMaxX, boxMaxY, boxMaxZ;
   int num_physicals;
@@ -1987,16 +1984,13 @@ struct bc_string_based_t {
 
 
 struct element_t {
-
-  int id;
+  int index;
+  int tag;
 
   element_type_t *type;                      // apuntador a tipo de elemento
   physical_entity_t *physical_entity;        // apuntador a la entidad fisica
   node_t **node;                             // apuntadores a los nodos
   cell_t *cell;                              // apuntador a la celda asociada al elemento (solo para FVM)
-
-  int ntags;                                 // cantidad de tags (ver documentacion de gmsh)
-  int *tag;                                  // el primero es la entidad fisica
 };
 
 
@@ -2075,7 +2069,7 @@ struct mesh_t {
   
   // cantidad de entidades geometricas
   int points, curves, surfaces, volumes;
-  geometrical_entity_t *geometrical_entity;
+  geometrical_entity_t *geometrical_entity[4];
   
   enum  {
     ordering_node_based,
@@ -2181,10 +2175,10 @@ struct mesh_t {
   physical_entity_t *left;
   physical_entity_t *right;
   physical_entity_t *front;
-  physical_entity_t *back;
+  physical_entity_t *rear;
   physical_entity_t *bottom;
   physical_entity_t *top;    
-  physical_entity_t *bulk;
+//  physical_entity_t *bulk;
   
   UT_hash_handle hh;
 
@@ -2481,7 +2475,7 @@ extern void mesh_set_xyz(double *, struct var_t *, struct var_t *, struct var_t 
 
 extern mesh_t *wasora_define_mesh(char *, file_t *, int, int, int, int, int, expr_t *, expr_t *, expr_t *, expr_t *, expr_t *);
 extern material_t *wasora_define_material(const char *);
-extern physical_entity_t *wasora_define_physical_entity(char *, int, mesh_t *, int, material_t *, bc_string_based_t *, int);
+extern physical_entity_t *wasora_define_physical_entity(char *, mesh_t *, int);
 extern physical_property_t *wasora_define_physical_property(const char *, mesh_t *);
 extern property_data_t *wasora_define_property_data(const char *, const char *, const char *);
 

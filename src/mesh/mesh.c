@@ -120,21 +120,42 @@ int wasora_instruction_mesh(void *arg) {
   }
   
   // barremos los elementos y resolvemos la physical entity asociada
-  // esto lo hacemos solo para la primera malla
-  if (wasora_mesh.meshes == mesh) {
-    LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-      if (physical_entity->n_elements != 0) {
-        physical_entity->element = malloc(physical_entity->n_elements * sizeof(int));
-      }
-    }
-  
-    for (i = 0; i < mesh->n_elements; i++) { 
-      physical_entity = mesh->element[i].physical_entity;
-      if (physical_entity != NULL && physical_entity->i_element < physical_entity->n_elements) {
-        physical_entity->element[physical_entity->i_element++] = i;
-      }
+  // primero alocamos
+  LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+    if (physical_entity->mesh == mesh && physical_entity->n_elements != 0) {
+      physical_entity->element = malloc(physical_entity->n_elements * sizeof(int));
     }
   }
+  
+  for (i = 0; i < mesh->n_elements; i++) {
+    
+    // vemos la dimension del elemento -> la mayor es la de la malla
+    if (mesh->element[i].type->dim > mesh->bulk_dimensions) {
+      mesh->bulk_dimensions = mesh->element[i].type->dim;
+    }
+
+    // el orden
+    if (mesh->element[i].type->order > mesh->order) {
+      mesh->order = mesh->element[i].type->order;
+    }
+
+    // nos acordamos del elemento que tenga el mayor numero de nodos
+    if (mesh->element[i].type->nodes > mesh->max_nodes_per_element) {
+      mesh->max_nodes_per_element = mesh->element[i].type->nodes;
+    }
+
+    // y del que tenga mayor cantidad de vecinos
+    if (mesh->element[i].type->faces > mesh->max_faces_per_element) {
+      mesh->max_faces_per_element = mesh->element[i].type->faces;
+    }
+
+    // armamos la lista de elementos de cada entidad
+    physical_entity = mesh->element[i].physical_entity;
+    if (physical_entity != NULL && physical_entity->mesh == mesh && physical_entity->i_element < physical_entity->n_elements) {
+      physical_entity->element[physical_entity->i_element++] = i;
+    }
+  }
+ 
   
   // rellenamos un array de nodos que pueda ser usado como argumento de funciones
   mesh->nodes_argument = malloc(mesh->spatial_dimensions * sizeof(double *));
@@ -183,43 +204,42 @@ int wasora_instruction_mesh(void *arg) {
   }
   
   // calculamos el volumen (o superficie o longitud) y el centro de masa de las physical entities
-  // solo para la primera malla (y no la principal!)
-  if (mesh == wasora_mesh.meshes && mesh->bulk_dimensions != 0) {
+  if (mesh->bulk_dimensions != 0) {
     LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
-      vol = cog[0] = cog[1] = cog[2] = 0;
-      for (i = 0; i < physical_entity->n_elements; i++) {
-        element = &mesh->element[physical_entity->element[i]];
-        for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
-          w = mesh_integration_weight(mesh, element, v);
+      if (physical_entity->mesh == mesh) {
+        vol = cog[0] = cog[1] = cog[2] = 0;
+        for (i = 0; i < physical_entity->n_elements; i++) {
+          element = &mesh->element[physical_entity->element[i]];
+          for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
+            w = mesh_integration_weight(mesh, element, v);
 
-          for (j = 0; j < element->type->nodes; j++) {
-            vol += w * gsl_vector_get(mesh->fem.h, j);
-            cog[0] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[0];
-            cog[1] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[1];
-            cog[2] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[2];
+            for (j = 0; j < element->type->nodes; j++) {
+              vol += w * gsl_vector_get(mesh->fem.h, j);
+              cog[0] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[0];
+              cog[1] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[1];
+              cog[2] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[2];
+            }
           }
         }
-      }
-      physical_entity->volume = vol;
-      physical_entity->cog[0] = cog[0]/vol;
-      physical_entity->cog[1] = cog[1]/vol;
-      physical_entity->cog[2] = cog[2]/vol;
-      
-      
-      // las pasamos a wasora para que esten disponibles en el input
-      if (physical_entity->var_vol != NULL) {
-        wasora_var_value(physical_entity->var_vol) = vol;
-      }
-      
-      if (physical_entity->vector_cog != NULL) {
-        if (!physical_entity->vector_cog->initialized) {
-          wasora_call(wasora_vector_init(physical_entity->vector_cog));
+        physical_entity->volume = vol;
+        physical_entity->cog[0] = cog[0]/vol;
+        physical_entity->cog[1] = cog[1]/vol;
+        physical_entity->cog[2] = cog[2]/vol;
+        
+        // las pasamos a wasora para que esten disponibles en el input
+        if (physical_entity->var_vol != NULL) {
+          wasora_var_value(physical_entity->var_vol) = vol;
         }
-        gsl_vector_set(physical_entity->vector_cog->value, 0, physical_entity->cog[0]);
-        gsl_vector_set(physical_entity->vector_cog->value, 1, physical_entity->cog[1]);
-        gsl_vector_set(physical_entity->vector_cog->value, 2, physical_entity->cog[2]);
-      }
       
+        if (physical_entity->vector_cog != NULL) {
+          if (!physical_entity->vector_cog->initialized) {
+            wasora_call(wasora_vector_init(physical_entity->vector_cog));
+          }
+          gsl_vector_set(physical_entity->vector_cog->value, 0, physical_entity->cog[0]);
+          gsl_vector_set(physical_entity->vector_cog->value, 1, physical_entity->cog[1]);
+          gsl_vector_set(physical_entity->vector_cog->value, 2, physical_entity->cog[2]);
+        }
+      }
     }
   }
   

@@ -86,14 +86,14 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *mesh, int d
     return NULL;
   }
   
-  HASH_FIND(hh_name, wasora_mesh.physical_entities_by_name, name, strlen(name), physical_entity);
+  HASH_FIND_STR(wasora_mesh.physical_entities_by_name, name, physical_entity);
   if (physical_entity == NULL) {
     physical_entity = calloc(1, sizeof(physical_entity_t));
     physical_entity->name = strdup(name);
     // linked list en orden de aparicion
     LL_APPEND(wasora_mesh.physical_entities, physical_entity);
     // hashed list por nombre
-    HASH_ADD_KEYPTR(hh_name, wasora_mesh.physical_entities_by_name, physical_entity->name, strlen(physical_entity->name), physical_entity);
+    HASH_ADD_STR(wasora_mesh.physical_entities_by_name, name, physical_entity);
   }
 
 /*  

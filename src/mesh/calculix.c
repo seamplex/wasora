@@ -53,7 +53,7 @@ int mesh_frd_readmesh(mesh_t *mesh) {
   int tags[2];
   int node;
 //  int dimension;
-  int cell_id;
+//  int cell_id;
   int spatial_dimensions;
   int bulk_dimensions;
   int order;
@@ -61,8 +61,8 @@ int mesh_frd_readmesh(mesh_t *mesh) {
   int format;
   int minusone, minustwo, minusthree;
   
-  char *dummy;
-  char *name;
+//  char *dummy;
+//  char *name;
   
   if (mesh->file->pointer == NULL) {
     wasora_call(wasora_instruction_open_file(mesh->file));

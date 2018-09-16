@@ -919,8 +919,7 @@ material_t *wasora_get_material_ptr(const char *name) {
 // devuelve la direccion de la  physical entity que se llama name
 physical_entity_t *wasora_get_physical_entity_ptr(const char *name) {
   physical_entity_t *physical_entity;
-//  HASH_FIND_STR(wasora_mesh.physical_entities_by_name, name, physical_entity);
-  HASH_FIND(hh_name, wasora_mesh.physical_entities_by_name, name, (unsigned)uthash_strlen(name), physical_entity);
+  HASH_FIND_STR(wasora_mesh.physical_entities_by_name, name, physical_entity);
   return physical_entity;
 }
 

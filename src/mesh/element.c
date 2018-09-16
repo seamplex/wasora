@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related element routines
  *
- *  Copyright (C) 2015--2016 jeremy theler
+ *  Copyright (C) 2015--2018 jeremy theler
  *
  *  This file is part of wasora.
  *

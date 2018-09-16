@@ -1753,8 +1753,8 @@ typedef enum {
 #define ELEMENT_TYPE_HEXAHEDRON27   12 
 #define ELEMENT_TYPE_POINT          15
 #define ELEMENT_TYPE_QUADRANGLE8    16
-#define ELEMENT_TYPE_HEXAHEDRON20   17 
-#define NUMBER_ELEMENT_TYPE         18  
+#define ELEMENT_TYPE_HEXAHEDRON20   17
+#define NUMBER_ELEMENT_TYPE         18
 
 #define GAUSS_POINTS_SINGLE       0
 #define GAUSS_POINTS_CANONICAL    1
@@ -1940,17 +1940,15 @@ struct physical_entity_t {
   vector_t *vector_cog;
   vector_t *vector_R0;
   vector_t *vector_R1;
-  
-  
+    
   // una linked list es muy cara
-//  element_list_item_t *elements;
   int n_elements;
   int i_element;
   int *element;
   
   physical_entity_t *next;
-  UT_hash_handle hh_id;
-  UT_hash_handle hh_name;
+  UT_hash_handle hh;
+  UT_hash_handle hh_dim_tag;
 };
 
 struct geometrical_entity_t {

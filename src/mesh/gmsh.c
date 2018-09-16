@@ -446,15 +446,15 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             
             if (ntags > 1) {
               // buscamos en el hash local tag,dim
-              snprintf(buffer, BUFFER_SIZE-1, "%d,%d", mesh->element[i].type->dim, tags[1]);
+              snprintf(buffer, BUFFER_SIZE-1, "%d,%d", mesh->element[i].type->dim, tags[0]);
               HASH_FIND(hh_dim_tag, physical_entities_by_dim_tag, buffer, (unsigned)uthash_strlen(buffer), physical_entity);
               if ((mesh->element[i].physical_entity = physical_entity) == NULL) {
                 // si no encontramos ninguna, hay que crear una
                 if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, mesh->element[i].type->dim)) == NULL) {
                   return WASORA_RUNTIME_ERROR;
                 }
-                HASH_ADD_KEYPTR(hh_dim_tag, physical_entities_by_dim_tag, buffer, strlen(buffer), physical_entity);
-                mesh->element[i].physical_entity->tag = tags[1];
+                HASH_ADD_KEYPTR(hh_dim_tag, physical_entities_by_dim_tag, buffer, strlen(buffer), mesh->element[i].physical_entity);
+                mesh->element[i].physical_entity->tag = tags[0];
               }
               mesh->element[i].physical_entity->n_elements++;
             }
@@ -521,6 +521,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
                 if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, mesh->element[i].type->dim)) == NULL) {
                   return WASORA_RUNTIME_ERROR;
                 }
+                HASH_ADD_KEYPTR(hh_dim_tag, physical_entities_by_dim_tag, buffer, strlen(buffer), mesh->element[i].physical_entity);
                 mesh->element[i].physical_entity->tag = tag;
               }
               physical_entity->n_elements++;
@@ -737,17 +738,6 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   
   free(tag2index);
   
-  // verificamos que la malla tenga la dimension esperada
-  if (mesh->bulk_dimensions == 0) {
-    mesh->bulk_dimensions = bulk_dimensions;
-  } else if (mesh->bulk_dimensions != bulk_dimensions) {
-    wasora_push_error_message("mesh '%s' is expected to have %d dimensions but it has %d", mesh->file->path, mesh->bulk_dimensions, bulk_dimensions);
-    return WASORA_RUNTIME_ERROR;
-  }
-  
-  mesh->spatial_dimensions = spatial_dimensions;
-  mesh->order = order;  
-
   return WASORA_RUNTIME_OK;
 }
 

@@ -112,7 +112,7 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *mesh, int d
     physical_entity->dimension = dimension;
   }
 
-  if (physical_entity->mesh != NULL && mesh != NULL && physical_entity->mesh != NULL) {
+  if (physical_entity->mesh != NULL && mesh != NULL && physical_entity->mesh != mesh) {
     wasora_push_error_message("physical entity '%s' has been previously defined over mesh '%s' and now mesh '%s' is required", name, physical_entity->mesh, mesh);
     return NULL;
   } else if (physical_entity->dimension == 0 && dimension != 0) {

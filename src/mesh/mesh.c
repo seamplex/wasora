@@ -35,6 +35,7 @@ int wasora_instruction_mesh(void *arg) {
   element_t *element;
   int i, j, d, v;
   int first_neighbor_nodes;
+  int bulk_dimensions;
   double scale_factor;
   double offset[3];
   double w, vol;
@@ -100,24 +101,6 @@ int wasora_instruction_mesh(void *arg) {
       }
     }
   }
-
-  // armamos un kd-tree de nodos y miramos cual es la mayor cantidad de vecinos que tiene un nodo
-  if (mesh->kd_nodes == NULL) {
-    mesh->kd_nodes = kd_create(mesh->spatial_dimensions);
-    for (j = 0; j < mesh->n_nodes; j++) {
-      kd_insert(mesh->kd_nodes, mesh->node[j].x, &mesh->node[j]);
-    
-      first_neighbor_nodes = 1;  // el nodo mismo
-      LL_FOREACH(mesh->node[j].associated_elements, associated_element) {
-        if (associated_element->element->type->dim == mesh->bulk_dimensions) {
-          first_neighbor_nodes += (associated_element->element->type->nodes) - (associated_element->element->type->nodes_per_face);
-        }
-      }
-      if (first_neighbor_nodes > mesh->max_first_neighbor_nodes) {
-        mesh->max_first_neighbor_nodes = first_neighbor_nodes;
-      }
-    }
-  }
   
   // barremos los elementos y resolvemos la physical entity asociada
   // primero alocamos
@@ -130,8 +113,8 @@ int wasora_instruction_mesh(void *arg) {
   for (i = 0; i < mesh->n_elements; i++) {
     
     // vemos la dimension del elemento -> la mayor es la de la malla
-    if (mesh->element[i].type->dim > mesh->bulk_dimensions) {
-      mesh->bulk_dimensions = mesh->element[i].type->dim;
+    if (mesh->element[i].type->dim > bulk_dimensions) {
+      bulk_dimensions = mesh->element[i].type->dim;
     }
 
     // el orden
@@ -156,7 +139,14 @@ int wasora_instruction_mesh(void *arg) {
     }
   }
  
-  
+  // verificamos que la malla tenga la dimension esperada
+  if (mesh->bulk_dimensions == 0) {
+    mesh->bulk_dimensions = bulk_dimensions;
+  } else if (mesh->bulk_dimensions != bulk_dimensions) {
+    wasora_push_error_message("mesh '%s' is expected to have %d dimensions but it has %d", mesh->file->path, mesh->bulk_dimensions, bulk_dimensions);
+    return WASORA_RUNTIME_ERROR;
+  }
+    
   // rellenamos un array de nodos que pueda ser usado como argumento de funciones
   mesh->nodes_argument = malloc(mesh->spatial_dimensions * sizeof(double *));
   for (d = 0; d < mesh->spatial_dimensions; d++) {
@@ -168,6 +158,7 @@ int wasora_instruction_mesh(void *arg) {
   
   // idem de celdas
   // TODO: ver si hay que hacerlo siempre
+/*  
   wasora_call(mesh_element2cell(mesh));
   mesh->cells_argument = malloc(mesh->spatial_dimensions * sizeof(double *));
   for (d = 0; d < mesh->spatial_dimensions; d++) {
@@ -176,6 +167,7 @@ int wasora_instruction_mesh(void *arg) {
       mesh->cells_argument[d][i] = mesh->cell[i].x[d]; 
     }
   }
+*/
 
   if (wasora_mesh.main_mesh == mesh) {
     wasora_var(wasora_mesh.vars.cells) = (double)mesh->n_cells;
@@ -242,6 +234,24 @@ int wasora_instruction_mesh(void *arg) {
       }
     }
   }
+  
+  // armamos un kd-tree de nodos y miramos cual es la mayor cantidad de vecinos que tiene un nodo
+  if (mesh->kd_nodes == NULL) {
+    mesh->kd_nodes = kd_create(mesh->spatial_dimensions);
+    for (j = 0; j < mesh->n_nodes; j++) {
+      kd_insert(mesh->kd_nodes, mesh->node[j].x, &mesh->node[j]);
+    
+      first_neighbor_nodes = 1;  // el nodo mismo
+      LL_FOREACH(mesh->node[j].associated_elements, associated_element) {
+        if (associated_element->element->type->dim == mesh->bulk_dimensions) {
+          first_neighbor_nodes += (associated_element->element->type->nodes) - (associated_element->element->type->nodes_per_face);
+        }
+      }
+      if (first_neighbor_nodes > mesh->max_first_neighbor_nodes) {
+        mesh->max_first_neighbor_nodes = first_neighbor_nodes;
+      }
+    }
+  }  
   
   // esto es todo amigos!
   mesh->initialized = 1;

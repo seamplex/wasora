@@ -35,7 +35,7 @@ int wasora_instruction_mesh(void *arg) {
   element_t *element;
   int i, j, d, v;
   int first_neighbor_nodes;
-  int bulk_dimensions;
+  int bulk_dimensions = 0;
   double scale_factor;
   double offset[3];
   double w, vol;

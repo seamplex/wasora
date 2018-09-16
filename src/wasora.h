@@ -1948,7 +1948,7 @@ struct physical_entity_t {
   
   physical_entity_t *next;
   UT_hash_handle hh;
-  UT_hash_handle hh_dim_tag;
+  UT_hash_handle hh_tag[4];
 };
 
 struct geometrical_entity_t {

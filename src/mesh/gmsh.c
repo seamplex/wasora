@@ -37,7 +37,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   char *dummy = NULL;
   char *name = NULL;
   physical_entity_t *physical_entity = NULL;
-  physical_entity_t *physical_entities_by_dim_tag = NULL; // hash table
+  physical_entity_t *physical_entities_by_tag[4];
 
   int i, j, k, l;
   int i_entity[4];
@@ -49,20 +49,16 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   int node;
   int dimension;
   int cell_id;
-  int spatial_dimensions;
-  int bulk_dimensions;
-  int order;
 
+  physical_entities_by_tag[0] = NULL;
+  physical_entities_by_tag[1] = NULL;
+  physical_entities_by_tag[2] = NULL;
+  physical_entities_by_tag[3] = NULL;
+  
 
   if (mesh->file->pointer == NULL) {
     wasora_call(wasora_instruction_open_file(mesh->file));
   }
-
-  // empezamos suponiendo cero dimensiones y vamos viendo cual es el elemento
-  // de mayor dimension que aparece -> esa es la de la malla
-  bulk_dimensions = 0;
-  spatial_dimensions = 0;
-  order = 0; // idem con el orden
   
   while (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) != NULL) {
 
@@ -186,8 +182,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
 
         // agregamos la entity a un hash local para despues
         // resolver el apuntador desde cada elemento "mas o menos" facil
-        snprintf(buffer, BUFFER_SIZE-1, "%d,%d", dimension, tag);
-        HASH_ADD_KEYPTR(hh_dim_tag, physical_entities_by_dim_tag, buffer, (unsigned)uthash_strlen(buffer), physical_entity);
+        HASH_ADD(hh_tag[dimension], physical_entities_by_tag[dimension], tag, sizeof(int), physical_entity);
 
         // si la physical entity no tiene material, buscamos uno que se llame igual
         if (physical_entity->material == NULL) {
@@ -446,15 +441,14 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             
             if (ntags > 1) {
               // buscamos en el hash local tag,dim
-              snprintf(buffer, BUFFER_SIZE-1, "%d,%d", mesh->element[i].type->dim, tags[0]);
-              HASH_FIND(hh_dim_tag, physical_entities_by_dim_tag, buffer, (unsigned)uthash_strlen(buffer), physical_entity);
+              HASH_FIND(hh_tag[dimension], physical_entities_by_tag[dimension], &tags[0], sizeof(int), physical_entity);
               if ((mesh->element[i].physical_entity = physical_entity) == NULL) {
                 // si no encontramos ninguna, hay que crear una
                 if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, mesh->element[i].type->dim)) == NULL) {
                   return WASORA_RUNTIME_ERROR;
                 }
-                HASH_ADD_KEYPTR(hh_dim_tag, physical_entities_by_dim_tag, buffer, strlen(buffer), mesh->element[i].physical_entity);
                 mesh->element[i].physical_entity->tag = tags[0];
+                HASH_ADD(hh_tag[dimension], physical_entities_by_tag[dimension], tag, sizeof(int), mesh->element[i].physical_entity);
               }
               mesh->element[i].physical_entity->n_elements++;
             }
@@ -515,14 +509,13 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
               // que hacemos si hay mas de una? la primera? la ultima?
               tag = mesh->geometrical_entity[dim][tag_geo].physical[0];
               // TODO: SPOT
-              snprintf(buffer, BUFFER_SIZE-1, "%d,%d", mesh->element[i].type->dim, tag);
-              HASH_FIND(hh_dim_tag, physical_entities_by_dim_tag, buffer, strlen(buffer), physical_entity);
+              HASH_FIND(hh_tag[dimension], physical_entities_by_tag[dimension], &tag, sizeof(int), physical_entity);
               if ((mesh->element[i].physical_entity = physical_entity) == NULL) {
                 if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, mesh->element[i].type->dim)) == NULL) {
                   return WASORA_RUNTIME_ERROR;
                 }
-                HASH_ADD_KEYPTR(hh_dim_tag, physical_entities_by_dim_tag, buffer, strlen(buffer), mesh->element[i].physical_entity);
                 mesh->element[i].physical_entity->tag = tag;
+                HASH_ADD(hh_tag[dimension], physical_entities_by_tag[dimension], tag, sizeof(int), mesh->element[i].physical_entity);
               }
               physical_entity->n_elements++;
             }

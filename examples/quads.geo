@@ -9,6 +9,6 @@ Mesh.CharacteristicLengthMax = a/3;
 Mesh.CharacteristicLengthMin = a/3;
 
 Mesh.Algorithm = 6;
-//Mesh.RecombineAll = 1;
-//Mesh.ElementOrder = 2;
+Mesh.RecombineAll = 1;
+Mesh.ElementOrder = 2;
 

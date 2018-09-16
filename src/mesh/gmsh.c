@@ -781,14 +781,14 @@ int mesh_gmsh_write_mesh(mesh_t *mesh, int no_physical_names, FILE *file) {
   fprintf(file, "$Nodes\n");
   fprintf(file, "%d\n", mesh->n_nodes);
   for (i = 0; i < mesh->n_nodes; i++) {
-    fprintf(file, "%d %g %g %g\n", mesh->node[i].index, mesh->node[i].x[0], mesh->node[i].x[1], mesh->node[i].x[2]);
+    fprintf(file, "%d %g %g %g\n", mesh->node[i].tag, mesh->node[i].x[0], mesh->node[i].x[1], mesh->node[i].x[2]);
   }
   fprintf(file, "$EndNodes\n");
 
   fprintf(file, "$Elements\n");
   fprintf(file, "%d\n", mesh->n_elements);
   for (i = 0; i < mesh->n_elements; i++) {
-    fprintf(file, "%d ", mesh->element[i].index);
+    fprintf(file, "%d ", mesh->element[i].tag);
     fprintf(file, "%d ", mesh->element[i].type->id);
 
     // en principio aca tendriamos que poner los tags y que se yo
@@ -803,7 +803,7 @@ int mesh_gmsh_write_mesh(mesh_t *mesh, int no_physical_names, FILE *file) {
     }
     // los nodos
     for (j = 0; j < mesh->element[i].type->nodes; j++) {
-      fprintf(file, " %d", mesh->element[i].node[j]->index);
+      fprintf(file, " %d", mesh->element[i].node[j]->tag);
     }
     fprintf(file, "\n");
   }
@@ -875,11 +875,11 @@ int mesh_gmsh_write_scalar(mesh_post_t *mesh_post, function_t *function, centeri
   
     if (function->type == type_pointwise_mesh_node) {
       for (i = 0; i < function->data_size; i++) {
-        fprintf(mesh_post->file->pointer, "%d %g\n", mesh->node[i].index, function->data_value[i]);
+        fprintf(mesh_post->file->pointer, "%d %g\n", mesh->node[i].tag, function->data_value[i]);
       }
     } else {
       for (i = 0; i < mesh->n_nodes; i++) {
-        fprintf(mesh_post->file->pointer, "%d %g\n", mesh->node[i].index, wasora_evaluate_function(function, mesh->node[i].x));
+        fprintf(mesh_post->file->pointer, "%d %g\n", mesh->node[i].tag, wasora_evaluate_function(function, mesh->node[i].x));
       }
     }
     fprintf(mesh_post->file->pointer, "$EndNodeData\n");    
@@ -945,7 +945,7 @@ int mesh_gmsh_write_vector(mesh_post_t *mesh_post, function_t **function, center
     fprintf(mesh_post->file->pointer, "%d\n", mesh->n_nodes);              
   
     for (i = 0; i < mesh->n_nodes; i++) {
-      fprintf(mesh_post->file->pointer, "%d %g %g %g\n", mesh->node[i].index,
+      fprintf(mesh_post->file->pointer, "%d %g %g %g\n", mesh->node[i].tag,
                                                          wasora_evaluate_function(function[0], mesh->node[i].x),
                                                          wasora_evaluate_function(function[1], mesh->node[i].x),
                                                          wasora_evaluate_function(function[2], mesh->node[i].x));

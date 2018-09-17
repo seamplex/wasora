@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related routines
  *
- *  Copyright (C) 2014--2017 jeremy theler
+ *  Copyright (C) 2014--2018 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -67,15 +67,15 @@ int wasora_instruction_mesh(void *arg) {
   mesh->bounding_box_min.associated_elements = NULL;
   mesh->bounding_box_max.associated_elements = NULL;
   
-  for (d = 0; d < 3; d++) {
-    x_min[d] = mesh->node[0].x[d];
-    x_max[d] = mesh->node[0].x[d];
-  }
-  
   scale_factor = wasora_evaluate_expression(mesh->scale_factor);
   offset[0] = wasora_evaluate_expression(mesh->offset_x);
   offset[1] = wasora_evaluate_expression(mesh->offset_y);
   offset[2] = wasora_evaluate_expression(mesh->offset_z);
+
+  for (d = 0; d < 3; d++) {
+    x_min[d] = +1e22;
+    x_max[d] = -1e22;
+  }
   
   for (j = 0; j < mesh->n_nodes; j++) {
     for (d = 0; d < 3; d++) {
@@ -102,8 +102,9 @@ int wasora_instruction_mesh(void *arg) {
     }
   }
   
-  // barremos los elementos y resolvemos la physical entity asociada
-  // primero alocamos
+  // alocamos los arrays de los elementos que pertenecen a cada entidad fisica
+  // (un array es mas eficiente que una linked list)
+  // TODO: por que no tenemoms un element_list?
   LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
     if (physical_entity->mesh == mesh && physical_entity->n_elements != 0) {
       physical_entity->element = malloc(physical_entity->n_elements * sizeof(int));
@@ -148,6 +149,7 @@ int wasora_instruction_mesh(void *arg) {
   }
     
   // rellenamos un array de nodos que pueda ser usado como argumento de funciones
+  // TODO: poner esto en el loop de arriba?
   mesh->nodes_argument = malloc(mesh->spatial_dimensions * sizeof(double *));
   for (d = 0; d < mesh->spatial_dimensions; d++) {
     mesh->nodes_argument[d] = malloc(mesh->n_nodes * sizeof(double));
@@ -158,7 +160,6 @@ int wasora_instruction_mesh(void *arg) {
   
   // idem de celdas
   // TODO: ver si hay que hacerlo siempre
-/*  
   wasora_call(mesh_element2cell(mesh));
   mesh->cells_argument = malloc(mesh->spatial_dimensions * sizeof(double *));
   for (d = 0; d < mesh->spatial_dimensions; d++) {
@@ -167,7 +168,6 @@ int wasora_instruction_mesh(void *arg) {
       mesh->cells_argument[d][i] = mesh->cell[i].x[d]; 
     }
   }
-*/
 
   if (wasora_mesh.main_mesh == mesh) {
     wasora_var(wasora_mesh.vars.cells) = (double)mesh->n_cells;

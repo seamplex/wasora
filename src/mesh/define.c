@@ -95,6 +95,8 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *mesh, int d
     // hashed list por nombre
     HASH_ADD_STR(wasora_mesh.physical_entities_by_name, name, physical_entity);
   }
+  
+  
 
 /*  
   if (physical_entity->id != 0 && id != 0 && physical_entity->id != id) {
@@ -104,6 +106,12 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *mesh, int d
     physical_entity->id = id;
   }
  */
+  if (physical_entity->mesh != NULL && mesh != NULL && physical_entity->mesh != mesh) {
+    wasora_push_error_message("physical entity '%s' is both in mesh '%s' and '%s'", name, physical_entity->mesh->name, mesh->name);
+    return NULL;
+  } else if (physical_entity->mesh == NULL && mesh != NULL) {
+    physical_entity->mesh = mesh;
+  }
 
   if (physical_entity->dimension != 0 && dimension != 0 && physical_entity->dimension != dimension) {
     wasora_push_error_message("physical entity '%s' has been previously defined as dimension '%d' and now dimension '%d' is required", name, physical_entity->dimension, dimension);

@@ -145,23 +145,15 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           return WASORA_RUNTIME_ERROR;
         }
         name = strdup(dummy+1);
-
-        HASH_FIND_STR(wasora_mesh.physical_entities_by_name, name, physical_entity);
        
-        if (physical_entity == NULL) {
+        if ((physical_entity = wasora_get_physical_entity_ptr(name, mesh)) == NULL) {
           // creamos una de prepo
           if ((physical_entity = wasora_define_physical_entity(name, mesh, dimension)) == NULL) {
             return WASORA_RUNTIME_ERROR;
           }
           physical_entity->tag = tag;
         } else {
-          // si ya hay una, primero miramos que corresponda a esta misma malla
-          if (physical_entity->mesh == NULL) {
-            physical_entity->mesh = mesh;
-          } else if (physical_entity->mesh != mesh) {
-            wasora_push_error_message("physical entity '%s' in mesh '%s' already belongs to mesh '%s'", name, mesh->name, physical_entity->mesh->name);
-          }
-          // y despues verificamos que no tenga id numerica
+          // verificamos que no tenga id numerica
           if (physical_entity->tag == 0) {
             physical_entity->tag = tag;
           } else if (physical_entity->tag != tag) {
@@ -747,7 +739,7 @@ int mesh_gmsh_write_mesh(mesh_t *mesh, int no_physical_names, FILE *file) {
   if (no_physical_names == 0) {
     // tenemos que contar las physical entities primero
     n = 0;
-    LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+    LL_FOREACH(mesh->physical_entities, physical_entity) {
       if (physical_entity->name != NULL) {
         n++;
       }
@@ -757,7 +749,7 @@ int mesh_gmsh_write_mesh(mesh_t *mesh, int no_physical_names, FILE *file) {
       fprintf(file, "%d\n", n);
   
       // y despues barrerlas
-      LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+      LL_FOREACH(mesh->physical_entities, physical_entity) {
         if (physical_entity->name != NULL) {
           fprintf(file, "%d %d \"%s\"\n", physical_entity->dimension, physical_entity->tag, physical_entity->name);
         }

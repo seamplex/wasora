@@ -354,7 +354,7 @@ int mesh_create_structured(mesh_t *mesh) {
   
   // barremos las physical entities que no tengan bcs y las aplicamos a los elementos
   i_entity = 0;
-  LL_FOREACH(wasora_mesh.physical_entities, physical_entity) {
+  LL_FOREACH(mesh->physical_entities, physical_entity) {
     if (physical_entity->tag == 0) {
       physical_entity->tag = ++i_entity;
     }

@@ -1825,8 +1825,8 @@ struct {
   // TODO: ver si las necesitamos aca o en cada malla
   // si las tenemos por malla podemos detectar ambiguedades y quejarnos
   // solo cuando tenemos que quejarnos y no siempre
-  physical_entity_t *physical_entities;                 // linked list por orden de aparicion
-  physical_entity_t *physical_entities_by_name;         // hash table
+//  physical_entity_t *physical_entities;                 // linked list por orden de aparicion
+//  physical_entity_t *physical_entities_by_name;         // hash table
 
   material_t *materials;
   physical_property_t *physical_properties;
@@ -1895,8 +1895,6 @@ struct physical_entity_t {
   char *name;
   int tag;
   int dimension;
-  
-  mesh_t *mesh;
   
   // apuntador al material
   material_t *material;
@@ -2071,15 +2069,14 @@ struct mesh_t {
   int degrees_of_freedom;        // grados de libertad por incognita
   int order;                     // mayor orden de algun elemento
 
-  // 4 hash tables por tag
-  physical_entity_t *physical_entities_by_tag[4];
+  physical_entity_t *physical_entities;                 // linked list por orden de aparicion
+  physical_entity_t *physical_entities_by_name;         // hash table
+  physical_entity_t *physical_entities_by_tag[4];       // 4 hash tables por tag
   
   // cantidad de entidades geometricas
   int points, curves, surfaces, volumes;
-  
-  geometrical_entity_t *geometrical_entities[4]; // 4 has tables
+  geometrical_entity_t *geometrical_entities[4]; // 4 hash tables
 
-  
   enum  {
     ordering_node_based,
     ordering_unknown_based,
@@ -2489,7 +2486,7 @@ extern physical_property_t *wasora_define_physical_property(const char *, mesh_t
 extern property_data_t *wasora_define_property_data(const char *, const char *, const char *);
 
 extern material_t  *wasora_get_material_ptr(const char *);
-extern physical_entity_t *wasora_get_physical_entity_ptr(const char *);
+extern physical_entity_t *wasora_get_physical_entity_ptr(const char *, mesh_t *);
 
 
 

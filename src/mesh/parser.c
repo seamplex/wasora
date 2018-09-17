@@ -414,13 +414,22 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_INTEGRATE+usage | EXPRESSION <expr> }
         } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
           wasora_call(wasora_parser_expression(&mesh_integrate->expr));
-        
+///kw+MESH_INTEGRATE+usage [ MESH <mesh_identifier> ]
+        } else if (strcasecmp(token, "MESH") == 0) {
+          char *mesh_name;
+          wasora_call(wasora_parser_string(&mesh_name));
+          if ((mesh_integrate->mesh = wasora_get_mesh_ptr(mesh_name)) == NULL) {
+            wasora_push_error_message("unknown mesh '%s'", mesh_name);
+            free(mesh_name);
+            return WASORA_PARSER_ERROR;
+          }
+          free(mesh_name);        
 ///kw+MESH_INTEGRATE+usage OVER <physical_entity_name>
         } else if (strcasecmp(token, "OVER") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
-          if ((mesh_integrate->physical_entity = wasora_get_physical_entity_ptr(name)) == NULL) {
-            if ((mesh_integrate->physical_entity = wasora_define_physical_entity(name, NULL, 0)) == NULL) {
+          if ((mesh_integrate->physical_entity = wasora_get_physical_entity_ptr(name, mesh_integrate->mesh)) == NULL) {
+            if ((mesh_integrate->physical_entity = wasora_define_physical_entity(name, mesh_integrate->mesh, 0)) == NULL) {
               free(name);
               return WASORA_PARSER_ERROR;
             }
@@ -433,17 +442,6 @@ int wasora_mesh_parse_line(char *line) {
           if ((mesh_integrate->result = wasora_get_or_define_variable_ptr(variable)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
-
-///kw+MESH_INTEGRATE+usage [ MESH <mesh_identifier> ]
-        } else if (strcasecmp(token, "MESH") == 0) {
-          char *mesh_name;
-          wasora_call(wasora_parser_string(&mesh_name));
-          if ((mesh_integrate->mesh = wasora_get_mesh_ptr(mesh_name)) == NULL) {
-            wasora_push_error_message("unknown mesh '%s'", mesh_name);
-            free(mesh_name);
-            return WASORA_PARSER_ERROR;
-          }
-          free(mesh_name);
           
 ///kw+MESH_INTEGRATE+usage [ NODES
         } else if (strcasecmp(token, "NODES") == 0) {
@@ -587,8 +585,8 @@ int wasora_mesh_parse_line(char *line) {
         } else if (strcasecmp(token, "PHYSICAL_ENTITY") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
-          if ((mesh_find_max->physical_entity = wasora_get_physical_entity_ptr(name)) == NULL) {
-            if ((mesh_find_max->physical_entity = wasora_define_physical_entity(name, NULL, 0)) == NULL) {
+          if ((mesh_find_max->physical_entity = wasora_get_physical_entity_ptr(name, mesh_find_max->mesh)) == NULL) {
+            if ((mesh_find_max->physical_entity = wasora_define_physical_entity(name, mesh_find_max->mesh, 0)) == NULL) {
               free(name);
               return WASORA_PARSER_ERROR;
             }
@@ -790,7 +788,7 @@ int wasora_mesh_parse_line(char *line) {
         free(pos);
       }
       
-      free(name);
+      //free(name);
       return WASORA_PARSER_OK;
 
 // ---- MATERIAL ----------------------------------------------------
@@ -917,9 +915,21 @@ material_t *wasora_get_material_ptr(const char *name) {
 }
 
 // devuelve la direccion de la  physical entity que se llama name
-physical_entity_t *wasora_get_physical_entity_ptr(const char *name) {
+physical_entity_t *wasora_get_physical_entity_ptr(const char *name, mesh_t *mesh) {
   physical_entity_t *physical_entity;
-  HASH_FIND_STR(wasora_mesh.physical_entities_by_name, name, physical_entity);
+  mesh_t *dummy;
+  mesh_t *tmp;
+  if (mesh != NULL) {
+    HASH_FIND_STR(mesh->physical_entities_by_name, name, physical_entity);
+  } else {
+    // barremos todas las mallas
+    HASH_ITER(hh, wasora_mesh.meshes, dummy, tmp) {
+      HASH_FIND_STR(dummy->physical_entities_by_name, name, physical_entity);
+      if (physical_entity != NULL) {
+        return physical_entity;
+      }
+    } 
+  }
   return physical_entity;
 }
 

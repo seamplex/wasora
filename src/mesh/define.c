@@ -77,27 +77,31 @@ mesh_t *wasora_define_mesh(char *name, file_t *file, int bulk_dimensions, int sp
   return mesh;
 }
 
-physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *mesh, int dimension) {
+physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, int dimension) {
   char *dummy_aux = NULL;
   physical_entity_t *physical_entity;
+  mesh_t *mesh; 
 
   if (name == NULL) {
     wasora_push_error_message("mandatory name needed for physical entity");
     return NULL;
   }
+  if ((mesh = new_mesh) == NULL) {
+    if ((mesh = wasora_mesh.main_mesh) == NULL) {
+      wasora_push_error_message("no mesh for defining physical entity '%s'", name);
+      return NULL;  
+    }
+  }
   
-  HASH_FIND_STR(wasora_mesh.physical_entities_by_name, name, physical_entity);
-  if (physical_entity == NULL) {
+  if ((physical_entity = wasora_get_physical_entity_ptr(name, mesh)) == NULL) {
     physical_entity = calloc(1, sizeof(physical_entity_t));
     physical_entity->name = strdup(name);
     // linked list en orden de aparicion
-    LL_APPEND(wasora_mesh.physical_entities, physical_entity);
+    LL_APPEND(mesh->physical_entities, physical_entity);
     // hashed list por nombre
-    HASH_ADD_STR(wasora_mesh.physical_entities_by_name, name, physical_entity);
+    HASH_ADD_KEYPTR(hh, mesh->physical_entities_by_name, name, strlen(name), physical_entity);
   }
   
-  
-
 /*  
   if (physical_entity->id != 0 && id != 0 && physical_entity->id != id) {
     wasora_push_error_message("physical entity '%s' has been previously defined using id '%d' and now id '%d' is required", name, physical_entity->id, id);
@@ -106,28 +110,21 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *mesh, int d
     physical_entity->id = id;
   }
  */
+/*  
   if (physical_entity->mesh != NULL && mesh != NULL && physical_entity->mesh != mesh) {
     wasora_push_error_message("physical entity '%s' is both in mesh '%s' and '%s'", name, physical_entity->mesh->name, mesh->name);
     return NULL;
   } else if (physical_entity->mesh == NULL && mesh != NULL) {
     physical_entity->mesh = mesh;
   }
-
+*/
   if (physical_entity->dimension != 0 && dimension != 0 && physical_entity->dimension != dimension) {
     wasora_push_error_message("physical entity '%s' has been previously defined as dimension '%d' and now dimension '%d' is required", name, physical_entity->dimension, dimension);
     return NULL;
   } else if (physical_entity->dimension == 0 && dimension != 0) {
     physical_entity->dimension = dimension;
   }
-
-  if (physical_entity->mesh != NULL && mesh != NULL && physical_entity->mesh != mesh) {
-    wasora_push_error_message("physical entity '%s' has been previously defined over mesh '%s' and now mesh '%s' is required", name, physical_entity->mesh, mesh);
-    return NULL;
-  } else if (physical_entity->dimension == 0 && dimension != 0) {
-    physical_entity->dimension = dimension;
-  }
   
-
   // -----------------------------  
   if (physical_entity->name != NULL && wasora_check_name(name) == WASORA_PARSER_OK) {
     // volumen (o area o longitud)

@@ -1917,7 +1917,7 @@ if (strcasecmp(token, "FROM") == 0) {
         } else if (strcasecmp(token, "PHYSICAL_ENTITY") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
-          if ((print_function->physical_entity = wasora_get_physical_entity_ptr(name)) == NULL) {
+          if ((print_function->physical_entity = wasora_get_physical_entity_ptr(name, NULL)) == NULL) {
             wasora_push_error_message("unknown physical entity '%s'", name);
             free(name);
             return WASORA_PARSER_ERROR;

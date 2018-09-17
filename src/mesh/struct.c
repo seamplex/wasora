@@ -227,7 +227,7 @@ int mesh_create_structured(mesh_t *mesh) {
       i_node = 0;
       for (i = 0; i < mesh->ncells_x+1; i++) {
         mesh->node[i_node].tag = i_node+1;
-        mesh->node[i_node].index = i_node;
+        mesh->node[i_node].index_mesh = i_node;
         mesh->node[i_node].x[0] = mesh->nodes_x[i];
         i_node++;
       }
@@ -246,7 +246,7 @@ int mesh_create_structured(mesh_t *mesh) {
       for (j = 0; j < mesh->ncells_y+1; j++) {
         for (i = 0; i < mesh->ncells_x+1; i++) {
           mesh->node[i_node].tag = i_node+1;
-          mesh->node[i_node].index = i_node;
+          mesh->node[i_node].index_mesh = i_node;
           mesh->node[i_node].x[0] = mesh->nodes_x[i];
           mesh->node[i_node].x[1] = mesh->nodes_y[j];
           i_node++;
@@ -268,7 +268,7 @@ int mesh_create_structured(mesh_t *mesh) {
         for (j = 0; j < mesh->ncells_y+1; j++) {
           for (i = 0; i < mesh->ncells_x+1; i++) {
             mesh->node[i_node].tag = i_node+1;
-            mesh->node[i_node].index = i_node;
+            mesh->node[i_node].index_mesh = i_node;
             mesh->node[i_node].x[0] = mesh->nodes_x[i];
             mesh->node[i_node].x[1] = mesh->nodes_y[j];
             mesh->node[i_node].x[2] = mesh->nodes_z[k];

@@ -117,7 +117,7 @@ int mesh_frd_readmesh(mesh_t *mesh) {
         }
         // nuestros id son de C
         id--;
-        mesh->node[id].index = id;
+        mesh->node[id].index_mesh = id;
         mesh->node[id].tag = id+1;
 
         for (j = 0; j < 3; j++) {

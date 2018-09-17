@@ -1839,8 +1839,8 @@ struct {
 
 // nodos
 struct node_t {
-  int tag;
-  int index;
+  int tag;               // numero asignado por gmsh
+  int index_mesh;        // indice dentro del array de nodos
 
   double x[3];           // coordenadas espaciales del nodo
   int *index_dof;        // indice del vector incognita para cada uno de los grados de libertad

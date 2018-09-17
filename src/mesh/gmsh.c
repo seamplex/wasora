@@ -304,7 +304,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             return WASORA_RUNTIME_ERROR;
           }
           mesh->node[i].tag = tag;
-          mesh->node[i].index = i;
+          mesh->node[i].index_mesh = i;
         }
         
       } else if (version_maj == 4) {
@@ -343,7 +343,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             }
             // en msh4 los tags son los indices de la malla global
             mesh->node[i].tag = tag;
-            mesh->node[i].index = i;
+            mesh->node[i].index_mesh = i;
             i++;
           }
         }

@@ -42,7 +42,7 @@ double mesh_integral_over_element(function_t *function, element_t *element, expr
 
     xi = 0;
     for (j = 0; j < element->type->nodes; j++) {
-      xi += gsl_vector_get(mesh->fem.h, j) * function->data_value[element->node[j]->index];
+      xi += gsl_vector_get(mesh->fem.h, j) * function->data_value[element->node[j]->index_mesh];
     }
 
     if (weight == NULL) {

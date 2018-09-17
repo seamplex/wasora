@@ -60,8 +60,8 @@ int wasora_instruction_mesh(void *arg) {
   }
   
   // barremos los nodos y definimos la bounding box (capaz se pueda meter esto en el loop del kd_tree)
-  mesh->bounding_box_min.index = -1;
-  mesh->bounding_box_max.index = -1;
+  mesh->bounding_box_min.index_mesh = -1;
+  mesh->bounding_box_max.index_mesh = -1;
   mesh->bounding_box_min.index_dof = NULL;
   mesh->bounding_box_max.index_dof = NULL;
   mesh->bounding_box_min.associated_elements = NULL;

@@ -37,24 +37,16 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   char *dummy = NULL;
   char *name = NULL;
   physical_entity_t *physical_entity = NULL;
-  physical_entity_t *physical_entities_by_tag[4];
-
+  geometrical_entity_t *geometrical_entity = NULL;
   int i, j, k, l;
-  int i_entity[4];
   int version_maj;
 //  int version_min;
-  int blocks, tag_geo, tag, dim, parametric, num;
-  int type;
+  int blocks, geometrical, tag, dimension, parametric, num;
+  int type, physical;
   int ntags, tag_max;
   int node;
-  int dimension;
   int cell_id;
 
-  physical_entities_by_tag[0] = NULL;
-  physical_entities_by_tag[1] = NULL;
-  physical_entities_by_tag[2] = NULL;
-  physical_entities_by_tag[3] = NULL;
-  
 
   if (mesh->file->pointer == NULL) {
     wasora_call(wasora_instruction_open_file(mesh->file));
@@ -182,7 +174,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
 
         // agregamos la entity a un hash local para despues
         // resolver el apuntador desde cada elemento "mas o menos" facil
-        HASH_ADD(hh_tag[dimension], physical_entities_by_tag[dimension], tag, sizeof(int), physical_entity);
+        HASH_ADD(hh_tag[dimension], mesh->physical_entities_by_tag[dimension], tag, sizeof(int), physical_entity);
 
         // si la physical entity no tiene material, buscamos uno que se llame igual
         if (physical_entity->material == NULL) {
@@ -213,16 +205,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
       if (fscanf(mesh->file->pointer, "%d %d %d %d", &mesh->points, &mesh->curves, &mesh->surfaces, &mesh->volumes) < 4) {
         return WASORA_RUNTIME_ERROR;
       }
-      
-      mesh->geometrical_entity[0] = calloc(mesh->points, sizeof(geometrical_entity_t));
-      mesh->geometrical_entity[1] = calloc(mesh->curves, sizeof(geometrical_entity_t));
-      mesh->geometrical_entity[2] = calloc(mesh->surfaces, sizeof(geometrical_entity_t));
-      mesh->geometrical_entity[3] = calloc(mesh->volumes, sizeof(geometrical_entity_t));
-      
-      for (dimension = 0; dimension < 4; dimension++) {
-        i_entity[dimension] = 0;
-      }
-      
+                  
       for (i = 0; i < mesh->points+mesh->curves+mesh->surfaces+mesh->volumes; i++) {
         if (i < mesh->points) {
           dimension = 0;
@@ -233,22 +216,24 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         } else {
           dimension = 3;
         }
-        if (fscanf(mesh->file->pointer, "%d %lf %lf %lf %lf %lf %lf %d",
-                &mesh->geometrical_entity[dimension][i_entity[dimension]].tag,
-                &mesh->geometrical_entity[dimension][i_entity[dimension]].boxMinX,
-                &mesh->geometrical_entity[dimension][i_entity[dimension]].boxMinY,
-                &mesh->geometrical_entity[dimension][i_entity[dimension]].boxMinZ,
-                &mesh->geometrical_entity[dimension][i_entity[dimension]].boxMaxX,
-                &mesh->geometrical_entity[dimension][i_entity[dimension]].boxMaxY,
-                &mesh->geometrical_entity[dimension][i_entity[dimension]].boxMaxZ,
-                &mesh->geometrical_entity[dimension][i_entity[dimension]].num_physicals) < 8) {
-          return WASORA_RUNTIME_ERROR;
-        }
         
-        if (mesh->geometrical_entity[dimension][i_entity[dimension]].num_physicals != 0) {
-          mesh->geometrical_entity[dimension][i_entity[dimension]].physical = calloc(mesh->geometrical_entity[dimension][i_entity[dimension]].num_physicals, sizeof(int));
-          for (j = 0; j < mesh->geometrical_entity[dimension][i_entity[dimension]].num_physicals; j++) {
-            if (fscanf(mesh->file->pointer, "%d", &mesh->geometrical_entity[dimension][i_entity[dimension]].physical[j]) == 0) {
+        geometrical_entity = calloc(1, sizeof(geometrical_entity_t));
+        if (fscanf(mesh->file->pointer, "%d %lf %lf %lf %lf %lf %lf %d",
+                &geometrical_entity->tag,
+                &geometrical_entity->boxMinX,
+                &geometrical_entity->boxMinY,
+                &geometrical_entity->boxMinZ,
+                &geometrical_entity->boxMaxX,
+                &geometrical_entity->boxMaxY,
+                &geometrical_entity->boxMaxZ,
+                &geometrical_entity->num_physicals) < 8) {
+          return WASORA_RUNTIME_ERROR;
+        }        
+        
+        if (geometrical_entity->num_physicals != 0) {
+          geometrical_entity->physical = calloc(geometrical_entity->num_physicals, sizeof(int));
+          for (j = 0; j < geometrical_entity->num_physicals; j++) {
+            if (fscanf(mesh->file->pointer, "%d", &geometrical_entity->physical[j]) == 0) {
               return WASORA_RUNTIME_ERROR;
             }
           }
@@ -256,18 +241,22 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         
         // los puntos no tienen bounding
         if (dimension != 0) {
-          if (fscanf(mesh->file->pointer, "%d", &mesh->geometrical_entity[dimension][i_entity[dimension]].num_bounding) < 1) {
+          if (fscanf(mesh->file->pointer, "%d", &geometrical_entity->num_bounding) < 1) {
             return WASORA_RUNTIME_ERROR;
           }          
-          if (mesh->geometrical_entity[dimension][i_entity[dimension]].num_bounding != 0) {
-            mesh->geometrical_entity[dimension][i_entity[dimension]].bounding = calloc(mesh->geometrical_entity[dimension][i_entity[dimension]].num_bounding, sizeof(int));
-            for (j = 0; j < mesh->geometrical_entity[dimension][i_entity[dimension]].num_bounding; j++) {
-              if (fscanf(mesh->file->pointer, "%d", &mesh->geometrical_entity[dimension][i_entity[dimension]].bounding[j]) == 0) {
+          if (geometrical_entity->num_bounding != 0) {
+            geometrical_entity->bounding = calloc(geometrical_entity->num_bounding, sizeof(int));
+            for (j = 0; j < geometrical_entity->num_bounding; j++) {
+              if (fscanf(mesh->file->pointer, "%d", &geometrical_entity->bounding[j]) == 0) {
                 return WASORA_RUNTIME_ERROR;
               }
             }
           }
         }
+        
+        // agregamos la entity al hash de la dimension que corresponda
+        HASH_ADD(hh[dimension], mesh->geometrical_entities[dimension], tag, sizeof(int), geometrical_entity);
+        
       }
 
       // queda un blanco y un newline
@@ -333,7 +322,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         tag_max = 0;
         i = 0;
         for (l = 0; l < blocks; l++) {
-          if (fscanf(mesh->file->pointer, "%d %d %d %d", &tag_geo, &dim, &parametric, &num) < 4) {
+          if (fscanf(mesh->file->pointer, "%d %d %d %d", &geometrical, &dimension, &parametric, &num) < 4) {
             return WASORA_RUNTIME_ERROR;
           }
           if (parametric) {
@@ -440,15 +429,15 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             
             
             if (ntags > 1) {
-              // buscamos en el hash local tag,dim
-              HASH_FIND(hh_tag[dimension], physical_entities_by_tag[dimension], &tags[0], sizeof(int), physical_entity);
+              dimension = mesh->element[i].type->dim;
+              HASH_FIND(hh_tag[dimension], mesh->physical_entities_by_tag[dimension], &tags[0], sizeof(int), physical_entity);
               if ((mesh->element[i].physical_entity = physical_entity) == NULL) {
                 // si no encontramos ninguna, hay que crear una
                 if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, mesh->element[i].type->dim)) == NULL) {
                   return WASORA_RUNTIME_ERROR;
                 }
                 mesh->element[i].physical_entity->tag = tags[0];
-                HASH_ADD(hh_tag[dimension], physical_entities_by_tag[dimension], tag, sizeof(int), mesh->element[i].physical_entity);
+                HASH_ADD(hh_tag[dimension], mesh->physical_entities_by_tag[dimension], tag, sizeof(int), mesh->element[i].physical_entity);
               }
               mesh->element[i].physical_entity->n_elements++;
             }
@@ -483,7 +472,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
 
         i = 0;
         for (l = 0; l < blocks; l++) {
-          if (fscanf(mesh->file->pointer, "%d %d %d %d", &tag_geo, &dim, &type, &num) < 4) {
+          if (fscanf(mesh->file->pointer, "%d %d %d %d", &geometrical, &dimension, &type, &num) < 4) {
             return WASORA_RUNTIME_ERROR;
           }
           if (type >= NUMBER_ELEMENT_TYPE) {
@@ -495,6 +484,24 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             return WASORA_RUNTIME_ERROR;
           }
           
+          // todo el bloque tiene la misma entidad fisica, la encontramos una vez y ya
+          HASH_FIND(hh[dimension], mesh->geometrical_entities[dimension], &geometrical, sizeof(int), geometrical_entity);
+          if (geometrical_entity->num_physicals > 0) {
+            // que hacemos si hay mas de una? la primera? la ultima?
+            physical = geometrical_entity->physical[0];
+            // TODO: SPOT
+            HASH_FIND(hh_tag[dimension], mesh->physical_entities_by_tag[dimension], &physical, sizeof(int), physical_entity);
+            if ((mesh->element[i].physical_entity = physical_entity) == NULL) {
+              if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, mesh->element[i].type->dim)) == NULL) {
+                return WASORA_RUNTIME_ERROR;
+              }
+              mesh->element[i].physical_entity->tag = tag;
+              HASH_ADD(hh_tag[dimension], mesh->physical_entities_by_tag[dimension], tag, sizeof(int), mesh->element[i].physical_entity);
+            }
+          } else {
+            physical_entity = NULL;
+          }
+                    
           for (k = 0; k < num; k++) {
             if (fscanf(mesh->file->pointer, "%d", &tag) == 0) {
               return WASORA_RUNTIME_ERROR;
@@ -504,20 +511,8 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             mesh->element[i].index = i;
             mesh->element[i].type = &(wasora_mesh.element_type[type]);
             
-            // aca hay que linkear a la entidad fisica de las entidades geometricas
-            if (mesh->geometrical_entity[dim][tag_geo].num_physicals > 0) {
-              // que hacemos si hay mas de una? la primera? la ultima?
-              tag = mesh->geometrical_entity[dim][tag_geo].physical[0];
-              // TODO: SPOT
-              HASH_FIND(hh_tag[dimension], physical_entities_by_tag[dimension], &tag, sizeof(int), physical_entity);
-              if ((mesh->element[i].physical_entity = physical_entity) == NULL) {
-                if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, mesh->element[i].type->dim)) == NULL) {
-                  return WASORA_RUNTIME_ERROR;
-                }
-                mesh->element[i].physical_entity->tag = tag;
-                HASH_ADD(hh_tag[dimension], physical_entities_by_tag[dimension], tag, sizeof(int), mesh->element[i].physical_entity);
-              }
-              physical_entity->n_elements++;
+            if ((mesh->element[i].physical_entity = physical_entity) != NULL) {
+              mesh->element[i].physical_entity->n_elements++;
             }
             
             mesh->element[i].node = calloc(mesh->element[i].type->nodes, sizeof(node_t *));
@@ -730,6 +725,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   mesh->file->pointer = NULL;
   
   free(tag2index);
+  // limpiar hashes
   
   return WASORA_RUNTIME_OK;
 }

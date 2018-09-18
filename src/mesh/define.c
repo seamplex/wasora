@@ -81,6 +81,7 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
   char *dummy_aux = NULL;
   physical_entity_t *physical_entity;
   mesh_t *mesh; 
+  int already_exists = 0;
 
   if (name == NULL) {
     wasora_push_error_message("mandatory name needed for physical entity");
@@ -94,12 +95,15 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
   }
   
   if ((physical_entity = wasora_get_physical_entity_ptr(name, mesh)) == NULL) {
+    already_exists = 0; // esto lo usamos para definir las variables especiales abajo
     physical_entity = calloc(1, sizeof(physical_entity_t));
     physical_entity->name = strdup(name);
     // linked list en orden de aparicion
     LL_APPEND(mesh->physical_entities, physical_entity);
     // hashed list por nombre
     HASH_ADD_KEYPTR(hh, mesh->physical_entities_by_name, name, strlen(name), physical_entity);
+  } else {
+    already_exists = 1;
   }
   
 /*  
@@ -110,14 +114,6 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
     physical_entity->id = id;
   }
  */
-/*  
-  if (physical_entity->mesh != NULL && mesh != NULL && physical_entity->mesh != mesh) {
-    wasora_push_error_message("physical entity '%s' is both in mesh '%s' and '%s'", name, physical_entity->mesh->name, mesh->name);
-    return NULL;
-  } else if (physical_entity->mesh == NULL && mesh != NULL) {
-    physical_entity->mesh = mesh;
-  }
-*/
   if (physical_entity->dimension != 0 && dimension != 0 && physical_entity->dimension != dimension) {
     wasora_push_error_message("physical entity '%s' has been previously defined as dimension '%d' and now dimension '%d' is required", name, physical_entity->dimension, dimension);
     return NULL;
@@ -126,35 +122,43 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
   }
   
   // -----------------------------  
-  if (physical_entity->name != NULL && wasora_check_name(name) == WASORA_PARSER_OK) {
+  if (already_exists == 0 && wasora_check_name(name) == WASORA_PARSER_OK) {
     // volumen (o area o longitud)
     asprintf(&dummy_aux, "%s_vol", physical_entity->name);
-    if ((physical_entity->var_vol = wasora_define_variable(dummy_aux)) == NULL) {
-      return NULL;
+    // volvemos a chequear por si acaso hay duplicados en mallas 
+    if (wasora_check_name(dummy_aux) == WASORA_PARSER_OK) {
+      if ((physical_entity->var_vol = wasora_define_variable(dummy_aux)) == NULL) {
+        return NULL;
+      }
     }
     free(dummy_aux);
 
     // centro de gravedad
     asprintf(&dummy_aux, "%s_cog", physical_entity->name);
-    if ((physical_entity->vector_cog = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
-      return NULL;
+    if (wasora_check_name(dummy_aux) == WASORA_PARSER_OK) {
+      if ((physical_entity->vector_cog = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
+        return NULL;
+      }
+      free(dummy_aux);
     }
-    free(dummy_aux);
 
     // reacciones
     asprintf(&dummy_aux, "%s_RF", physical_entity->name);
-    if ((physical_entity->vector_R0 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
-      return NULL;
+    if (wasora_check_name(dummy_aux) == WASORA_PARSER_OK) {
+      if ((physical_entity->vector_R0 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
+        return NULL;
+      }
     }
     free(dummy_aux);
 
     asprintf(&dummy_aux, "%s_RM", physical_entity->name);
-    if ((physical_entity->vector_R1 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
-      return NULL;
+    if (wasora_check_name(dummy_aux) == WASORA_PARSER_OK) {
+      if ((physical_entity->vector_R1 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
+        return NULL;
+      }
+      free(dummy_aux);
     }
-    free(dummy_aux);
-  }
-
+  } 
 
   return physical_entity;
 }

@@ -98,9 +98,6 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
     already_exists = 0; // esto lo usamos para definir las variables especiales abajo
     physical_entity = calloc(1, sizeof(physical_entity_t));
     physical_entity->name = strdup(name);
-    // linked list en orden de aparicion
-    LL_APPEND(mesh->physical_entities, physical_entity);
-    // hashed list por nombre
     HASH_ADD_KEYPTR(hh, mesh->physical_entities, name, strlen(name), physical_entity);
   } else {
     already_exists = 1;

@@ -737,22 +737,14 @@ int mesh_gmsh_write_mesh(mesh_t *mesh, int no_physical_names, FILE *file) {
   physical_entity_t *physical_entity;
 
   if (no_physical_names == 0) {
-    // tenemos que contar las physical entities primero
-    n = 0;
-    LL_FOREACH(mesh->physical_entities, physical_entity) {
-      if (physical_entity->name != NULL) {
-        n++;
-      }
-    }
+    n = HASH_COUNT(mesh->physical_entities);
     if (n != 0) {
       fprintf(file, "$PhysicalNames\n");
       fprintf(file, "%d\n", n);
   
       // y despues barrerlas
-      LL_FOREACH(mesh->physical_entities, physical_entity) {
-        if (physical_entity->name != NULL) {
-          fprintf(file, "%d %d \"%s\"\n", physical_entity->dimension, physical_entity->tag, physical_entity->name);
-        }
+      for (physical_entity = mesh->physical_entities; physical_entity != NULL; physical_entity = physical_entity->hh.next) {
+        fprintf(file, "%d %d \"%s\"\n", physical_entity->dimension, physical_entity->tag, physical_entity->name);
       }
       fprintf(file, "$EndPhysicalNames\n");
     }

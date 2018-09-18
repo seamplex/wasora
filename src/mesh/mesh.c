@@ -197,7 +197,7 @@ int wasora_instruction_mesh(void *arg) {
   
   // calculamos el volumen (o superficie o longitud) y el centro de masa de las physical entities
   if (mesh->bulk_dimensions != 0) {
-    LL_FOREACH(mesh->physical_entities, physical_entity) {
+    for (physical_entity = mesh->physical_entities; physical_entity != NULL; physical_entity = physical_entity->hh.next) {
       vol = cog[0] = cog[1] = cog[2] = 0;
       for (i = 0; i < physical_entity->n_elements; i++) {
         element = &mesh->element[physical_entity->element[i]];
@@ -416,7 +416,7 @@ int mesh_free(mesh_t *mesh) {
   
   mesh->max_first_neighbor_nodes = 1;
 
-  LL_FOREACH(mesh->physical_entities, physical_entity) {
+  for (physical_entity = mesh->physical_entities; physical_entity != NULL; physical_entity = physical_entity->hh.next) {
     physical_entity->n_elements = 0;
     physical_entity->i_element = 0;
     free(physical_entity->element);

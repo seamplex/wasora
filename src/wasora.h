@@ -1821,13 +1821,6 @@ struct {
   // en verdad deberia ir sobre un espacio fem, no sobre una malla
   element_type_t *element_type;
 
-  // estas son globales de todas las mallas, las tenemos aca porque
-  // TODO: ver si las necesitamos aca o en cada malla
-  // si las tenemos por malla podemos detectar ambiguedades y quejarnos
-  // solo cuando tenemos que quejarnos y no siempre
-//  physical_entity_t *physical_entities;                 // linked list por orden de aparicion
-//  physical_entity_t *physical_entities_by_name;         // hash table
-
   material_t *materials;
   physical_property_t *physical_properties;
   mesh_post_t *posts;
@@ -2069,8 +2062,7 @@ struct mesh_t {
   int degrees_of_freedom;        // grados de libertad por incognita
   int order;                     // mayor orden de algun elemento
 
-  physical_entity_t *physical_entities;                 // linked list por orden de aparicion
-  physical_entity_t *physical_entities_by_name;         // hash table
+  physical_entity_t *physical_entities;         // hash table
   physical_entity_t *physical_entities_by_tag[4];       // 4 hash tables por tag
   
   // cantidad de entidades geometricas

@@ -920,11 +920,11 @@ physical_entity_t *wasora_get_physical_entity_ptr(const char *name, mesh_t *mesh
   mesh_t *dummy;
   mesh_t *tmp;
   if (mesh != NULL) {
-    HASH_FIND_STR(mesh->physical_entities_by_name, name, physical_entity);
+    HASH_FIND_STR(mesh->physical_entities, name, physical_entity);
   } else {
     // barremos todas las mallas
     HASH_ITER(hh, wasora_mesh.meshes, dummy, tmp) {
-      HASH_FIND_STR(dummy->physical_entities_by_name, name, physical_entity);
+      HASH_FIND_STR(dummy->physical_entities, name, physical_entity);
       if (physical_entity != NULL) {
         return physical_entity;
       }

@@ -2281,7 +2281,7 @@ extern int mesh_cell_indexes(mesh_t *, int);
 extern int wasora_mesh_element_types_init(void);
 extern int mesh_alloc_gauss(gauss_t *, element_type_t *, int);
 extern int mesh_init_shape_at_gauss(gauss_t *, element_type_t *);
-extern int mesh_create_element(element_t *, int, int, physical_entity_t *);
+extern int mesh_create_element(element_t *, int, int, int, physical_entity_t *);
 extern int mesh_add_element_to_list(element_list_item_t **, element_t *);
 extern int mesh_add_material_to_list(material_list_item_t **, material_t *);
 extern int mesh_compute_element_barycenter(element_t *, double []);

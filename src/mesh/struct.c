@@ -308,9 +308,10 @@ int mesh_create_structured(mesh_t *mesh) {
   // elementos volumetricos
   mesh->element = calloc(mesh->n_elements, sizeof(element_t));
 
-  // el origen
   i_element = 0;
-  mesh_create_element(&mesh->element[i_element], i_element+1, ELEMENT_TYPE_POINT, mesh->origin);
+  
+  // el origen
+  mesh_create_element(&mesh->element[i_element], i_element, i_element+1, ELEMENT_TYPE_POINT, mesh->origin);
   mesh->element[i_element].node[0] = &mesh->node[0];
   mesh_add_element_to_list(&mesh->node[0].associated_elements, &mesh->element[i_element]);
   i_element++;
@@ -319,7 +320,7 @@ int mesh_create_structured(mesh_t *mesh) {
     for (j = 0; j < mesh->ncells_y; j++) {
       for (i = 0; i < mesh->ncells_x; i++) {
         
-        mesh_create_element(&mesh->element[i_element], i_element+1, volume_element_type, NULL);
+        mesh_create_element(&mesh->element[i_element], i_element, i_element+1, volume_element_type, NULL);
         for (i_node = 0; i_node < mesh->element[i_element].type->nodes; i_node++) {
 
           // este es el orden del vtk, asi que debe estar bien
@@ -352,17 +353,21 @@ int mesh_create_structured(mesh_t *mesh) {
     }
   }
   
-  // barremos las physical entities que no tengan bcs y las aplicamos a los elementos
+  // barremos las physical entities que tengan materiales y las aplicamos a los elementos
   i_entity = 0;
-  LL_FOREACH(mesh->physical_entities, physical_entity) {
+  for (physical_entity = mesh->physical_entities; physical_entity != NULL; physical_entity = physical_entity->hh.next) {
+/*
     if (physical_entity->tag == 0) {
       physical_entity->tag = ++i_entity;
     }
+ */
+/*    
     if (physical_entity->name == NULL) {
       physical_entity->name = malloc(strlen(physical_entity->material->name)+32);
       sprintf(physical_entity->name, "%s-%d", physical_entity->material->name, physical_entity->tag);
     }
-    // si no tiene condicion de contorno se la asignamos a los elementos
+ */
+    // si tiene material se la asignamos a los elementos
     if (physical_entity->material != NULL) {      
       if (physical_entity->dimension == 0) {
         physical_entity->dimension = mesh->bulk_dimensions; 
@@ -482,7 +487,7 @@ int mesh_create_structured(mesh_t *mesh) {
             neighbor->cell = &mesh->cell[flat_index(i-1,j,k)];
             neighbor->element = neighbor->cell->element;
           } else {
-            mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->left);
+            mesh_create_element(&mesh->element[i_element],  i_element, i_element+1, surface_element_type, mesh->left);
             
             // el 0 siempre a la izquierda
             mesh->element[i_element].node[0] = mesh->cell[i_cell].element->node[0];
@@ -517,7 +522,7 @@ int mesh_create_structured(mesh_t *mesh) {
             neighbor->cell = &mesh->cell[flat_index(i+1,j,k)];
             neighbor->element = neighbor->cell->element;
           } else {
-            mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->right);
+            mesh_create_element(&mesh->element[i_element], i_element, i_element+1, surface_element_type, mesh->right);
             // el 1 siempre a la derecha
             mesh->element[i_element].node[0] = mesh->cell[i_cell].element->node[1];
             mesh_add_element_to_list(&mesh->element[i_element].node[0]->associated_elements, &mesh->element[i_element]);                
@@ -552,7 +557,7 @@ int mesh_create_structured(mesh_t *mesh) {
               neighbor->cell = &mesh->cell[flat_index(i,j-1,k)];
               neighbor->element = neighbor->cell->element;
             } else {
-              mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->front);
+              mesh_create_element(&mesh->element[i_element], i_element, i_element+1, surface_element_type, mesh->front);
               // en 2d los nodos 0 y 1
               mesh->element[i_element].node[0] = mesh->cell[i_cell].element->node[0];
               mesh_add_element_to_list(&mesh->element[i_element].node[0]->associated_elements, &mesh->element[i_element]);                
@@ -584,7 +589,7 @@ int mesh_create_structured(mesh_t *mesh) {
               neighbor->cell = &mesh->cell[flat_index(i,j+1,k)];
               neighbor->element = neighbor->cell->element;
             } else {
-              mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->rear);
+              mesh_create_element(&mesh->element[i_element], i_element, i_element+1, surface_element_type, mesh->rear);
               // en 2d los nodos 2 y 3
               mesh->element[i_element].node[0] = mesh->cell[i_cell].element->node[2];
               mesh_add_element_to_list(&mesh->element[i_element].node[0]->associated_elements, &mesh->element[i_element]);                
@@ -618,7 +623,7 @@ int mesh_create_structured(mesh_t *mesh) {
               neighbor->cell = &mesh->cell[flat_index(i,j,k-1)];
               neighbor->cell->element = neighbor->cell->element;
             } else {
-              mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->bottom);
+              mesh_create_element(&mesh->element[i_element],  i_element, i_element+1, surface_element_type, mesh->bottom);
               // los nodos 0 1 2 3
               mesh->element[i_element].node[0] = mesh->cell[i_cell].element->node[0];
               mesh_add_element_to_list(&mesh->element[i_element].node[0]->associated_elements, &mesh->element[i_element]);                
@@ -646,7 +651,7 @@ int mesh_create_structured(mesh_t *mesh) {
               neighbor->cell = &mesh->cell[flat_index(i,j,k+1)];
               neighbor->cell->element = neighbor->cell->element;
             } else {
-              mesh_create_element(&mesh->element[i_element], i_element+1, surface_element_type, mesh->top);
+              mesh_create_element(&mesh->element[i_element], i_element, i_element+1, surface_element_type, mesh->top);
               // los nodos 4 5 6 7
               mesh->element[i_element].node[0] = mesh->cell[i_cell].element->node[4];
               mesh_add_element_to_list(&mesh->element[i_element].node[0]->associated_elements, &mesh->element[i_element]);                

@@ -259,8 +259,9 @@ int mesh_init_shape_at_gauss(gauss_t *gauss, element_type_t *element_type) {
 
 
 // esta no rellena los nodos!
-int mesh_create_element(element_t *element, int tag, int type, physical_entity_t *physical_entity) {
+int mesh_create_element(element_t *element, int index, int tag, int type, physical_entity_t *physical_entity) {
  
+  element->index = index;
   element->tag = tag;
   element->type = &(wasora_mesh.element_type[type]);
   element->node  = calloc(element->type->nodes, sizeof(node_t *));

@@ -29,12 +29,11 @@ int mesh_count_common_nodes(element_t *e1, element_t *e2, int *nodes) {
   int i, j;
   int k = 0;
   
-  
   for (i = 0; i < e1->type->nodes; i++) {
     for (j = 0; j < e2->type->nodes; j++) {
       if (e1->node[i] == e2->node[j]) {
         if (nodes != NULL) {
-          nodes[k] = e1->node[i]->tag;
+          nodes[k] = e1->node[i]->index_mesh;
         }
         k++;
       }
@@ -101,8 +100,8 @@ int mesh_find_neighbors(mesh_t *mesh) {
       LL_FOREACH(mesh->cell[i].element->node[j]->associated_elements, associated_element) {
 
         memset(nodes, 0, sizeof(nodes));
-        if ((l = associated_element->element->tag) != mesh->cell[i].element->tag) {
-          if (mesh_count_common_nodes(mesh->cell[i].element, &mesh->element[l-1], nodes) >= mesh->cell[i].element->type->dim) {
+        if ((l = associated_element->element->index) != mesh->cell[i].element->index) {
+          if (mesh_count_common_nodes(mesh->cell[i].element, &mesh->element[l], nodes) >= mesh->cell[i].element->type->dim) {
 
             flag = 1;
             for (m = 0; m < n; m++) {
@@ -153,7 +152,7 @@ int mesh_fill_neighbors(mesh_t *mesh) {
     for (j = 0; j < mesh->cell[i].n_neighbors; j++) {
       
       // apuntador al elemento a partir del numero
-      mesh->cell[i].neighbor[j].element = &mesh->element[mesh->cell[i].ineighbor[j]-1];
+      mesh->cell[i].neighbor[j].element = &mesh->element[mesh->cell[i].ineighbor[j]];
       
       // apuntador a la celda
       mesh->cell[i].neighbor[j].cell = mesh->cell[i].neighbor[j].element->cell;
@@ -163,7 +162,7 @@ int mesh_fill_neighbors(mesh_t *mesh) {
       
       mesh->cell[i].neighbor[j].x_ij[0] = mesh->cell[i].neighbor[j].x_ij[1] = mesh->cell[i].neighbor[j].x_ij[2] = 0;
       for (k = 0; k < mesh->cell[i].element->type->nodes_per_face; k++) {
-        mesh->cell[i].neighbor[j].face_coord[k] = mesh->node[mesh->cell[i].ifaces[j][k]-1].x;
+        mesh->cell[i].neighbor[j].face_coord[k] = mesh->node[mesh->cell[i].ifaces[j][k]].x;
 
         mesh->cell[i].neighbor[j].x_ij[0] += mesh->cell[i].neighbor[j].face_coord[k][0];
         mesh->cell[i].neighbor[j].x_ij[1] += mesh->cell[i].neighbor[j].face_coord[k][1];

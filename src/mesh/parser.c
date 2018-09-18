@@ -42,7 +42,7 @@ int wasora_mesh_parse_line(char *line) {
       expr_t *lengths = calloc(3, sizeof(expr_t));
       expr_t *deltas = calloc(3, sizeof(expr_t));
       expr_t *scale_factor = calloc(1, sizeof(expr_t));
-      expr_t *offsets = calloc(3, sizeof(expr_t));
+      expr_t *offset = calloc(3, sizeof(expr_t));
       int ordering = 0;
       int dimensions = 0;
       int degrees = 0;
@@ -84,21 +84,15 @@ int wasora_mesh_parse_line(char *line) {
           int values[] = {ordering_node_based, ordering_unknown_based, 0};
           wasora_call(wasora_parser_keywords_ints(keywords, values, &ordering));
           
-///kw+MESH+usage [ SCALE_FACTOR <expr> ]
-        } else if (strcasecmp(token, "SCALE_FACTOR") == 0) {
+///kw+MESH+usage [ SCALE <expr> ]
+        } else if (strcasecmp(token, "SCALE") == 0) {
           wasora_call(wasora_parser_expression(scale_factor));
 
-///kw+MESH+usage [ OFFSET_X <expr> ]
-        } else if (strcasecmp(token, "OFFSET_X") == 0) {
-          wasora_call(wasora_parser_expression(&offsets[0]));
-
-///kw+MESH+usage [ OFFSET_Y <expr> ]
-        } else if (strcasecmp(token, "OFFSET_Y") == 0) {
-          wasora_call(wasora_parser_expression(&offsets[1]));
-
-///kw+MESH+usage [ OFFSET_Z <expr> ]
-        } else if (strcasecmp(token, "OFFSET_Z") == 0) {
-          wasora_call(wasora_parser_expression(&offsets[2]));
+///kw+MESH+usage [ OFFSET <expr_x> <expr_y> <expr_z>]
+        } else if (strcasecmp(token, "OFFSET") == 0) {
+          wasora_call(wasora_parser_expression(&offset[0]));
+          wasora_call(wasora_parser_expression(&offset[1]));
+          wasora_call(wasora_parser_expression(&offset[2]));
           
 ///kw+MESH+usage [ DEGREES <num_expr> ]
         } else if (strcasecmp(token, "DEGREES") == 0) {
@@ -150,14 +144,33 @@ int wasora_mesh_parse_line(char *line) {
           wasora_call(wasora_parser_expression(&deltas[2]));
           structured = 1;
 
-///kw+MESH+usage [ READ_DATA <name_in_mesh> AS <function_name> ... ]
-        } else if (strcasecmp(token, "READ_DATA") == 0 || strcasecmp(token, "READ_FUNCTION") == 0) {
-          char *name_in_mesh;
+ ///kw+MESH+usage [ READ_FUNCTION <function_name> ] [...]
+        } else if (strcasecmp(token, "READ_FUNCTION") == 0 ) {
+          // TODO: que funcione con cell-centered
           char *function_name;
           node_data_t *node_data;
 
           if (dimensions == 0) {
             wasora_push_error_message("MESH READ_FUNCTION needs DIMENSIONS to be set", token);
+            return WASORA_PARSER_ERROR;
+          }
+          
+          wasora_call(wasora_parser_string(&function_name));
+          
+          node_data = calloc(1, sizeof(node_data_t));
+          node_data->name_in_mesh = strdup(function_name);
+          node_data->function = wasora_define_function(function_name, dimensions);
+          LL_APPEND(node_datas, node_data);
+          free(function_name);
+          
+///kw+MESH+usage [ READ_SCALAR <name_in_mesh> AS <function_name> ] [...]
+        } else if (strcasecmp(token, "READ_DATA") == 0 || strcasecmp(token, "READ_SCALAR") == 0) {
+          char *name_in_mesh;
+          char *function_name;
+          node_data_t *node_data;
+
+          if (dimensions == 0) {
+            wasora_push_error_message("MESH READ_DATA needs DIMENSIONS to be set", token);
             return WASORA_PARSER_ERROR;
           }
           
@@ -171,9 +184,10 @@ int wasora_mesh_parse_line(char *line) {
           wasora_call(wasora_parser_string(&function_name));
           
           node_data = calloc(1, sizeof(node_data_t));
-          node_data->name_in_mesh = name_in_mesh;
+          node_data->name_in_mesh = strdup(name_in_mesh);
           node_data->function = wasora_define_function(function_name, dimensions);
           LL_APPEND(node_datas, node_data);
+          free(name_in_mesh);
           free(function_name);
 
         } else {
@@ -186,10 +200,10 @@ int wasora_mesh_parse_line(char *line) {
       if (name == NULL) {
         if (wasora_mesh.meshes == NULL) {
           // y es la primera malla, la llamamos main
-          name = strdup("main");
+          name = strdup("first");
         } else {
           // y es otra malla, nos quejamos
-          wasora_push_error_message("when defining multiples MESHEs, a NAME is mandatory");
+          wasora_push_error_message("when defining multiples MESHes, a NAME is mandatory");
           return WASORA_PARSER_ERROR;
         }
       }
@@ -199,8 +213,7 @@ int wasora_mesh_parse_line(char *line) {
         return WASORA_PARSER_ERROR;
       }
       
-
-      if ((mesh = wasora_define_mesh(name, file, dimensions, dimensions, degrees, ordering, structured, scale_factor, offsets, ncells, lengths, deltas)) == NULL) {
+      if ((mesh = wasora_define_mesh(name, file, dimensions, dimensions, degrees, ordering, structured, scale_factor, offset, ncells, lengths, deltas)) == NULL) {
         return WASORA_PARSER_ERROR;
       }
       
@@ -227,6 +240,7 @@ int wasora_mesh_parse_line(char *line) {
       if (wasora_define_instruction(wasora_instruction_mesh, mesh) == NULL) {
         return WASORA_PARSER_ERROR;
       }
+      free(name);
 
       return WASORA_PARSER_OK;
 
@@ -235,7 +249,7 @@ int wasora_mesh_parse_line(char *line) {
       char *mesh_name;
       
 ///kw+MESH_MAIN+usage MESH_MAIN
-///kw+MESH_MAIN+usage [ <mesh_identifier> ]
+///kw+MESH_MAIN+usage [ <name> ]
       wasora_call(wasora_parser_string(&mesh_name));
       if ((wasora_mesh.main_mesh = wasora_get_mesh_ptr(mesh_name)) == NULL) {
         wasora_push_error_message("unknown mesh '%s'", mesh_name);
@@ -294,7 +308,7 @@ int wasora_mesh_parse_line(char *line) {
         } else if (strcasecmp(token, "CELLS") == 0) {
           mesh_post->centering = centering_cells;
 
-///kw+MESH_POST+usage  NODE ]
+///kw+MESH_POST+usage  NODES ]
         } else if (strcasecmp(token, "NODES") == 0) {
           mesh_post->centering = centering_nodes;
 
@@ -302,7 +316,7 @@ int wasora_mesh_parse_line(char *line) {
         } else if (strcasecmp(token, "NO_PHYSICAL_NAMES") == 0) {
           mesh_post->no_physical_names = 1;
           
-///kw+MESH_POST+usage [ VECTOR <component_1> <component_2> <component_3> ]
+///kw+MESH_POST+usage [ VECTOR <function1_x> <function1_y> <function1_z> ] [...]
         } else if (strcasecmp(token, "VECTOR") == 0) {
           int i;
           mesh_post_dist_t *mesh_post_dist = calloc(1, sizeof(mesh_post_dist_t));
@@ -332,7 +346,7 @@ int wasora_mesh_parse_line(char *line) {
           
         } else {
           
-///kw+MESH_POST+usage [ <scalar_1> ] [ <scalar_2> ] ...
+///kw+MESH_POST+usage [ <scalar_function_1> ] [ <scalar_function_2> ] ...
           mesh_post_dist_t *mesh_post_dist = calloc(1, sizeof(mesh_post_dist_t));
           
           if ((mesh_post_dist->scalar = wasora_get_function_ptr(token)) == NULL) {
@@ -407,6 +421,7 @@ int wasora_mesh_parse_line(char *line) {
 //      mesh_integrate->cell_centered = wasora_mesh.default_cell_centered;
       
       while ((token = wasora_get_next_token(NULL)) != NULL) {
+// TODO: integrand y que wasora vea si es una funcion o una expresion        
 ///kw+MESH_INTEGRATE+usage { FUNCTION <function>
         if (strcasecmp(token, "FUNCTION") == 0) {
           wasora_call(wasora_parser_function(&mesh_integrate->function));
@@ -414,6 +429,7 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_INTEGRATE+usage | EXPRESSION <expr> }
         } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
           wasora_call(wasora_parser_expression(&mesh_integrate->expr));
+          
 ///kw+MESH_INTEGRATE+usage [ MESH <mesh_identifier> ]
         } else if (strcasecmp(token, "MESH") == 0) {
           char *mesh_name;
@@ -424,7 +440,7 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
           free(mesh_name);        
-///kw+MESH_INTEGRATE+usage OVER <physical_entity_name>
+///kw+MESH_INTEGRATE+usage [ OVER <physical_entity_name> ]
         } else if (strcasecmp(token, "OVER") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
@@ -470,11 +486,12 @@ int wasora_mesh_parse_line(char *line) {
         wasora_push_error_message("either EXPR of FUNCTION needed");
         return WASORA_PARSER_ERROR;
       }
+/*      
       if (mesh_integrate->physical_entity == NULL) {
         wasora_push_error_message("MESH_INTEGRATE needs a OVER physical_entity");
         return WASORA_PARSER_ERROR;
       }
-      
+*/      
       if (mesh_integrate->mesh == NULL) {
         if ((mesh_integrate->mesh = wasora_mesh.main_mesh) == NULL) {
           wasora_push_error_message("no MESH defined for MESH_INTEGRATE");
@@ -497,7 +514,7 @@ int wasora_mesh_parse_line(char *line) {
 //      mesh_fill_vector->cell_centered = wasora_mesh.default_cell_centered;
 
       while ((token = wasora_get_next_token(NULL)) != NULL) {
-///kw+MESH_FILL_VECTOR+usage [ MESH <mesh_identifier> ]
+///kw+MESH_FILL_VECTOR+usage [ MESH <name> ]
         if (strcasecmp(token, "MESH") == 0) {
           char *mesh_name;
           wasora_call(wasora_parser_string(&mesh_name));
@@ -570,7 +587,7 @@ int wasora_mesh_parse_line(char *line) {
         } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
           wasora_call(wasora_parser_expression(&mesh_find_max->expr));
         
-///kw+MESH_FIND_MAX+usage [ MESH <mesh_identifier> ]
+///kw+MESH_FIND_MAX+usage [ MESH <name> ]
         } else if (strcasecmp(token, "MESH") == 0) {
           char *mesh_name;
           wasora_call(wasora_parser_string(&mesh_name));
@@ -674,32 +691,27 @@ int wasora_mesh_parse_line(char *line) {
           }
           dimension = (int)(xi);          
 
-///kw+PHYSICAL_ENTITY+usage [ MESH <<name> ]
+///kw+PHYSICAL_ENTITY+usage [ MESH <name> ]
         } else if (strcasecmp(token, "MESH") == 0) {
-          
-          if ((token = wasora_get_next_token(NULL)) == NULL) {
-            wasora_push_error_message("expected mesh name");
+          char *mesh_name;
+          wasora_call(wasora_parser_string(&mesh_name));
+          if ((mesh = wasora_get_mesh_ptr(mesh_name)) == NULL) {
+            wasora_push_error_message("unknown mesh '%s'", mesh_name);
+            free(mesh_name);
             return WASORA_PARSER_ERROR;
           }
-
-          if ((mesh = wasora_get_mesh_ptr(token)) == NULL) {
-            wasora_push_error_message("unknown mesh '%s'", token);
-            return WASORA_PARSER_ERROR;
-          }
+          free(mesh_name);
 
 ///kw+PHYSICAL_ENTITY+usage [ MATERIAL <name> ]
         } else if (strcasecmp(token, "MATERIAL") == 0) {
-
-          if ((token = wasora_get_next_token(NULL)) == NULL) {
-            wasora_push_error_message("expected material name");
+          char *material_name;
+          wasora_call(wasora_parser_string(&material_name));
+          if ((material = wasora_get_material_ptr(material_name)) == NULL) {
+            wasora_push_error_message("unknown material '%s'", material_name);
+            free(material_name);
             return WASORA_PARSER_ERROR;
           }
-
-          HASH_FIND_STR(wasora_mesh.materials, token, material);
-          if (material == NULL) {
-            wasora_push_error_message("undefined material '%s'", token);
-            return WASORA_PARSER_ERROR;
-          }
+          free(material_name);
           
 ///kw+PHYSICAL_ENTITY+usage [ X_MIN <expr> ] [ X_MAX <expr> ] [ Y_MIN <expr> ] [ Y_MAX <expr> ] [ Z_MIN <expr> ] [ Z_MAX <expr> ]
         } else if (strcasecmp(token+1, "_MIN") == 0 || strcasecmp(token+1, "_MAX") == 0) {
@@ -738,7 +750,7 @@ int wasora_mesh_parse_line(char *line) {
             dimension = (ndim+1);
           }
           
-///kw+PHYSICAL_ENTITY+usage [ BC { <problem_dependent_expressions> } ]
+///kw+PHYSICAL_ENTITY+usage [ BC <string_1> <string_2> ... ]
         } else if (strcasecmp(token, "BOUNDARY") == 0 || strcasecmp(token, "BC") == 0) {
 
           // los argumentos como una linked list de strings
@@ -771,8 +783,10 @@ int wasora_mesh_parse_line(char *line) {
         wasora_push_error_message("NAME is mandatory for PHYSICAL_ENTIY");
         return WASORA_PARSER_ERROR;
       }
-      if ((physical_entity = wasora_define_physical_entity(name, mesh, dimension)) == NULL) {
-        return WASORA_PARSER_ERROR;
+      if ((physical_entity = wasora_get_physical_entity_ptr(name, mesh)) == NULL) {
+        if ((physical_entity = wasora_define_physical_entity(name, mesh, dimension)) == NULL) {
+          return WASORA_PARSER_ERROR;
+        }
       }
       
       if (material != NULL) {
@@ -796,68 +810,64 @@ int wasora_mesh_parse_line(char *line) {
 
 ///kw+MATERIAL+usage MATERIAL
       material_t *material;
-      material_t *base = NULL;
-      char *materialname;
-
+      physical_entity_t *physical_entity = NULL;
+      char *name;
+      char *material_name;
+      
 ///kw+MATERIAL+usage <name>
-      if (wasora_parser_string(&materialname) != WASORA_PARSER_OK) {
-        return WASORA_PARSER_ERROR;
-      }
+      wasora_call(wasora_parser_string(&material_name));
 
       // si ya hay un material le agregamos propiedades a ese
-      HASH_FIND_STR(wasora_mesh.materials, materialname, material);
+      HASH_FIND_STR(wasora_mesh.materials, material_name, material);
       if (material == NULL) {
-        material = wasora_define_material(materialname);
+        material = wasora_define_material(material_name);
       }
-
+      
+      // por default es la main mesh
+      if ((material->mesh = wasora_mesh.main_mesh) == NULL) {
+        wasora_push_error_message("MATERIAL before MESH");
+        return WASORA_PARSER_ERROR;
+      }      
+      
       while ((token = wasora_get_next_token(NULL)) != NULL) {
 
         char *expr_string;
-        char *total_string;
-        property_data_t *base_data;
-        char *property_name = strdup(token);
 
-///kw+MATERIAL+usage [ INCREMENTAL <material> ]
-        if (strcasecmp(token, "INCREMENTAL") == 0) {
-          if ((token = wasora_get_next_token(NULL)) == NULL) {
-            wasora_push_error_message("expected material name after INCREMENTAL keyword");
+///kw+MATERIAL+usage [ MESH <name> ]
+        if (strcasecmp(token, "MESH") == 0) {
+          wasora_call(wasora_parser_string(&name));         
+          if ((material->mesh = wasora_get_mesh_ptr(name)) == NULL) {
+            wasora_push_error_message("undefined mesh '%s'" , name);
             return WASORA_PARSER_ERROR;
           }
+          free(name);
+          
+///kw+MATERIAL+usage [ PHYSICAL_ENTITY <name_1>  [ PHYSICAL_ENTITY <name_2> [ ... ] ] ]
+        } else if (strcasecmp(token, "PHYSICAL_ENTITY") == 0) {
+          wasora_call(wasora_parser_string(&name));  
 
-          if ((base = wasora_get_material_ptr(token)) == NULL) {
-            wasora_push_error_message("undefined base material '%s' for incremental material '%s'" , token, material->name);
-            return WASORA_PARSER_ERROR;
-          }
-
-        } else {
-///kw+MATERIAL+usage [ <property_name> <expr> ]
-          if (wasora_parser_string(&expr_string) != WASORA_PARSER_OK) {
-            return WASORA_PARSER_ERROR;
-          }
-
-          if (base != NULL) {
-            HASH_FIND_STR(base->property_datums, property_name, base_data);
-            if (base_data != NULL) {
-              total_string = malloc(strlen(expr_string) + strlen(base_data->expr.string) + 16);
-              sprintf(total_string, "(%s)+(%s)", expr_string, base_data->expr.string);
-            } else {
-              total_string = strdup(expr_string);
+          if ((physical_entity = wasora_get_physical_entity_ptr(name, material->mesh)) == NULL) {
+            if ((physical_entity = wasora_define_physical_entity(name, material->mesh, material->mesh->bulk_dimensions)) == NULL) {
+              return WASORA_PARSER_ERROR;
             }
-          } else {
-            total_string = strdup(expr_string);
           }
-
-          if (wasora_define_property_data(materialname, property_name, total_string) == NULL) {
+          
+          physical_entity->material = material;
+          free(name);
+          
+        } else {
+          name = strdup(token);
+///kw+MATERIAL+usage [ <property_name_1> <expr_1> [ <property_name_2> <expr_2> [ ... ] ] ]
+          wasora_call(wasora_parser_string(&expr_string));
+          if (wasora_define_property_data(material_name, name, expr_string) == NULL) {
             return WASORA_PARSER_ERROR;
           }
-          free(total_string);
           free(expr_string);
+          free(name);
         }
-        free(property_name);
       }
-
-      free(materialname);
-
+      free(material_name);
+      
       return WASORA_PARSER_OK;
       
 // ---- PHYSICAL_PROPERTY ----------------------------------------------------

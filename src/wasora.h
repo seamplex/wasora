@@ -1761,7 +1761,7 @@ typedef enum {
 
 struct material_t {
   char *name;
-  physical_entity_t *physical_entity;
+  mesh_t *mesh;
   property_data_t *property_datums;
 
   // este es un apuntador generico que le dejamos a alguien
@@ -1941,7 +1941,6 @@ struct physical_entity_t {
   int i_element;
   int *element;
   
-  physical_entity_t *next;
   UT_hash_handle hh;
   UT_hash_handle hh_tag[4];
 };

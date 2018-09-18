@@ -98,7 +98,7 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
     already_exists = 0; // esto lo usamos para definir las variables especiales abajo
     physical_entity = calloc(1, sizeof(physical_entity_t));
     physical_entity->name = strdup(name);
-    HASH_ADD_KEYPTR(hh, mesh->physical_entities, name, strlen(name), physical_entity);
+    HASH_ADD_KEYPTR(hh, mesh->physical_entities, physical_entity->name, strlen(name), physical_entity);
   } else {
     already_exists = 1;
   }
@@ -191,7 +191,7 @@ physical_property_t *wasora_define_physical_property(const char *name, mesh_t *m
     wasora_push_error_message("physical properties can be given only after at least giving one mesh");
     return NULL;;
   } else if (mesh->bulk_dimensions == 0) {
-    wasora_push_error_message("mesh '%s' has zero dimensions when defining property '%s', keyword DIMENSIONS in needed for MESH definition", mesh->name, name);
+    wasora_push_error_message("mesh '%s' has zero dimensions when defining property '%s', keyword DIMENSIONS is needed for MESH definition", mesh->name, name);
     return NULL;
   }
   
@@ -234,7 +234,7 @@ property_data_t *wasora_define_property_data(const char *materialname, const cha
   }
   HASH_FIND_STR(wasora_mesh.physical_properties, propertyname, property);
   if (property == NULL) {
-    if ((property = wasora_define_physical_property(propertyname, NULL)) == NULL) {
+    if ((property = wasora_define_physical_property(propertyname, material->mesh)) == NULL) {
       return NULL;
     }
   }
@@ -248,8 +248,8 @@ property_data_t *wasora_define_property_data(const char *materialname, const cha
 
   // function llamada material_property que se evalua en x,y,z pero directamente
   // el usuario elige la propiedad sin tener que depender de x,y,z
-  if (wasora_mesh.main_mesh->bulk_dimensions == 0) {
-    wasora_push_error_message("mesh '%s' has zero dimensions when defining property '%s', keyword DIMENSIONS in needed for MESH definition", wasora_mesh.main_mesh->name, property->name);
+  if (material->mesh->bulk_dimensions == 0) {
+    wasora_push_error_message("mesh '%s' has zero dimensions when defining property '%s', keyword DIMENSIONS is needed for MESH definition", wasora_mesh.main_mesh->name, property->name);
     return NULL;
   }
   name = malloc(strlen(material->name)+strlen(property->name)+8);

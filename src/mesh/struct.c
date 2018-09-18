@@ -289,7 +289,7 @@ int mesh_create_structured(mesh_t *mesh) {
   mesh->left =   wasora_define_physical_entity("left",  mesh, mesh->bulk_dimensions-1);
   mesh->left->struct_bc_direction = structured_direction_left;
   mesh->right =  wasora_define_physical_entity("right", mesh, mesh->bulk_dimensions-1);
-  mesh->left->struct_bc_direction = structured_direction_right;
+  mesh->right->struct_bc_direction = structured_direction_right;
   if (mesh->bulk_dimensions > 1) {
     mesh->front =  wasora_define_physical_entity("front", mesh, mesh->bulk_dimensions-1);
     mesh->front->struct_bc_direction = structured_direction_front;

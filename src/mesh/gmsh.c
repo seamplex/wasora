@@ -834,11 +834,11 @@ int mesh_gmsh_write_scalar(mesh_post_t *mesh_post, function_t *function, centeri
 
     if (function->type == type_pointwise_mesh_cell) {
       for (i = 0; i < function->data_size; i++) {
-        fprintf(mesh_post->file->pointer, "%d %g\n", mesh->cell[i].element->index, function->data_value[i]);
+        fprintf(mesh_post->file->pointer, "%d %g\n", mesh->cell[i].element->tag, function->data_value[i]);
       }
     } else {
       for (i = 0; i < mesh->n_cells; i++) {
-        fprintf(mesh_post->file->pointer, "%d %g\n", mesh->cell[i].element->index, wasora_evaluate_function(function, mesh->cell[i].x));
+        fprintf(mesh_post->file->pointer, "%d %g\n", mesh->cell[i].element->tag, wasora_evaluate_function(function, mesh->cell[i].x));
       }
     }
     fprintf(mesh_post->file->pointer, "$EndElementData\n");

@@ -31,7 +31,7 @@ extern element_type_t element_types[16];
 
 int mesh_create_structured(mesh_t *mesh) {
 
-  int i_element, i_cell, i_node, i_entity;
+  int i_element, i_cell, i_node;
   int i, j, k;
   int node_index;
   int volume_element_type;
@@ -354,7 +354,6 @@ int mesh_create_structured(mesh_t *mesh) {
   }
   
   // barremos las physical entities que tengan materiales y las aplicamos a los elementos
-  i_entity = 0;
   for (physical_entity = mesh->physical_entities; physical_entity != NULL; physical_entity = physical_entity->hh.next) {
 /*
     if (physical_entity->tag == 0) {
@@ -418,7 +417,7 @@ int mesh_create_structured(mesh_t *mesh) {
           for (i = i_min; i <= i_max; i++) {
             // el 1 es por el origen
             mesh->element[1 + i].physical_entity = physical_entity;
-            physical_entity->n_elements++;
+//            physical_entity->n_elements++;
           }
         break;  
         case 2:
@@ -426,7 +425,8 @@ int mesh_create_structured(mesh_t *mesh) {
             for (j = j_min; j <= j_max; j++) {
               // el 1 es por el origen
               mesh->element[1 + i + mesh->ncells_x*j].physical_entity = physical_entity;
-              physical_entity->n_elements++;
+// esto da segfault
+//              physical_entity->n_elements++;
             }
           }
         break;
@@ -436,7 +436,7 @@ int mesh_create_structured(mesh_t *mesh) {
               for (k = k_min; k <= k_max; k++) {
                 // el 1 es por el origen
                 mesh->element[1 + i + mesh->ncells_x*j + mesh->ncells_x*mesh->ncells_y*k].physical_entity = physical_entity;
-                physical_entity->n_elements++;
+//                physical_entity->n_elements++;
               }
             }
           }

@@ -284,7 +284,7 @@ int mesh_create_structured(mesh_t *mesh) {
   }    
   
   // entidades fisicas de prepo
-  mesh->origin = wasora_define_physical_entity("origin", mesh, 0);
+//  mesh->origin = wasora_define_physical_entity("origin", mesh, 0);
   
   mesh->left =   wasora_define_physical_entity("left",  mesh, mesh->bulk_dimensions-1);
   mesh->left->struct_bc_direction = structured_direction_left;

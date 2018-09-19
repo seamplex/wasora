@@ -87,7 +87,8 @@ void wasora_free_files(void) {
 }
 
 void wasora_free_functions(void) {
-  function_t *function, *tmp;
+  function_t *function = NULL;
+  function_t *tmp = NULL;
 
   // no vale ir hacia adelante porque las funciones siguientes
   // pueden tener referencias a funciones anteriores, hay que
@@ -97,14 +98,15 @@ void wasora_free_functions(void) {
     wasora_free_function(function);
   }
 */
-  function = wasora.functions;
-  while (function->hh.next == NULL) {
-    function = function->hh.next;
-  }
+  if ((function = wasora.functions) != NULL) {
+    while (function->hh.next == NULL) {
+      function = function->hh.next;
+    }
   
-  for (; function != NULL; function = tmp) {
-    tmp = function->hh.prev;
-    wasora_free_function(function);    
+    for (; function != NULL; function = tmp) {
+      tmp = function->hh.prev;
+      wasora_free_function(function);    
+    }
   }
 
   return;

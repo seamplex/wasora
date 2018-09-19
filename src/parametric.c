@@ -287,8 +287,6 @@ int wasora_parametric_run(void) {
     sem_close(parallel_semaphore);
     sem_unlink(parallel_semaphore_name);
   }
-
-
   
   if (r != NULL) {
     gsl_rng_free(r);
@@ -297,6 +295,8 @@ int wasora_parametric_run(void) {
     gsl_qrng_free(q);
   }
   free(local_step);
+  free(wasora.parametric.nsteps);
+  free(v);
 
   return WASORA_RUNTIME_OK;
   

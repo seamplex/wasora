@@ -1892,7 +1892,7 @@ struct physical_entity_t {
   // apuntador al material
   material_t *material;
   
-  char *bc_type_string; // el tipo de CC es arbitraria, despues cada codigo la interpreta
+//  char *bc_type_string; // el tipo de CC es arbitraria, despues cada codigo la interpreta
   int bc_type_math;
   int bc_type_phys;
   

@@ -328,11 +328,22 @@ element_t *mesh_find_element(mesh_t *mesh, const double *x) {
 // esta en el input (dimensiones, grados de libertad, etc)
 int mesh_free(mesh_t *mesh) {
 
-  physical_entity_t *physical_entity;
+  physical_entity_t *physical_entity, *physical_entity_tmp;
   element_list_item_t *element_item, *element_tmp;
-//  material_list_item_t *material_item, *material_tmp;
-  int i, j, k;
+  int i, j, k, d;
 
+  for (d = 0; d < 4; d++) {
+    HASH_ITER(hh, mesh->physical_entities_by_tag[d], physical_entity, physical_entity_tmp) {
+      HASH_DEL(mesh->physical_entities_by_tag[d], physical_entity);
+    }
+  }
+  HASH_ITER(hh, mesh->physical_entities, physical_entity, physical_entity_tmp) {
+    free(physical_entity->name);
+    free(physical_entity->element);
+    HASH_DEL(mesh->physical_entities, physical_entity);
+    free(physical_entity);
+  }
+  
   if (mesh->cell != NULL) {
     for (i = 0; i < mesh->n_cells; i++) {
       if (mesh->cell[i].index != NULL) {
@@ -365,12 +376,6 @@ int mesh_free(mesh_t *mesh) {
             LL_DELETE(mesh->element[i].node[j]->associated_elements, element_item);
             free(element_item);
           }
-/*          
-          LL_FOREACH_SAFE(mesh->element[i].node[j]->materials_list, material_item, material_tmp) {
-            LL_DELETE(mesh->element[i].node[j]->materials_list, material_item);
-            free(material_item);
-          }
- */
         }
         free(mesh->element[i].node);
       }

@@ -2364,7 +2364,7 @@ if (strcasecmp(token, "FROM") == 0) {
     } else if ((strcasecmp(token, "PARAMETRIC") == 0)) {
 
       varlist_t *varlist = NULL;
-      varlist_t *varitem;
+      varlist_t *varitem, *tmp;
       
       double xi;
       // suponemos que type = linear
@@ -2498,9 +2498,12 @@ if (strcasecmp(token, "FROM") == 0) {
         }
       }
       
-      
       if (wasora_define_instruction(wasora_instruction_parametric, NULL) == NULL) {
         return WASORA_PARSER_ERROR;
+      }
+      LL_FOREACH_SAFE(varlist, varitem, tmp) {
+        LL_DELETE(varlist, varitem);
+        free(varitem);
       }
       return WASORA_PARSER_OK;
 

@@ -88,9 +88,23 @@ void wasora_free_files(void) {
 
 void wasora_free_functions(void) {
   function_t *function, *tmp;
-  
+
+  // no vale ir hacia adelante porque las funciones siguientes
+  // pueden tener referencias a funciones anteriores, hay que
+  // ir al vesre de atras para adelante  
+/*  
   HASH_ITER(hh, wasora.functions, function, tmp) {
     wasora_free_function(function);
+  }
+*/
+  function = wasora.functions;
+  while (function->hh.next == NULL) {
+    function = function->hh.next;
+  }
+  
+  for (; function != NULL; function = tmp) {
+    tmp = function->hh.prev;
+    wasora_free_function(function);    
   }
 
   return;
@@ -99,6 +113,10 @@ void wasora_free_functions(void) {
 void wasora_free_function(function_t *function) {
   
   int i;
+  
+  if (function->algebraic_expression.n_tokens != 0) {
+    wasora_destroy_expression(&function->algebraic_expression);
+  }
   
   if (function->data_argument_alloced) {
     for (i = 0; i < function->n_arguments; i++) {

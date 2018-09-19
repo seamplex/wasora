@@ -1,9 +1,16 @@
-% wasora's an advanced suite for optimization & reactor analysis
+---
+title: Wasora’s an advanced suite for optimization & reactor analysis
+author: Jeremy Theler
+lang: en-US
+numbersections: true
+formats: html tex pdf
+template: light
+...
 
-![wasora](doc/logo.svg){.img-responsive}\ 
+![Logo](doc/logo.svg){.img-responsive}\ 
 
 
-[Wasora](https://www.seamplex.com/wasora) is a convenient (relatively) high-level tool to perform mathematical computations. It also provides a framework which other [particular computational codes](#plugins) can use. It is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing
+[Wasora](https://www.seamplex.com/wasora) is a (relatively) high-level tool to perform mathematical computations. It also provides a framework which other [particular computational codes](#plugins) can use. It is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing
 
  * algebraic expressions,
  * data for function interpolation,
@@ -14,14 +21,12 @@ amongst other facilities.
 
 For example, the famous chaotic [Lorenz’ dynamical system](http://en.wikipedia.org/wiki/Lorenz_system)---the one of the butterfly---whose differential equations are
 
-$$
 \begin{align*}
 \dot{x} &= \sigma \cdot (y - x)\\
 \dot{y} &= x \cdot (r - z) - y\\
 \dot{z} &= xy - bz\\
 \end{align*}
-$$
-where $\sigma=10$, $b=8/3$ and $r=28$ are the classical parameters that generate the butterfly as presented by Edward Lorenz back in his seminal 1963 paper [Deterministic non-periodic flow](http://journals.ametsoc.org/doi/abs/10.1175/1520-0469%281963%29020%3C0130%3ADNF%3E2.0.CO%3B2), can be solved with wasoraby writing the equations in the input file as naturally as possible, as illustrated in the input file that follows:
+where $\sigma=10$, $b=8/3$ and $r=28$ are the classical parameters that generate the butterfly as presented by Edward Lorenz back in his seminal 1963 paper [Deterministic non-periodic flow](http://journals.ametsoc.org/doi/abs/10.1175/1520-0469%281963%29020%3C0130%3ADNF%3E2.0.CO%3B2), can be solved with wasora by writing the equations in the input file as naturally as possible, as illustrated in the input file that follows:
 
 ```wasora
 # lorenz’ seminal dynamical system
@@ -45,16 +50,16 @@ z_dot .= x*y - b*z
 PRINT t x y z HEADER
 ```
 
-Following the [UNIX Philosophy](https://en.wikipedia.org/wiki/Unix_philosophy), wasora’s output can be piped to [Gnuplot](http://gnuplot.info/) in order to obtain a beautiful figure:
+Following the [UNIX Philosophy](https://en.wikipedia.org/wiki/Unix_philosophy), wasora’s output can be piped for example to [Gnuplot](http://gnuplot.info/) in order to obtain a beautiful figure:
 
 ```
 wasora lorenz.was | gnuplot -e "set terminal svg; set output 'lorenz.svg'; set ticslevel 0; splot '-' u 2:3:4 w l ti ''"
 
 ```
-![wasora](examples/lorenz.svg){.img-responsive}\ 
+![The Lorenz attractor computed by wasora](examples/lorenz.svg){.img-responsive}\ 
 
 
-At a first glance, wasora may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical calculation. For example, see [here](https://www.seamplex.com/wasora/realbook/real-._realbook006.html) to find how the famous [Lorenz system](http://en.wikipedia.org/wiki/Lorenz_system) may be solved by writing the three differential equations into a plain-text input file as humanly-friendly as possible.
+At a first glance, wasora may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical calculation.
 
 Although its ultimate subject is optimization, it may hopefully help you with the tough calculations that usually appear when working with problems that have some kind of complexity, allowing the user to focus on what humans perform best---expert judgment and reaching conclusions. Some of its main features include
 
@@ -83,7 +88,7 @@ if you are doing computational science.
 >
 > <https://lists.mcs.anl.gov/pipermail/petsc-users/2015-July/026388.html>
 
-Open a terminal in a GNU/Linux box (may be a VirtualBox box) and make sure you install the following packages:
+Open a terminal in a GNU/Linux box (may be a VirtualBox box) and make sure you install the following packages (the last two are optional):
 
 ```
 sudo apt-get install m4 make autoconf automake gcc git findutils libgsl-dev libsundials-serial-dev libreadline-dev
@@ -102,12 +107,45 @@ make check
 
 If you get any error, including packages not found or other any issue, ask for help in the mailing list at <https://www.seamplex.com/lists.html>.
 
+## Keeping up to date
+
+To update wasora, go to the directory where the code has been previously clone and run
+
+```
+git pull
+./autogen.sh
+./configure
+make
+make check
+```
+
+See the file `INSTALL` for detailed installation instructions.
+
 
 # Running wasora
 
 Following a design decision, wasora reads a plain-text file referred to as the _input file_ that contains a set of alphanumeric keywords with their corresponding arguments that define a certain mathematical problem that is to be solved. See the file `examples/parser.was` that explains how wasora parses its input files.
 
-Assuming wasora is installed in a directory listed in the `$PATH` variable and that the input file is named `input.was`, then the proper execution instruction is
+In order to execute wasora, the compiled binary should be located by the system. One way of doing this is copying (as root) the `wasora` executable to a system-wide binary directory such as `/usr/local/bin`:
+
+```
+sudo cp wasora /usr/local/bin
+```
+
+Another alternative that does not require root access is to copy it to a `bin` directory within the user’s home and add this path (if it is not already) to the `PATH` environment variable:
+
+```
+mkdir -p $HOME/bin
+cp wasora $HOME/bin
+echo 'PATH=$PATH:$HOME/bin' >> $HOME/.bashrc
+```
+
+Close the terminal and open a new one, and `wasora` ought to be available from any directory.
+
+
+## Invocation
+
+Assuming an input file named `input.was` exists in the current directory, then the proper execution instruction is
 
 ```
 $ wasora input.was
@@ -117,17 +155,15 @@ There exist some command line options---that may be consulted using the `--help`
 
 ```
 $ wasora --version
-wasora v0.5.24-gd413ad5
+wasora v0.5.252-gbf723b9
 wasora’s an advanced suite for optimization & reactor analysis
 
- last commit on Wed Dec 7 12:26:02 2016 -0300
- compiled on 2016-12-08 07:32:03 by gtheler@tom ( )
- with gcc (Debian 4.9.2-10) 4.9.2 using -Wall and linked against
-  GNU Scientific Library version 1.16
-  SUNDIALs Library version 2.5.0
-  GNU Readline version 6.3
+ last commit on Tue Sep 18 06:40:31 2018 -0300
+ compiled on 2018-09-18 18:41:15 by gtheler@hera ( )
+ with gcc (Debian 8.2.0-6) 8.2.0 using -O2 and linked against
+  GNU Scientific Library version 2.5
 
- wasora is copyright (C) 2009-2016 jeremy theler
+ wasora is copyright (C) 2009-2018 jeremy theler
  licensed under GNU GPL version 3 or later.
  wasora is free software: you are free to change and redistribute it.
  There is NO WARRANTY, to the extent permitted by law.

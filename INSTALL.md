@@ -1,149 +1,46 @@
 % Installing wasora
 
-This file contains brief instructions to download, and/or compile and/or install [wasora](https://wasora.bitbucket.org/). The detailed discussed is deferred to the full documentation (see directory `doc`).
+This file contains instructions to download, and/or compile and/or install [wasora](https://www.seamplex.com/wasora).
 
 
 # Getting wasora
 
-The wasora code can be obtained essentially in either source or binary form. Since the v0.3.x series, wasora uses [Mercurial](http://mercurial.selenic.com/) as the version control system and the repository is hosted at [Bitbucket](https://bitbucket.org/wasora/wasora) (v0.2.x series used [Bazaar](http://bazaar.canonical.com/en/) and [Launchpad](https://launchpad.net/)) whilst previous versions were developed using [Subversion](https://subversion.apache.org/) and hosted only privately). Tarballs containing either sources or binaries are periodically prepared from the repository sources and may be downloaded from <https://bitbucket.org/wasora/wasora/downloads>.
 
-In order of increasing level of user expertise (i.e. start from the first bullet and try to advance as far as you can), to get wasora either
+> It is really worth any amount of time and effort to get away from Windows
+if you are doing computational science.
+>
+> <https://lists.mcs.anl.gov/pipermail/petsc-users/2015-July/026388.html>
 
- * Download the latest binary tarball for your architecture. Currently, the options are
-
-    - linux-amd64: GNU/Linux 64-bit statically linked binary
-
-    - linux-i386: GNU/Linux 32-bit statically linked binary
-
-    - win32-mingw: [MinGW](http://www.mingw.org/)-based 32-bit Windows binary
-
-    - win32-cygwin: [Cygwin](http://www.cygwin.com/)-based 32-bit Windows binary (includes `cygwin1.dll`) 
-
-    and proceed to the [Installing] section.
-
-    The provided binaries are statically linked to the required libraries to avoid having a user that expects to run wasora out of the box dealing with unresolved library dependences. However, there may be some libraries that are not available in a certain configuration. A full source compilation is recommended.
-
-    Note that using wasora in non-free operating systems is highly discouraged. Please try switching to [GNU/Linux](http://www.debian.org/). 
-
- * Download the latest source tarball listed in wasora's [download section](https://bitbucket.org/wasora/wasora/downloads). Then proceed to the [Compiling] section.
-
- * Clone the [Mercurial](http://mercurial.selenic.com/) [Bitbucket](https://bitbucket.org/wasora/wasora) repository:
-
-        $ hg clone https://bitbucket.org/wasora/wasora
-
-    and proceed to the [Bootstrapping] section. You may keep your tree up-to-date by pulling incremental changes:
-
-        $ cd wasora
-        $ hg pull
-        pulling from https://bitbucket.org/wasora/wasora
-        searching for changes
-        no changes found
-        $ 
-
-
-
-
-# Bootstrapping
-
-Skip this section if you did not clone the [repository](https://bitbucket.org/wasora/wasora).
-
-The repository development tree has to be bootstrapped by [autoconf & friends](http://en.wikipedia.org/wiki/GNU_build_system) to be able to configure and make the code. The script `autogen.sh` generates the files that `autoconf` needs to produce a working `configure` script:
+Wasora is distributed as a source code git repositor and requires some standard packages that are shipped with most GNU/Linux distributions. Open a terminal in a GNU/Linux (may be a VirtualBox) box and make sure you install the following packages (the last two are optional):
 
 ```
-$ ./autogen.sh 
-cleaning... done
-major version... 0.4
-minor version... 35
-building changelog... done
-formatting readme & install... done
-building src/Makefile.am... done
-calling autoreconf... 
-configure.ac:22: installing './compile'
-configure.ac:17: installing './config.guess'
-configure.ac:17: installing './config.sub'
-configure.ac:19: installing './install-sh'
-configure.ac:19: installing './missing'
-parallel-tests: installing './test-driver'
-src/Makefile.am: installing './depcomp'
-done!
-$ 
+sudo apt-get install m4 make autoconf automake gcc git findutils libgsl-dev libsundials-serial-dev libreadline-dev
 ```
 
-At this point, a tree (almost) similar to the source distribution tarball is obtained, which can be configured and compiled as described in the section [Compiling] below. The bootstrapped files are listed in `.hgignore` so Mercurial should not report any changes in the status of the working tree after executing `autogen.sh`:
+Clone the wasora repository, bootstrap, configure, compile and check:
 
-    $ hg status
-    $
+```
+git clone https://bitbucket.org/seamplex/wasora/
+cd wasora
+./autogen.sh
+./configure
+make
+make check
+```
 
-To clean the working tree and revert it to a fresh-clone status, the `autoclean.sh` script should be executed:
+If you get any error, including packages not found or other any issue, ask for help in the mailing list at <https://www.seamplex.com/lists.html>.
 
-    $ ./autoclean.sh
+## Keeping up to date
 
-Note that `autogen.sh` calls `autoclean.sh` first.
+To update wasora, go to the directory where the code has been previously clone and run
 
-
-# Compiling
-
-Skip this section if you downloaded a binary tarball.
-
-Wasora follows the standard GNU `./configure && make` procedure. So uncompress the downloaded tarball into a proper location within your home directory:
-
-
-    $ tar xvzf wasora-0.4.35.tar.gz
-    $ cd wasora
-
-Then execute the `configure` script so it can check the environment is able to build wasora:
-
-    $ ./configure
-    checking build system type... x86_64-unknown-linux-gnu
-    checking host system type... x86_64-unknown-linux-gnu
-    checking for a BSD-compatible install... /usr/bin/install -c
-    checking whether build environment is sane... yes
-    [...]
-    config.status: creating src/Makefile
-    config.status: executing depfiles commands
-
-    ## --------------------- ##
-    ## Configuration summary ##
-    ## --------------------- ##
-      GSL library (required): yes, version 1.16
-
-      IDA library (optional): yes, version unknown
-        differential-algebraic systems will be solved
-
-      Readline library (opt): yes, version 6.3
-        run-time debugging-like capabilities will be provided
-
-    Now proceed to compile with 'make'
-
-    $
-
-If any error is reported, there may be likely problems with finding one or more libraries. See the section [Required libraries] below to see how the error can be fixed.
-
-Once the `configure` step successfully tells us to proceed to compile with `make`, that is what we do:
-
-    $ make
-
-The executable binary will be located in the current directory and called `wasora`. At this point you may want to check if wasora actually works by executing the test suite:
-
-    $ make check
-
-If [gnuplot](http://www.gnuplot.info/) is installed, some graphical windows should pop up. See the `README` for a full list of the test involved.
-
-The usual way to finish the compilation of a program that follows the GNU standard is to perform a system-wide installation by executing (as root):
-
-    # make install
-
-This would leave the executable `wasora` available to be executed by any user of the system. However, other workflows may be used to run wasora. See the section [Installing] for details.
-
-By default, `configure` sets `CFLAGS=-O2`. To obtain a binary with debugging symbols, call either `./configure` or `make` with `CFLAGS=-g`, i.e.
-
-    $ ./configure CFLAGS=-g
-    $ make
-
-or
-
-    $ ./configure
-    $ make CFLAGS=-g
+```
+git pull
+./autogen.sh
+./configure
+make
+make check
+```
 
 
 
@@ -204,23 +101,17 @@ Call `./configure --help` to see all the available options. Which libraries waso
 
 ```
 $ ./wasora -v
-wasora 0.4.35  (c0750cdeca3f 2015-12-28 11:59 -0300)
-wasora's an advanced suite for optimization & reactor analysis
+wasora v0.5.252-gbf723b9
+wasora’s an advanced suite for optimization & reactor analysis
 
- rev hash c0750cdeca3f8cf8eae4b80ec3cfdfd85321f5b0
- last commit on 2015-12-28 11:59 -0300 (rev 189)
+ last commit on Tue Sep 18 06:40:31 2018 -0300
+ compiled on 2018-09-18 18:41:15 by gtheler@hera ( )
+ with gcc (Debian 8.2.0-6) 8.2.0 using -O2 and linked against
+  GNU Scientific Library version 2.5
 
- compiled on 2015-12-28 15:03:49 by jeremy@tom (linux-gnu x86_64)
- with gcc (Debian 4.9.2-10) 4.9.2 using -O2 and linked against
-  GNU Scientific Library version 1.16
-  GNU Readline version 6.3
-  SUNDIALs Library version 2.5.0
-
-
- wasora is copyright (C) 2009-2015 jeremy theler
+ wasora is copyright (C) 2009-2018 jeremy theler
  licensed under GNU GPL version 3 or later.
- wasora is free software: you are free to change and redistribute it.
- There is NO WARRANTY, to the extent permitted by law.
+ wasora is free software: you are free to change an
 $
 ```
  
@@ -230,7 +121,7 @@ If something goes wrong and the compilation fails, please feel free to ask for h
 
 # Installing
 
-To be explained.
+Once the `wasora` executable is obtained, 
 
 
 # Further information

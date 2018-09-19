@@ -1726,7 +1726,7 @@ typedef struct neighbor_t neighbor_t;
 typedef struct gauss_t gauss_t;
 
 typedef struct elementary_entity_t elementary_entity_t;
-typedef struct bc_string_based_t bc_string_based_t;
+typedef struct bc_t bc_t;
 typedef struct node_data_t node_data_t;
 
 
@@ -1889,24 +1889,8 @@ struct physical_entity_t {
   int tag;
   int dimension;
   
-  // apuntador al material
-  material_t *material;
-  
-//  char *bc_type_string; // el tipo de CC es arbitraria, despues cada codigo la interpreta
-  int bc_type_math;
-  int bc_type_phys;
-  
-  // linked list con los argumentos que definen la cc
-  // dependiendo del problema, los grados de libertad y
-  // el tipo de cc se interpretan de diferentes maneras
-  expr_t *bc_args;
-  
-  // linked list con strings arbitrarias que despues cada codigo interpreta
-  // el cuento es asi: dejamos que una CC se defina como texto y despues
-  // el codigo ve que hace, si usa directamente ese bc_string o rellena
-  // las expresiones y cosas de esta estructura
-  
-  bc_string_based_t *bc_strings;
+  material_t *material;    // apuntador
+  bc_t *bcs;                // linked list 
   
   // entero que indica en que direccion hay que aplicar una cierta cc
   // en mallas estructuradas (1 = x<0, 2 = x>0, 3 = y<0, 4 = y>0, 5 = z<0, 6 = z>0)
@@ -1961,19 +1945,19 @@ struct elementary_entity_t {
   elementary_entity_t *next;
 };
 
-struct bc_string_based_t {
+struct bc_t {
   char *string;
   
   // estos son ints y no enums porque desde wasora no sabemos que va a haber
-  int bc_type_math;
-  int bc_type_phys;  
+  int type_math;
+  int type_phys;  
   int dof;   // este puede tener valores altos que quieran decir cosas (i.e. dof=213 es Mx)
   
-  physical_entity_t *mimic_to;
-  
   expr_t expr;
+  expr_t *args;
+  physical_entity_t *slave;  
   
-  bc_string_based_t *next;
+  bc_t *next;
 };
 
 

@@ -671,13 +671,14 @@ int wasora_mesh_parse_line(char *line) {
       mesh_t *mesh = NULL;
       int dimension = 0;
       material_t *material = NULL;
-      bc_string_based_t *bc_strings = NULL;
-      bc_string_based_t *bc_string = NULL;
+      bc_t *bcs = NULL;
+      bc_t *bc = NULL;
       expr_t *pos = NULL;
       physical_entity_t *physical_entity = NULL;
 
       while ((token = wasora_get_next_token(NULL)) != NULL) {
 
+        // TODO: habria que sacarlo?
 ///kw+PHYSICAL_ENTITY+usage NAME <name>
         if (strcasecmp(token, "NAME") == 0) {
           if (wasora_parser_string(&name) != WASORA_PARSER_OK) {
@@ -750,14 +751,14 @@ int wasora_mesh_parse_line(char *line) {
             dimension = (ndim+1);
           }
           
-///kw+PHYSICAL_ENTITY+usage [ BC <string_1> <string_2> ... ]
+///kw+PHYSICAL_ENTITY+usage [ BC <bc_1> <bcg_2> ... ]
         } else if (strcasecmp(token, "BOUNDARY") == 0 || strcasecmp(token, "BC") == 0) {
 
           // los argumentos como una linked list de strings
           while ((token = wasora_get_next_token(NULL)) != NULL) {
-            bc_string = calloc(1, sizeof(bc_string_based_t));
-            bc_string->string = strdup(token);
-            LL_APPEND(bc_strings, bc_string);
+            bc = calloc(1, sizeof(bc_t));
+            bc->string = strdup(token);
+            LL_APPEND(bcs, bc);
           }
 
         } else {
@@ -774,7 +775,7 @@ int wasora_mesh_parse_line(char *line) {
       if (dimension == 0) {
         if (material != NULL) {
           dimension = mesh->bulk_dimensions;
-        } else if (bc_strings != NULL) {
+        } else if (bcs != NULL) {
           dimension = mesh->bulk_dimensions-1;
         } 
       }
@@ -788,13 +789,13 @@ int wasora_mesh_parse_line(char *line) {
           return WASORA_PARSER_ERROR;
         }
       }
-      
+
       if (material != NULL) {
         physical_entity->material = material;
       }
       
-      if (bc_strings != NULL) {
-        physical_entity->bc_strings = bc_strings;
+      if (bcs != NULL) {
+        physical_entity->bcs = bcs;
       }
       
       if (pos != NULL) {
@@ -802,7 +803,7 @@ int wasora_mesh_parse_line(char *line) {
         free(pos);
       }
       
-      //free(name);
+      free(name);
       return WASORA_PARSER_OK;
 
 // ---- MATERIAL ----------------------------------------------------

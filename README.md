@@ -83,8 +83,7 @@ The code heavily relies on the numerical routines provided by the [GNU Scientifi
 
 # Quick-start
 
-> It is really worth any amount of time and effort to get away from Windows
-if you are doing computational science.
+> It is really worth any amount of time and effort to get away from Windows if you are doing computational science.
 >
 > <https://lists.mcs.anl.gov/pipermail/petsc-users/2015-July/026388.html>
 
@@ -119,6 +118,7 @@ make
 make check
 ```
 
+You can receive an email notification each time wasora is updated by watching the [Bitbucket repository](https://bitbucket.org/seamplex/wasora/src). Log in to Bitbucket, and choose “Watch repository” from the top-right menu.
 See the file `INSTALL` for detailed installation instructions.
 
 

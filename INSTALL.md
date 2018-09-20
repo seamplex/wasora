@@ -6,8 +6,7 @@ This file contains instructions to download, and/or compile and/or install [waso
 # Getting wasora
 
 
-> It is really worth any amount of time and effort to get away from Windows
-if you are doing computational science.
+> It is really worth any amount of time and effort to get away from Windows if you are doing computational science.
 >
 > <https://lists.mcs.anl.gov/pipermail/petsc-users/2015-July/026388.html>
 
@@ -42,6 +41,8 @@ make
 make check
 ```
 
+
+You can receive an email notification each time wasora is updated by watching the [Bitbucket repository](https://bitbucket.org/seamplex/wasora/src). Log in to Bitbucket, and choose “Watch repository” from the top-right menu.
 
 
 # Required libraries
@@ -121,7 +122,22 @@ If something goes wrong and the compilation fails, please feel free to ask for h
 
 # Installing
 
-Once the `wasora` executable is obtained, 
+In order to execute wasora, the compiled binary should be located by the system. One way of doing this is copying (as root) the `wasora` executable to a system-wide binary directory such as `/usr/local/bin`:
+
+```
+sudo cp wasora /usr/local/bin
+```
+
+Another alternative that does not require root access is to copy it to a `bin` directory within the user’s home and add this path (if it is not already) to the `PATH` environment variable:
+
+```
+mkdir -p $HOME/bin
+cp wasora $HOME/bin
+echo 'PATH=$PATH:$HOME/bin' >> $HOME/.bashrc
+```
+
+Close the terminal and open a new one, and `wasora` ought to be available from any directory.
+
 
 
 # Further information
@@ -136,7 +152,7 @@ FAQ: <http://wasora.bitbucket.org/FAQ.html>
 
 
 
-wasora is copyright (C) 2009--2016 Germán (jeremy) Theler  
+wasora is copyright (C) 2009--2018 Germán (jeremy) Theler  
 wasora is licensed under [GNU GPL version 3](http://www.gnu.org/copyleft/gpl.html) or (at your option) any later version.  
 wasora is free software: you are free to change and redistribute it.  
 There is NO WARRANTY, to the extent permitted by law.  

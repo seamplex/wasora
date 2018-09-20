@@ -671,17 +671,17 @@ int wasora_mesh_parse_line(char *line) {
       expr_t *pos = NULL;
       physical_entity_t *physical_entity = NULL;
 
-      while ((token = wasora_get_next_token(NULL)) != NULL) {
-
-        // TODO: habria que sacarlo?
-///kw+PHYSICAL_ENTITY+usage NAME <name>
-        if (strcasecmp(token, "NAME") == 0) {
-          if (wasora_parser_string(&name) != WASORA_PARSER_OK) {
-            return WASORA_PARSER_ERROR;
-          }
-          
+///kw+PHYSICAL_ENTITY+usage <name>
+      wasora_call(wasora_parser_string(&name));
+      // backwards compatibility: antes pediamos "NAME"
+      if (strcasecmp(name, "NAME") == 0) {
+        free(name);
+        wasora_call(wasora_parser_string(&name));
+      }
+      
+      while ((token = wasora_get_next_token(NULL)) != NULL) {          
 ///kw+PHYSICAL_ENTITY+usage [ DIMENSION <expr> ]
-        } else if (strcasecmp(token, "DIMENSION") == 0 || strcasecmp(token, "DIM") == 0) {
+        if (strcasecmp(token, "DIMENSION") == 0 || strcasecmp(token, "DIM") == 0) {
           if (wasora_parser_expression_in_string(&xi) != WASORA_PARSER_OK) {
             return WASORA_PARSER_ERROR;
           }
@@ -708,8 +708,9 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
           free(material_name);
-          
-///kw+PHYSICAL_ENTITY+usage [ X_MIN <expr> ] [ X_MAX <expr> ] [ Y_MIN <expr> ] [ Y_MAX <expr> ] [ Z_MIN <expr> ] [ Z_MAX <expr> ]
+  
+// esto no lo documento para no encourage
+//kw+PHYSICAL_ENTITY+usage [ X_MIN <expr> ] [ X_MAX <expr> ] [ Y_MIN <expr> ] [ Y_MAX <expr> ] [ Z_MIN <expr> ] [ Z_MAX <expr> ]
         } else if (strcasecmp(token+1, "_MIN") == 0 || strcasecmp(token+1, "_MAX") == 0) {
 
           int ndim = 0;
@@ -776,7 +777,7 @@ int wasora_mesh_parse_line(char *line) {
       }
       
       if (name == NULL) {
-        wasora_push_error_message("NAME is mandatory for PHYSICAL_ENTIY");
+        wasora_push_error_message("NAME is mandatory for PHYSICAL_ENTITY");
         return WASORA_PARSER_ERROR;
       }
       if ((physical_entity = wasora_get_physical_entity_ptr(name, mesh)) == NULL) {

@@ -75,6 +75,9 @@
 // macro para verificar errores en llamadas a funciones
 #define wasora_call(function)   if ((function) != WASORA_RUNTIME_OK) return WASORA_RUNTIME_ERROR
 
+// macro para hacer free y apuntar a NULL
+#define wasora_free(p) free(p);p=NULL;
+
 extern const char operators[];
 extern const char factorseparators[];
 
@@ -1795,6 +1798,7 @@ struct property_data_t {
 struct {
     
   int initialized;
+  int need_cells;
     
   mesh_t *meshes;
   mesh_t *main_mesh;

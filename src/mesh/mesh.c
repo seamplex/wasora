@@ -159,13 +159,14 @@ int wasora_instruction_mesh(void *arg) {
   }
   
   // idem de celdas
-  // TODO: ver si hay que hacerlo siempre
-  wasora_call(mesh_element2cell(mesh));
-  mesh->cells_argument = malloc(mesh->spatial_dimensions * sizeof(double *));
-  for (d = 0; d < mesh->spatial_dimensions; d++) {
-    mesh->cells_argument[d] = malloc(mesh->n_cells * sizeof(double));
-    for (i = 0; i < mesh->n_cells; i++) {
-      mesh->cells_argument[d][i] = mesh->cell[i].x[d]; 
+  if (wasora_mesh.need_cells) {
+    wasora_call(mesh_element2cell(mesh));
+    mesh->cells_argument = malloc(mesh->spatial_dimensions * sizeof(double *));
+    for (d = 0; d < mesh->spatial_dimensions; d++) {
+      mesh->cells_argument[d] = malloc(mesh->n_cells * sizeof(double));
+      for (i = 0; i < mesh->n_cells; i++) {
+        mesh->cells_argument[d][i] = mesh->cell[i].x[d]; 
+      }
     }
   }
 
@@ -328,24 +329,11 @@ element_t *mesh_find_element(mesh_t *mesh, const double *x) {
 // esta en el input (dimensiones, grados de libertad, entidades fisicas, etc)
 int mesh_free(mesh_t *mesh) {
 
-  physical_entity_t *physical_entity, *physical_entity_tmp;
+  physical_entity_t *physical_entity;
+//  physical_entity_t *physical_entity_tmp;
   element_list_item_t *element_item, *element_tmp;
   int i, j, k, d;
-/*
-  for (d = 0; d < 4; d++) {
-    HASH_ITER(hh_tag[d], mesh->physical_entities_by_tag[d], physical_entity, physical_entity_tmp) {
-      HASH_DELETE(hh_tag[d], mesh->physical_entities_by_tag[d], physical_entity);
-    }
-  }
-  HASH_ITER(hh, mesh->physical_entities, physical_entity, physical_entity_tmp) {
-    HASH_DEL(mesh->physical_entities, physical_entity);
-    // si hacemos free de la entidad en si entonces perdemos la informacion sobre BCs
-    // TODO: pensar!    
-    // free(physical_entity->name);
-    // free(physical_entity->element);
-    // free(physical_entity);
-  }
-*/  
+  
   if (mesh->cell != NULL) {
     for (i = 0; i < mesh->n_cells; i++) {
       if (mesh->cell[i].index != NULL) {
@@ -364,6 +352,10 @@ int mesh_free(mesh_t *mesh) {
         free(mesh->cell[i].ineighbor);
       }
     }
+    for (d = 0; d < mesh->spatial_dimensions; d++) {
+      free(mesh->cells_argument[d]);
+    }
+    free(mesh->cells_argument);
     free(mesh->cell);
   }
   mesh->cell = NULL;
@@ -429,6 +421,21 @@ int mesh_free(mesh_t *mesh) {
     free(physical_entity->element);
     physical_entity->element = NULL;
   }
+/*
+  for (d = 0; d < 4; d++) {
+    HASH_ITER(hh_tag[d], mesh->physical_entities_by_tag[d], physical_entity, physical_entity_tmp) {
+      HASH_DELETE(hh_tag[d], mesh->physical_entities_by_tag[d], physical_entity);
+    }
+  }
+  HASH_ITER(hh, mesh->physical_entities, physical_entity, physical_entity_tmp) {
+    HASH_DEL(mesh->physical_entities, physical_entity);
+    // si hacemos free de la entidad en si entonces perdemos la informacion sobre BCs
+    // TODO: pensar!    
+    // free(physical_entity->name);
+    // free(physical_entity->element);
+    // free(physical_entity);
+  }
+*/    
   
   mesh->initialized = 0;
 

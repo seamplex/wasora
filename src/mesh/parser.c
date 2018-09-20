@@ -267,9 +267,6 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_POST+usage MESH_POST
       mesh_post_t *mesh_post = calloc(1, sizeof(mesh_post_t));
       
-      // con esto le pegamos la mayor parte de las veces
-//      mesh_post->cell_centered = wasora_mesh.default_cell_centered;
-
       while ((token = wasora_get_next_token(NULL)) != NULL) {
 ///kw+MESH_POST+usage [ MESH <mesh_identifier> ]
         if (strcasecmp(token, "MESH") == 0) {
@@ -307,6 +304,7 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_POST+usage [ CELLS | ]
         } else if (strcasecmp(token, "CELLS") == 0) {
           mesh_post->centering = centering_cells;
+          wasora_mesh.need_cells = 1;
 
 ///kw+MESH_POST+usage  NODES ]
         } else if (strcasecmp(token, "NODES") == 0) {
@@ -417,8 +415,6 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_INTEGRATE+usage MESH_INTEGRATE
       
       mesh_integrate_t *mesh_integrate = calloc(1, sizeof(mesh_integrate_t));
-      // con esto le pegamos la mayor parte de las veces
-//      mesh_integrate->cell_centered = wasora_mesh.default_cell_centered;
       
       while ((token = wasora_get_next_token(NULL)) != NULL) {
 // TODO: integrand y que wasora vea si es una funcion o una expresion        
@@ -465,6 +461,7 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_INTEGRATE+usage | CELLS ]
           } else if (strcasecmp(token, "CELLS") == 0) {
             mesh_integrate->centering = centering_cells;
+            wasora_mesh.need_cells = 1;
 
 ///kw+MESH_INTEGRATE+usage [ GAUSS_POINTS <num_expr> ]
         } else if (strcasecmp(token, "GAUSS_POINTS") == 0) {
@@ -510,9 +507,6 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_FILL_VECTOR+usage MESH_FILL_VECTOR
       mesh_fill_vector_t *mesh_fill_vector = calloc(1, sizeof(mesh_fill_vector_t));
       
-      // con esto le pegamos la mayor parte de las veces
-//      mesh_fill_vector->cell_centered = wasora_mesh.default_cell_centered;
-
       while ((token = wasora_get_next_token(NULL)) != NULL) {
 ///kw+MESH_FILL_VECTOR+usage [ MESH <name> ]
         if (strcasecmp(token, "MESH") == 0) {
@@ -531,6 +525,7 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_FILL_VECTOR+usage | CELLS ]
           } else if (strcasecmp(token, "CELLS") == 0) {
             mesh_fill_vector->centering = centering_cells;
+            wasora_mesh.need_cells = 1;
 
 ///kw+MESH_FILL_VECTOR+usage VECTOR <vector>
         } else if (strcasecmp(token, "VECTOR") == 0) {

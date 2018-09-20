@@ -28,6 +28,7 @@ int mesh_element2cell(mesh_t *mesh) {
   if (mesh->cell != NULL) {
     return WASORA_RUNTIME_OK;
   }
+  wasora_mesh.need_cells = 1;
   
   // contamos cuantas celdas hay
   // una celda = un elemento de la dimension del problema

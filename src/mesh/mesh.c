@@ -333,8 +333,8 @@ int mesh_free(mesh_t *mesh) {
   int i, j, k, d;
 
   for (d = 0; d < 4; d++) {
-    HASH_ITER(hh, mesh->physical_entities_by_tag[d], physical_entity, physical_entity_tmp) {
-      HASH_DEL(mesh->physical_entities_by_tag[d], physical_entity);
+    HASH_ITER(hh_tag[d], mesh->physical_entities_by_tag[d], physical_entity, physical_entity_tmp) {
+      HASH_DELETE(hh_tag[d], mesh->physical_entities_by_tag[d], physical_entity);
     }
   }
   HASH_ITER(hh, mesh->physical_entities, physical_entity, physical_entity_tmp) {

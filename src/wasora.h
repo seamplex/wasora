@@ -1953,8 +1953,7 @@ struct bc_t {
   int type_phys;  
   int dof;   // este puede tener valores altos que quieran decir cosas (i.e. dof=213 es Mx)
   
-  expr_t expr;
-  expr_t *args;
+  expr_t *expr;
   physical_entity_t *slave;  
   
   bc_t *next;

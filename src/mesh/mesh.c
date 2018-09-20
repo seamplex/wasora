@@ -325,25 +325,27 @@ element_t *mesh_find_element(mesh_t *mesh, const double *x) {
 }
 
 // libera lo que allocamos al leerla, pero no lo que
-// esta en el input (dimensiones, grados de libertad, etc)
+// esta en el input (dimensiones, grados de libertad, entidades fisicas, etc)
 int mesh_free(mesh_t *mesh) {
 
   physical_entity_t *physical_entity, *physical_entity_tmp;
   element_list_item_t *element_item, *element_tmp;
   int i, j, k, d;
-
+/*
   for (d = 0; d < 4; d++) {
     HASH_ITER(hh_tag[d], mesh->physical_entities_by_tag[d], physical_entity, physical_entity_tmp) {
       HASH_DELETE(hh_tag[d], mesh->physical_entities_by_tag[d], physical_entity);
     }
   }
   HASH_ITER(hh, mesh->physical_entities, physical_entity, physical_entity_tmp) {
-    free(physical_entity->name);
-    free(physical_entity->element);
     HASH_DEL(mesh->physical_entities, physical_entity);
-    free(physical_entity);
+    // si hacemos free de la entidad en si entonces perdemos la informacion sobre BCs
+    // TODO: pensar!    
+    // free(physical_entity->name);
+    // free(physical_entity->element);
+    // free(physical_entity);
   }
-  
+*/  
   if (mesh->cell != NULL) {
     for (i = 0; i < mesh->n_cells; i++) {
       if (mesh->cell[i].index != NULL) {

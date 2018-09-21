@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language name="wasora" version="0.2" kateversion="3.7.4" section="Scientific" extensions="*.was;*.mil;*.fin" author="jeremy theler" license="GPL">
+  <highlighting>
+    <list name="prim_keywords">
+      <item>ABORT</item>
+      <item>ADIABATIC</item>
+      <item>ALGORITHM</item>
+      <item>ALIAS</item>
+      <item>AS</item>
+      <item>ASCII_FILE</item>
+      <item>ASCII_FILE_PATH</item>
+      <item>BAKE</item>
+      <item>BC</item>
+      <item>BINARY_FILE</item>
+      <item>BINARY_FILE_PATH</item>
+      <item>BOUNDARY</item>
+      <item>BREAK</item>
+      <item>CALL</item>
+      <item>CELLS</item>
+      <item>CLOSE</item>
+      <item>COLS</item>
+      <item>COLUMNS</item>
+      <item>CONST</item>
+      <item>DATA</item>
+      <item>DEFAULT_ARGUMENT_VALUE</item>
+      <item>DEGREES</item>
+      <item>DELTAEPSABS</item>
+      <item>DELTAEPSREL</item>
+      <item>DELTA_X</item>
+      <item>DELTA_Y</item>
+      <item>DELTA_Z</item>
+      <item>DIFFERENTIAL</item>
+      <item>DIM</item>
+      <item>DIMENSION</item>
+      <item>DIMENSIONS</item>
+      <item>DO_NOT_EVALUATE_AT_PARSE_TIME</item>
+      <item>DO_NOT_OPEN</item>
+      <item>DO_NOT_RERUN</item>
+      <item>DO_NOT_SET_BLOCK_SIZE</item>
+      <item>DUMP_FILE_PATH</item>
+      <item>ELASTIC</item>
+      <item>ELASTIC_AXISYMMETRIC</item>
+      <item>ELEMS_PER_LINE</item>
+      <item>ELSE</item>
+      <item>ENDIF</item>
+      <item>END_POINT</item>
+      <item>EPSABS</item>
+      <item>EPSREL</item>
+      <item>EPS_TYPE</item>
+      <item>EXPR</item>
+      <item>EXPRESSION</item>
+      <item>FILE</item>
+      <item>FILE_PATH</item>
+      <item>FINO_DEBUG</item>
+      <item>FINO_LINEARIZE</item>
+      <item>FINO_PROBLEM</item>
+      <item>FINO_SOLVER</item>
+      <item>FINO_STEP</item>
+      <item>FIT</item>
+      <item>FLUX_POST</item>
+      <item>FORMAT</item>
+      <item>FORMULATION</item>
+      <item>FROM</item>
+      <item>FUNCTION</item>
+      <item>FUNCTION_DATA</item>
+      <item>GAUSS_POINTS</item>
+      <item>GRADIENT</item>
+      <item>GRADIENT_EVALUATION</item>
+      <item>GRADIENT_JACOBIAN_THRESHOLD</item>
+      <item>GROUPS</item>
+      <item>GUESS</item>
+      <item>HEADER</item>
+      <item>HEAT</item>
+      <item>HEAT_AXISYMMETRIC</item>
+      <item>HISTORY</item>
+      <item>HORIZONTAL</item>
+      <item>IF</item>
+      <item>IGNORE_NULL</item>
+      <item>I_MAX</item>
+      <item>IMPLICIT</item>
+      <item>IMPLICIT_BC</item>
+      <item>INCLUDE</item>
+      <item>INCLUDE_INPUT</item>
+      <item>INDEX</item>
+      <item>INITIAL_CONDITIONS_MODE</item>
+      <item>INPUT</item>
+      <item>INPUT_FILE</item>
+      <item>INPUT_FILE_PATH</item>
+      <item>INTERPOLATION</item>
+      <item>INTERPOLATION_THRESHOLD</item>
+      <item>IS</item>
+      <item>JUST_BUILD</item>
+      <item>JUST_SOLVE</item>
+      <item>KSP_TYPE</item>
+      <item>LENGTH_X</item>
+      <item>LENGTH_Y</item>
+      <item>LENGTH_Z</item>
+      <item>LOAD_PLUGIN</item>
+      <item>LOAD_ROUTINE</item>
+      <item>M</item>
+      <item>M4</item>
+      <item>MACRO</item>
+      <item>MATERIAL</item>
+      <item>MATRICES_ASCII</item>
+      <item>MATRICES_ASCII_STRUCTURE</item>
+      <item>MATRICES_PETSC_ASCII</item>
+      <item>MATRICES_PETSC_BINARY</item>
+      <item>MATRICES_PETSC_COMPRESSED_BINARY</item>
+      <item>MATRICES_PETSC_DENSE</item>
+      <item>MATRICES_PETSC_OCTAVE</item>
+      <item>MATRICES_SIZE</item>
+      <item>MATRICES_SNG</item>
+      <item>MATRICES_SNG_STRUCT</item>
+      <item>MATRICES_STRIDE</item>
+      <item>MATRICES_X</item>
+      <item>MATRICES_X_SIZE</item>
+      <item>MATRIX</item>
+      <item>MAX</item>
+      <item>MAX_DAUGHTERS</item>
+      <item>MAX_ITER</item>
+      <item>MB</item>
+      <item>MEMORY_USAGE_SHMEM</item>
+      <item>MESH</item>
+      <item>MESH_FILL_VECTOR</item>
+      <item>MESH_FIND_MAX</item>
+      <item>MESH_INTEGRATE</item>
+      <item>MESH_MAIN</item>
+      <item>MESH_POST</item>
+      <item>METHOD</item>
+      <item>MILONGA_DEBUG</item>
+      <item>MILONGA_PROBLEM</item>
+      <item>MILONGA_SOLVER</item>
+      <item>MILONGA_STEP</item>
+      <item>MIN</item>
+      <item>MINIMIZE</item>
+      <item>MODAL</item>
+      <item>MODE</item>
+      <item>NAME</item>
+      <item>NCELLS_X</item>
+      <item>NCELLS_Y</item>
+      <item>NCELLS_Z</item>
+      <item>N_EIGEN</item>
+      <item>NODES</item>
+      <item>NOMESH</item>
+      <item>NO_MESH</item>
+      <item>NONEWLINE</item>
+      <item>NO_PHYSICAL_NAMES</item>
+      <item>NORERUN</item>
+      <item>NOSEP</item>
+      <item>NSTEPS</item>
+      <item>OFFSET</item>
+      <item>OPEN</item>
+      <item>OPTIMIZE</item>
+      <item>ORDERING</item>
+      <item>OUTER_STEPS</item>
+      <item>OUTPUT</item>
+      <item>OUTPUT_FILE</item>
+      <item>OUTPUT_FILE_PATH</item>
+      <item>OVER</item>
+      <item>PARAMETRIC</item>
+      <item>PC_TYPE</item>
+      <item>PEAK</item>
+      <item>PHASE_SPACE</item>
+      <item>PHYSICAL_ENTITY</item>
+      <item>PHYSICAL_PROPERTY</item>
+      <item>PLANE_STRAIN</item>
+      <item>PLANE_STRESS</item>
+      <item>PRINT</item>
+      <item>PRINT_FUNCTION</item>
+      <item>PRINT_VECTOR</item>
+      <item>PROGRESS_ASCII</item>
+      <item>PROGRESS_BUILD_SHMEM</item>
+      <item>PROGRESS_SOLVE_SHMEM</item>
+      <item>RANGE_MAX</item>
+      <item>RANGE_MIN</item>
+      <item>READ</item>
+      <item>READ_DATA</item>
+      <item>READ_FUNCTION</item>
+      <item>READ_SCALAR</item>
+      <item>RERUN</item>
+      <item>RESIDUALS</item>
+      <item>RESULT</item>
+      <item>ROUTINE</item>
+      <item>ROWS</item>
+      <item>SCALE</item>
+      <item>SCHEME</item>
+      <item>SEM</item>
+      <item>SEMAPHORE</item>
+      <item>SEP</item>
+      <item>SEPARATOR</item>
+      <item>SET_BLOCK_SIZE</item>
+      <item>SET_NEAR_NULLSPACE</item>
+      <item>SET_NEAR_NULL_SPACE</item>
+      <item>SHAKE</item>
+      <item>SHELL</item>
+      <item>SHEPARD_EXPONENT</item>
+      <item>SHEPARD_RADIUS</item>
+      <item>SHM</item>
+      <item>SHMEM_MEMORY</item>
+      <item>SHMEM_PROGRESS_BUILD</item>
+      <item>SHMEM_PROGRESS_SOLVE</item>
+      <item>SHM_OBJECT</item>
+      <item>SIMAN_EFUNC</item>
+      <item>SIZE</item>
+      <item>SIZES</item>
+      <item>SOLUTION</item>
+      <item>SOLUTION_NAMES</item>
+      <item>SOLUTIONS</item>
+      <item>SOLVE</item>
+      <item>SPECTRUM</item>
+      <item>ST_ANTI_SHIFT</item>
+      <item>START_POINT</item>
+      <item>STEP</item>
+      <item>STRING</item>
+      <item>STRUCTURED</item>
+      <item>ST_SHIFT</item>
+      <item>ST_TYPE</item>
+      <item>SUBSPACE_DIM</item>
+      <item>SYMMETRY_AXIS</item>
+      <item>TEXT</item>
+      <item>TIME_PATH</item>
+      <item>TO</item>
+      <item>TOTAL</item>
+      <item>TYPE</item>
+      <item>UNKNOWN</item>
+      <item>UNKNOWNS</item>
+      <item>VAR</item>
+      <item>VECTOR</item>
+      <item>VECTOR_DATA</item>
+      <item>VECTORS</item>
+      <item>VERBOSE</item>
+      <item>VERTICAL</item>
+      <item>VIA</item>
+      <item>VOLHOM</item>
+      <item>WRITE</item>
+      <item>X_INCREASES_FIRST</item>
+      <item>X_MAX</item>
+      <item>XS</item>
+      <item>Y_MAX</item>
+      <item>Z_MAX</item>
+      <item>ALLOWED</item>
+      <item>AS_PROVIDED</item>
+      <item>FROM_DERIVATIVES</item>
+      <item>FROM_VARIABLES</item>
+      <item>GRADTOL</item>
+      <item>MAX_ITER</item>
+      <item>NONE</item>
+      <item>POST</item>
+      <item>SKIP_HEADER_STEP</item>
+      <item>SKIP_STATIC_STEP</item>
+      <item>SKIP_STEP</item>
+      <item>SKIP_TIME</item>
+      <item>TOL</item>
+      <item>WAIT</item>
+    </list>
+    <list name="sec_keywords">
+    </list>
+    <list name="internals">
+      <item>cells</item>
+      <item>cells_0</item>
+      <item>done</item>
+      <item>done_0</item>
+      <item>done_outer</item>
+      <item>done_outer_0</item>
+      <item>done_static</item>
+      <item>done_static_0</item>
+      <item>done_transient</item>
+      <item>done_transient_0</item>
+      <item>dont_quit</item>
+      <item>dont_quit_0</item>
+      <item>dont_report</item>
+      <item>dont_report_0</item>
+      <item>dt</item>
+      <item>dt_0</item>
+      <item>elements</item>
+      <item>elements_0</item>
+      <item>end_time</item>
+      <item>end_time_0</item>
+      <item>eps</item>
+      <item>eps_0</item>
+      <item>i</item>
+      <item>i_0</item>
+      <item>infinite</item>
+      <item>infinite_0</item>
+      <item>in_outer_initial</item>
+      <item>in_outer_initial_0</item>
+      <item>in_static</item>
+      <item>in_static_0</item>
+      <item>in_static_first</item>
+      <item>in_static_first_0</item>
+      <item>in_static_last</item>
+      <item>in_static_last_0</item>
+      <item>in_transient</item>
+      <item>in_transient_0</item>
+      <item>in_transient_first</item>
+      <item>in_transient_first_0</item>
+      <item>in_transient_last</item>
+      <item>in_transient_last_0</item>
+      <item>j</item>
+      <item>j_0</item>
+      <item>max_dt</item>
+      <item>max_dt_0</item>
+      <item>min_dt</item>
+      <item>min_dt_0</item>
+      <item>ncores</item>
+      <item>ncores_0</item>
+      <item>nodes</item>
+      <item>nodes_0</item>
+      <item>on_gsl_error</item>
+      <item>on_gsl_error_0</item>
+      <item>on_ida_error</item>
+      <item>on_ida_error_0</item>
+      <item>on_nan</item>
+      <item>on_nan_0</item>
+      <item>pi</item>
+      <item>pi_0</item>
+      <item>pid</item>
+      <item>pid_0</item>
+      <item>quit</item>
+      <item>quit_0</item>
+      <item>realtime_scale</item>
+      <item>realtime_scale_0</item>
+      <item>rel_error</item>
+      <item>rel_error_0</item>
+      <item>report</item>
+      <item>report_0</item>
+      <item>static_steps</item>
+      <item>static_steps_0</item>
+      <item>step_inner</item>
+      <item>step_inner_0</item>
+      <item>step_outer</item>
+      <item>step_outer_0</item>
+      <item>step_static</item>
+      <item>step_static_0</item>
+      <item>step_transient</item>
+      <item>step_transient_0</item>
+      <item>t</item>
+      <item>t_0</item>
+      <item>x</item>
+      <item>x_0</item>
+      <item>y</item>
+      <item>y_0</item>
+      <item>z</item>
+      <item>z_0</item>
+      <item>zero</item>
+      <item>zero_0</item>
+    </list>
+    <list name="functions">
+      <item>abs</item>
+      <item>acos</item>
+      <item>asin</item>
+      <item>atan</item>
+      <item>atan2</item>
+      <item>builtindecl.h</item>
+      <item>ceil</item>
+      <item>clock</item>
+      <item>cos</item>
+      <item>cosh</item>
+      <item>d_dt</item>
+      <item>deadband</item>
+      <item>derivative</item>
+      <item>equal</item>
+      <item>exp</item>
+      <item>expint1</item>
+      <item>expint2</item>
+      <item>expint3</item>
+      <item>expintn</item>
+      <item>floor</item>
+      <item>func_min</item>
+      <item>gauss_kronrod</item>
+      <item>gauss_legendre</item>
+      <item>heaviside</item>
+      <item>if</item>
+      <item>integral</item>
+      <item>integral_dt</item>
+      <item>integral_euler_dt</item>
+      <item>is_even</item>
+      <item>is_in_interval</item>
+      <item>is_odd</item>
+      <item>j0</item>
+      <item>lag</item>
+      <item>lag_bilinear</item>
+      <item>lag_euler</item>
+      <item>last</item>
+      <item>limit</item>
+      <item>limit_dt</item>
+      <item>log</item>
+      <item>mark_max</item>
+      <item>mark_min</item>
+      <item>max</item>
+      <item>min</item>
+      <item>mod</item>
+      <item>not</item>
+      <item>prod</item>
+      <item>random</item>
+      <item>random_gauss</item>
+      <item>root</item>
+      <item>round</item>
+      <item>sawtooth_wave</item>
+      <item>sgn</item>
+      <item>sin</item>
+      <item>sinh</item>
+      <item>sqrt</item>
+      <item>square_wave</item>
+      <item>sum</item>
+      <item>tan</item>
+      <item>tanh</item>
+      <item>threshold_max</item>
+      <item>threshold_min</item>
+      <item>triangular_wave</item>
+      <item>vecdot</item>
+      <item>vecmax</item>
+      <item>vecmaxindex</item>
+      <item>vecmin</item>
+      <item>vecminindex</item>
+      <item>vecnorm</item>
+      <item>vecsize</item>
+      <item>vecsum</item>
+    </list>
+    <contexts>
+      <context attribute="Normal Text" lineEndContext="#stay" name="Normal">
+
+<!-- do not detect strings (for now) -->
+<!--         <DetectChar attribute="String" context="String" char="&quot;"/> -->
+<!--         <DetectChar attribute="Normal Text" context="#stay"  char="&quot;"/> -->
+
+        <keyword attribute="Keyword1" context="#stay" String="prim_keywords"/>
+        <keyword attribute="Keyword2" context="#stay" String="sec_keywords"/>
+        <keyword attribute="Identifier" context="#stay" String="internals"/>
+        <keyword attribute="Function" context="#stay" String="functions"/>
+
+        <DetectChar char="{" attribute="Operator" context="#stay" beginRegion="block" />
+        <DetectChar char="}" attribute="Operator" context="#stay" endRegion="block" />
+
+        <DetectChar char="=" attribute="Operator" context="#stay" />
+        <DetectChar char="+" attribute="Operator" context="#stay" />
+        <DetectChar char="-" attribute="Operator" context="#stay" />
+        <DetectChar char="/" attribute="Operator" context="#stay" />
+        <DetectChar char="*" attribute="Operator" context="#stay" />
+        <DetectChar char="^" attribute="Operator" context="#stay" />
+        <DetectChar char="," attribute="Operator" context="#stay" />
+        <DetectChar char="(" attribute="Operator" context="#stay" />
+        <DetectChar char=")" attribute="Operator" context="#stay" />
+
+        <Float attribute="Types" context="#stay"/>
+        <Int attribute="Types" context="#stay"/>
+        <Detect2Chars char="\" char1="#" attribute="Normal Text" context="#stay" />
+        <DetectChar attribute="Comment" context="Comment" char="#"/>
+      </context>
+    
+      <context name="Comment" attribute="Comment" lineEndContext="#pop"/>
+
+      <context name="String" attribute="String" lineEndContext="#stay">
+        <DetectChar char="&quot;" attribute="String" context="#pop"/>
+      </context>
+
+    </contexts>
+
+    <itemDatas>
+      <itemData name="Normal Text" defStyleNum="dsNormal"/>
+      <itemData name="Keyword1" defStyleNum="dsKeyword"/>
+      <itemData name="Keyword2" defStyleNum="dsKeyword" color="#003300"/>
+      <itemData name="Operator" defStyleNum="dsOperator" color="#666666"/>
+      <itemData name="Identifier" defStyleNum="dsOthers" color="#663333" italic="1"/>
+      <itemData name="Function" defStyleNum="dsFunction" color="#006600" bold="1"/>
+      <itemData name="Types" defStyleNum="dsDataType" color="#3333CC"/>
+      <itemData name="String" defStyleNum="dsString" color="#666699"/>
+      <itemData name="Comment" defStyleNum="dsComment"/>
+    </itemDatas>
+  </highlighting>
+
+  <general>
+    <comments>
+      <comment name="singleLine" start="#" />
+    </comments>
+    <keywords casesensitive="1" />
+  </general>
+</language>

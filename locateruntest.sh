@@ -1,1 +1,1 @@
-examples/locateruntest.sh
+tests/locateruntest.sh

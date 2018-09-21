@@ -1,9 +1,9 @@
 if [ -e ./runtest.sh ]; then
- . runtest.sh
+  . runtest.sh
 elif [ -e tests/runtest.sh ]; then
- cd tests
- . runtest.sh
+  cd tests
+  . runtest.sh
 else
- echo wrong PWD
- exit 77
+  echo wrong PWD
+  exit 1
 fi

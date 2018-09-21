@@ -1,21 +1,10 @@
-#!/bin/sh
-# this file should not be called directly from the shell,
-# it ought to be included from within run.sh for each case
-if [ -e ./wasora ]; then
- wasorabin="./wasora"
- testdir="examples/"
-elif [ -e ../wasora ]; then
+#!/bin/bash
+# this file should not be called directly from the shell
+
+if [ -e ../wasora ]; then
  wasorabin="../wasora"
- testdir=""
-elif [ "`which wasora`" != "" ]; then
+elif [ ! -z "`which wasora`" ]; then
   wasorabin=`which wasora`
-  if [ -e fibonacci.was ]; then
-   testdir=""
-  elif [ -e examples/fibonacci.was ]; then
-   testdir="examples/"
-  else
-   echo "do not know where the examples are :("
-  fi
 else
  echo "do not know how to run wasora :("
  exit 1
@@ -23,8 +12,8 @@ fi
 
 # runs wasora
 function runwasora {
- $wasorabin ${testdir}${1} ${2} ${3} ${4} ${5} ${6}
- outcome=$?
+ $wasorabin ${1} ${2} ${3} ${4} ${5} ${6}
+ outcome=${PIPESTATUS[0]}
  if [ $outcome -ne 0 ]; then
    exit $outcome
  fi

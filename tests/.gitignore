@@ -2,7 +2,8 @@
 *.trs
 *.dat
 *.term
-test-suite.html
-test-suite.md
-pi.txt
-lorenz.svg
+*.gp
+*.svg
+*.txt
+*.html
+*.md

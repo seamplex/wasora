@@ -23,7 +23,9 @@ EXTRA_DIST = ChangeLog-0.2 ChangeLog-0.3 \
 #         examples/test-roessler.sh
 
 TESTS = tests/fibonacci.sh \
-        tests/pi.sh
+        tests/pi.sh \
+        tests/interp1d.sh \
+        tests/lorenz.sh
 
 all-local:
 	cp -r src/wasora$(EXEEXT) .

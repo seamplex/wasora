@@ -5,7 +5,7 @@
 ./pre.sh
 
 # remove stale output file
-output="fibo.dat"
+output="fibonacci.txt"
 rm -rf ${output}
 
 # call wasora
@@ -18,24 +18,7 @@ else
  outcome=99
 fi
 
-cat << EOF >> test-suite.md
-# The Fibonacci sequence
-
-Create a vector of size 15 with the first elements of the [Fibonacci numbers](https://en.wikipedia.org/wiki/Fibonacci_number) with the following input file:
-
-~~~wasora
-`cat fibonacci.was`
-~~~
-
-And run it like this:
-
-~~~
-$ wasora fibonacci.was
-`cat ${output}`
-$
-~~~
-
-EOF
+m4 quotes.m4 fibonacci.md.m4 >> test-suite.md
 
 # exit
 exit $outcome

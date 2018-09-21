@@ -1,8 +1,5 @@
 #!/bin/bash
 # compute pi in eight different ways
-# jeremy theler
-
-# locate and include runtest.sh
 . locateruntest.sh
 
 # remove stale output file
@@ -14,22 +11,7 @@ runwasora pi.was | tee ${output}
 awk '{err+=($2>5e-4)}END{exit err}' ${output}
 outcome=$?
 
-cat << EOF >> test-suite.md
-# Compute $\pi$ in eight different ways
-
-Did you know all these ways to compute [$\pi$](https://en.wikipedia.org/wiki/Pi)?
-
-~~~wasora
-`cat pi.was`
-~~~
-
-~~~
-$ wasora pi.was
-`cat ${output}`
-$
-~~~
-
-EOF
+m4 quotes.m4 pi.md.m4 >> test-suite.md
 
 # exit
 exit $outcome

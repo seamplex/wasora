@@ -24,11 +24,19 @@ if [ `which gnuplot` ]; then
  hasgnuplot=1
 fi
 
+# calls gnuplot with the provided command if it is installed
 function plot {
- if [[ "x`which gnuplot`" != "x" && ! -z "$DISPLAY" ]]; then
-  gnuplot -p -e "$1"
+ if [ ! -z "$2" ]; then
+   format=$2
+ else
+   format=svg
+ fi
+ rm -f $1.$format
+ if [ "x`which gnuplot`" != "x" ]; then
+   gnuplot -e "set terminal $format; set output \"$1.$format\"" $1.gp
  fi
 }
+
 
 
 

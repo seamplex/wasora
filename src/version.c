@@ -68,13 +68,16 @@ void wasora_show_version(int version) {
   if (wasora.i_plugin == 0) {
     
     wasora_shortversion();
+
+    if (version) {
+      printf("\n");
+    }
+     
     switch (version) {
       case VERSION_COPYRIGHT:
-        printf("\n");
         wasora_copyright();
       break;
       case VERSION_INFO:
-        printf("\n");
         wasora_longversion();
       break;
     }
@@ -83,22 +86,28 @@ void wasora_show_version(int version) {
     
     printf("%s %s\n", wasora.plugin[0].name_string, wasora.plugin[0].version_string);
     if (wasora.plugin[0].description_string != NULL) {
-      printf("%s\n", wasora.plugin[0].description_string);
+      printf("%s\n\n", wasora.plugin[0].description_string);
     }
     
-    if (version) {
-      if (wasora.plugin[0].longversion_string != NULL) {
-        printf("%s\n\n", wasora.plugin[0].longversion_string);
-      }
-      if (wasora.plugin[0].copyright_string != NULL) {
-        printf("%s\n\n", wasora.plugin[0].copyright_string);
-      }
-      
-      printf("\n");
-      wasora_print_random_line(stdout, 72);
-      
-      wasora_shortversion();
-      wasora_longversion();
+    switch (version) {
+      case VERSION_COPYRIGHT:
+        if (wasora.plugin[0].copyright_string != NULL) {
+          printf("%s\n\n", wasora.plugin[0].copyright_string);
+        }
+        wasora_print_random_line(stdout, 72);
+        wasora_shortversion();
+        printf("\n");
+        wasora_copyright();
+      break;
+      case VERSION_INFO:
+        if (wasora.plugin[0].longversion_string != NULL) {
+          printf("%s\n\n", wasora.plugin[0].longversion_string);
+        }
+        wasora_print_random_line(stdout, 72);
+        wasora_shortversion();
+        printf("\n");
+        wasora_longversion();
+      break;
     }
     
   } else if (wasora.i_plugin != 0) {

@@ -13,6 +13,7 @@ AC_INIT([wasora],wasoraversion,[jeremy@seamplex.com])
 
 AC_CONFIG_SRCDIR([src/wasora.c])
 AC_CONFIG_MACRO_DIR([m4])
+AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE
 

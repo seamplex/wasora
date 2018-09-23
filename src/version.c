@@ -60,7 +60,7 @@ void wasora_show_help(char *progname) {
 }
 
 
-void wasora_show_version(int long_version) {
+void wasora_show_version(int version) {
   
   int i;
   char numbers[][8] = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
@@ -68,8 +68,15 @@ void wasora_show_version(int long_version) {
   if (wasora.i_plugin == 0) {
     
     wasora_shortversion();
-    if (long_version) {
-      wasora_longversion();
+    switch (version) {
+      case VERSION_COPYRIGHT:
+        printf("\n");
+        wasora_copyright();
+      break;
+      case VERSION_INFO:
+        printf("\n");
+        wasora_longversion();
+      break;
     }
     
   } if (wasora.i_plugin == 1) {
@@ -79,7 +86,7 @@ void wasora_show_version(int long_version) {
       printf("%s\n", wasora.plugin[0].description_string);
     }
     
-    if (long_version) {
+    if (version) {
       if (wasora.plugin[0].longversion_string != NULL) {
         printf("%s\n\n", wasora.plugin[0].longversion_string);
       }
@@ -97,7 +104,7 @@ void wasora_show_version(int long_version) {
   } else if (wasora.i_plugin != 0) {
 
     wasora_shortversion();
-    if (long_version) {
+    if (version) {
       wasora_longversion();
     }
 
@@ -117,7 +124,7 @@ void wasora_show_version(int long_version) {
         printf("%s\n", wasora.plugin[i].description_string);
       }
       
-      if (long_version) {
+      if (version) {
         if (wasora.plugin[i].longversion_string != NULL) {
           printf("%s\n\n", wasora.plugin[i].longversion_string);
         }
@@ -148,37 +155,35 @@ void wasora_shortversion(void) {
   return;
 }
 
-void wasora_longversion(void) {
-  printf("\n");
-  
-  printf(" last commit on %s\n", WASORA_VCS_DATE);
-  printf(" compiled on %s by %s@%s (%s)\n",
-   COMPILATION_DATE,
-   COMPILATION_USERNAME,
-   COMPILATION_HOSTNAME,
-   COMPILATION_ARCH);
-#ifdef COMPILER_VERSION
-  printf(" with %s using %s and linked against\n",
-   COMPILER_VERSION,
-   COMPILER_CFLAGS);
-#endif
-  printf("  GNU Scientific Library version %s\n", gsl_version);
-#if HAVE_IDA
-  printf("  SUNDIALs Library version %s\n", SUNDIALS_PACKAGE_VERSION);
-#endif
-#if HAVE_READLINE
-  printf("  GNU Readline version %s\n", rl_library_version);
-#endif
-  
+
+void wasora_copyright(void) {
   /* It is important to separate the year from the rest of the message,
      as done here, to avoid having to retranslate the message when a new
      year comes around.  */  
-  printf("\n\
- wasora is copyright (C) %d-%d jeremy theler\n\
- licensed under GNU GPL version 3 or later.\n\
- wasora is free software: you are free to change and redistribute it.\n\
- There is NO WARRANTY, to the extent permitted by law.\n", 2009, 2018);
+  printf("wasora is copyright (C) %d-%d jeremy theler\n\
+an is licensed under GNU GPL version 3 or later.\n\
+wasora is free software: you are free to change and redistribute it.\n\
+There is NO WARRANTY, to the extent permitted by law.\n", 2009, 2018); 
+}
+
+void wasora_longversion(void) {
   
+  printf("Last commit date   : %s\n", WASORA_VCS_DATE);
+  printf("Build date         : %s\n", COMPILATION_DATE);
+  printf("Build architecture : %s\n", COMPILATION_ARCH);
+  printf("Builder            : %s@%s\n", COMPILATION_USERNAME, COMPILATION_HOSTNAME);
+#ifdef COMPILER_VERSION
+  printf("Compiler           : %s\n", COMPILER_VERSION);
+  printf("Compiler flags     : %s\n", COMPILER_CFLAGS);
+#endif
+  printf("GSL version        : %s\n", gsl_version);
+#if HAVE_IDA
+  printf("SUNDIALs version   : %s\n", SUNDIALS_PACKAGE_VERSION);
+#endif
+#if HAVE_READLINE
+  printf("Readline version   ; %s\n", rl_library_version);
+#endif
+    
   return;
 }
 

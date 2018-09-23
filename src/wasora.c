@@ -42,6 +42,7 @@ int main(int argc, char **argv) {
   const struct option longopts[] = {
     { "help",     no_argument,       NULL, 'h'},
     { "version",  no_argument,       NULL, 'v'},
+    { "info",     no_argument,       NULL, 'i'},
     { "plugin",   required_argument, NULL, 'p'},
     { "no-debug", no_argument,       NULL, 'n'},
     { "debug",    no_argument,       NULL, 'd'},
@@ -67,13 +68,16 @@ int main(int argc, char **argv) {
   // que no se queje si una opcion no es valida para wasora,
   // puede ser valida para algun plugin o algo
   opterr = 0;
-  while ((optc = getopt_long_only(argc, argv, "hvp:dl", longopts, &option_index)) != -1) {
+  while ((optc = getopt_long_only(argc, argv, "hvip:dl", longopts, &option_index)) != -1) {
     switch (optc) {
       case 'h':
         show_help = 1;
         break;
       case 'v':
-        show_version = 1;
+        show_version = VERSION_COPYRIGHT;
+        break;
+      case 'i':
+        show_version = VERSION_INFO;
         break;
       case 'p':
         if (wasora_load_plugin(optarg) != WASORA_RUNTIME_OK) {
@@ -103,7 +107,7 @@ int main(int argc, char **argv) {
     wasora_finalize();
     exit(EXIT_SUCCESS);
   } else if (show_version && optind == argc) {
-    wasora_show_version(1);
+    wasora_show_version(show_version);
     wasora_finalize();
     exit(EXIT_SUCCESS);
   } else if (wasora.mode && optind == argc) {

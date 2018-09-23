@@ -91,6 +91,10 @@ extern const char factorseparators[];
 extern const char operators[];
 extern const char factorseparators[];
 
+#define VERSION_COMPACT    0
+#define VERSION_COPYRIGHT  1
+#define VERSION_INFO       2
+
 // tipo de componentes del phase space (los numeros son de la sundials), no cambiar 
 #define DAE_ALGEBRAIC                      0.0
 #define DAE_DIFFERENTIAL                   1.0
@@ -1607,6 +1611,7 @@ extern int wasora_vector_init(vector_t *);
 extern void wasora_show_help();
 extern void wasora_show_version(int);
 extern void wasora_shortversion(void);
+extern void wasora_copyright(void);
 extern void wasora_longversion(void);
 
 // str_replace.c

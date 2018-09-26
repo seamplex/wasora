@@ -441,7 +441,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             if (fscanf(mesh->file->pointer, "%d", &node) < 1) {
               return WASORA_RUNTIME_ERROR;
             }
-            if (node > mesh->n_nodes) {
+            if (node < 1 || node > mesh->n_nodes) {
               wasora_push_error_message("node %d in element %d does not exist", node, tag);
               return WASORA_RUNTIME_ERROR;
             }
@@ -481,10 +481,9 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           if (geometrical_entity->num_physicals > 0) {
             // que hacemos si hay mas de una? la primera? la ultima?
             physical = geometrical_entity->physical[0];
-            // TODO: SPOT
             HASH_FIND(hh_tag[dimension], mesh->physical_entities_by_tag[dimension], &physical, sizeof(int), physical_entity);
             if ((mesh->element[i].physical_entity = physical_entity) == NULL) {
-              if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, mesh->element[i].type->dim)) == NULL) {
+              if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, wasora_mesh.element_type[type].dim)) == NULL) {
                 return WASORA_RUNTIME_ERROR;
               }
               mesh->element[i].physical_entity->tag = tag;

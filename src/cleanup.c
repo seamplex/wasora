@@ -99,7 +99,7 @@ void wasora_free_functions(void) {
   }
 */
   if ((function = wasora.functions) != NULL) {
-    while (function->hh.next == NULL) {
+    while (function->hh.next != NULL) {
       function = function->hh.next;
     }
   

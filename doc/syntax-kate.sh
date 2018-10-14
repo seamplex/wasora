@@ -1,8 +1,11 @@
 #!/bin/sh
 # take the output of this script as a kate syntax definition file for wasora
 #
+# mkdir -p ./syntax-kate.sh > $HOME/.local/share/katepart5/syntax
 # ./syntax-kate.sh > $HOME/.kde/share/apps/katepart/syntax/wasora.xml
-# ./syntax-kate.sh > $HOME/.local/share/katepart5/syntax/wasora.html
+#
+# mkdir -p $HOME/.local/share/katepart5/syntax
+# ./syntax-kate.sh > $HOME/.local/share/katepart5/syntax/wasora.xml
 #
 
 . ./keywords.sh

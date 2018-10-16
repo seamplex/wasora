@@ -425,7 +425,6 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
               HASH_FIND(hh_tag[dimension], mesh->physical_entities_by_tag[dimension], &tags[0], sizeof(int), physical_entity);
               if ((mesh->element[i].physical_entity = physical_entity) == NULL) {
                 // si no encontramos ninguna, hay que crear una
-                // TODO: crear por id?
                 snprintf(buffer, BUFFER_SIZE-1, "%s_%d_%d", mesh->name, dimension, tags[0]);
                 if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, mesh->element[i].type->dim)) == NULL) {
                   return WASORA_RUNTIME_ERROR;
@@ -485,6 +484,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             physical = geometrical_entity->physical[0];
             HASH_FIND(hh_tag[dimension], mesh->physical_entities_by_tag[dimension], &physical, sizeof(int), physical_entity);
             if ((mesh->element[i].physical_entity = physical_entity) == NULL) {
+              snprintf(buffer, BUFFER_SIZE-1, "%s_%d_%d", mesh->name, dimension, physical);
               if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, wasora_mesh.element_type[type].dim)) == NULL) {
                 return WASORA_RUNTIME_ERROR;
               }

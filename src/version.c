@@ -86,9 +86,13 @@ void wasora_show_version(int version) {
     
     printf("%s %s\n", wasora.plugin[0].name_string, wasora.plugin[0].version_string);
     if (wasora.plugin[0].description_string != NULL) {
-      printf("%s\n\n", wasora.plugin[0].description_string);
+      printf("%s\n", wasora.plugin[0].description_string);
     }
     
+    if (version) {
+      printf("\n");
+    }
+
     switch (version) {
       case VERSION_COPYRIGHT:
         if (wasora.plugin[0].copyright_string != NULL) {

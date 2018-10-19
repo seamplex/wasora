@@ -43,17 +43,19 @@
 ///fn+clock+desc in the `clock_gettime (2)` system call manual page.
 ///fn+clock+example clock.was
 double builtin_clock(factor_t *expr) {
- 
+
+  struct timespec tp;
+
 #if defined (__MACH__)
   // OS X does not have clock_gettime, use clock_get_time
   clock_id_t clk_id;
-    
+
   if (expr->arg[0].n_tokens != 0) {
     clk_id = (int)wasora_evaluate_expression(&expr->arg[0]);
   } else {
     clk_id = SYSTEM_CLOCK; // Same meaning than monotonic in linux
   }
-    
+
   clock_serv_t cclock;
   mach_timespec_t mts;
   host_get_clock_service(mach_host_self(), clk_id, &cclock);
@@ -62,9 +64,8 @@ double builtin_clock(factor_t *expr) {
   tp.tv_sec = mts.tv_sec;
   tp.tv_nsec = mts.tv_nsec;
 
-  return (float)tp.tv_sec + ((float)tp.tv_nsec * 1E-9);    
+  return (float)tp.tv_sec + ((float)tp.tv_nsec * 1E-9);
 #else
-  struct timespec tp;
   clockid_t clk_id;
 
   if (expr->arg[0].n_tokens != 0) {
@@ -76,7 +77,7 @@ double builtin_clock(factor_t *expr) {
   if (clock_gettime(clk_id, &tp) < 0) {
     wasora_runtime_error();
   }
-  
+
   return (float)tp.tv_sec + ((float)tp.tv_nsec * 1E-9);
 #endif
 }
@@ -87,7 +88,7 @@ double builtin_clock(factor_t *expr) {
 ///fn+last+desc Returns the value the signal $x$ had in the previous time step.
 ///fn+last+desc This function is equivalent to the $Z$-transform operator "delay" denoted by $z^{-1}\left[x\right]$.
 ///fn+last+desc For $t=0$ the function returns the actual value of $x$.
-///fn+last+desc The optional flag $p$ should be set to one if the reference to `last` 
+///fn+last+desc The optional flag $p$ should be set to one if the reference to `last`
 ///fn+last+desc is done in an assignment over a variable that already appears insi
 ///fn+last+desc expression $x$. See example number 2.
 ///fn+last+example last1.was last2.was
@@ -97,7 +98,7 @@ double builtin_last(factor_t *expr) {
   double x[2];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
-  
+
   if (expr->aux == NULL) {
     expr->aux = malloc(3*sizeof(double));
     expr->aux[0] = x[0];
@@ -114,7 +115,7 @@ double builtin_last(factor_t *expr) {
     y = expr->aux[0];
   } else {
     y = x[0];
-  }    
+  }
 
   if (wasora_var(wasora_special_var(done))) {
     free(expr->aux);
@@ -139,7 +140,7 @@ double builtin_d_dt(factor_t *expr) {
   double y;
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   if (wasora_var(wasora_special_var(dt)) == 0) {
     wasora_nan_error();
     return 0;
@@ -158,8 +159,8 @@ double builtin_d_dt(factor_t *expr) {
     expr->aux[0] = expr->aux[1];
     expr->aux[1] = x[0];
     expr->aux[2] = (int)(wasora_value(wasora_special_var(step_transient)));
-  }  
-  
+  }
+
   y = (x[0] - expr->aux[0])/wasora_var(wasora_special_var(dt));
 
   if (wasora_var(wasora_special_var(done))) {
@@ -182,10 +183,10 @@ double builtin_d_dt(factor_t *expr) {
 ///fn+integral_dt+example integral_dt.was
 double builtin_integral_dt(factor_t *expr) {
 
-  double y;  
+  double y;
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   if (expr->aux == NULL) {
     expr->aux = malloc(4*sizeof(double));
     expr->aux[0] = x[0];
@@ -202,10 +203,10 @@ double builtin_integral_dt(factor_t *expr) {
     expr->aux[1] = x[0];
     expr->aux[2] += 0.5*(expr->aux[0]+x[0])*wasora_var(wasora_special_var(dt));
     expr->aux[3] = (int)(wasora_value(wasora_special_var(step_transient)));
-  }  
-  
+  }
+
   y = expr->aux[2];
-  
+
   if (wasora_var(wasora_special_var(done))) {
     free(expr->aux);
     expr->aux = NULL;
@@ -236,10 +237,10 @@ double builtin_integral_euler_dt(factor_t *expr) {
   } else if ((int)round(expr->aux[1]) != (int)(wasora_value(wasora_special_var(step_transient)))) {
     expr->aux[0] += x[0]*wasora_var(wasora_special_var(dt));
     expr->aux[1] = (int)(wasora_value(wasora_special_var(step_transient)));
-  }  
-  
+  }
+
   y = expr->aux[0];
-  
+
   if (wasora_var(wasora_special_var(done))) {
     free(expr->aux);
     expr->aux = NULL;
@@ -258,10 +259,10 @@ double builtin_integral_euler_dt(factor_t *expr) {
 ///fn+square_wave+plotx 0 2.75 1e-2
 ///fn+square_wave+example square_wave.was
 double builtin_square_wave(factor_t *expr) {
-  
+
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   if ((x[0] - floor(x[0])) < 0.5) {
     return 1;
   }
@@ -277,10 +278,10 @@ double builtin_square_wave(factor_t *expr) {
 ///fn+triangular_wave+desc and $\phi$ controls its phase.
 ///fn+triangular_wave+plotx 0 2.75 0.1
 double builtin_triangular_wave(factor_t *expr) {
-  
+
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   if ((x[0] - floor(x[0])) < 0.5) {
     return 2*(x[0] - floor(x[0]));
   } else {
@@ -298,10 +299,10 @@ double builtin_triangular_wave(factor_t *expr) {
 ///fn+sawtooth_wave+plotx 0 2.75 1e-2
 ///fn+sawtooth_wave+example sawtooth_wave.was
 double builtin_sawtooth_wave(factor_t *expr) {
-  
+
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return x[0] - floor(x[0]);
 }
 
@@ -316,7 +317,7 @@ double builtin_sawtooth_wave(factor_t *expr) {
 double builtin_sin(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return sin(x[0]);
 }
 
@@ -367,7 +368,7 @@ double builtin_acos(factor_t *expr) {
 double builtin_j0(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return gsl_sf_bessel_J0(x[0]);
 }
 
@@ -382,7 +383,7 @@ double builtin_j0(factor_t *expr) {
 double builtin_cos(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return cos(x[0]);
 }
 
@@ -394,7 +395,7 @@ double builtin_cos(factor_t *expr) {
 double builtin_tan(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return tan(x[0]);
 }
 
@@ -406,7 +407,7 @@ double builtin_tan(factor_t *expr) {
 double builtin_sinh(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return sinh(x[0]);
 }
 
@@ -418,7 +419,7 @@ double builtin_sinh(factor_t *expr) {
 double builtin_cosh(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return cosh(x[0]);
 }
 
@@ -444,7 +445,7 @@ double builtin_tanh(factor_t *expr) {
 double builtin_atan(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return atan(x[0]);
 }
 
@@ -458,7 +459,7 @@ double builtin_atan2(factor_t *expr) {
   double x[2];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
-  
+
   return atan2(x[0], x[1]);
 }
 
@@ -472,7 +473,7 @@ double builtin_atan2(factor_t *expr) {
 double builtin_exp(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return (x[0] < GSL_LOG_DBL_MIN)?0:gsl_sf_exp(x[0]);
 }
 
@@ -486,12 +487,12 @@ double builtin_exp(factor_t *expr) {
 double builtin_expint1(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   if (x[0] == 0) {
     wasora_nan_error();
     return 0;
   }
-  
+
   return gsl_sf_expint_E1(x[0]);
 }
 
@@ -504,7 +505,7 @@ double builtin_expint1(factor_t *expr) {
 double builtin_expint2(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return gsl_sf_expint_E2(x[0]);
 }
 
@@ -516,7 +517,7 @@ double builtin_expint2(factor_t *expr) {
 double builtin_expint3(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return gsl_sf_expint_En(3, x[0]);
 }
 
@@ -531,12 +532,12 @@ double builtin_expintn(factor_t *expr) {
   int n;
   n = ((int)(round(wasora_evaluate_expression(&expr->arg[0]))));
   x[0] = wasora_evaluate_expression(&expr->arg[1]);
-  
+
   if ((n == 1 || n == 0) && x[0] == 0) {
     wasora_nan_error();
     return 0;
   }
-  
+
   return gsl_sf_expint_En(n, x[0]);
 }
 
@@ -564,12 +565,12 @@ double builtin_log(factor_t *expr) {
 ///fn+abs+desc Returns the absolute value of the argument $x$.
 ///fn+abs+usage y = abs(x)
 ///fn+abs+math y = |x|
-///fn+abs+plotx -2.5 2.5 1e-2   -2 2 1   0 2 1 
+///fn+abs+plotx -2.5 2.5 1e-2   -2 2 1   0 2 1
 ///fn+abs+example abs.was
 double builtin_abs(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return fabs(x[0]);
 }
 
@@ -583,7 +584,7 @@ double builtin_abs(factor_t *expr) {
 double builtin_sqrt(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   if (x[0] < 0) {
     wasora_nan_error();
     return 0;
@@ -619,7 +620,7 @@ double builtin_is_odd(factor_t *expr) {
 ///fn+heaviside+example heaviside.was
 double builtin_heaviside(factor_t *expr) {
   double x[2];
-  
+
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
 
@@ -628,7 +629,7 @@ double builtin_heaviside(factor_t *expr) {
   } else if (x[0] >= x[1]) {
     return 1;
   }
-  
+
   return x[0]/x[1];
 }
 
@@ -646,7 +647,7 @@ double builtin_sgn(factor_t *expr) {
 
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
-  
+
   if (expr->arg[1].n_tokens != 0) {
     eps = x[1];
   }
@@ -691,7 +692,7 @@ double builtin_mod(factor_t *expr) {
 
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
-  
+
   if (x[1] == 0) {
     return 0;
   } else {
@@ -734,7 +735,7 @@ double builtin_ceil(factor_t *expr) {
 double builtin_round(factor_t *expr) {
   double x[1];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
-  
+
   return round(x[0]);
 }
 
@@ -748,7 +749,7 @@ double builtin_deadband(factor_t *expr) {
   double x[2];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
-  
+
   return (fabs(x[0])<x[1])?0:(x[0]+((x[0]>0)?(-1):1)*x[1]);
 }
 
@@ -764,15 +765,15 @@ double builtin_deadband(factor_t *expr) {
 ///fn+lag+usage lag(x, tau)
 ///fn+lag+math x(t) - \Big[x(t) - y(t-\Delta t) \Big] \cdot \exp\left(-\frac{\Delta t}{\tau}\right)
 double builtin_lag(factor_t *expr) {
-  
+
   double y;
   double x[2];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
-  
+
   if (expr->aux == NULL) {
     // si es la primera vez que se llama a este lag, allocamos
-    // el apuntador interno e inicializamos al valor de entrada 
+    // el apuntador interno e inicializamos al valor de entrada
     expr->aux = malloc(3*sizeof(double));
     expr->aux[0] = x[0];
     expr->aux[1] = x[0];
@@ -780,19 +781,19 @@ double builtin_lag(factor_t *expr) {
   } else if ((int)(wasora_value(wasora_special_var(in_static))) || x[1] < ZERO) {
     // si no es la primera vez que se llama a este lag pero estamos
     // en el paso estatico o el tau es muy chiquito, pasa de largo
-    // el valor del primer argumento 
+    // el valor del primer argumento
     expr->aux[0] = x[0];
     expr->aux[1] = x[0];
     expr->aux[2] = 0;
   } else if ((int)round(expr->aux[2]) != (int)(wasora_value(wasora_special_var(step_transient)))) {
     // si nos llamaron, nos aseguramos de que solamente hagamos el lag
     //   cuando corresponda para evitar problemas en cosas que se llaman
-    //   iterativa o implicitamente 
+    //   iterativa o implicitamente
     expr->aux[0] = expr->aux[1];
     expr->aux[1] = x[0] - (x[0] - expr->aux[0])*exp(-wasora_var(wasora_special_var(dt))/x[1]);
     expr->aux[2] = (int)(wasora_value(wasora_special_var(step_transient)));
-  }  
-  
+  }
+
   // si termino la corrida rompemos todo para que si tenemos que volver
   // a arrcancar, empiece todo como si nada
   if (wasora_var(wasora_special_var(done))) {
@@ -801,9 +802,9 @@ double builtin_lag(factor_t *expr) {
     expr->aux = NULL;
     return dummy;
   }
-  
+
   y = expr->aux[1];
-  
+
   if (wasora_var(wasora_special_var(done))) {
     free(expr->aux);
     expr->aux = NULL;
@@ -821,12 +822,12 @@ double builtin_lag(factor_t *expr) {
 ///fn+lag_euler+usage lag_euler(x, tau)
 ///fn+lag_euler+math y(t-\Delta t) + \Big[ x(t) - x(t - \Delta t) \Big] \cdot \frac{\Delta t}{\tau}
 double builtin_lag_euler(factor_t *expr) {
-  
+
   double y;
   double x[2];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
-  
+
   if (expr->aux == NULL) {
     expr->aux = malloc(5*sizeof(double));
     expr->aux[0] = x[0];
@@ -846,8 +847,8 @@ double builtin_lag_euler(factor_t *expr) {
     expr->aux[2] = expr->aux[3];
     expr->aux[3] = expr->aux[2] + wasora_var(wasora_special_var(dt))/x[1]*(x[0]-expr->aux[2]);
     expr->aux[4] = (int)(wasora_value(wasora_special_var(step_transient)));
-  }  
-  
+  }
+
   y = expr->aux[3];
 
   if (wasora_var(wasora_special_var(done))) {
@@ -872,7 +873,7 @@ double builtin_lag_bilinear(factor_t *expr) {
   double x[2];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
-  
+
   if (expr->aux == NULL) {
     expr->aux = malloc(5*sizeof(double));
     expr->aux[0] = x[0];
@@ -892,8 +893,8 @@ double builtin_lag_bilinear(factor_t *expr) {
     expr->aux[2] = expr->aux[3];
     expr->aux[3] = (expr->aux[2] * (1 - 0.5*wasora_var(wasora_special_var(dt))/x[1]) + 0.5*wasora_var(wasora_special_var(dt))/x[1]*(x[0] + expr->aux[0]))/(1 + 0.5*wasora_var(wasora_special_var(dt))/x[1]);
     expr->aux[4] = (int)(wasora_value(wasora_special_var(step_transient)));
-  }  
-  
+  }
+
   y = expr->aux[3];
 
   if (wasora_var(wasora_special_var(done))) {
@@ -907,7 +908,7 @@ double builtin_lag_bilinear(factor_t *expr) {
 // lead(x, tau) implementa la fucion de transferencia s.tau/(1+s.tau)
 /*
 double builtin_lead(factor_t *expr) {
-  
+
   double y;
   double x[2];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
@@ -926,10 +927,10 @@ double builtin_lead(factor_t *expr) {
     expr->aux[0] = expr->aux[1];
     expr->aux[1] = (x[0] - expr->aux[0])/(0.5*wasora_var(wasora_special_var(dt))/x[1] + 1) - (0.5*wasora_var(wasora_special_var(dt))/x[1] - 1)/(0.5*wasora_var(wasora_special_var(dt))/x[1] + 1) * (expr->aux[0]);
     expr->aux[2] = (int)(wasora_value(wasora_special_var(step_transient)));
-  }  
-  
+  }
+
   y = expr->aux[1];
-  
+
   if (wasora_var(wasora_special_var(done))) {
     free(expr->aux);
     expr->aux = NULL;
@@ -1005,17 +1006,17 @@ double builtin_equal(factor_t *expr) {
 ///fn+random+usage random(x1, x2, [s])
 ///fn+random+math  x_1 + r \cdot (x_2-x_1) \quad \quad 0 \leq r < 1
 double builtin_random(factor_t *expr) {
-  
+
   double y;
   double x[3];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
   x[2] = wasora_evaluate_expression(&expr->arg[2]);
 
-  // si es la primera llamada inicializamos el generador 
+  // si es la primera llamada inicializamos el generador
   if (expr->aux == NULL) {
     expr->aux = (double *)gsl_rng_alloc(DEFAULT_RANDOM_METHOD);
-    // si nos dieron tercer argumento, lo usamos como semilla, sino usamos time() 
+    // si nos dieron tercer argumento, lo usamos como semilla, sino usamos time()
     if (expr->arg[2].n_tokens == 0) {
       gsl_rng_set((gsl_rng *)expr->aux, (unsigned long int)(time(NULL)) + (unsigned long int)(&expr->aux));
     } else {
@@ -1023,18 +1024,18 @@ double builtin_random(factor_t *expr) {
     }
   }
 
-  
+
   // TODO: memory leaks en fiteo, minimizacion, etc
   y = x[0] + gsl_rng_uniform((const gsl_rng *)expr->aux)*(x[1]-x[0]);
-  
+
   if (wasora_var(wasora_special_var(done))) {
     gsl_rng_free((gsl_rng *)expr->aux);
     expr->aux = NULL;
   }
-  
+
   return y;
 
-  // TODO: no camina con seed y fit al mismo tiempo 
+  // TODO: no camina con seed y fit al mismo tiempo
 
 }
 
@@ -1050,16 +1051,16 @@ double builtin_random(factor_t *expr) {
 ///fn+random_gauss+desc Knuth in Seminumerical Algorithms, 3rd Ed., Section 3.6.
 ///fn+random_gauss+usage random_gauss(x1, x2, [s])
 double builtin_random_gauss(factor_t *expr) {
-  
+
   double x[3];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
   x[2] = wasora_evaluate_expression(&expr->arg[2]);
 
-  // si es la primera llamada inicializamos el generador 
+  // si es la primera llamada inicializamos el generador
   if (expr->aux == NULL) {
     expr->aux = (double *)gsl_rng_alloc(DEFAULT_RANDOM_METHOD);
-    // si nos dieron tercer argumento, lo usamos como semilla, sino usamos time() 
+    // si nos dieron tercer argumento, lo usamos como semilla, sino usamos time()
     if (expr->arg[2].n_tokens == 0) {
       gsl_rng_set((const gsl_rng *)expr->aux, (unsigned long int)(time(NULL)) + (unsigned long int)(&expr->aux));
 //      gsl_rng_set((const gsl_rng *)expr->aux, (unsigned long int)(time(NULL)));
@@ -1070,7 +1071,7 @@ double builtin_random_gauss(factor_t *expr) {
 
   return x[0] + gsl_ran_gaussian((const gsl_rng *)expr->aux, x[1]);
 
-  // TODO: no camina con seed y fit al mismo tiempo 
+  // TODO: no camina con seed y fit al mismo tiempo
 
 }
 
@@ -1101,7 +1102,7 @@ double builtin_limit(factor_t *expr) {
 ///fn+limit_dt+usage limit_dt(x, a, b)
 ///fn+limit_dt+math \begin{cases} x(t) & \text{if $a \leq dx/dt \leq b$} \\ x(t-\Delta t) + a \cdot \Delta t & \text{if $dx/dt < a$} \\ x(t-\Delta t) + b \cdot \Delta t & \text{if $dx/dt > b$} \end{cases}
 double builtin_limit_dt(factor_t *expr) {
-  
+
   double y;
   double derivative;
   double x[3];
@@ -1127,11 +1128,11 @@ double builtin_limit_dt(factor_t *expr) {
     expr->aux[0] = expr->aux[1];
     expr->aux[1] = x[0];
     expr->aux[2] = (int)(wasora_value(wasora_special_var(step_transient)));
-  }  
-  
+  }
+
   derivative = (x[0] - expr->aux[0])/wasora_var(wasora_special_var(dt));
 
-  
+
 //  if (!expr->nofirst_time) {
 //    return x[0];
 //  }
@@ -1143,7 +1144,7 @@ double builtin_limit_dt(factor_t *expr) {
   } else {
     y = x[0];
   }
-  
+
   if (wasora_var(wasora_special_var(done))) {
     free(expr->aux);
     expr->aux = NULL;
@@ -1163,7 +1164,7 @@ double builtin_limit_dt(factor_t *expr) {
 ///fn+if+desc are double-precision floating point numbers.
 ///fn+if+usage if(a, [b], [c], [eps])
 ///fn+if+math \begin{cases} b & \text{if $a \neq 0$} \\ c & \text{if $a = b$} \end{cases}
- 
+
 double builtin_if(factor_t *expr) {
   double eps = 1e-16;
   double x[4];
@@ -1178,7 +1179,7 @@ double builtin_if(factor_t *expr) {
   } else {
     return (expr->arg[2].n_tokens!=0) ? wasora_evaluate_expression(&expr->arg[2]) : 0.0;
   }
- 
+
 }
 
 
@@ -1188,17 +1189,17 @@ double builtin_if(factor_t *expr) {
 ///fn+is_in_interval+usage is_in_interval(x, a, b)
 ///fn+is_in_interval+math \begin{cases} 1 & \text{if $a \leq x < b$} \\ 0 & \text{otherwise} \end{cases}
 double builtin_is_in_interval(factor_t *expr) {
-  
+
   double y;
   double x[3];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
   x[2] = wasora_evaluate_expression(&expr->arg[2]);
-  
+
   y = (x[0] >= x[1] && x[0] < x[2]);
 
   return y;
-}  
+}
 
 
 
@@ -1209,33 +1210,33 @@ double builtin_is_in_interval(factor_t *expr) {
 ///fn+threshold_max+desc to reset the function value. Default is no hysteresis, i.e. $b=0$.
 ///fn+threshold_max+usage threshold_max(x, a, [b])
 ///fn+threshold_max+math \begin{cases} 1 & \text{if $x > a$} \\ 0 & \text{if $x < a-b$} \\ \text{last value of $y$} & \text{otherwise} \end{cases}
- 
+
 double builtin_threshold_max(factor_t *expr) {
-  
+
   double y;
   double x[3];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
   x[2] = wasora_evaluate_expression(&expr->arg[2]);
-  
+
   if (expr->aux == NULL) {
     expr->aux = malloc(1*sizeof(double));
     expr->aux[0] = x[0] > x[1];
-  }  
-  
+  }
+
   if (x[0] > x[1]) {
     expr->aux[0] = 1;
   } else if (x[0] < (x[1]-x[2])) {
     expr->aux[0] = 0;
   }
   y = expr->aux[0];
-  
+
   if (wasora_var(wasora_special_var(done))) {
     free(expr->aux);
     expr->aux = NULL;
   }
   return y;
-  
+
 }
 
 
@@ -1246,41 +1247,41 @@ double builtin_threshold_max(factor_t *expr) {
 ///fn+threshold_min+desc to reset the function value. Default is no hysteresis, i.e. $b=0$.
 ///fn+threshold_min+usage threshold_min(x, a, [b])
 ///fn+threshold_min+math \begin{cases} 1 & \text{if $x < a$} \\ 0 & \text{if $x > a+b$} \\ \text{last value of $y$} & \text{otherwise} \end{cases}
- 
+
 double builtin_threshold_min(factor_t *expr) {
-  
+
   double y;
   double x[3];
   x[0] = wasora_evaluate_expression(&expr->arg[0]);
   x[1] = wasora_evaluate_expression(&expr->arg[1]);
   x[2] = wasora_evaluate_expression(&expr->arg[2]);
-  
+
   if (expr->aux == NULL) {
     expr->aux = malloc(1*sizeof(double));
     expr->aux[0] = x[0] > x[1];
-  }  
-  
+  }
+
   if (x[0] < x[1]) {
     expr->aux[0] = 1;
   } else if (x[0] > (x[1]+x[2])) {
     expr->aux[0] = 0;
   }
-  
+
   y = expr->aux[0];
-  
+
   if (wasora_var(wasora_special_var(done))) {
     free(expr->aux);
     expr->aux = NULL;
   }
   return y;
-}  
+}
 
 
 ///fn+min+name min
 ///fn+min+desc Returns the minimum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 ///fn+min+usage min(x1, x2, [...], [x10])
 ///fn+min+math  \min \Big (x_1, x_2, \dots, x_{10} \Big)
- 
+
 double builtin_min(factor_t *expr) {
   int i;
   double min = wasora_evaluate_expression(&expr->arg[0]);
@@ -1297,7 +1298,7 @@ double builtin_min(factor_t *expr) {
 ///fn+max+desc Returns the maximum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 ///fn+max+usage max(x1, x2, [...], [x10])
 ///fn+max+math  \max \Big (x_1, x_2, \dots, x_{10} \Big)
- 
+
 double builtin_max(factor_t *expr) {
   int i;
   double max = wasora_evaluate_expression(&expr->arg[0]);
@@ -1315,7 +1316,7 @@ double builtin_max(factor_t *expr) {
 ///fn+mark_min+desc Returns the integer index $i$ of the minimum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 ///fn+mark_min+usage mark_max(x1, x2, [...], [x10])
 ///fn+mark_min+math  i / \min \Big (x_1, x_2, \dots, x_{10} \Big) = x_i
- 
+
 double builtin_mark_min(factor_t *expr) {
   int i;
   int i_min = 0;
@@ -1334,7 +1335,7 @@ double builtin_mark_min(factor_t *expr) {
 ///fn+mark_max+desc Returns the integer index $i$ of the maximum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 ///fn+mark_max+usage mark_max(x1, x2, [...], [x10])
 ///fn+mark_max+math  i / \max \Big (x_1, x_2, \dots, x_{10} \Big) = x_i
- 
+
 double builtin_mark_max(factor_t *expr) {
   int i;
   int i_max = 0;

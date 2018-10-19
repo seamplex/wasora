@@ -488,7 +488,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
               if ((mesh->element[i].physical_entity = wasora_define_physical_entity(buffer, mesh, wasora_mesh.element_type[type].dim)) == NULL) {
                 return WASORA_RUNTIME_ERROR;
               }
-              mesh->element[i].physical_entity->tag = tag;
+              mesh->element[i].physical_entity->tag = physical;
               HASH_ADD(hh_tag[dimension], mesh->physical_entities_by_tag[dimension], tag, sizeof(int), mesh->element[i].physical_entity);
             }
           } else {

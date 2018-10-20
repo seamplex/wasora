@@ -62,7 +62,7 @@ wasora lorenz.was | gnuplot -e "set terminal svg; set output 'lorenz.svg'; set t
 ![The Lorenz attractor computed by wasora](examples/lorenz.svg){.img-responsive}\ 
 
 
-At a first glance, wasora may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical calculation.
+At a first glance, wasora may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical computation (which is what computers do).
 
 Although its ultimate subject is optimization, it may hopefully help you with the tough calculations that usually appear when working with problems that have some kind of complexity, allowing the user to focus on what humans perform best---expert judgment and reaching conclusions. Some of its main features include
 
@@ -78,7 +78,7 @@ Although its ultimate subject is optimization, it may hopefully help you with th
   * solution of systems of non-linear algebraic equations
   * non-linear fit of scattered data to [one](https://www.seamplex.com/wasora/realbook/real-020-gsl.html) or [multidimensional](https://www.seamplex.com/wasora/realbook/real-028-mass.html) functions
   * [non-linear multidimensional optimization](https://www.seamplex.com/wasora/realbook/real-020-gsl.html)
-  * management of unstructured grids
+  * computations using multidimensional functions defined over of unstructured grids
   * complex extensions by means of [Plugins]
 
 The code heavily relies on the numerical routines provided by the [GNU Scientific Library](http://www.gnu.org/software/gsl/), whose installation is mandatory. In fact, wasora can be seen as a high-level front-end to GSL's numerical procedures. The solution of differential-algebraic systems of equations is performed using the [SUNDIALS IDA Library](http://computation.llnl.gov/casc/sundials/main.html), although this feature usage is optional.
@@ -107,11 +107,17 @@ make
 make check
 ```
 
+If you have root access, install it system-wide:
+
+```
+sudo make install
+```
+
 If you get any error, including packages not found or other any issue, ask for help in the mailing list at <https://www.seamplex.com/lists.html>.
 
 ## Keeping up to date
 
-To update wasora, go to the directory where the code has been previously clone and run
+To update wasora, go to the directory where the code has been previously cloned and run
 
 ```
 git pull
@@ -119,6 +125,7 @@ git pull
 ./configure
 make
 make check
+sudo make install
 ```
 
 You can receive an email notification each time wasora is updated by watching the [Bitbucket repository](https://bitbucket.org/seamplex/wasora/src). Log in to Bitbucket, and choose “Watch repository” from the top-right menu.
@@ -129,13 +136,7 @@ See the file `INSTALL` for detailed installation instructions.
 
 Following a design decision, wasora reads a plain-text file referred to as the _input file_ that contains a set of alphanumeric keywords with their corresponding arguments that define a certain mathematical problem that is to be solved. See the file `examples/parser.was` that explains how wasora parses its input files.
 
-In order to execute wasora, the compiled binary should be located by the system. One way of doing this is copying (as root) the `wasora` executable to a system-wide binary directory such as `/usr/local/bin`:
-
-```
-sudo cp wasora /usr/local/bin
-```
-
-Another alternative that does not require root access is to copy it to a `bin` directory within the user’s home and add this path (if it is not already) to the `PATH` environment variable:
+In order to execute wasora, the compiled binary should be located by the system. The usual way to do this is to execute the `sudo make install` step above. But for those cases where root access is no available, an alternative is is to copy the `wasora` binary to a `bin` directory within the user’s home and add this path (if it is not already) to the `PATH` environment variable:
 
 ```
 mkdir -p $HOME/bin
@@ -254,7 +255,17 @@ As jazz, wasora is best mastered when played. The wasora Realbook, like the [ori
 
 # Licensing
 
-Wasora is distributed under the terms of the [GNU General Public License](http://www.gnu.org/copyleft/gpl.html) version 3 or (at your option) any later version.
+Wasora is distributed under the terms of the [GNU General Public License](http://www.gnu.org/copyleft/gpl.html) version 3 or (at your option) any later version. The following text was borrowed from the [Gmsh documentation](http://gmsh.info/doc/texinfo/gmsh.html#Copying-conditions), and replacing “Gmsh” with “wasora” gives:
+
+> Wasora is “free software”; this means that everyone is free to use it and to redistribute it on a free basis. Wasora is not in the public domain; it is copyrighted and there are restrictions on its distribution, but these restrictions are designed to permit everything that a good cooperating citizen would want to do. What is not allowed is to try to prevent others from further sharing any version of wasora that they might get from you.
+>
+> Specifically, we want to make sure that you have the right to give away copies of wasora, that you receive source code or else can get it if you want it, that you can change wasora or use pieces of wasora in new free programs, and that you know you can do these things.
+>
+> To make sure that everyone has such rights, we have to forbid you to deprive anyone else of these rights. For example, if you distribute copies of wasora, you must give the recipients all the rights that you have. You must make sure that they, too, receive or can get the source code. And you must tell them their rights.
+>
+> Also, for our own protection, we must make certain that everyone finds out that there is no warranty for wasora. If wasora is modified by someone else and passed on, we want their recipients to know that what they have is not what we distributed, so that any problems introduced by others will not reflect on our reputation.
+>
+> The precise conditions of the license for wasora are found in the [General Public License](https://bitbucket.org/seamplex/wasora/src/master/COPYING) that accompanies the source code. Further information about this license is available from the GNU Project webpage <http://www.gnu.org/copyleft/gpl-faq.html>.
 
 
 # Further information
@@ -270,4 +281,4 @@ wasora is copyright (C) 2009--2018 Jeremy Theler
 wasora is licensed under [GNU GPL version 3](http://www.gnu.org/copyleft/gpl.html) or (at your option) any later version.  
 wasora is free software: you are free to change and redistribute it.  
 There is NO WARRANTY, to the extent permitted by law.  
-See the file [`COPYING`](https://bitbucket.org/wasora/wasora/src/default/COPYING) for copying conditions.  
+See the file [`COPYING`](https://bitbucket.org/seamplex/wasora/src/master/COPYING) for copying conditions.  

@@ -42,7 +42,7 @@ function plot {
 
 # checks if wasora is compiled with ida and skips the test if necessary
 function checkida {
- if [ `${wasorabin} -v | grep SUNDIAL | wc -l` = 0 ]; then
+ if [ `${wasorabin} -i | grep SUNDIAL | wc -l` = 0 ]; then
   echo "wasora was not compiled with IDA, skipping test"
   exit 77
  fi

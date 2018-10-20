@@ -513,12 +513,11 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
               if (fscanf(mesh->file->pointer, "%d", &node) == 0) {
                 return WASORA_RUNTIME_ERROR;
               }
-              if (node > mesh->n_nodes) {
+              // ojo al piojo en msh4, hay que usar el maneje del tag2index
+              if ((mesh->element[i].node[j] = &mesh->node[tag2index[node]]) == 0) {
                 wasora_push_error_message("node %d in element %d does not exist", node, tag);
                 return WASORA_RUNTIME_ERROR;
               }
-              // ojo al piojo en msh4, hay que usar el maneje del tag2index
-              mesh->element[i].node[j] = &mesh->node[tag2index[node]];
               mesh_add_element_to_list(&mesh->element[i].node[j]->associated_elements, &mesh->element[i]);
             }
             i++;

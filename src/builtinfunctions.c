@@ -651,7 +651,7 @@ double builtin_sgn(factor_t *expr) {
   if (expr->arg[1].n_tokens != 0) {
     eps = x[1];
   }
-  if (fabs(x[0] < eps)) {
+  if (fabs(x[0]) < eps) {
     return 0;
   } else {
     return (x[0] > 0)?1:-1;
@@ -1174,7 +1174,7 @@ double builtin_if(factor_t *expr) {
     eps = wasora_evaluate_expression(&expr->arg[3]);
   }
 
-  if (fabs(x[0] > eps)) {
+  if (fabs(x[0]) > eps) {
     return (expr->arg[1].n_tokens!=0) ? wasora_evaluate_expression(&expr->arg[1]) : 1.0;
   } else {
     return (expr->arg[2].n_tokens!=0) ? wasora_evaluate_expression(&expr->arg[2]) : 0.0;

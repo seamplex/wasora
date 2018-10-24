@@ -194,7 +194,7 @@ void wasora_longversion(void) {
   printf("SUNDIALs version   : %s\n", SUNDIALS_PACKAGE_VERSION);
 #endif
 #if HAVE_READLINE
-  printf("Readline version   ; %s\n", rl_library_version);
+  printf("Readline version   : %s\n", rl_library_version);
 #endif
     
   return;

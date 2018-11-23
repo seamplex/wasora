@@ -77,7 +77,7 @@ int wasora_mesh_parse_line(char *line) {
             wasora_push_error_message("mesh dimensions have to be either 1, 2 or 3, not '%d'", dimensions);
             return WASORA_PARSER_ERROR;
           }
-          
+
 ///kw+MESH+usage [ ORDERING { unknown | node } ]
         } else if (strcasecmp(token, "ORDERING") == 0) {
           char *keywords[] = {"node", "unknown", ""};
@@ -222,9 +222,14 @@ int wasora_mesh_parse_line(char *line) {
       }
       
       if (mesh->format == mesh_format_fromextension && mesh->file != NULL) {
-        char *ext = mesh->file->format + strlen(mesh->file->format) - 4;
+        char *ext = strrchr(mesh->file->format, '.');
         
-               if (strcasecmp(ext, ".msh") == 0) {
+        if (ext == NULL) {
+          wasora_push_error_message("no extension and no FORMAT given", ext);
+          return WASORA_PARSER_ERROR;
+        }
+        
+               if (strncasecmp(ext, ".msh", 4) == 0) {
           mesh->format = mesh_format_gmsh;
         } else if (strcasecmp(ext, ".vtk") == 0) {
           mesh->format = mesh_format_vtk;

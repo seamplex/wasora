@@ -1,1 +1,8 @@
 See <https://bitbucket.org/wasora/wasora/issues>
+
+ * realbook
+    - point kinetics direct & inverse with DAE
+    - boling channel + riser
+ * doc in markdown
+ * debian package
+ * web frontend

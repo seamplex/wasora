@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora parser
  *
- *  Copyright (C) 2009--2018 jeremy theler
+ *  Copyright (C) 2009--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -2218,7 +2218,20 @@ if (strcasecmp(token, "FROM") == 0) {
         } else if (strcasecmp(token, "OUTPUT_FILE_PATH") == 0) {
           wasora_call(wasora_parser_file_path(&m4->output_file, "w"));
 
-///kw+M4+usage [ MACRO <name> [ <format> ] <definition> ] }
+///kw+M4+usage [ EXPAND <name> ] ... }
+        } else if (strcasecmp(token, "EXPAND") == 0) {
+          
+          m4_macro_t *macro = calloc(1, sizeof(m4_macro_t));
+          LL_APPEND(m4->macros, macro);
+          
+          wasora_call(wasora_parser_string(&macro->name));
+          macro->print_token.format = strdup(DEFAULT_M4_FORMAT);
+          if (wasora_parse_expression(macro->name, &macro->print_token.expression) != WASORA_PARSER_OK) {
+            wasora_push_error_message("m4 expansion of '%s' failed", macro->name);
+            return WASORA_PARSER_ERROR;
+          }
+
+///kw+M4+usage [ MACRO <name> [ <format> ] <definition> ] ... }
         } else if (strcasecmp(token, "MACRO") == 0) {
           
           m4_macro_t *macro = calloc(1, sizeof(m4_macro_t));

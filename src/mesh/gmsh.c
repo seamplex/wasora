@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related gmsh routines
  *
- *  Copyright (C) 2014--2018 jeremy theler
+ *  Copyright (C) 2014--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -38,12 +38,14 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   char *name = NULL;
   physical_entity_t *physical_entity = NULL;
   geometrical_entity_t *geometrical_entity = NULL;
+  // TODO: usar size_t en lugar de ints
   int i, j, k, l;
   int version_maj;
-//  int version_min;
+  int version_min;
   int blocks, geometrical, tag, dimension, parametric, num;
+  int first, second; // this are buffers because 4.0 and 4.1 swapped tag,dim to dim,tag
   int type, physical;
-  int ntags, tag_max;
+  int ntags, tag_min, tag_max;
   int node;
   int cell_id;
 
@@ -66,12 +68,15 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
       }
       if (strcmp("2.2", buffer) == 0) {
         version_maj = 2;
-//        version_min = 2;
+        version_min = 2;
       } else if (strcmp("4", buffer) == 0) {
         version_maj = 4;
-//        version_min = 0;       
+        version_min = 0;       
+      } else if (strcmp("4.1", buffer) == 0) {
+        version_maj = 4;
+        version_min = 1;       
       } else {
-        wasora_push_error_message("mesh '%s' has an incompatible version '%s', only version 2.2 or 4 are supported", mesh->file->path, buffer);
+        wasora_push_error_message("mesh '%s' has an incompatible version '%s', only version 2.2, 4.0 or 4.1 are supported", mesh->file->path, buffer);
         return WASORA_RUNTIME_ERROR;
       }
   
@@ -210,16 +215,30 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         }
         
         geometrical_entity = calloc(1, sizeof(geometrical_entity_t));
-        if (fscanf(mesh->file->pointer, "%d %lf %lf %lf %lf %lf %lf %d",
-                &geometrical_entity->tag,
-                &geometrical_entity->boxMinX,
-                &geometrical_entity->boxMinY,
-                &geometrical_entity->boxMinZ,
-                &geometrical_entity->boxMaxX,
-                &geometrical_entity->boxMaxY,
-                &geometrical_entity->boxMaxZ,
-                &geometrical_entity->num_physicals) < 8) {
-          return WASORA_RUNTIME_ERROR;
+        // a partir de 4.1 los puntos tienen solo 3 valores, no 6 de bounding box
+        if (dimension == 0 && version_maj == 4 && version_min >= 1) {
+          if (fscanf(mesh->file->pointer, "%d %lf %lf %lf %d",
+                     &geometrical_entity->tag,
+                     &geometrical_entity->boxMinX,
+                     &geometrical_entity->boxMinY,
+                     &geometrical_entity->boxMinZ,
+                     &geometrical_entity->num_physicals) < 5) {
+            wasora_push_error_message("not enough data in physical entities");
+            return WASORA_RUNTIME_ERROR;
+          }
+        } else {
+          if (fscanf(mesh->file->pointer, "%d %lf %lf %lf %lf %lf %lf %d",
+                     &geometrical_entity->tag,
+                     &geometrical_entity->boxMinX,
+                     &geometrical_entity->boxMinY,
+                     &geometrical_entity->boxMinZ,
+                     &geometrical_entity->boxMaxX,
+                     &geometrical_entity->boxMaxY,
+                     &geometrical_entity->boxMaxZ,
+                     &geometrical_entity->num_physicals) < 8) {
+            wasora_push_error_message("not enough data in physical entities");
+            return WASORA_RUNTIME_ERROR;
+          }
         }        
         
         if (geometrical_entity->num_physicals != 0) {
@@ -301,8 +320,19 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         
       } else if (version_maj == 4) {
         // la cantidad de bloques y de nodos
-        if (fscanf(mesh->file->pointer, "%d %d", &blocks, &mesh->n_nodes) < 2) {
-          return WASORA_RUNTIME_ERROR;
+        if (version_min == 0) {
+          // en 4.0 no tenemos min y max
+          tag_min = 0;
+          tag_max = 0;
+          if (fscanf(mesh->file->pointer, "%d %d", &blocks, &mesh->n_nodes) < 2) {
+            wasora_push_error_message("error reading node blocks");
+            return WASORA_RUNTIME_ERROR;
+          }
+        } else {
+          if (fscanf(mesh->file->pointer, "%d %d %d %d", &blocks, &mesh->n_nodes, &tag_min, &tag_max) < 4) {
+            wasora_push_error_message("error reading node blocks");
+            return WASORA_RUNTIME_ERROR;
+          }
         }
         if (mesh->n_nodes == 0) {
           wasora_push_error_message("no nodes found in mesh '%s'", mesh->file->path);
@@ -310,43 +340,92 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         }
 
         mesh->node = calloc(mesh->n_nodes, sizeof(node_t));
+
+        if (tag_max != 0) {
+          // podemos hacer este mapeo en una sola pasada porque tenemos tag_max
+          // TODO: offsetear con tag_min?            
+          tag2index = malloc((tag_max+1) * sizeof(int));
+          for (k = 0; k <= tag_max; k++) {
+            tag2index[k] = -1;
+          }
+        }
         
-        tag_max = 0;
         i = 0;
         for (l = 0; l < blocks; l++) {
-          if (fscanf(mesh->file->pointer, "%d %d %d %d", &geometrical, &dimension, &parametric, &num) < 4) {
+          if (fscanf(mesh->file->pointer, "%d %d %d %d", &first, &second, &parametric, &num) < 4) {
+            wasora_push_error_message("not enough data in node block");
             return WASORA_RUNTIME_ERROR;
           }
+          if (version_min == 0) {
+            geometrical = first;
+            dimension = second;
+          } else {
+            dimension = first;
+            geometrical = second;
+          }
+
           if (parametric) {
             wasora_push_error_message("mesh '%s' contains parametric data, which is unsupported yet", mesh->file->path);
             return WASORA_RUNTIME_ERROR;
           }
-          for (k = 0; k < num; k++) {
-            if (fscanf(mesh->file->pointer, "%d %lf %lf %lf",
-                  &tag,
-                  &mesh->node[i].x[0],
-                  &mesh->node[i].x[1],
-                  &mesh->node[i].x[2]) < 4) {
-              return WASORA_RUNTIME_ERROR;
+          
+          if (version_min == 0) {
+            // aca esta tag y coordenada en una sola linea
+            for (k = 0; k < num; k++) {
+              if (fscanf(mesh->file->pointer, "%d %lf %lf %lf",
+                         &mesh->node[i].tag,
+                         &mesh->node[i].x[0],
+                         &mesh->node[i].x[1],
+                         &mesh->node[i].x[2]) < 4) {
+                wasora_push_error_message("reading node data");
+                return WASORA_RUNTIME_ERROR;
+              }
+              
+              if (tag > tag_max) {
+                tag_max = tag;
+              }
+              
+              // en msh4 los tags son los indices de la malla global
+              mesh->node[i].index_mesh = i;
+              i++;
             }
+          } else {
 
-            if (tag > tag_max) {
-              tag_max = tag;
+            // aca primero todos los tags y despues las coordenadas (supuestamente para no mezclar ints y doubles)
+            for (k = 0; k < num; k++) {
+              if (fscanf(mesh->file->pointer, "%d", &mesh->node[i+k].tag) < 1) {
+                wasora_push_error_message("reading node tag");
+                return WASORA_RUNTIME_ERROR;
+              }
             }
-            // en msh4 los tags son los indices de la malla global
-            mesh->node[i].tag = tag;
-            mesh->node[i].index_mesh = i;
-            i++;
+            for (k = 0; k < num; k++) {
+              if (fscanf(mesh->file->pointer, "%lf %lf %lf",
+                         &mesh->node[i].x[0],
+                         &mesh->node[i].x[1],
+                         &mesh->node[i].x[2]) < 3) {
+                wasora_push_error_message("reading node coordinates");
+                return WASORA_RUNTIME_ERROR;
+              }
+              
+              // en msh4 los tags son los indices de la malla global
+              mesh->node[i].index_mesh = i;
+              tag2index[mesh->node[i].tag] = i;
+              
+              i++;
+            }
           }
+          
         }
         
-        // tengo que hacer un loop extra en nodos porque no tuve el tamaño posta
-        tag2index = malloc((tag_max+1) * sizeof(int));
-        for (k = 0; k <= tag_max; k++) {
-          tag2index[k] = -1;
-        }
-        for (i = 0; i < mesh->n_nodes; i++) {
-          tag2index[mesh->node[i].tag] = i;
+        if (version_min == 0) {
+          // tengo que hacer un loop extra en nodos porque no tuve el tamaño posta
+          tag2index = malloc((tag_max+1) * sizeof(int));
+          for (k = 0; k <= tag_max; k++) {
+            tag2index[k] = -1;
+          }
+          for (i = 0; i < mesh->n_nodes; i++) {
+            tag2index[mesh->node[i].tag] = i;
+          }
         }
         
       }
@@ -454,20 +533,40 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         
       } else if (version_maj == 4) {
         // la cantidad de bloques y de elementos
-        if (fscanf(mesh->file->pointer, "%d %d", &blocks, &mesh->n_elements) < 2) {
-          return WASORA_RUNTIME_ERROR;
+        if (version_min == 0) {
+          // en 4.0 no tenemos min y max
+          tag_min = 0;
+          tag_max = 0;
+          if (fscanf(mesh->file->pointer, "%d %d", &blocks, &mesh->n_elements) < 2) {
+            wasora_push_error_message("error reading element blocks");
+            return WASORA_RUNTIME_ERROR;
+          }
+        } else {
+          if (fscanf(mesh->file->pointer, "%d %d %d %d", &blocks, &mesh->n_elements, &tag_min, &tag_max) < 4) {
+            wasora_push_error_message("error reading node blocks");
+            return WASORA_RUNTIME_ERROR;
+          }
         }
+        
         if (mesh->n_elements == 0) {
           wasora_push_error_message("no elements found in mesh file '%s'", mesh->file->path);
-          return -2;
+          return WASORA_RUNTIME_ERROR;
         }
         mesh->element = calloc(mesh->n_elements, sizeof(element_t));
 
         i = 0;
         for (l = 0; l < blocks; l++) {
-          if (fscanf(mesh->file->pointer, "%d %d %d %d", &geometrical, &dimension, &type, &num) < 4) {
+          if (fscanf(mesh->file->pointer, "%d %d %d %d", &first, &second, &type, &num) < 4) {
             return WASORA_RUNTIME_ERROR;
           }
+          if (version_min == 0) {
+            geometrical = first;
+            dimension = second;
+          } else {
+            dimension = first;
+            geometrical = second;
+          }
+          
           if (type >= NUMBER_ELEMENT_TYPE) {
             wasora_push_error_message("elements of type '%d' are not supported in this version :-(", type);
             return WASORA_RUNTIME_ERROR;

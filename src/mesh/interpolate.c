@@ -151,7 +151,7 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   // calculamos el valor de y
   y = 0;
   for (j = 0; j < chosen_element->type->nodes; j++) {
-    y += chosen_element->type->h(j, r) * f->data_value[chosen_element->node[j]->tag - 1];
+    y += chosen_element->type->h(j, r) * f->data_value[chosen_element->node[j]->index_mesh];    
   }
   
   gsl_vector_free(r);
@@ -206,7 +206,7 @@ int mesh_interp_solve_for_r(element_t *element, const double *x, gsl_vector *r) 
 }
 
 
-
+// vemos que r hace que las x se interpolen exactamente (isoparametricos)
 int mesh_interp_residual(const gsl_vector *test, void *params, gsl_vector *residual) {
 
   int i, j;

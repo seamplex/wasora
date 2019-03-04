@@ -106,10 +106,10 @@ double mesh_three_node_line_h(int k, gsl_vector *gsl_r) {
   // numeracion gmsh
   switch (k) {
     case 0:
-      return 0.5*r*(r-1);
+      return 0.5*r*(r+1);
       break;
     case 1:
-      return 0.5*r*(r+1);
+      return 0.5*r*(r-1);
       break;
     case 2:
       return (1+r)*(1-r);

@@ -17,7 +17,7 @@ template: light
  * differential equations, and
  * output instructions
 
-among other facilities.
+among other facilities. See <https://www.seamplex.com/docs/SP-WA-15-TD-9E3D-B.pdf> for a techical description.
 
 For example, the famous chaotic [Lorenz’ dynamical system](http://en.wikipedia.org/wiki/Lorenz_system)---the one of the butterfly---whose differential equations are
 

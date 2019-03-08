@@ -381,8 +381,8 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
                 return WASORA_RUNTIME_ERROR;
               }
               
-              if (tag > tag_max) {
-                tag_max = tag;
+              if (mesh->node[i].tag > tag_max) {
+                tag_max = mesh->node[i].tag;
               }
               
               // en msh4 los tags son los indices de la malla global

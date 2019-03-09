@@ -176,7 +176,7 @@ void wasora_copyright(void) {
   printf("wasora is copyright (C) %d-%d jeremy theler\n\
 an is licensed under GNU GPL version 3 or later.\n\
 wasora is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n", 2009, 2018); 
+There is NO WARRANTY, to the extent permitted by law.\n", 2009, 2019); 
 }
 
 void wasora_longversion(void) {

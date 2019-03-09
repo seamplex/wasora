@@ -277,7 +277,7 @@ Follow us: [Twitter](https://twitter.com/seamplex/) [YouTube](https://www.youtub
 
 ----------------------------------------------------
 
-wasora is copyright ©2009--2018 Jeremy Theler  
+wasora is copyright ©2009--2019 Jeremy Theler   
 wasora is licensed under [GNU GPL version 3](http://www.gnu.org/copyleft/gpl.html) or (at your option) any later version.  
 wasora is free software: you are free to change and redistribute it.  
 There is NO WARRANTY, to the extent permitted by law.  

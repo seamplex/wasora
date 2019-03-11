@@ -55,8 +55,6 @@ doc/highlighting-kate*
 doc/pandoc*
 doc/wasora_full.html
 
-gsl-1.16
-
 src/.deps/
 src/.dirstamp
 src/.libs/

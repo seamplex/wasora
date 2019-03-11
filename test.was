@@ -1,3 +1,0 @@
-a = 50
-y = integral(cos(x/50*pi/2), x, -a, a)
-PRINT y^3 (2*a)^3

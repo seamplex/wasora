@@ -9,7 +9,7 @@ fi
 rm -f *~ .*~ src/*~
 rm -rf src/.libs
 rm -f src/version.h src/version-vcs.h src/version-conf.h
-rm -f README INSTALL PLUGINS ChangeLog
+rm -f README INSTALL PLUGINS
 rm -f version.m4
 rm -f doc/README.pdf doc/README.html doc/INSTALL.pdf doc/INSTALL.html doc/PLUGINS.pdf doc/PLUGINS.html
 rm -f aclocal.m4 configure config.log config.status config.guess config.sub compile depcomp install-sh missing configure.scan autoscan.log test-driver

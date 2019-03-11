@@ -1,5 +1,5 @@
 dnl This file is part of wasora and/or one of its plugins
-dnl GPL v3+ (c) 2009-2018 jeremy theler
+dnl GPL v3+ (c) 2009-2019 jeremy theler
 dnl <https://bitbucket.org/seamplex/wasora>
 dnl
 changequote([,])dnl esto es para poder usar los backticks de bash
@@ -21,7 +21,6 @@ define([WASORA_VERSION_VCS],
 # wasora major version is equal to the latest tag
 if test ${vcs} = "git"; then
  version=`git describe | sed 's/-/./'`
-# echo "version... ${version}"
  echo "[[define]](wasoraversion, ${version})[[dnl]]" > version.m4
 
  branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
@@ -33,14 +32,9 @@ if test ${vcs} = "git"; then
 #define WASORA_VCS_CLEAN     `git status --porcelain | wc -l`
 EOF
 
-# echo -n "building changelog... "
- git log > ChangeLog
-# echo "done"
-
 else
  majorversion=x.y
  version=${majorversion}.z
- touch ChangeLog
 fi
 )dnl
 
@@ -48,7 +42,6 @@ define([PLUGIN_VERSION_VCS],
 # plugin version
 if test "${vcs}" = "git"; then
  version=`git describe | sed 's/-/./'`
-# echo "version... ${version}"
 
  branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
  commitdate=`git log -1 --pretty=format:"%ad"`
@@ -88,18 +81,13 @@ EOF
 #define WASORA_VCS_CLEAN     `git status --porcelain | wc -l`
 EOF
 
-# echo -n "building changelog... "
- git log > ChangeLog
-# echo "done"
 else
  majorversion=x.y
  version=${majorversion}.z
- touch ChangeLog
 fi
 )dnl
 
 define([WASORA_README_INSTALL],
-#echo -n "formatting readme & install... "
 if test ! -z "`which pandoc`"; then
  pandoc README.md -t plain -o README
  pandoc INSTALL.md -t plain -o INSTALL
@@ -107,6 +95,5 @@ else
  fmt -s README.md > README
  fmt -s INSTALL.md > INSTALL
 fi
-#echo "done"
 )dnl
 divert(0)

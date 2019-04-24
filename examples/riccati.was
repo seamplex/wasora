@@ -1,0 +1,52 @@
+# Interest Rate Modeling:
+#   Cox Ingersol Ross (CIR) Short Rate Model 
+
+# All times are in continuous quantity with 1-year units.
+# The simulation time is the time to maturity, not the
+# time, i.e. we have used the transformation t = (T - t).
+
+# Define a maturity using Business 252 day count convention
+CONST T
+T = 252/252
+
+# end_time should be end_tau. However, it is always equal
+# to maturity since end_tau = T - t for t = 0
+end_time = T
+
+CONST kappa theta sigma
+kappa = 0.4363
+theta = 0.0613
+sigma = 0.1491
+
+CONST alpha beta
+alpha = 0
+beta = 1
+
+# g(t, T, c1, c2) = P(t, T) for these c's values
+CONST c1 c2
+c1 = 0
+c2 = 1
+
+PHASE_SPACE A B
+
+A_0 = 0
+B_0 = c1
+
+A_dot .=  0 - kappa * theta * B + 0.5 * sigma^2 * alpha * B^2
+B_dot .= c2 - kappa *     1 * B - 0.5 * sigma^2 * beta  * B^2
+
+HISTORY A A_numeric
+HISTORY B B_numeric
+
+IF done
+  # auxiliary variable
+  gamma = sqrt(kappa^2 + 2 * sigma^2 * c2)
+
+  # analytical solution for CIR Short Rate Model
+  A_analytic(t) := kappa * theta * (1 / (sigma^2)) * ((kappa + gamma) * t - 2 * log(1 + ((kappa + gamma - c1 * sigma^2) * (exp(gamma * t) - 1) / (2 * gamma))))
+  B_analytic(t) := ((2 * c2 - kappa * c1) * (1 - exp(-gamma * t)) + gamma * c1 * (1 + exp(-gamma * t))) / ((kappa + gamma + c1 * sigma^2) * (1 - exp(-gamma * t)) + 2 * gamma * exp(-gamma * t))
+
+  PRINT_FUNCTION FILE_PATH a.dat A_numeric A_analytic MIN 0 MAX T STEP 0.01
+  PRINT_FUNCTION FILE_PATH b.dat B_numeric B_analytic MIN 0 MAX T STEP 0.01
+  PRINT_FUNCTION A_numeric A_analytic B_numeric B_analytic MIN 0 MAX T STEP 0.01
+ENDIF

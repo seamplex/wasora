@@ -1,32 +1,42 @@
 % Wasora reference sheet
 % Jeremy Theler
 
-This reference sheet is for [wasora](index.html) v0.5.160-g53c190f
+This reference sheet is for [wasora](index.html) v0.6.1-ga49e212
 .
 
 ~~~
-$ wasora
-wasora v0.5.159-g4df4130 
+$ wasora -i
+wasora v0.6 
 wasora’s an advanced suite for optimization & reactor analysis
+
+Last commit date   : Mon Mar 11 07:24:38 2019 -0300
+Build date         : 2019-04-20 08:08:28
+Build architecture : linux-gnu x86_64
+Builder            : gtheler@tom
+Compiler           : gcc (Debian 8.3.0-6) 8.3.0
+Compiler flags     : -O2
+GSL version        : 2.5
+SUNDIALs version   : 2.5.0
+Readline version   : 7.0
 $
 ~~~
 
 # Keywords
-
-##  `=`
-
-
-~~~wasora
-<var>[ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr> <vector>(<expr_i>)[<expr_i_min, expr_i_max>] [ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr> <matrix>(<expr_i>,<expr_j>)[<expr_i_min, expr_i_max; expr_j_min, expr_j_max>] [ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr>
-~~~
-
-
 
 ##  `.=`
 
 
 ~~~wasora
 { 0[(i[,j]][<imin:imax[;jmin:jmax]>] | <expr1> } .= <expr2>
+~~~
+
+
+
+##  `=`
+
+
+~~~wasora
+<var>[ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr> <vector>(<expr_i>)[<expr_i_min, expr_i_max>] [ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr> <matrix>(<expr_i>,<expr_j>)[<expr_i_min, expr_i_max; expr_j_min, expr_j_max>] [ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr>
 ~~~
 
 
@@ -258,7 +268,7 @@ LOAD_ROUTINE <file_path> <routine_1> [ <routine_2> ... <routine_n> ]
 Calls the `m4` macro processor with definitions from wasora variables.
 
 ~~~wasora
-M4 { INPUT_FILE <file_id> | FILE_PATH <file_path> } { OUTPUT_FILE <file_id> | OUTPUT_FILE_PATH <file_path> } [ MACRO <name> [ <format> ] <definition> ] }
+M4 { INPUT_FILE <file_id> | FILE_PATH <file_path> } { OUTPUT_FILE <file_id> | OUTPUT_FILE_PATH <file_path> } [ EXPAND <name> ] ... } [ MACRO <name> [ <format> ] <definition> ] ... }
 ~~~
 
 
@@ -453,7 +463,7 @@ See the `READ` keyword for usage details.
 
 
 ~~~wasora
-MATERIAL <name> [ INCREMENTAL <material> ] [ <property_name> <expr> ]
+MATERIAL <name> [ MESH <name> ] [ PHYSICAL_ENTITY <name_1> [ PHYSICAL_ENTITY <name_2> [ ... ] ] ] [ <property_name_1> <expr_1> [ <property_name_2> <expr_2> [ ... ] ] ]
 ~~~
 
 
@@ -462,7 +472,7 @@ MATERIAL <name> [ INCREMENTAL <material> ] [ <property_name> <expr> ]
 
 
 ~~~wasora
-MESH [ NAME <name> ] [ FILE <file_id> | FILE_PATH <file_path> ] [ STRUCTURED ] [ DIMENSIONS <num_expr> ] [ ORDERING { unknown | node } ] [ SCALE_FACTOR <expr> ] [ OFFSET_X <expr> ] [ OFFSET_Y <expr> ] [ OFFSET_Z <expr> ] [ DEGREES <num_expr> ] [ NCELLS_X <expr> ] [ NCELLS_Y <expr> ] [ NCELLS_Z <expr> ] [ LENGTH_X <expr> ] [ LENGTH_Y <expr> ] [ LENGTH_Z <expr> ] [ DELTA_X <expr> ] [ DELTA_Y <expr> ] [ DELTA_Z <expr> ] [ READ_DATA <name_in_mesh> AS <function_name> ... ]
+MESH [ NAME <name> ] [ FILE <file_id> | FILE_PATH <file_path> ] [ STRUCTURED ] [ DIMENSIONS <num_expr> ] [ ORDERING { unknown | node } ] [ SCALE <expr> ] [ OFFSET <expr_x> <expr_y> <expr_z>] [ DEGREES <num_expr> ] [ NCELLS_X <expr> ] [ NCELLS_Y <expr> ] [ NCELLS_Z <expr> ] [ LENGTH_X <expr> ] [ LENGTH_Y <expr> ] [ LENGTH_Z <expr> ] [ DELTA_X <expr> ] [ DELTA_Y <expr> ] [ DELTA_Z <expr> ] ///kw+MESH+usage [ READ_FUNCTION <function_name> ] [...] [ READ_SCALAR <name_in_mesh> AS <function_name> ] [...]
 ~~~
 
 
@@ -471,7 +481,7 @@ MESH [ NAME <name> ] [ FILE <file_id> | FILE_PATH <file_path> ] [ STRUCTURED ] [
 
 
 ~~~wasora
-MESH_FILL_VECTOR [ MESH <mesh_identifier> ] [ NODES | CELLS ] VECTOR <vector> { FUNCTION <function> | EXPRESSION <expr> }
+MESH_FILL_VECTOR [ MESH <name> ] [ NODES | CELLS ] VECTOR <vector> { FUNCTION <function> | EXPRESSION <expr> }
 ~~~
 
 
@@ -480,7 +490,7 @@ MESH_FILL_VECTOR [ MESH <mesh_identifier> ] [ NODES | CELLS ] VECTOR <vector> { 
 
 
 ~~~wasora
-MESH_FIND_MAX { FUNCTION <function> | EXPRESSION <expr> } [ MESH <mesh_identifier> ] [ NODES | CELLS ] [ MAX <variable> ] [ I_MAX <variable> ] [ X_MAX <variable> ] [ Y_MAX <variable> ] [Z_MAX <variable> ]
+MESH_FIND_MAX { FUNCTION <function> | EXPRESSION <expr> } [ MESH <name> ] [ PHYSICAL_ENTITY <physical_entity_name> ] [ NODES | CELLS ] [ MAX <variable> ] [ I_MAX <variable> ] [ X_MAX <variable> ] [ Y_MAX <variable> ] [Z_MAX <variable> ]
 ~~~
 
 
@@ -489,7 +499,7 @@ MESH_FIND_MAX { FUNCTION <function> | EXPRESSION <expr> } [ MESH <mesh_identifie
 
 
 ~~~wasora
-MESH_INTEGRATE { FUNCTION <function> | EXPRESSION <expr> } OVER <physical_entity> RESULT <variable> [ MESH <mesh_identifier> ] [ NODES | CELLS ] [ GAUSS_POINTS <num_expr> ]
+MESH_INTEGRATE { FUNCTION <function> | EXPRESSION <expr> } [ MESH <mesh_identifier> ] [ OVER <physical_entity_name> ] RESULT <variable> [ NODES | CELLS ] [ GAUSS_POINTS <num_expr> ]
 ~~~
 
 
@@ -498,7 +508,7 @@ MESH_INTEGRATE { FUNCTION <function> | EXPRESSION <expr> } OVER <physical_entity
 
 
 ~~~wasora
-MESH_MAIN [ <mesh_identifier> ]
+MESH_MAIN [ <name> ]
 ~~~
 
 
@@ -507,7 +517,7 @@ MESH_MAIN [ <mesh_identifier> ]
 
 
 ~~~wasora
-MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ NO_MESH ] [ FORMAT { gmsh | vtk } ] [ CELLS | ] NODE ] [ NO_PHYSICAL_NAMES ] [ VECTOR <component_1> <component_2> <component_3> ] [ <scalar_1> ] [ <scalar_2> ] ...
+MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ NO_MESH ] [ FORMAT { gmsh | vtk } ] [ CELLS | ] NODES ] [ NO_PHYSICAL_NAMES ] [ VECTOR <function1_x> <function1_y> <function1_z> ] [...] [ <scalar_function_1> ] [ <scalar_function_2> ] ...
 ~~~
 
 
@@ -516,7 +526,7 @@ MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ N
 
 
 ~~~wasora
-PHYSICAL_ENTITY [ NAME <name> ] [ ID <expr> ] [ MESH <identifier> ] [ MATERIAL <name> ] [ X_MIN <expr> ] [ X_MAX <expr> ] [ Y_MIN <expr> ] [ Y_MAX <expr> ] [ Z_MIN <expr> ] [ Z_MAX <expr> ] [ BC { <problem_dependent_expressions> } ]
+PHYSICAL_ENTITY <name> [ DIMENSION <expr> ] [ MESH <name> ] [ MATERIAL <name> ] [ X_MIN <expr> ] [ X_MAX <expr> ] [ Y_MIN <expr> ] [ Y_MAX <expr> ] [ Z_MIN <expr> ] [ Z_MAX <expr> ] [ BC <bc_1> <bcg_2> ... ]
 ~~~
 
 
@@ -1166,7 +1176,7 @@ lag_euler(x, tau)
 Returns the value the signal $x$ had in the previous time step.
 This function is equivalent to the $Z$-transform operator "delay" denoted by $z^{-1}\left[x\right]$.
 For $t=0$ the function returns the actual value of $x$.
-The optional flag $p$ should be set to one if the reference to `last` 
+The optional flag $p$ should be set to one if the reference to `last`
 is done in an assignment over a variable that already appears insi
 expression $x$. See example number 2.
 

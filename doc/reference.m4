@@ -5,8 +5,8 @@ changequote([!,!])dnl
 This reference sheet is for [wasora](index.html) esyscmd([!git describe | sed 's/-/./'!]).
 
 ~~~
-$ wasora
-esyscmd([!wasora!])dnl
+$ wasora -i
+esyscmd([!wasora -i!])dnl
 $
 ~~~
 

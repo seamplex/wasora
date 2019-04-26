@@ -1,13 +1,9 @@
 ---
 title: Wasora’s an advanced suite for optimization & reactor analysis
-author: Jeremy Theler
 lang: en-US
-numbersections: true
-formats: html tex pdf
-template: light
 ...
 
-![Logo](doc/logo.svg){.img-responsive}\ 
+![Logo](doc/logo.svg){.img-fluid}\ 
 
 
 [Wasora](https://www.seamplex.com/wasora) is a (relatively) high-level tool to perform mathematical computations. It also provides a framework which other [particular computational codes](#plugins) can use. It is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing

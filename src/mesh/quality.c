@@ -27,7 +27,7 @@ double mesh_compute_quality(mesh_t *mesh, element_t *element) {
 
   double det, det0;
   double det_local_min = 1e6;
-  int node_local_min;
+//  int node_local_min;
   int j;
   
 
@@ -48,7 +48,7 @@ double mesh_compute_quality(mesh_t *mesh, element_t *element) {
 
     if (det < det_local_min) {
       det_local_min = det;
-      node_local_min = j;
+//      node_local_min = j;
     }
 //    printf("%d\t%d\t%e\t%e\t%e\n", element->id, j, det, det0, det/det0);
   }

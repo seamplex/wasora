@@ -138,6 +138,7 @@ AC_DEFUN([WASORA_CHECK_IDA],[
 # the default is read from the macro argument, but the help string
 # does not expand variables so it always states that it is "check"
 ida_default=m4_default([$1],[check])
+ida_version=0
 
 AC_ARG_WITH([ida],
   [AS_HELP_STRING([--with-ida],
@@ -146,8 +147,13 @@ AC_ARG_WITH([ida],
   [with_ida=${ida_default}])
 
 AS_IF([test "x$with_ida" != xno],[
-   AC_CHECK_HEADERS([sundials/sundials_types.h ida/ida.h], [],
-    [AS_IF([test "x$with_ida" != xcheck],
+   AC_CHECK_HEADERS([sundials/sundials_types.h ida/ida.h],
+    [
+     AC_CHECK_HEADERS([ida/ida_dense.h], ida_version=2)
+     AC_CHECK_HEADERS([sundials/sundials_linearsolver.h], ida_version=3)
+    ],
+    [
+     AS_IF([test "x$with_ida" != xcheck],
        [AC_MSG_FAILURE([--with-ida was given, but test for ida headers failed])],
        [AC_MSG_WARN([sundials ida headers not found])])
     ])
@@ -171,13 +177,11 @@ AS_IF([test "x$with_ida" != xno],[
 # check if we have everything
 AS_IF([test "x$ac_cv_lib_sundials_ida_IDAInit" = xyes -a "x$ac_cv_header_sundials_sundials_types_h" = xyes -a "x$ac_cv_lib_sundials_nvecserial_N_VNew_Serial" = xyes -a "x$ac_cv_header_nvector_nvector_serial_h" = xyes ],
   [
-   ida=1
-   #AS_IF([test "x`which sundials-config`" != x],
-           #[ida_include=`sundials-config -lc -mida -ts | grep I | awk '{print [$]1}' | cut -c3-`
-            #ida_version=`cat ${ida_include}/sundials/sundials_config.h | grep VERSION | awk '{print [$]3}' | sed s/\"//g`],
-         #[ida_version=unknown])
-   ida_version=unknown
    AC_DEFINE(HAVE_IDA)
+# esto no camina 
+#   AC_DEFINE(IDA_VERSION, [$ida_version])
+   AS_IF([test $ida_version -eq 2], AC_DEFINE(IDA_VERSION, 2), [test $ida_version -eq 3], AC_DEFINE(IDA_VERSION, 3))
+   ida=1
   ],[
    ida=0
   ])

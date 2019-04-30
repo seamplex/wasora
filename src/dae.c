@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  dae evaluation routines
  *
- *  Copyright (C) 2009--2015 jeremy theler
+ *  Copyright (C) 2009--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -21,12 +21,6 @@
  */
 
 #include "wasora.h"
-
-
-#ifdef HAVE_IDA
- #include <sundials/sundials_math.h>
- #include <sundials/sundials_types.h>
-#endif
 
 int wasora_dae_init(void) {
   
@@ -231,9 +225,24 @@ int wasora_dae_init(void) {
     return WASORA_RUNTIME_ERROR;
   }
  
+#if IDA_VERSION == 2
   if (IDADense(wasora_dae.system, wasora_dae.dimension) != IDA_SUCCESS) {
     return WASORA_RUNTIME_ERROR;
   }
+#elif IDA_VERSION == 3
+  if ((wasora_dae.A = SUNDenseMatrix(wasora_dae.dimension, wasora_dae.dimension)) == NULL) {
+    return WASORA_RUNTIME_ERROR;
+  }
+    
+  if ((wasora_dae.LS = SUNDenseLinearSolver(wasora_dae.x, wasora_dae.A)) == NULL) {
+    return WASORA_RUNTIME_ERROR;
+  }
+  
+  if (IDADlsSetLinearSolver(wasora_dae.system, wasora_dae.LS, wasora_dae.A) != IDA_SUCCESS) {
+    return WASORA_RUNTIME_ERROR;
+  }
+#endif
+  
   if (IDASetInitStep(wasora_dae.system, wasora_var(wasora_special_var(dt))) != IDA_SUCCESS) {
     return WASORA_RUNTIME_ERROR;
   }

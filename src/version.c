@@ -191,7 +191,11 @@ void wasora_longversion(void) {
 #endif
   printf("GSL version        : %s\n", gsl_version);
 #if HAVE_IDA
+ #if IDA_VERSION == 2 
   printf("SUNDIALs version   : %s\n", SUNDIALS_PACKAGE_VERSION);
+ #elif IDA_VERSION == 3  
+  printf("SUNDIALs version   : %s\n", SUNDIALS_VERSION);  
+ #endif
 #endif
 #if HAVE_READLINE
   printf("Readline version   : %s\n", rl_library_version);

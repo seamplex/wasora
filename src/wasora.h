@@ -42,10 +42,18 @@
 #include <gsl/gsl_matrix.h>
 
 
-#if HAVE_IDA
-#include <ida/ida.h>
-#include <ida/ida_dense.h>
-#include <nvector/nvector_serial.h>
+#ifdef HAVE_IDA
+ #include <ida/ida.h>
+ #include <nvector/nvector_serial.h>
+ #include <sundials/sundials_types.h>
+ #include <sundials/sundials_math.h>
+ #if IDA_VERSION == 2
+  #include <ida/ida_dense.h>
+ #elif IDA_VERSION == 3
+  #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
+  #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
+  #include <ida/ida_direct.h>            /* access to IDADls interface           */
+ #endif
 #endif
 
 // cantidad de funciones internas
@@ -1274,6 +1282,9 @@ struct {
   N_Vector dxdt;
   N_Vector id;
   N_Vector abs_error;
+  
+  SUNMatrix A;
+  SUNLinearSolver LS;
 #endif
 
 } wasora_dae;

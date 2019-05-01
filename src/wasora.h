@@ -1282,9 +1282,10 @@ struct {
   N_Vector dxdt;
   N_Vector id;
   N_Vector abs_error;
-  
+ #if IDA_VERSION == 3
   SUNMatrix A;
   SUNLinearSolver LS;
+ #endif 
 #endif
 
 } wasora_dae;

@@ -1,0 +1,23 @@
+set preamble "\usepackage{amsmath}"
+set width 12*unit(cm)
+set axis x arrow nomirrored
+set axis y arrow nomirrored
+set nomxtics
+
+set style data linespoints
+
+set xlabel "$t$"
+set ylabel "$x(t)$"
+set terminal pdf
+set output "exp-dt.pdf"
+
+plot exp(-x) w l color black ti "exact",\
+     "exp-dt1.dat" w p  pt 1  color blue       ti "min\_dt=0 max\_dt=0",\
+     "exp-dt2.dat" w p  pt 16 color brickred   ti "min\_dt=0.1 max\_dt=0",\
+     "exp-dt3.dat" w p  pt 15 color magenta    ti "min\_dt=0 max\_dt=0.1",\
+     "exp-dt4.dat" w p  pt 3  color green      ti "min\_dt=0.1 max\_dt=0.1",\
+     "exp-dt5.dat" w p  pt 32 color grey       ti "min\_dt=1 max\_dt=1"
+
+#set terminal png dpi 127
+#set output "exp-dt.png"
+replot

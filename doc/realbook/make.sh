@@ -38,7 +38,7 @@ for i in `seq 1 ${#cases[*]}`; do
  # TODO: yaml parser
 #  title=`grep title README.m4 | cut -d" " -f2-`
 #  tags=`grep tags README.m4 | cut -d" " -f2-`
- inputs=`grep inputs README.m4 | cut -d" " -f2-`
+ inputs=`grep inputs: README.m4 | cut -d" " -f2-`
  difficulty=`echo ${cases[${i}]} | cut -c-3`
 
  if [ -e pre.sh ]; then

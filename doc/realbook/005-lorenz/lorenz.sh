@@ -1,0 +1,3 @@
+wasora lorenz.was > lorenz.dat
+qdp lorenz.dat -o lorenz2d --pt "16 17 18" --ps "0.5 0.5 0.5" --color "orange navyblue gray" --pi "60 71 87"
+gnuplot lorenz3d.gp

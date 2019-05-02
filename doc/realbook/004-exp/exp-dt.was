@@ -1,0 +1,8 @@
+end_time = 2
+min_dt = $1
+max_dt = $2
+rel_error = 1e-3
+PHASE_SPACE x
+x_0 = 1
+x_dot .= -x
+PRINT t x (x-exp(-t))/x

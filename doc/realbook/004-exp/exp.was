@@ -1,0 +1,6 @@
+end_time = 1        # transient problem
+PHASE_SPACE x       # DAE problem with one variable
+x_0 = 1             # initial condition
+x_dot .= -x         # differential equation
+PRINT t x HEADER    # output
+# exercise: plot dt vs t and see what happens

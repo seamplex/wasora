@@ -13,7 +13,7 @@ lang: en-US
  * differential equations, and
  * output instructions
 
-among other facilities. See <https://www.seamplex.com/docs/SP-WA-15-TD-9E3D-B.pdf> for a techical description.
+among other facilities. For further details, read the [technical description](https://www.seamplex.com/wasora/description.html).
 
 For example, the famous chaotic [Lorenz’ dynamical system](http://en.wikipedia.org/wiki/Lorenz_system)---the one of the butterfly---whose differential equations are
 
@@ -53,9 +53,9 @@ Following the [UNIX Philosophy](https://en.wikipedia.org/wiki/Unix_philosophy), 
 
 ```
 wasora lorenz.was | gnuplot -e "set terminal svg; set output 'lorenz.svg'; set ticslevel 0; splot '-' u 2:3:4 w l ti ''"
-
 ```
-![The Lorenz attractor computed by wasora](examples/lorenz.svg){.img-responsive}\ 
+
+![The Lorenz attractor computed by wasora](examples/lorenz.svg){.img-responsive}
 
 
 At a first glance, wasora may look as another high-level interpreted programming language, but---hopefully---it is not: wasora should be seen as a [syntactically-sweetened](http://en.wikipedia.org/wiki/Syntactic_sugar) way to ask a computer to perform a certain mathematical computation (which is what computers do).

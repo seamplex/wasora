@@ -1,0 +1,21 @@
+VAR x'
+N = 8
+
+VECTOR datax SIZE N 
+datax(i) = i-1
+
+VECTOR datay SIZE N DATA 1 1.5 0.75 1 1 0 0 0
+
+FUNCTION f(x) VECTORS datax datay
+FUNCTION g(x) VECTORS datax datay INTERPOLATION cspline
+FUNCTION h(x) VECTORS datax datay INTERPOLATION akima
+
+f'(x) := derivative(f(x'), x', x)
+g'(x) := derivative(g(x'), x', x)
+h'(x) := derivative(h(x'), x', x)
+F(x) := integral(f(x'), x', 0, x)
+G(x) := integral(g(x'), x', 0, x)
+H(x) := integral(h(x'), x', 0, x)
+
+PRINT_FUNCTION f' g' h' MIN datax(1) MAX datax(N) STEP 1e-2 FILE_PATH derivatives.dat
+PRINT_FUNCTION F  G  H  MIN f_a      MAX f_b      STEP 1e-2 FILE_PATH integrals.dat

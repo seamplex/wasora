@@ -1,0 +1,6 @@
+$ wasora inline.was
+1.125
+1
+0.55
+$ pyxplot inline.ppl
+$ 

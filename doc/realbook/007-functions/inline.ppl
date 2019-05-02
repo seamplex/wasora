@@ -1,0 +1,18 @@
+set preamble "\usepackage{amsmath}"
+set width 12*unit(cm)
+set axis x arrow nomirrored
+set axis y arrow nomirrored
+set nomxtics
+
+set xlabel "$x$"
+set yrange [0:1.5]
+
+set terminal pdf
+set output "inline.pdf"
+
+plot "inline-points.dat" w p color blue ti "data", "inline-interp.dat" w l color green ti "linear intepolation"
+
+set terminal png dpi 127
+set output "inline.png"
+
+replot

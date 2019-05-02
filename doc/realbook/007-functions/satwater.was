@@ -1,0 +1,13 @@
+VAR T' p'   # dummy variables for the derivative
+
+FUNCTION psat(T) FILE_PATH satwater.txt COLUMNS 1 2 INTERPOLATION akima
+FUNCTION Tsat(p) FILE_PATH satwater.txt COLUMNS 2 1 INTERPOLATION akima
+FUNCTION rhoT(T) FILE_PATH satwater.txt COLUMNS 1 3 INTERPOLATION akima
+FUNCTION rhop(p) FILE_PATH satwater.txt COLUMNS 2 3 INTERPOLATION akima
+
+FUNCTION drho_dT(T) = derivative(rhoT(T'), T', T)
+FUNCTION drho_dp(p) = derivative(rhop(p'), p', p)
+
+PRINT_FUNCTION psat    MIN 300 MAX 500 STEP 2            FILE_PATH psat.dat
+PRINT_FUNCTION Tsat    MIN 0.035368 MAX 26.392 STEP 0.02 FILE_PATH Tsat.dat
+PRINT_FUNCTION drho_dT MIN 300 MAX 500 STEP 2            FILE_PATH drhodt.dat

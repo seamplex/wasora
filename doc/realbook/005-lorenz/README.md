@@ -66,5 +66,5 @@ The ability to solve the Lorenz system---that has both intrigued and inspired me
 
 -------
 :::{.text-center}
-[Previous](../004-exp) | [Index](../) | [Next](../)
+[Previous](../004-exp) | [Index](../) | [Next](../006-fibonacci)
 :::

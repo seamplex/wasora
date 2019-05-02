@@ -1,0 +1,9 @@
+# f(x) is point-wise-defined linear piece-wise-interpolated
+FUNCTION f(x) FILE_PATH function.data
+# g(x) is point-wise-defined spline-interpolated
+FUNCTION g(x) FILE_PATH function.data INTERPOLATION cspline
+# h(x) is point-wise-defined akima-interpolated
+FUNCTION h(x) FILE_PATH function.data INTERPOLATION akima
+
+# we send all functions to the standard output
+PRINT_FUNCTION f g h MIN f_a MAX f_b STEP 1e-2

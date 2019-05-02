@@ -1,0 +1,14 @@
+# f(x) is an algebraic function of one variable
+FUNCTION f(x) = sin(x)/log(1+x)
+# the colon can be used as an alias to the FUNCTION keyword
+g(x) := sqrt(cos(x)^2)
+
+# these functions need an explicit range to be printed
+# the PRINT_FUNCTION instruction can handle either the
+# name of the function (i.e. without the argument) or an
+# algebraic expression involving the same argument of
+# the first function
+VAR x'
+a = 1
+b = 5
+PRINT_FUNCTION f g integral(f(x')*g(x'),x',1,x) MIN a MAX b STEP (b-a)/100

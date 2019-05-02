@@ -1,0 +1,23 @@
+# f(x) is point-wise defined
+FUNCTION f(x) DATA {
+0      1
+1      1.5
+2      0.75
+3      1
+4      1
+5      0.1
+6      0.1
+7      0.1
+}
+
+# now PRINT_FUNCTION does not need a mandatory range
+PRINT_FUNCTION f FILE_PATH inline-points.dat
+
+# but if it is given, the function is interplated
+# (by default as a linear piecewise function)
+PRINT_FUNCTION f FILE_PATH inline-interp.dat MIN f_a MAX f_b STEP 1e-2
+
+# we can also evaluate f(x) at arbitrary (x)
+PRINT f(1.5)
+PRINT f(3.5)
+PRINT f(4.5)

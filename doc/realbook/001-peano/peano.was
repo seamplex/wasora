@@ -1,0 +1,9 @@
+PRINT 1+1      # with default format
+PRINT %g 1+1   # with numeric format
+
+# by means of an intermediate variable
+a = 1+1
+PRINT %g a 
+
+# with an informative text
+PRINT "Peano says that one plus one equals" %.0f a

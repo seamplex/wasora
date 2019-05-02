@@ -1,0 +1,5 @@
+$ wasora lag.was > lag.dat
+$ wasora compact.was > compact.dat
+$ diff -s lag.dat compact.dat
+Files lag.dat and compact.dat are identical
+$ 

@@ -1,0 +1,9 @@
+$ wasora -i
+wasora v0.6.5-g8932559+Δ 
+wasora’s an advanced suite for optimization & reactor analysis
+
+wasora is copyright (C) 2009-2019 jeremy theler
+an is licensed under GNU GPL version 3 or later.
+wasora is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+$

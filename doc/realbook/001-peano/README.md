@@ -1,9 +1,9 @@
 
-...
+---
 title: The Peano axiom
 inputs: peano
 tags: PRINT expressions
----
+...
 
 # The Peano axiom
 

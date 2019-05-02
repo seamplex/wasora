@@ -1,9 +1,9 @@
 
-...
+---
 title: One-dimensional functions
 inputs: algebraic inline file vectors satwater
 tags: FUNCTION PRINT_FUNCTION MIN MAX STEP VAR FILE FILE_PATH VECTORS NUMBER OUTPUT_FILE INTERPOLATION cspline akima linear sin cos log sqrt derivative integral
----
+...
 
 # One-dimensional functions
 
@@ -75,7 +75,7 @@ $ wasora inline.was
 1.125
 1
 0.55
-$ pyxplot inline.ppl
+$ pyxplot inline.ppl; pdf2svg inline.pdf inline.svg; rm -f inline.pdf
 $ 
 ```
 
@@ -156,15 +156,10 @@ $ qdp integrals.dat   --ti "linear splines akima" --xlabel "\$x\$" --key "bottom
 $ 
 ```
 
-![Derivatives](derivatives-dat)
+![Derivatives](derivatives-dat.svg)
 
-![Integrals](integrals-dat)
+![Integrals](integrals-dat.svg)
 
-
--------
-:::{.text-center}
-[Previous](../006-fibonacci) | [Index](../) | [Next](../)
-:::
 
 ## satwater.was
 
@@ -189,6 +184,10 @@ PRINT_FUNCTION drho_dT MIN 300 MAX 500 STEP 2            FILE_PATH drhodt.dat
 ```bash
 $ wasora satwater.was
 $ pyxplot satwater.ppl
+$ pdf2svg drhodt.pdf drhodt.svg; rm -f drhodt.pdf
+$ pdf2svg psat.pdf psat.svg; rm -f psat.pdf
+$ pdf2svg Tsat.pdf Tsat.svg; rm -f Tsat.pdf
+$ 
 $ 
 ```
 
@@ -197,3 +196,8 @@ $
 ![Saturation temperature](Tsat.svg)
 
 ![Derivative of density with respect to temperature $\partial \rho/\partial T$](drhodt.svg)
+
+-------
+:::{.text-center}
+[Previous](../006-fibonacci) | [Index](../) | [Next](../008-integrals)
+:::

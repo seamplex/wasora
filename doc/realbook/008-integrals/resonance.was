@@ -1,0 +1,9 @@
+# read XS vs energy from file
+FUNCTION sigma(E) FILE_PATH au117-ng-au118.xs
+
+E_c = 0.5       # cut-off energy in eV
+E_max = 20e6    # maximum energy in eV
+
+I = integral(sigma(E)/E, E, E_c, E_max)
+
+PRINT TEXT " I = "  %.2lf I TEXT "barns" 

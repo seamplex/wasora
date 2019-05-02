@@ -1,9 +1,9 @@
 define(case_title, The Fibonacci sequence)
-...
+---
 title: case_title
 inputs: fibo_vector fibo_iterative fibo_formula
 tags: VECTOR SIZE PRINT_VECTOR FORMAT IF ELSE ENDIF := static_steps vecsize sqrt 
----
+...
 
 # case_title
 

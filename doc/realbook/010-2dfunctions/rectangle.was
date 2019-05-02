@@ -1,0 +1,6 @@
+# h(x,y) is equal to g(x,y) at the definition points,
+# but it is interpolated differently
+FUNCTION h(x,y) INTERPOLATION rectangle FILE_PATH g_def.dat
+
+# print h(x,y) at the selected range
+PRINT_FUNCTION h FILE_PATH h_int.dat MIN 0 0 MAX 2 2 STEP 0.05 0.05

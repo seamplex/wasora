@@ -1,9 +1,9 @@
 
-...
+---
 title: A simple differential equation
 inputs: exp exp-dt
 tags: PHASE_SPACE PRINT HEADER = .= end_time min_dt max_dt rel_error
----
+...
 
 # A simple differential equation
 
@@ -61,10 +61,8 @@ $ wasora exp-dt.was 0.1 0   > exp-dt2.dat
 $ wasora exp-dt.was 0 0.1   > exp-dt3.dat
 $ wasora exp-dt.was 0.1 0.1 > exp-dt4.dat
 $ wasora exp-dt.was 1 1     > exp-dt5.dat
-$ pyxplot exp-dt.ppl; pdf2psvg exp-dt.pdf exp-dt.svg; rm -f exp-dt.pdf
-./tmp: line 1: pdf2psvg: command not found
-$ pyxplot exp-error.ppl; pdf2psvg exp-error.pdf exp-error.svg; rm -f exp-error.pdf
-./tmp: line 1: pdf2psvg: command not found
+$ pyxplot exp-dt.ppl; pdf2svg exp-dt.pdf exp-dt.svg; rm -f exp-dt.pdf
+$ pyxplot exp-error.ppl; pdf2svg exp-error.pdf exp-error.svg; rm -f exp-error.pdf
 $ 
 ```
 

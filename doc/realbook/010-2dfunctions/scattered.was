@@ -1,0 +1,28 @@
+# scattered multidimensional data may be interpolated
+# using a nearest-neighbor approach
+FUNCTION n(x,y) INTERPOLATION nearest DATA {
+0     0    0
+1     0    1
+0     1    2
+-0.5  0.5  3
+-1    -1   2
+0.75  0    1.5
+0.25  0.25 1
+}
+
+# another way of giving the same set of data
+VECTOR datax SIZE 7 DATA 0 1 0 -0.5 -1 0.75 0.25
+VECTOR datay SIZE 7 DATA 0 0 1  0.5 -1 0    0.25
+VECTOR dataz SIZE 7 DATA 0 1 2  3    2 1.5  1
+
+# using shepard's interpolation method
+FUNCTION s(x,y) VECTORS datax datay dataz INTERPOLATION shepard SHEPARD_EXPONENT 4
+
+# or using shepard's modified algorithm
+FUNCTION m(x,y) VECTORS datax datay dataz INTERPOLATION modified_shepard SHEPARD_RADIUS 2
+
+# print the definition points
+PRINT_FUNCTION n FILE_PATH n_def.dat
+
+# print the different functions at the selected range
+PRINT_FUNCTION n s m FILE_PATH n_int.dat MIN -1 -1 MAX 1.5 1.5 STEP 0.05 0.05

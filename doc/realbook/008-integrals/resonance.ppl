@@ -1,0 +1,19 @@
+set preamble "\usepackage{amsmath}"
+set width 12*unit(cm)
+set axis x arrow nomirrored
+set axis y arrow nomirrored
+set nomxtics
+
+set logscale x
+set logscale y
+
+set xlabel "energy~$E$ [eV]"
+set ylabel "microscopic cross section $\sigma$ [barns]"
+set terminal pdf
+set output "au117-ng-au118.pdf"
+
+plot "au117-ng-au118.xs" w l color blue ti "$^{117}\text{Au} (n,\gamma) ^{118}\text{Au}$"
+
+#set terminal png dpi 127
+#set output "au117-ng-au118.png"
+#replot

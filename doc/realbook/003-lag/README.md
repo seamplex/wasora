@@ -1,9 +1,9 @@
 
-...
+---
 title: First-order lags
 inputs: lag compact quasi-sine
 tags: end_time dt lag HEADER
----
+...
 
 # First-order lags
 

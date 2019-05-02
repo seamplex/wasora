@@ -1,0 +1,5 @@
+FUNCTION v(p,T) FILE_PATH compwater.txt COLUMNS 2 1 4 INTERPOLATION rectangular
+FUNCTION u(p,T) FILE_PATH compwater.txt COLUMNS 2 1 5 INTERPOLATION rectangular
+FUNCTION h(p,T) = u(p,T) + p*v(p,T)
+
+PRINT_FUNCTION h MIN 1e5 300 MAX 200e5 1000 STEP 2e5 4

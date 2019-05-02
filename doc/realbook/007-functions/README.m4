@@ -1,9 +1,9 @@
 define(case_title, One-dimensional functions)
-...
+---
 title: case_title
 inputs: algebraic inline file vectors satwater
 tags: FUNCTION PRINT_FUNCTION MIN MAX STEP VAR FILE FILE_PATH VECTORS NUMBER OUTPUT_FILE INTERPOLATION cspline akima linear sin cos log sqrt derivative integral
----
+...
 
 # case_title
 
@@ -72,12 +72,10 @@ include(vectors.was)dnl
 include(vectors.term)dnl
 ```
 
-![Derivatives](derivatives-dat)
+![Derivatives](derivatives-dat.svg)
 
-![Integrals](integrals-dat)
+![Integrals](integrals-dat.svg)
 
-
-case_nav
 
 ## satwater.was
 
@@ -96,3 +94,5 @@ include(satwater.term)dnl
 ![Saturation temperature](Tsat.svg)
 
 ![Derivative of density with respect to temperature $\partial \rho/\partial T$](drhodt.svg)
+
+case_nav

@@ -1,9 +1,9 @@
 define(case_title, First-order lags)
-...
+---
 title: case_title
 inputs: lag compact quasi-sine
 tags: end_time dt lag HEADER
----
+...
 
 # case_title
 

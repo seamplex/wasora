@@ -1,9 +1,9 @@
 define(case_title, Hello world)
-...
+---
 title: case_title
 inputs: hello
 tags: PRINT TEXT
----
+...
 
 # case_title
 

@@ -1,9 +1,9 @@
 
-...
+---
 title: Hello world
 inputs: hello
 tags: PRINT TEXT
----
+...
 
 # Hello world
 

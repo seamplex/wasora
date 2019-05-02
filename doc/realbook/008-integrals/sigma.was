@@ -1,0 +1,10 @@
+VAR xi   # dummy integration variable
+
+h = 6.62606957e-34      # planck's contant [J s]
+c = 299792458           # speed of light in vacuum [m s^(-1)]
+k = 1.3806488e-23       # boltzmann constant  [m^2 kg s^(-2) K^(-1)]
+
+# compute stefan-boltzmann constant
+sigma = 2*pi*k^4/(h^3*c^2) * integral(1/(xi^5*(exp(1/xi)-1)), xi, 1e-2, infinite)
+
+PRINT TEXT "sigma =" sigma TEXT "W m^(-2) K^(-4)"

@@ -1,9 +1,9 @@
 
-...
+---
 title: Algebraic expressions
 inputs: expr hoc
 tags: PRINT = expressions TEXT
----
+...
 
 # Algebraic expressions
 

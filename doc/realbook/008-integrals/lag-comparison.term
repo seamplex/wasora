@@ -1,0 +1,6 @@
+$ cat loop.sh
+for i in 1.0 1.2 1.5 1.8; do
+ wasora lag-comparison.was $i | qdp -o comparison$i --plottitle "\$t_0 = $i \\cdot \\Delta t\$" --ti "exact lag bilinear euler convolution convolution" --key bottom --lw 3 --pt 31
+done
+$ ./loop.sh
+$ 

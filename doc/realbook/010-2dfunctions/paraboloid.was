@@ -1,0 +1,9 @@
+a = 1
+b = 1
+
+f(x,y) := (x/a)^2 + (y/b)^2
+
+b = 2
+
+# range is mandatory as f(x,y) is algebraically-defined
+PRINT_FUNCTION f MIN -b -b MAX b b STEP b/20 b/20

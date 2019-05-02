@@ -1,9 +1,9 @@
 define(case_title, The Peano axiom)
-...
+---
 title: case_title
 inputs: peano
 tags: PRINT expressions
----
+...
 
 # case_title
 

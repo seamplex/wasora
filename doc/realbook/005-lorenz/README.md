@@ -1,9 +1,9 @@
 
-...
+---
 title: The Lorenz chaotic system
 inputs: lorenz
 tags: PHASE_SPACE CONST PRINT HEADER .= = 
----
+...
 
 # The Lorenz chaotic system
 
@@ -60,9 +60,9 @@ $
 The ability to solve the Lorenz system---that has both intrigued and inspired me since I was old enough to understand differential equations---with such simple and concise instructions shows me that indeed wasora has something to provide to the scientific/engineering community.
 
 
-![Lorenz as a function of time][lorenz2d.svg]
+![Lorenz as a function of time](lorenz2d.svg)
 
-![The Lorenz attractor in phase space][lorenz3d.svg]
+![The Lorenz attractor in phase space](lorenz3d.svg)
 
 -------
 :::{.text-center}

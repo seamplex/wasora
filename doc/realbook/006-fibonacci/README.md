@@ -1,9 +1,9 @@
 
-...
+---
 title: The Fibonacci sequence
 inputs: fibo_vector fibo_iterative fibo_formula
 tags: VECTOR SIZE PRINT_VECTOR FORMAT IF ELSE ENDIF := static_steps vecsize sqrt 
----
+...
 
 # The Fibonacci sequence
 

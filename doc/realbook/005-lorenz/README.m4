@@ -1,9 +1,9 @@
 define(case_title, The Lorenz chaotic system)
-...
+---
 title: case_title
 inputs: lorenz
 tags: PHASE_SPACE CONST PRINT HEADER .= = 
----
+...
 
 # case_title
 
@@ -35,8 +35,8 @@ The ability to solve the Lorenz system---that has both intrigued and inspired me
 
 dnl See also the [besssugo plugin quickstart examples](http://www.talador.com.ar/jeremy/wasora/besssugo/#thelorenzsystem) for videos of applications of wasora to solve and study the Lorenz equations---and other chaotic dynamical systems.
 
-![Lorenz as a function of time][lorenz2d.svg]
+![Lorenz as a function of time](lorenz2d.svg)
 
-![The Lorenz attractor in phase space][lorenz3d.svg]
+![The Lorenz attractor in phase space](lorenz3d.svg)
 
 case_nav

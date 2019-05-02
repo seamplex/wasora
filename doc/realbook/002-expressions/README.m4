@@ -1,9 +1,9 @@
 define(case_title, Algebraic expressions)
-...
+---
 title: case_title
 inputs: expr hoc
 tags: PRINT = expressions TEXT
----
+...
 
 # case_title
 

@@ -16,18 +16,18 @@ set logscale y
 plot "psat.dat"     w l color blue ti "interpolation",\
      "satwater.txt" w p color blue ti "definition points"  
 
-set terminal png dpi 127
-set output "psat.png"
-replot
+#set terminal png dpi 127
+#set output "psat.png"
+#replot
 
 set terminal pdf
 set output "drhodt.pdf"
 unset logscale y
 set ylabel "$\partial \rho / \partial T$ [kg / (m$^3$ K)]"
 plot "drhodt.dat" w l lw 1 color red ti ""
-set terminal png dpi 127
-set output "drhodt.png"
-replot
+#set terminal png dpi 127
+#set output "drhodt.png"
+#replot
 
 
 set terminal pdf
@@ -36,8 +36,8 @@ set ylabel "pressure $p$ [bar]"
 set xlabel "temperature $T$ [K]"
 plot "Tsat.dat" w l color green ti "interpolation",\
      "satwater.txt" u 2:1 w p color green ti "definition points"
-set terminal png dpi 127
-set output "Tsat.png"
-replot
+#set terminal png dpi 127
+#set output "Tsat.png"
+#replot
 
 

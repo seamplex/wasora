@@ -2,5 +2,5 @@ $ wasora inline.was
 1.125
 1
 0.55
-$ pyxplot inline.ppl
+$ pyxplot inline.ppl; pdf2svg inline.pdf inline.svg; rm -f inline.pdf
 $ 

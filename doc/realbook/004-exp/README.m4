@@ -1,9 +1,9 @@
 define(case_title, A simple differential equation)
-...
+---
 title: case_title
 inputs: exp exp-dt
 tags: PHASE_SPACE PRINT HEADER = .= end_time min_dt max_dt rel_error
----
+...
 
 # case_title
 

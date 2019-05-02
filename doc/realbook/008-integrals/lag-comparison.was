@@ -1,0 +1,25 @@
+VAR t'
+end_time = 3
+dt = 0.5
+t0 = $1*dt
+a = 1
+tau = 1
+
+# note that r is a function so it can be integrated
+r(t) := a*heaviside(t-t0)
+
+# exact solution
+y1[t0:infinite] = a*(1-exp(-(t-t0)/tau))
+
+# lags are operators applied to signals, but in this
+# context r(t) acts as a signal and not as a function
+y2 = lag(r(t), tau)
+y3 = lag_bilinear(r(t), tau)
+y4 = lag_euler(r(t), tau)
+
+# convolution are operators over functions
+g(t) := 1/tau*exp(-t/tau)
+y5 = integral(r(t') * g(t-t'), t', 0, t) 
+y6 = integral(r(t-t') * g(t'), t', 0, t)
+
+PRINT t y1 y2 y3 y4 y5 y6 

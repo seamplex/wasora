@@ -22,6 +22,10 @@ i=1
 for dir in 0*; do
  if [ -e ${dir}/README.m4 ]; then
 #   echo $dir
+  # si nos dieron argumento, en list ponemos el i de ese nombre
+  if [ ! -z "$1" ] && [ "x${dir}" = "x`basename ${1}`" ]; then
+    list=${i}
+  fi
   cases[${i}]=$dir
   next[$((${i} - 1))]=$dir
   prev[${i}]=$current_prev
@@ -30,7 +34,11 @@ for dir in 0*; do
  fi
 done
 
-for i in `seq 1 ${#cases[*]}`; do
+if [ -z "${list}" ]; then
+ list=`seq 1 ${#cases[*]}`
+fi
+
+for i in ${list}; do
 
  echo ${cases[${i}]}
  cd ${cases[${i}]}
@@ -46,15 +54,17 @@ for i in `seq 1 ${#cases[*]}`; do
  fi
   
  for input in $inputs; do
-  if [ -z "$1" ]; then
-   saltear=`echo ${input} | grep \~ | wc -l`
-  else
-   if [[ "$example" = "`basename $1`" && -z "`echo ${input} | grep \~`" ]]; then
-    saltear=0
-   else
-    saltear=1
-   fi
-  fi
+#   if [ -z "$1" ]; then
+#    saltear=`echo ${input} | grep \~ | wc -l`
+#   else
+#    if [[ "$example" = "`basename ${1}`" && -z "`echo ${input} | grep \~`" ]]; then
+#     saltear=0
+#    else
+#     saltear=1
+#    fi
+#   fi
+
+  saltear=0
  
   input=`echo ${input} | sed s/~//`
   echo "    ${input}"
@@ -70,7 +80,7 @@ for i in `seq 1 ${#cases[*]}`; do
     cat tmp >> terminal.txt
     chmod +x tmp
     script -aq -c ./tmp terminal.txt 2>&1 | grep error: > errors
-    if [ ! -z "`cat errors | grep -v libGL`" ]; then
+    if [ ! -z "`cat errors`" ]; then
      echo "error: something happened on the way to heaven"
      cat ./tmp
      cat errors

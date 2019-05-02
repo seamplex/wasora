@@ -12,7 +12,7 @@ set output "inline.pdf"
 
 plot "inline-points.dat" w p color blue ti "data", "inline-interp.dat" w l color green ti "linear intepolation"
 
-set terminal png dpi 127
-set output "inline.png"
+#set terminal png dpi 127
+#set output "inline.png"
 
 replot

@@ -89,7 +89,7 @@ The code heavily relies on the numerical routines provided by the [GNU Scientifi
 Open a terminal in a GNU/Linux box (may be a VirtualBox box) and make sure you install the following packages (the last two are optional):
 
 ```
-sudo apt-get install m4 make autoconf automake gcc git findutils libgsl-dev libsundials-serial-dev libreadline-dev
+sudo apt-get install m4 make autoconf automake gcc git findutils libgsl-dev libsundials-dev libreadline-dev
 ```
 
 Clone the wasora repository, bootstrap, configure, compile and check:

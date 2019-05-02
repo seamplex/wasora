@@ -1243,9 +1243,9 @@ if (strcasecmp(token, "FROM") == 0) {
 
           // nos dieron los datos hard en el wasora_input
           backup1 = malloc(strlen(dummy)+8);
-          sprintf(backup1, "dummy %s", dummy);
+          snprintf(backup1, strlen(dummy)+8, "dummy %s", dummy);
           backup2 = malloc(strlen(dummy)+8);
-          sprintf(backup2, "dummy %s", dummy);
+          snprintf(backup2, strlen(dummy)+8, "dummy %s", dummy);
 
           // contamos cuanta informacion hay
           function->data_size = 0;

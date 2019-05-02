@@ -123,7 +123,7 @@ void wasora_free_function(function_t *function) {
   if (function->data_argument_alloced) {
     for (i = 0; i < function->n_arguments; i++) {
       free(function->data_argument[i]);
-      function->data_argument = NULL;
+      function->data_argument[i] = NULL;
     }
     free(function->data_argument);
     function->data_argument = NULL;

@@ -5,6 +5,8 @@ if [ -z "`which wasora`" ]; then
   exit
 fi
 
+. parse_yaml.sh
+
 # el dibujito de la portada
 # inkscape wasorarealbook.svg -e wasorarealbook.png -C -w 550
 
@@ -106,3 +108,18 @@ for i in ${list}; do
  
  cd ..
 done
+
+# el TOC
+echo > toc.md
+for dir in 0*; do
+ if [ -e ${dir}/README.m4 ]; then
+
+  # el toc
+  eval $(parse_yaml ${dir}/README.md "case_")
+  echo " * [${case_title}](${dir})" >> toc.md
+  
+  i=$((${i} + 1))
+ fi
+done
+
+m4 header.m4 README.m4 > README.md

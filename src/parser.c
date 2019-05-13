@@ -481,11 +481,11 @@ if (strcasecmp(token, "FROM") == 0) {
 
 ///kw+INITIAL_CONDITIONS_MODE+usage { AS_PROVIDED | FROM_VARIABLES | FROM_DERIVATIVES }
 ///kw+INITIAL_CONDITIONS_MODE+detail In DAE problems, initial conditions may be either:
-///kw+INITIAL_CONDITIONS_MODE+detail .
-///kw+INITIAL_CONDITIONS_MODE+detail  * equal to the provided expressions (`AS_PROVIDED`)
-///kw+INITIAL_CONDITIONS_MODE+detail  * the derivatives computed from the provided phase-space variables (`FROM_VARIABLES`)
-///kw+INITIAL_CONDITIONS_MODE+detail  * the phase-space variables computed from the provided derivatives (`FROM_DERIVATIVES`)
-///kw+INITIAL_CONDITIONS_MODE+detail .
+///kw+INITIAL_CONDITIONS_MODE+detail @
+///kw+INITIAL_CONDITIONS_MODE+detail  * equal to the provided expressions (`AS_PROVIDED`)@
+///kw+INITIAL_CONDITIONS_MODE+detail  * the derivatives computed from the provided phase-space variables (`FROM_VARIABLES`)@
+///kw+INITIAL_CONDITIONS_MODE+detail  * the phase-space variables computed from the provided derivatives (`FROM_DERIVATIVES`)@
+///kw+INITIAL_CONDITIONS_MODE+detail @
 ///kw+INITIAL_CONDITIONS_MODE+detail In the first case, it is up to the user to fulfill the DAE system at\ $t = 0$.
 ///kw+INITIAL_CONDITIONS_MODE+detail If the residuals are not small enough, a convergence error will occur.
 ///kw+INITIAL_CONDITIONS_MODE+detail The `FROM_VARIABLES` option means calling IDA’s `IDACalcIC` routine with the parameter `IDA_YA_YDP_INIT`. 
@@ -508,13 +508,13 @@ if (strcasecmp(token, "FROM") == 0) {
 ///kw+LOAD_PLUGIN+detail A wasora plugin in the form of a dynamic shared object (i.e. `.so`) can be loaded
 ///kw+LOAD_PLUGIN+detail either with the `LOAD_PLUGIN` keyword or from the command line with the `-p` option.
 ///kw+LOAD_PLUGIN+detail Either a file path or a plugin name can be given. The following locations are tried:
-///kw+LOAD_PLUGIN+detail .        
-///kw+LOAD_PLUGIN+detail  * the current directory `./`      
-///kw+LOAD_PLUGIN+detail  * the parent directory `../`
-///kw+LOAD_PLUGIN+detail  * the user’s `LD_LIBRARY_PATH`
-///kw+LOAD_PLUGIN+detail  * the cache file `/etc/ld.so.cache`
-///kw+LOAD_PLUGIN+detail  * the directories `/lib`, `/usr/lib`, `/usr/local/lib`
-///kw+LOAD_PLUGIN+detail .        
+///kw+LOAD_PLUGIN+detail @
+///kw+LOAD_PLUGIN+detail  * the current directory `./`@
+///kw+LOAD_PLUGIN+detail  * the parent directory `../`@
+///kw+LOAD_PLUGIN+detail  * the user’s `LD_LIBRARY_PATH`@
+///kw+LOAD_PLUGIN+detail  * the cache file `/etc/ld.so.cache`@
+///kw+LOAD_PLUGIN+detail  * the directories `/lib`, `/usr/lib`, `/usr/local/lib`@
+///kw+LOAD_PLUGIN+detail @
 ///kw+LOAD_PLUGIN+detail If a wasora plugin was compiled and installed following the `make install` procedure,
 ///kw+LOAD_PLUGIN+detail the plugin should be loaded by just passing the name to `LOAD_PLUGIN`.
         
@@ -1067,13 +1067,14 @@ if (strcasecmp(token, "FROM") == 0) {
           }
 
 ///kw+FUNCTION+usage [ INTERPOLATION
+///kw+FUNCTION+desc Default interpolation scheme for one-dimensional functions is `DEFAULT_INTERPOLATION`.
         } else if (strcasecmp(token, "INTERPOLATION") == 0) {
 
           if ((token = wasora_get_next_token(NULL)) == NULL) {
             wasora_push_error_message("expected interpolation method");
             return WASORA_PARSER_ERROR;
           }
-
+          
 ///kw+FUNCTION+usage {
 ///kw+FUNCTION+usage linear |
           if (strcasecmp(token, "linear") == 0) {
@@ -1684,7 +1685,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
 // --- PRINT -----------------------------------------------------
-///kw+PRINT+desc Print plaint-text and/or formatted data to the standard output or into an output file.
+///kw+PRINT+desc Print plain-text and/or formatted data to the standard output or into an output file.
 ///kw+PRINT+usage PRINT
     } else if (strcasecmp(token, "PRINT") == 0) {
 
@@ -1705,25 +1706,15 @@ if (strcasecmp(token, "FROM") == 0) {
         NULL
       };
 
-///kw+PRINT+detail Each argument `object` that is not a keyword is expected to be part of the output,
-///kw+PRINT+detail can be either a matrix, a vector, an scalar algebraic expression. If the given object
-///kw+PRINT+detail cannot be solved into a valid matrix, vector or expression, it is treated as a
-///kw+PRINT+detail string literal if `IMPLICIT` is `ALLOWED`, otherwise a parser error is raised.
-///kw+PRINT+detail To explicitly interpret an object as a literal string even if it resolves to a valid
-///kw+PRINT+detail numerical expression, it should be prefixed with the `TEXT` keyword. Hashes~`#`
-///kw+PRINT+detail appearing literal strings have to be quoted to prevent the parser to treat them as
-///kw+PRINT+detail comments within the wasora input file.
-///kw+PRINT+detail Whenever an argument starts with a porcentage sign '%', it is treated as a
-///kw+PRINT+detail printf-compatible format definition and all the objects that follow it are printed
-///kw+PRINT+detail using the given format until a new format definition is found. All the objects are
-///kw+PRINT+detail treated as double-precision floating point numbers, so only floating point formats      
-///kw+PRINT+detail should be given. The default format is '%e'.
-///kw+PRINT+detail Matrices, vectors, scalar expressions, format modifiers and string literals can be
-///kw+PRINT+detail given in the desired order, and are processed from left to right.
-///kw+PRINT+detail Vectors are printed element-by-element in a single row. See `PRINT_VECTOR` to print
-///kw+PRINT+detail vectors column-wise. Matrices are printed element-by-element in a row-major fashion
-///kw+PRINT+detail if mixed with other objects but in the natural row and column fashion if it is the
-///kw+PRINT+detail only given object.      
+///kw+PRINT+detail Each argument `object` that is not a keyword is expected to be part of the output, can be either a matrix, a vector, an scalar algebraic expression.
+///kw+PRINT+detail If the given object cannot be solved into a valid matrix, vector or expression, it is treated as a string literal if `IMPLICIT` is `ALLOWED`, otherwise a parser error is raised.
+///kw+PRINT+detail To explicitly interpret an object as a literal string even if it resolves to a valid numerical expression, it should be prefixed with the `TEXT` keyword.
+///kw+PRINT+detail Hashes `#` appearing literal in text strings have to be quoted to prevent the parser to treat them as comments within the wasora input file and thus ignoring the rest of the line.
+///kw+PRINT+detail Whenever an argument starts with a porcentage sign  `%`, it is treated as a C `printf`-compatible format definition and all the objects that follow it are printed using the given format until a new format definition is found.
+///kw+PRINT+detail The objects are treated as double-precision floating point numbers, so only floating point formats should be given. The default format is `DEFAULT_PRINT_FORMAT`.
+///kw+PRINT+detail Matrices, vectors, scalar expressions, format modifiers and string literals can be given in any desired order, and are processed from left to right.
+///kw+PRINT+detail Vectors are printed element-by-element in a single row. See `PRINT_VECTOR` to print vectors column-wise.
+///kw+PRINT+detail Matrices are printed element-by-element in a single line using row-major ordering if mixed with other objects but in the natural row and column fashion if it is the only given object.
       
       while ((token = wasora_get_next_token(NULL)) != NULL) {
 ///kw+PRINT+usage [ FILE <file_id> |
@@ -1746,7 +1737,7 @@ if (strcasecmp(token, "FROM") == 0) {
           if (wasora_parser_string(&print->separator) != WASORA_PARSER_OK) {
             return WASORA_PARSER_ERROR;
           }
-///kw+PRINT+detail The `SEP` keywords expects a string used to separate printed objects, the default is a tab '\t' character.
+///kw+PRINT+detail The `SEP` keywords expects a string used to separate printed objects, the default is a tab 'DEFAULT_PRINT_SEPARATOR' character.
 
 ///kw+PRINT+usage [ NOSEP ]
         } else if (strcasecmp(token, "NOSEP") == 0) {

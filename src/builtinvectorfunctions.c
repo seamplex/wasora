@@ -29,10 +29,10 @@
 
 #include "wasora.h"
 
-//fv+vecsize+name vecsize
-//fv+vecsize+usage vecsize(b)
-//fv+vecsize+desc Returns the size of vector $\vec{b}$.
-//fv+vecsize+example vecsize.was
+///fv+vecsize+name vecsize
+///fv+vecsize+usage vecsize(b)
+///fv+vecsize+desc Returns the size of vector $\vec{b}$.
+///fv+vecsize+example vecsize.was
 double builtin_vecsize(vector_t **arg) {
   if (!arg[0]->initialized) {
     wasora_vector_init(arg[0]);
@@ -40,11 +40,11 @@ double builtin_vecsize(vector_t **arg) {
   return (double)arg[0]->size;
 }
 
-//fv+vecsum+name vecsum
-//fv+vecsum+usage vecsum(b)
-//fv+vecsum+math \sum_{i=1}^{\text{vecsize}(\vec{b})} b_i
-//fv+vecsum+desc Computes the sum of all the components of vector $\vec{b}$.
-//fv+vecsum+example vecsum.was
+///fv+vecsum+name vecsum
+///fv+vecsum+usage vecsum(b)
+///fv+vecsum+math \sum_{i=1}^{\text{vecsize}(\vec{b})} b_i
+///fv+vecsum+desc Computes the sum of all the components of vector $\vec{b}$.
+///fv+vecsum+example vecsum.was
 double builtin_vecsum(vector_t **arg) {
 
   int i;
@@ -63,12 +63,12 @@ double builtin_vecsum(vector_t **arg) {
 }
 
 
-//fv+vecnorm+name vecnorm
-//fv+vecnorm+usage vecnorm(b)
-//fv+vecnorm+math \sqrt{\sum_{i=1}^{\text{vecsize}(\vec{b})} b^2_i}
-//fv+vecnorm+desc Computes euclidean norm of vector $\vec{b}$. Other norms can be computed explicitly
-//fv+vecnorm+desc using the `sum` functional, as illustrated in the example.
-//fv+vecnorm+example vecnorm.was
+///fv+vecnorm+name vecnorm
+///fv+vecnorm+usage vecnorm(b)
+///fv+vecnorm+math \sqrt{\sum_{i=1}^{\text{vecsize}(\vec{b})} b^2_i}
+///fv+vecnorm+desc Computes euclidean norm of vector $\vec{b}$. Other norms can be computed explicitly
+///fv+vecnorm+desc using the `sum` functional, as illustrated in the example.
+///fv+vecnorm+example vecnorm.was
 double builtin_vecnorm(vector_t **arg) {
 
   int i;
@@ -86,12 +86,12 @@ double builtin_vecnorm(vector_t **arg) {
   return sqrt(s);
 }
 
-//fv+vecmin+name vecmin
-//fv+vecmin+usage vecmin(b)
-//fv+vecmin+math \min_i b_i
-//fv+vecmin+desc Returns the smallest element of vector $\vec{b}$, taking into account its sign
-//fv+vecmin+desc (i.e. $-2 < 1$).
-//fv+vecmin+example vecmin.was
+///fv+vecmin+name vecmin
+///fv+vecmin+usage vecmin(b)
+///fv+vecmin+math \min_i b_i
+///fv+vecmin+desc Returns the smallest element of vector $\vec{b}$, taking into account its sign
+///fv+vecmin+desc (i.e. $-2 < 1$).
+///fv+vecmin+example vecmin.was
 double builtin_vecmin(vector_t **arg) {
 
   double y;
@@ -104,12 +104,12 @@ double builtin_vecmin(vector_t **arg) {
   return y;
 }
 
-//fv+vecmax+name vecmax
-//fv+vecmax+usage vecmax(b)
-//fv+vecmax+math \max_i b_i
-//fv+vecmax+desc Returns the biggest element of vector $\vec{b}$, taking into account its sign
-//fv+vecmax+desc (i.e. $1 > -2$).
-//fv+vecmax+example vecmax.was
+///fv+vecmax+name vecmax
+///fv+vecmax+usage vecmax(b)
+///fv+vecmax+math \max_i b_i
+///fv+vecmax+desc Returns the biggest element of vector $\vec{b}$, taking into account its sign
+///fv+vecmax+desc (i.e. $1 > -2$).
+///fv+vecmax+example vecmax.was
 double builtin_vecmax(vector_t **arg) {
 
   double y;
@@ -122,12 +122,12 @@ double builtin_vecmax(vector_t **arg) {
   return y;
 }
 
-//fv+vecminindex+name vecminindex
-//fv+vecminindex+usage vecminindex(b)
-//fv+vecminindex+math i / b_i = \min_i b_i
-//fv+vecminindex+desc Returns the index of the smallest element of vector $\vec{b}$, taking into account its sign
-//fv+vecminindex+desc (i.e. $-2 < 1$).
-//fv+vecminindex+example vecminindex.was
+///fv+vecminindex+name vecminindex
+///fv+vecminindex+usage vecminindex(b)
+///fv+vecminindex+math i / b_i = \min_i b_i
+///fv+vecminindex+desc Returns the index of the smallest element of vector $\vec{b}$, taking into account its sign
+///fv+vecminindex+desc (i.e. $-2 < 1$).
+///fv+vecminindex+example vecminindex.was
 double builtin_vecminindex(vector_t **arg) {
 
   double y;
@@ -140,12 +140,12 @@ double builtin_vecminindex(vector_t **arg) {
   return y;
 }
 
-//fv+vecmaxindex+name vecmaxindex
-//fv+vecmaxindex+usage vecmaxindex(b)
-//fv+vecmaxindex+math i / b_i = \max_i b_i
-//fv+vecmaxindex+desc Returns the index of the biggest element of vector $\vec{b}$, taking into account its sign
-//fv+vecmaxindex+desc (i.e. $2 > -1$).
-//fv+vecmaxindex+example vecminindex.was
+///fv+vecmaxindex+name vecmaxindex
+///fv+vecmaxindex+usage vecmaxindex(b)
+///fv+vecmaxindex+math i / b_i = \max_i b_i
+///fv+vecmaxindex+desc Returns the index of the biggest element of vector $\vec{b}$, taking into account its sign
+///fv+vecmaxindex+desc (i.e. $2 > -1$).
+///fv+vecmaxindex+example vecminindex.was
 double builtin_vecmaxindex(vector_t **arg) {
 
   double y;
@@ -158,12 +158,12 @@ double builtin_vecmaxindex(vector_t **arg) {
   return y;
 }
 
-//fv+vecdot+name vecdot
-//fv+vecdot+usage vecdot(a,b)
-//fv+vecdot+math \vec{a} \cdot \vec{b} = \sum_{i=1}^{\text{vecsize}(\vec{a})} a_i \cdot b_i
-//fv+vecdot+desc Computes the dot product between vectors $\vec{a}$ and $\vec{b}$, which should
-//fv+vecdot+desc have the same size.
-//fv+vecdot+example vecdot.was
+///fv+vecdot+name vecdot
+///fv+vecdot+usage vecdot(a,b)
+///fv+vecdot+math \vec{a} \cdot \vec{b} = \sum_{i=1}^{\text{vecsize}(\vec{a})} a_i \cdot b_i
+///fv+vecdot+desc Computes the dot product between vectors $\vec{a}$ and $\vec{b}$, which should
+///fv+vecdot+desc have the same size.
+///fv+vecdot+example vecdot.was
 double builtin_vecdot(vector_t **arg) {
 
   int i;

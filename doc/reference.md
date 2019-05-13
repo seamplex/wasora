@@ -1,8 +1,8 @@
-% Wasora v0.6.16-g1d59bb0 reference sheet
+% Wasora v0.6.17-g80b64c8 reference sheet
 
 # Keywords
 
-##  `.=`
+##  .=
 
 Add an equation to the DAE system to be solved in the phase space spanned by `PHASE_SPACE`.
 
@@ -12,7 +12,7 @@ Add an equation to the DAE system to be solved in the phase space spanned by `PH
 
 
 
-##  `=`
+##  =
 
 Assign an expression to a variable, a vector or a matrix.
 
@@ -22,7 +22,7 @@ Assign an expression to a variable, a vector or a matrix.
 
 
 
-##  `ABORT`
+##  ABORT
 
 Catastrophically abort the execution and quit wasora.
 
@@ -31,13 +31,13 @@ ABORT
 ~~~
 
 
-Whenever the instruction `ABORT` is executed, wasora quits without closing file
-or unlocking shared memory objects. The objective of this instruction is, a
-illustrated in the examples, either to debug complex input files and check th
-values of certain variables or to conditionally abort the execution using `IF
-clauses
+Whenever the instruction `ABORT` is executed, wasora quits without closing files
+or unlocking shared memory objects. The objective of this instruction is, as
+illustrated in the examples, either to debug complex input files and check the
+values of certain variables or to conditionally abort the execution using `IF`
+clauses.
 
-##  `ALIAS`
+##  ALIAS
 
 Define a scalar alias of an already-defined indentifier.
 
@@ -46,12 +46,12 @@ ALIAS { <new_var_name> IS <existing_object> | <existing_object> AS <new_name> }
 ~~~
 
 
-The existing object can be a variable, a vector element or a matrix element
-In the first case, the name of the variable should be given as the existing object
-In the second case, to alias the second element of vector `v` to the new name `new`, `v(2)` should be given as the existing object
-In the third case, to alias second element (2,3) of matrix `M` to the new name `new`, `M(2,3)` should be given as the existing object
+The existing object can be a variable, a vector element or a matrix element.
+In the first case, the name of the variable should be given as the existing object.
+In the second case, to alias the second element of vector `v` to the new name `new`, `v(2)` should be given as the existing object.
+In the third case, to alias second element (2,3) of matrix `M` to the new name `new`, `M(2,3)` should be given as the existing object.
 
-##  `CALL`
+##  CALL
 
 Call a previously dynamically-loaded user-provided routine.
 
@@ -61,7 +61,7 @@ CALL <name> [ expr_1 expr_2 ... expr_n ]
 
 
 
-##  `CLOSE`
+##  CLOSE
 
 Explicitly close an already-`OPEN`ed file.
 
@@ -71,7 +71,7 @@ CLOSE
 
 
 
-##  `CONST`
+##  CONST
 
 Mark a scalar variable, vector or matrix as a constant.
 
@@ -81,7 +81,7 @@ CONST name_1 [ <name_2> ] ... [ <name_n> ]
 
 
 
-##  `DEFAULT_ARGUMENT_VALUE`
+##  DEFAULT_ARGUMENT_VALUE
 
 Give a default value for an optional commandline argument.
 
@@ -90,14 +90,14 @@ DEFAULT_ARGUMENT_VALUE <constant> <string>
 ~~~
 
 
-If a `$n` construction is found in the input file but th
-commandline argument was not given, the default behavior is t
-fail complaining that an extra argument has to be given in th
-commandline. With this keyword, a default value can be assigned i
-no argument is given, thus avoiding the failure and making the argumen
-optional
+If a `$n` construction is found in the input file but the
+commandline argument was not given, the default behavior is to
+fail complaining that an extra argument has to be given in the
+commandline. With this keyword, a default value can be assigned if
+no argument is given, thus avoiding the failure and making the argument
+optional.
 
-##  `DIFFERENTIAL`
+##  DIFFERENTIAL
 
 Explicitly mark variables, vectors or matrices as “differential” to compute intial conditions of DAE systems.
 
@@ -107,7 +107,7 @@ DIFFERENTIAL { <var_1> <var_2> ... | <vector_1> <vector_2> ... | <matrix_1> <mat
 
 
 
-##  `DO_NOT_EVALUATE_AT_PARSE_TIME`
+##  DO_NOT_EVALUATE_AT_PARSE_TIME
 
 Ask wasora not to evaluate assignments at parse time.
 
@@ -117,7 +117,7 @@ DO_NOT_EVALUATE_AT_PARSE_TIME
 
 
 
-##  `FILE`
+##  FILE
 
 Define a file, either as input or as output, for further usage.
 
@@ -127,7 +127,7 @@ Define a file, either as input or as output, for further usage.
 
 
 
-##  `FIT`
+##  FIT
 
 Fit a function of one or more arguments to a set of data.
 
@@ -136,24 +136,25 @@ FIT <function_to_be_fitted> TO <function_with_data> VIA <var_1> <var_2> ... <var
 ~~~
 
 
-The function with the data has to be point-wise defined
-The function to be fitted hast to be parametrized with at least one of the variables provided after the `VIA` keyword
-Only the names of the functions have to be given
-Both functions have to have the same number of arguments
-The initial guess of the solution is given by the initial value of the variables listed in the `VIA` keyword
-Analytical expressions for the gradient of the function to be fitted with respect to the parameters to be fitted can be optionally given with the `GRADIENT` keyword
-If none is provided, the gradient will be computed numerically using finite differences
-A range over which the residuals are to be minimized can be given with `RANGE_MIN` and `RANGE_MAX`
-For multidimensional fits, the range is an hypercube
-If no range is given, all the definition points of the function witht the data are used for the fit
-Convergence can be controlled by given the relative and absolute tolreances wit
-`DELTAEPSREL` (default 1e-4) and `DELTAEPSABS` (default 1e-6)
-and with the maximum number of iterations `MAX_ITER` (default 100)
-If the optional keyword `VERBOSE` is given, some data of the intermediate steps is written in the standard output
+The function with the data has to be point-wise defined.
+The function to be fitted hast to be parametrized with at least one of the variables provided after the `VIA` keyword.
+Only the names of the functions have to be given.
+Both functions have to have the same number of arguments.
+The initial guess of the solution is given by the initial value of the variables listed in the `VIA` keyword.
+Analytical expressions for the gradient of the function to be fitted with respect to the parameters to be fitted can be optionally given with the `GRADIENT` keyword.
+If none is provided, the gradient will be computed numerically using finite differences.
+A range over which the residuals are to be minimized can be given with `RANGE_MIN` and `RANGE_MAX`.
+For multidimensional fits, the range is an hypercube.
+If no range is given, all the definition points of the function witht the data are used for the fit.
+Convergence can be controlled by given the relative and absolute tolreances with
+`DELTAEPSREL` (default 1e-4) and `DELTAEPSABS` (default 1e-6),
+and with the maximum number of iterations `MAX_ITER` (default 100).
+If the optional keyword `VERBOSE` is given, some data of the intermediate steps is written in the standard output.
 
-##  `FUNCTION`
+##  FUNCTION
 
 Define a function of one or more variables.
+Default interpolation scheme for one-dimensional functions is `DEFAULT_INTERPOLATION`.
 
 ~~~wasora
 FUNCTION <name>(<var_1>[,var2,...,var_n]) { [ = <expr> | FILE_PATH <file_path> | ROUTINE <name> | | MESH <name> { DATA <data> | VECTOR <vector> { NODES | CELLS } } | [ VECTOR_DATA <vector_1> <vector_2> ... <vector_n> <vector_n+1> ] } [COLUMNS <num_expr_1> <num_expr_2> ... <num_expr_n> <num_expr_n+1> ] [ INTERPOLATION { linear | polynomial | spline | spline_periodic | akima | akima_periodic | steffen | nearest | shepard | modified_shepard | bilinear } ] [ INTERPOLATION_THRESHOLD <expr> ] [ SHEPARD_RADIUS <expr> ] [ SHEPARD_EXPONENT <expr> ] [ SIZES <expr_1> <expr_2> ... <expr_n> ] [ X_INCREASES_FIRST <expr> ] [ DATA <num_expr_1> <num_expr_2> ... <num_expr_N> ]
@@ -161,7 +162,7 @@ FUNCTION <name>(<var_1>[,var2,...,var_n]) { [ = <expr> | FILE_PATH <file_path> |
 
 
 
-##  `HISTORY`
+##  HISTORY
 
 Record the time history of a variable as a function of time.
 
@@ -171,7 +172,7 @@ HISTORY <variable> <function>
 
 
 
-##  `IF`
+##  IF
 
 Begin a conditional block.
 
@@ -185,7 +186,7 @@ ENDIF
 
 
 
-##  `IMPLICIT`
+##  IMPLICIT
 
 Define whether implicit declaration of variables is allowed or not.
 
@@ -194,13 +195,13 @@ IMPLICIT { NONE | ALLOWED }
 ~~~
 
 
-By default, wasora allows variables (but not vectors nor matrices) to b
-implicitly declared. To avoid introducing errors due to typos, explici
-declaration of variables can be forced by giving `IMPLICIT NONE`
-Whether implicit declaration is allowed or explicit declaration is require
-depends on the last `IMPLICIT` keyword given, which by default is `ALLOWED`
+By default, wasora allows variables (but not vectors nor matrices) to be
+implicitly declared. To avoid introducing errors due to typos, explicit
+declaration of variables can be forced by giving `IMPLICIT NONE`.
+Whether implicit declaration is allowed or explicit declaration is required
+depends on the last `IMPLICIT` keyword given, which by default is `ALLOWED`.
 
-##  `INCLUDE`
+##  INCLUDE
 
 Include another wasora input file.
 
@@ -209,15 +210,15 @@ INCLUDE <file_path> [ FROM <num_expr> ] [ TO <num_expr> ]
 ~~~
 
 
-Includes the input file located in the string `file_path` at the current location
-The effect is the same as copying and pasting the contents of the included fil
-at the location of the `INCLUDE` keyword. The path can be relative or absolute
-Note, however, that when including files inside `IF` blocks that instructions ar
-conditionally-executed but all definitions (such as function definitions) are processed a
-parse-time independently from the evaluation of the conditional
-The optional `FROM` and `TO` keywords can be used to include only portions of a file
+Includes the input file located in the string `file_path` at the current location.
+The effect is the same as copying and pasting the contents of the included file
+at the location of the `INCLUDE` keyword. The path can be relative or absolute.
+Note, however, that when including files inside `IF` blocks that instructions are
+conditionally-executed but all definitions (such as function definitions) are processed at
+parse-time independently from the evaluation of the conditional.
+The optional `FROM` and `TO` keywords can be used to include only portions of a file.
 
-##  `INITIAL_CONDITIONS_MODE`
+##  INITIAL_CONDITIONS_MODE
 
 Define how initial conditions of DAE problems are computed.
 
@@ -226,21 +227,21 @@ INITIAL_CONDITIONS_MODE { AS_PROVIDED | FROM_VARIABLES | FROM_DERIVATIVES }
 ~~~
 
 
-In DAE problems, initial conditions may be either
+In DAE problems, initial conditions may be either:
 
- * equal to the provided expressions (`AS_PROVIDED`
- * the derivatives computed from the provided phase-space variables (`FROM_VARIABLES`
- * the phase-space variables computed from the provided derivatives (`FROM_DERIVATIVES`
+ * equal to the provided expressions (`AS_PROVIDED`)
+ * the derivatives computed from the provided phase-space variables (`FROM_VARIABLES`)
+ * the phase-space variables computed from the provided derivatives (`FROM_DERIVATIVES`)
 
-In the first case, it is up to the user to fulfill the DAE system at\ $t = 0$
-If the residuals are not small enough, a convergence error will occur
-The `FROM_VARIABLES` option means calling IDA’s `IDACalcIC` routine with the parameter `IDA_YA_YDP_INIT`
-The `FROM_DERIVATIVES` option means calling IDA’s `IDACalcIC` routine with the parameter IDA_Y_INIT
-Wasora should be able to automatically detect which variables in phase-space are differential an
-which are purely algebraic. However, the `DIFFERENTIAL` keyword may be used to explicitly define them
-See the (SUNDIALS documentation)[https://computation.llnl.gov/casc/sundials/documentation/ida_guide.pdf] for further information
+In the first case, it is up to the user to fulfill the DAE system at\ $t = 0$.
+If the residuals are not small enough, a convergence error will occur.
+The `FROM_VARIABLES` option means calling IDA’s `IDACalcIC` routine with the parameter `IDA_YA_YDP_INIT`.
+The `FROM_DERIVATIVES` option means calling IDA’s `IDACalcIC` routine with the parameter IDA_Y_INIT.
+Wasora should be able to automatically detect which variables in phase-space are differential and
+which are purely algebraic. However, the `DIFFERENTIAL` keyword may be used to explicitly define them.
+See the (SUNDIALS documentation)[https://computation.llnl.gov/casc/sundials/documentation/ida_guide.pdf] for further information.
 
-##  `LOAD_PLUGIN`
+##  LOAD_PLUGIN
 
 Load a wasora plug-in from a dynamic shared object.
 
@@ -249,20 +250,20 @@ LOAD_PLUGIN { <file_path> | <plugin_name> }
 ~~~
 
 
-A wasora plugin in the form of a dynamic shared object (i.e. `.so`) can be loade
-either with the `LOAD_PLUGIN` keyword or from the command line with the `-p` option
-Either a file path or a plugin name can be given. The following locations are tried
+A wasora plugin in the form of a dynamic shared object (i.e. `.so`) can be loaded
+either with the `LOAD_PLUGIN` keyword or from the command line with the `-p` option.
+Either a file path or a plugin name can be given. The following locations are tried:
 
- * the current directory `./
- * the parent directory `../
- * the user’s `LD_LIBRARY_PATH
- * the cache file `/etc/ld.so.cache
- * the directories `/lib`, `/usr/lib`, `/usr/local/lib
+ * the current directory `./`
+ * the parent directory `../`
+ * the user’s `LD_LIBRARY_PATH`
+ * the cache file `/etc/ld.so.cache`
+ * the directories `/lib`, `/usr/lib`, `/usr/local/lib`
 
-If a wasora plugin was compiled and installed following the `make install` procedure
-the plugin should be loaded by just passing the name to `LOAD_PLUGIN`
+If a wasora plugin was compiled and installed following the `make install` procedure,
+the plugin should be loaded by just passing the name to `LOAD_PLUGIN`.
 
-##  `LOAD_ROUTINE`
+##  LOAD_ROUTINE
 
 Load one or more routines from a dynamic shared object.
 
@@ -272,7 +273,7 @@ LOAD_ROUTINE <file_path> <routine_1> [ <routine_2> ... <routine_n> ]
 
 
 
-##  `M4`
+##  M4
 
 Call the `m4` macro processor with definitions from wasora variables or expressions.
 
@@ -282,7 +283,7 @@ M4 { INPUT_FILE <file_id> | FILE_PATH <file_path> } { OUTPUT_FILE <file_id> | OU
 
 
 
-##  `MATRIX`
+##  MATRIX
 
 Define a matrix.
 
@@ -292,7 +293,7 @@ MATRIX <name> ROWS <expr> COLS <expr> [ DATA num_expr_1 num_expr_2 ... num_expr_
 
 
 
-##  `MINIMIZE`
+##  MINIMIZE
 
 Find the combination of arguments that give a (relative) minimum of a function, i.e. run an optimization problem.
 
@@ -302,7 +303,7 @@ MINIMIZE <function> <function> [ METHOD { conjugate_fr | conjugate_pr | vector_b
 
 
 
-##  `PARAMETRIC`
+##  PARAMETRIC
 
 Systematically sweep a zone of the parameter space, i.e. perform a parametric run.
 
@@ -312,7 +313,7 @@ PARAMETRIC <var_1> [ ... <var_n> ] [ TYPE { linear | logarithmic | random | gaus
 
 
 
-##  `PHASE_SPACE`
+##  PHASE_SPACE
 
 Define which variables, vectors and/or matrices belong to the phase space of the DAE system to be solved.
 
@@ -322,49 +323,39 @@ PHASE_SPACE { <vars> | <vectors> | <matrices> }
 
 
 
-##  `PRINT`
+##  PRINT
 
-Print plaint-text and/or formatted data to the standard output or into an output file.
+Print plain-text and/or formatted data to the standard output or into an output file.
 
 ~~~wasora
 PRINT [ FILE <file_id> | FILE_PATH <file_path> ] [ NONEWLINE ] [ SEP <string> ] [ NOSEP ] [ HEADER ] [ SKIP_STEP <expr> ] [ SKIP_STATIC_STEP <expr> ] [ SKIP_TIME <expr> ] [ SKIP_HEADER_STEP <expr> ] [ <object_1> <object_2> ... <object_n> ] [ TEXT <string_1> ... TEXT <string_n> ]
 ~~~
 
 
-Each argument `object` that is not a keyword is expected to be part of the output
-can be either a matrix, a vector, an scalar algebraic expression. If the given objec
-cannot be solved into a valid matrix, vector or expression, it is treated as 
-string literal if `IMPLICIT` is `ALLOWED`, otherwise a parser error is raised
-To explicitly interpret an object as a literal string even if it resolves to a vali
-numerical expression, it should be prefixed with the `TEXT` keyword. Hashes~`#
-appearing literal strings have to be quoted to prevent the parser to treat them a
-comments within the wasora input file
-Whenever an argument starts with a porcentage sign '%', it is treated as 
-printf-compatible format definition and all the objects that follow it are printe
-using the given format until a new format definition is found. All the objects ar
-treated as double-precision floating point numbers, so only floating point format
-should be given. The default format is '%e'
-Matrices, vectors, scalar expressions, format modifiers and string literals can b
-given in the desired order, and are processed from left to right
-Vectors are printed element-by-element in a single row. See `PRINT_VECTOR` to prin
-vectors column-wise. Matrices are printed element-by-element in a row-major fashio
-if mixed with other objects but in the natural row and column fashion if it is th
-only given object
-If the `FILE` keyword is not provided, default is to write to stdout
-If the `NONEWLINE` keyword is not provided, default is to write a newline '\n' character after all the objects are processed
-The `SEP` keywords expects a string used to separate printed objects, the default is a tab '\t' character
-Use the `NOSEP` keyword to define an empty string as object separator
-If the `HEADER` keyword is given, a single line containing the literal tex
-given for each object is printed at the very first time the `PRINT` instruction i
-processed, starting with a hash `#` character
-If the `SKIP_STEP` (`SKIP_STATIC_STEP`)keyword is given, the instruction is processed only ever
-the number of transient (static) steps that results in evaluating the expression
-which may not be constant. By default the `PRINT` instruction is evaluated ever
-step. The `SKIP_HEADER_STEP` keyword works similarly for the optional `HEADER` bu
-by default it is only printed once. The `SKIP_TIME` keyword use time advancement
-to choose how to skip printing and may be useful for non-constant time-step problems
+Each argument `object` that is not a keyword is expected to be part of the output, can be either a matrix, a vector, an scalar algebraic expression.
+If the given object cannot be solved into a valid matrix, vector or expression, it is treated as a string literal if `IMPLICIT` is `ALLOWED`, otherwise a parser error is raised.
+To explicitly interpret an object as a literal string even if it resolves to a valid numerical expression, it should be prefixed with the `TEXT` keyword.
+Hashes `#` appearing literal in text strings have to be quoted to prevent the parser to treat them as comments within the wasora input file and thus ignoring the rest of the line.
+Whenever an argument starts with a porcentage sign `%`, it is treated as a C `printf`-compatible format definition and all the objects that follow it are printed using the given format until a new format definition is found.
+The objects are treated as double-precision floating point numbers, so only floating point formats should be given. The default format is `"%g"`.
+Matrices, vectors, scalar expressions, format modifiers and string literals can be given in any desired order, and are processed from left to right.
+Vectors are printed element-by-element in a single row. See `PRINT_VECTOR` to print vectors column-wise.
+Matrices are printed element-by-element in a single line using row-major ordering if mixed with other objects but in the natural row and column fashion if it is the only given object.
+If the `FILE` keyword is not provided, default is to write to stdout.
+If the `NONEWLINE` keyword is not provided, default is to write a newline '\n' character after all the objects are processed.
+The `SEP` keywords expects a string used to separate printed objects, the default is a tab 'DEFAULT_PRINT_SEPARATOR' character.
+Use the `NOSEP` keyword to define an empty string as object separator.
+If the `HEADER` keyword is given, a single line containing the literal text
+given for each object is printed at the very first time the `PRINT` instruction is
+processed, starting with a hash `#` character.
+If the `SKIP_STEP` (`SKIP_STATIC_STEP`)keyword is given, the instruction is processed only every
+the number of transient (static) steps that results in evaluating the expression,
+which may not be constant. By default the `PRINT` instruction is evaluated every
+step. The `SKIP_HEADER_STEP` keyword works similarly for the optional `HEADER` but
+by default it is only printed once. The `SKIP_TIME` keyword use time advancements
+to choose how to skip printing and may be useful for non-constant time-step problems.
 
-##  `PRINT_FUNCTION`
+##  PRINT_FUNCTION
 
 Print one or more functions as a table of values of dependent and independent variables.
 
@@ -374,7 +365,7 @@ PRINT_FUNCTION <function_1> [ { function_2 | expr_1 } ... { function_n | expr_n-
 
 
 
-##  `PRINT_VECTOR`
+##  PRINT_VECTOR
 
 Print the elements of one or more vectors.
 
@@ -384,7 +375,7 @@ PRINT_VECTOR [ FILE <file_id> ] FILE_PATH <file_path> ] [ { VERTICAL | HORIZONTA
 
 
 
-##  `READ`
+##  READ
 
 Read data (variables, vectors o matrices) from files or shared-memory segments.
 
@@ -394,7 +385,7 @@ Read data (variables, vectors o matrices) from files or shared-memory segments.
 
 
 
-##  `SEMAPHORE`
+##  SEMAPHORE
 
 Perform either a wait or a post operation on a named shared semaphore.
 
@@ -404,7 +395,7 @@ Perform either a wait or a post operation on a named shared semaphore.
 
 
 
-##  `SHELL`
+##  SHELL
 
 Execute a shell command.
 
@@ -414,7 +405,7 @@ SHELL <print_format> [ expr_1 expr_2 ... expr_n ]
 
 
 
-##  `SOLVE`
+##  SOLVE
 
 Solve a non-linear system of\ $n$ equations with\ $n$ unknowns.
 
@@ -424,7 +415,7 @@ SOLVE <n> UNKNOWNS <var_1> <var_2> ... <var_n> RESIDUALS <expr_1> <expr_2> ... <
 
 
 
-##  `TIME_PATH`
+##  TIME_PATH
 
 Force transient problems to pass through specific instants of time.
 
@@ -433,12 +424,12 @@ TIME_PATH <expr_1> [ <expr_2> [ ... <expr_n> ] ]
 ~~~
 
 
-The time step `dt` will be reduced whenever the distance betwee
-the current time `t` and the next expression in the list is greate
-than `dt` so as to force `t` to coincide with the expressions given
-The list of expresssions should evaluate to a sorted list of values
+The time step `dt` will be reduced whenever the distance between
+the current time `t` and the next expression in the list is greater
+than `dt` so as to force `t` to coincide with the expressions given.
+The list of expresssions should evaluate to a sorted list of values.
 
-##  `VAR`
+##  VAR
 
 Define one or more scalar variables.
 
@@ -448,7 +439,7 @@ VAR <name_1> [ <name_2> ] ... [ <name_n> ]
 
 
 
-##  `VECTOR`
+##  VECTOR
 
 Define a vector.
 
@@ -458,7 +449,7 @@ VECTOR <name> SIZE <expr> [ DATA <expr_1> <expr_2> ... <expr_n> | FUNCTION_DATA 
 
 
 
-##  `WRITE`
+##  WRITE
 
 Write data (variables, vectors o matrices) to files or shared-memory segments.
 See the `READ` keyword for usage details.
@@ -468,9 +459,11 @@ See the `READ` keyword for usage details.
 
 
 
+--------------
+
 # Mesh-related keywords
 
-##  `MATERIAL`
+##  MATERIAL
 
 
 ~~~wasora
@@ -479,7 +472,7 @@ MATERIAL <name> [ MESH <name> ] [ PHYSICAL_ENTITY <name_1> [ PHYSICAL_ENTITY <na
 
 
 
-##  `MESH`
+##  MESH
 
 
 ~~~wasora
@@ -488,7 +481,7 @@ MESH [ NAME <name> ] [ FILE <file_id> | FILE_PATH <file_path> ] [ STRUCTURED ] [
 
 
 
-##  `MESH_FILL_VECTOR`
+##  MESH_FILL_VECTOR
 
 
 ~~~wasora
@@ -497,7 +490,7 @@ MESH_FILL_VECTOR [ MESH <name> ] [ NODES | CELLS ] VECTOR <vector> { FUNCTION <f
 
 
 
-##  `MESH_FIND_MAX`
+##  MESH_FIND_MAX
 
 
 ~~~wasora
@@ -506,7 +499,7 @@ MESH_FIND_MAX { FUNCTION <function> | EXPRESSION <expr> } [ MESH <name> ] [ PHYS
 
 
 
-##  `MESH_INTEGRATE`
+##  MESH_INTEGRATE
 
 
 ~~~wasora
@@ -515,7 +508,7 @@ MESH_INTEGRATE { FUNCTION <function> | EXPRESSION <expr> } [ MESH <mesh_identifi
 
 
 
-##  `MESH_MAIN`
+##  MESH_MAIN
 
 
 ~~~wasora
@@ -524,7 +517,7 @@ MESH_MAIN [ <name> ]
 
 
 
-##  `MESH_POST`
+##  MESH_POST
 
 
 ~~~wasora
@@ -533,7 +526,7 @@ MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ N
 
 
 
-##  `PHYSICAL_ENTITY`
+##  PHYSICAL_ENTITY
 
 
 ~~~wasora
@@ -542,7 +535,7 @@ PHYSICAL_ENTITY <name> [ DIMENSION <expr> ] [ MESH <name> ] [ MATERIAL <name> ] 
 
 
 
-##  `PHYSICAL_PROPERTY`
+##  PHYSICAL_PROPERTY
 
 
 ~~~wasora
@@ -554,28 +547,251 @@ PHYSICAL_PROPERTY <name> [ <material_name1> <expr1> [ <material_name2> <expr2> ]
 
 
 
+--------------
+
 # Variables
 
+##  done
+
+Flag that indicates whether the overall calculation is over.
 
 
+
+##  done_outer
+
+Flag that indicates whether the parametric, optimization of fit calculation is over or not.
+It is set to true (i.e. $\neq 0$) by wasora whenever the outer calculation is considered to be finished,
+which can be that the parametric calculation swept the desired parameter space or that the
+optimization algorithm reached the desired convergence criteria.
+If the user sets it to true, the current step is marked as the last outer step and
+the transient calculation ends after finishing the step.
+
+
+
+##  done_static
+
+Flag that indicates whether the static calculation is over or not.
+It is set to true (i.e. $\neq 0$) by wasora if `step_static` $\ge$ `static_steps`.
+If the user sets it to true, the current step is marked as the last static step and
+the static calculation ends after finishing the step.
+
+
+
+##  done_transient
+
+Flag that indicates whether the transient calculation is over or not.
+It is set to true (i.e. $\neq 0$) by wasora if `t` $\ge$ `end_time`.
+If the user sets it to true, the current step is marked as the last transient step and
+the transient calculation ends after finishing the step.
+
+
+
+##  dt
+
+Actual value of the time step for transient calculations. When solving DAE systems,
+this variable is set by wasora. It can be written by the user for example by importing it from another
+transient code by means of shared-memory objects. Care should be taken when
+solving DAE systems and overwriting `t`. Default value is 1/16, which is
+a power of two and roundoff errors are thus reduced.
+
+
+
+##  end_time
+
+Final time of the transient calculation, to be set by the user. 
+The default value is zero, meaning no transient calculation.
+
+
+
+##  i
+
+Dummy index, used mainly in vector and matrix row subindex expressions.
+
+
+
+##  infinite
+
+A very big positive number, which can be used as `end_time = infinite` or
+to define improper integrals with infinite limits. Default is $2^{50} \approx 1 \times 10^{15}$.
+
+
+
+##  in_outer_initial
+
+Flag that indicates if the current step is the initial step of an optimization of fit run.
+
+
+
+##  in_static
+
+Flag that indicates if wasora is solving the iterative static calculation.
+Flag that indicates if wasora is in the first step of the iterative static calculation.
+Flag that indicates if wasora is in the last step of the iterative static calculation.
+
+
+
+##  in_transient
+
+Flag that indicates if wasora is solving transient calculation.
+
+
+
+##  in_transient_first
+
+Flag that indicates if wasora is in the first step of the transient calculation.
+
+
+
+##  in_transient_last
+
+Flag that indicates if wasora is in the last step of the transient calculation.
+
+
+
+##  j
+
+Dummy index, used mainly in matrix column subindex expressions.
+
+
+
+##  max_dt
+
+Maximum bound for the time step that wasora should take when solving DAE systems.
+
+
+
+##  min_dt
+
+Minimum bound for the time step that wasora should take when solving DAE systems.
+
+
+
+##  ncores
+
+The number of online available cores, as returned by `sysconf(_SC_NPROCESSORS_ONLN)`.
+This value can be used in the `MAX_DAUGHTERS` expression of the `PARAMETRIC` keyword
+(i.e `ncores/2`).
+
+
+
+##  on_gsl_error
+
+This should be set to a mask that indicates how to proceed if an error ir raised in any
+routine of the GNU Scientific Library. 
+
+
+
+##  on_ida_error
+
+This should be set to a mask that indicates how to proceed if an error ir raised in any
+routine of the SUNDIALS IDA Library. 
+
+
+
+##  on_nan
+
+This should be set to a mask that indicates how to proceed if Not-A-Number signal (such as a division by zero)
+is generated when evaluating any expression within wasora.
+
+
+
+##  pi
+
+A double-precision floating point representaion of the number $\pi$, equal to
+`math.h` 's `M_PI` constant.
+
+
+
+##  pid
+
+The UNIX process id of wasora (or the plugin).
+
+
+
+##  realtime_scale
+
+If this variable is not zero, then the transient problem is run trying to syncrhonize the
+problem time with realtime, up to a scale given. For example, if the scale is set to one, then
+wasora will advance the problem time at the same pace that the real wall time advances. If set to
+two, wasora's time wil advance twice as fast as real time, and so on. If the calculation time is
+slower than real time modified by the scale, this variable has no effect on the overall behavior
+and execution will proceed as quick as possible with no delays.
+
+
+
+##  rel_error
+
+Maximum allowed relative error for the solution of DAE systems. Default value is
+is $1 \times 10^{-6}$. If a fine per-variable error control is needed, special vector
+`abs_error` should be used.
+
+
+
+##  static_steps
+
+Number of steps that ought to be taken during the static calculation, to be set by the user. 
+The default value is one, meaning only one static step. 
+
+
+
+##  step_outer
+
+Indicates the current step number of the iterative outer calculation (parametric, optimization or fit).
+Indicates the current step number of the iterative inner calculation (optimization or fit).
+
+
+
+##  step_static
+
+Indicates the current step number of the iterative static calculation.
+
+
+
+##  step_transient
+
+Indicates the current step number of the transient static calculation.
+
+
+
+##  t
+
+Actual value of the time for transient calculations. This variable is set by
+wasora, but can be written by the user for example by importing it from another
+transient code by means of shared-memory objects. Care should be taken when
+solving DAE systems and overwriting `t`.
+
+
+
+##  zero
+
+A very small positive number, which is taken to avoid roundoff 
+errors when comparing floating point numbers such as replacing $a \leq a_\text{max}$
+with $a < a_\text{max} +$ `zero`. Default is $(1/2)^{-50} \approx 9\times 10^{-16}$ .
+
+
+
+
+
+
+--------------
 
 # Mesh-related variables
 
-##  `cells`
+##  cells
 
 Number of cells of the unstructured grid. This number is the actual
 quantity of volumetric elements in which the domain was discretized.
 
 
 
-##  `elements`
+##  elements
 
 Number of total elements of the unstructured grid. This number
 include those surface elements that belong to boundary physical entities.
 
 
 
-##  `nodes`
+##  nodes
 
 Number of nodes of the unstructured grid.
 
@@ -584,9 +800,11 @@ Number of nodes of the unstructured grid.
 
 
 
+--------------
+
 # Functions
 
-##  `abs`
+##  abs
 
 Returns the absolute value of the argument $x$.
 
@@ -596,7 +814,7 @@ y = abs(x)
 
 
 
-##  `acos`
+##  acos
 
 Computes arc in radians whose cosine is equal to the argument $x$.
 A NaN error is raised if $|x|>1$.
@@ -607,7 +825,7 @@ y = acos(x)
 
 
 
-##  `asin`
+##  asin
 
 Computes arc in radians whose sine is equal to the argument $x$.
 A NaN error is raised if $|x|>1$.
@@ -618,7 +836,7 @@ y = asin(x)
 
 
 
-##  `atan`
+##  atan
 
 Computes, in radians, the arc tangent of the argument $x$.
 
@@ -628,7 +846,7 @@ atan(x)
 
 
 
-##  `atan2`
+##  atan2
 
 Computes, in radians, the arc tangent of quotient $y/x$, using the signs of the two arguments
 to determine the quadrant of the result, which is in the range $[-\pi,\pi]$.
@@ -639,7 +857,7 @@ atan(y,x)
 
 
 
-##  `ceil`
+##  ceil
 
 Returns the smallest integral value not less than the argument $x$.
 
@@ -649,7 +867,7 @@ ceil(x)
 
 
 
-##  `clock`
+##  clock
 
 Returns the value of a certain clock in seconds measured from a certain (but specific)
 milestone. The kind of clock and the initial milestone depends on the
@@ -663,7 +881,7 @@ clock([f])
 
 
 
-##  `cos`
+##  cos
 
 Computes the cosine of the argument $x$, where $x$ is in radians.
 A cosine wave can be generated by passing as the argument $x$
@@ -676,7 +894,7 @@ cos(x)
 
 
 
-##  `cosh`
+##  cosh
 
 Computes the hyperbolic cosine of the argument $x$, where $x$ is in radians.
 
@@ -686,7 +904,7 @@ cosh(x)
 
 
 
-##  `d_dt`
+##  d_dt
 
 Computes the time derivative of the signal $x$ using the difference between the
 value of the signal in the previous time step and the actual value divided by the
@@ -702,7 +920,7 @@ d_dt(x)
 
 
 
-##  `deadband`
+##  deadband
 
 Filters the first argument $x$ with a deadband centered at zero with an amplitude
 given by the second argument $a$.
@@ -713,7 +931,7 @@ deadband(x, a)
 
 
 
-##  `equal`
+##  equal
 
 Checks if the two first expressions $a$ and $b$ are equal, up to the tolerance
 given by the third optional argument $\epsilon$. If either $|a|>1$ or $|b|>1$,
@@ -728,7 +946,7 @@ equal(a, b, [eps])
 
 
 
-##  `exp`
+##  exp
 
 Computes the exponential function the argument $x$, i.e. the base of the
 natural logarithms raised to the $x$-th power.
@@ -739,7 +957,7 @@ exp(x)
 
 
 
-##  `expint1`
+##  expint1
 
 Computes the first exponential integral function of the argument $x$.
 If $x$ equals zero, a NaN error is issued.
@@ -750,7 +968,7 @@ expint1(x)
 
 
 
-##  `expint2`
+##  expint2
 
 Computes the second exponential integral function of the argument $x$.
 
@@ -760,7 +978,7 @@ expint2(x)
 
 
 
-##  `expint3`
+##  expint3
 
 Computes the third exponential integral function of the argument $x$.
 
@@ -770,7 +988,7 @@ expint3(x)
 
 
 
-##  `expintn`
+##  expintn
 
 Computes the $n$-th exponential integral function of the argument $x$.
 If $n$ equals zero or one and $x$ zero, a NaN error is issued.
@@ -781,7 +999,7 @@ expintn(n,x)
 
 
 
-##  `floor`
+##  floor
 
 Returns the largest integral value not greater than the argument $x$.
 
@@ -791,7 +1009,7 @@ floor(x)
 
 
 
-##  `heaviside`
+##  heaviside
 
 Computes the zero-centered Heaviside step function of the argument $x$.
 If the optional second argument $\epsilon$ is provided, the discontinuous
@@ -803,7 +1021,7 @@ heaviside(x, [eps])
 
 
 
-##  `if`
+##  if
 
 Performs a conditional testing of the first argument $a$, and returns either the
 second optional argument $b$ if $a$ is different from zero or the third optional argument $c$
@@ -821,7 +1039,7 @@ if(a, [b], [c], [eps])
 
 
 
-##  `integral_dt`
+##  integral_dt
 
 Computes the time integral of the signal $x$ using the trapezoidal rule
 using the value of the signal in the previous time step and the current value.
@@ -837,7 +1055,7 @@ integral_dt(x)
 
 
 
-##  `integral_euler_dt`
+##  integral_euler_dt
 
 Idem as `integral_dt` but uses the backward Euler rule to update the
 integral value.
@@ -850,7 +1068,7 @@ integral_euler_dt(x)
 
 
 
-##  `is_even`
+##  is_even
 
 Returns one if the argument $x$ rounded to the nearest integer is even.
 
@@ -860,7 +1078,7 @@ y = is_even(x)
 
 
 
-##  `is_in_interval`
+##  is_in_interval
 
 Returns true if the argument~$x$ is in the interval~$[a,b)$, i.e. including~$a$
 but excluding~$b$.
@@ -871,7 +1089,7 @@ is_in_interval(x, a, b)
 
 
 
-##  `is_odd`
+##  is_odd
 
 Returns one if the argument $x$ rounded to the nearest integer is odd.
 
@@ -881,7 +1099,7 @@ y = is_odd(x)
 
 
 
-##  `j0`
+##  j0
 
 Computes the regular cylindrical Bessel function of zeroth order evaluated at the argument $x$.
 
@@ -891,7 +1109,7 @@ j0(x)
 
 
 
-##  `lag`
+##  lag
 
 Filters the first argument $x(t)$ with a first-order lag of characteristic time $\tau$,
 i.e. this function applies the transfer function
@@ -908,7 +1126,7 @@ lag(x, tau)
 
 
 
-##  `lag_bilinear`
+##  lag_bilinear
 
 Filters the first argument $x(t)$ with a first-order lag of characteristic time $\tau$,
 i.e. this function applies the transfer function
@@ -923,7 +1141,7 @@ lag_bilinear(x, tau)
 
 
 
-##  `lag_euler`
+##  lag_euler
 
 Filters the first argument $x(t)$ with a first-order lag of characteristic time $\tau$,
 i.e. this function applies the transfer function
@@ -938,7 +1156,7 @@ lag_euler(x, tau)
 
 
 
-##  `last`
+##  last
 
 Returns the value the signal $x$ had in the previous time step.
 This function is equivalent to the $Z$-transform operator "delay" denoted by $z^{-1}\left[x\right]$.
@@ -953,7 +1171,7 @@ last(x,[p])
 
 
 
-##  `limit`
+##  limit
 
 Limits the first argument $x$ to the interval $[a,b]$. The second argument $a$ should
 be less than the third argument $b$.
@@ -964,7 +1182,7 @@ limit(x, a, b)
 
 
 
-##  `limit_dt`
+##  limit_dt
 
 Limits the value of the first argument $x(t)$ so to that its time derivative
 is bounded to the interval $[a,b]$. The second argument $a$ should
@@ -976,7 +1194,7 @@ limit_dt(x, a, b)
 
 
 
-##  `log`
+##  log
 
 Computes the natural logarithm of the argument $x$. If $x$ is zero or negative,
 a NaN error is issued.
@@ -987,7 +1205,7 @@ log(x)
 
 
 
-##  `mark_max`
+##  mark_max
 
 Returns the integer index $i$ of the maximum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 
@@ -997,7 +1215,7 @@ mark_max(x1, x2, [...], [x10])
 
 
 
-##  `mark_min`
+##  mark_min
 
 Returns the integer index $i$ of the minimum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 
@@ -1007,7 +1225,7 @@ mark_max(x1, x2, [...], [x10])
 
 
 
-##  `max`
+##  max
 
 Returns the maximum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 
@@ -1017,7 +1235,7 @@ max(x1, x2, [...], [x10])
 
 
 
-##  `min`
+##  min
 
 Returns the minimum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 
@@ -1027,7 +1245,7 @@ min(x1, x2, [...], [x10])
 
 
 
-##  `mod`
+##  mod
 
 Returns the remainder of the division between the first argument $a$ and the
 second $b$. Both arguments may be non-integral.
@@ -1038,7 +1256,7 @@ mod(a, b)
 
 
 
-##  `not`
+##  not
 
 Returns one if the first argument $x$ is zero and zero otherwise.
 The second optional argument $\epsilon$ gives the precision of the "zero"
@@ -1050,7 +1268,7 @@ not(x, [eps])
 
 
 
-##  `random`
+##  random
 
 Returns a random real number uniformly distributed between the first
 real argument $x_1$ and the second one $x_2$.
@@ -1067,7 +1285,7 @@ random(x1, x2, [s])
 
 
 
-##  `random_gauss`
+##  random_gauss
 
 Returns a random real number with a Gaussian distribution with a mean
 equal to the first argument $x_1$ and a standard deviation equatl to the second one $x_2$.
@@ -1084,7 +1302,7 @@ random_gauss(x1, x2, [s])
 
 
 
-##  `round`
+##  round
 
 Rounds the argument $x$ to the nearest integer. Halfway cases are rounded away from zero.
 
@@ -1094,7 +1312,7 @@ round(x)
 
 
 
-##  `sawtooth_wave`
+##  sawtooth_wave
 
 Computes a sawtooth wave betwen zero and one with a period equal to one.
 As with the sine wave, a sawtooh wave can be generated by passing as the argument $x$
@@ -1107,7 +1325,7 @@ sawtooth_wave(x)
 
 
 
-##  `sgn`
+##  sgn
 
 Returns minus one, zero or plus one depending on the sign of the first argument $x$.
 The second optional argument $\epsilon$ gives the precision of the "zero"
@@ -1119,7 +1337,7 @@ sgn(x, [eps])
 
 
 
-##  `sin`
+##  sin
 
 Computes the sine of the argument $x$, where $x$ is in radians.
 A sine wave can be generated by passing as the argument $x$
@@ -1132,7 +1350,7 @@ sin(x)
 
 
 
-##  `sinh`
+##  sinh
 
 Computes the hyperbolic sine of the argument $x$, where $x$ is in radians.
 
@@ -1142,7 +1360,7 @@ sinh(x)
 
 
 
-##  `sqrt`
+##  sqrt
 
 Computes the positive square root of the argument $x$. If $x$ is negative,
 a NaN error is issued.
@@ -1153,7 +1371,7 @@ sqrt(x)
 
 
 
-##  `square_wave`
+##  square_wave
 
 Computes a square function betwen zero and one with a period equal to one.
 The output is one for $0 < x < 1/2$ and goes to zero for $1/2 < x < 1$.
@@ -1167,7 +1385,7 @@ square_wave(x)
 
 
 
-##  `tan`
+##  tan
 
 Computes the tangent of the argument $x$, where $x$ is in radians.
 
@@ -1177,7 +1395,7 @@ tan(x)
 
 
 
-##  `tanh`
+##  tanh
 
 Computes the hyperbolic tangent of the argument $x$, where $x$ is in radians.
 
@@ -1187,7 +1405,7 @@ tanh(x)
 
 
 
-##  `threshold_max`
+##  threshold_max
 
 Returns one if the first argument $x$ is greater than the threshold given by
 the second argument $a$, and \textit{exactly} zero otherwise. If the optional
@@ -1200,7 +1418,7 @@ threshold_max(x, a, [b])
 
 
 
-##  `threshold_min`
+##  threshold_min
 
 Returns one if the first argument $x$ is less than the threshold given by
 the second argument $a$, and \textit{exactly} zero otherwise. If the optional
@@ -1213,7 +1431,7 @@ threshold_min(x, a, [b])
 
 
 
-##  `triangular_wave`
+##  triangular_wave
 
 Computes a triangular wave betwen zero and one with a period equal to one.
 As with the sine wave, a triangular wave can be generated by passing as the argument $x$
@@ -1229,9 +1447,11 @@ triangular_wave(x)
 
 
 
+--------------
+
 # Functionals
 
-##  `derivative`
+##  derivative
 
 Computes the derivative of the expression $f(x)$ 
 given in the first argument with respect to the variable $x$
@@ -1253,7 +1473,7 @@ derivative(f(x), x, a, [h], [p])
 
 
 
-##  `func_min`
+##  func_min
 
 Finds the value of the variable $x$ given in the second argument
 which makes the expression $f(x)$ given in the first argument to
@@ -1281,7 +1501,7 @@ y = func_min(f(x), x, a, b, [eps], [alg], [p])
 
 
 
-##  `gauss_kronrod`
+##  gauss_kronrod
 
 Computes the integral of the expression $f(x)$
 given in the first argument with respect to variable $x$
@@ -1307,7 +1527,7 @@ gauss_kronrod(f(x), x, a, b, [eps])
 
 
 
-##  `gauss_legendre`
+##  gauss_legendre
 
 Computes the integral of the expression $f(x)$
 given in the first argument with respect to variable $x$
@@ -1328,7 +1548,7 @@ gauss_legendre(f(x), x, a, b, [n])
 
 
 
-##  `integral`
+##  integral
 
 Computes the integral of the expression $f(x)$
 given in the first argument with respect to variable $x$
@@ -1371,7 +1591,7 @@ integral(f(x), x, a, b, [eps], [k], [max_subdivisions])
 
 
 
-##  `prod`
+##  prod
 
 Computes product of the $N=b-a$ expressions $f(i)$
 given in the first argument by varying the variable~$i$
@@ -1385,7 +1605,7 @@ prod(f(i), i, a, b)
 
 
 
-##  `root`
+##  root
 
 Computes the value of the variable $x$ given in the second argument
 which makes the expression $f(x)$ given in the first argument to
@@ -1415,7 +1635,7 @@ root(f(x), x, a, b, [eps], [alg], [p])
 
 
 
-##  `sum`
+##  sum
 
 Computes sum of the $N=b-a$ expressions $f_i$
 given in the first argument by varying the variable $i$
@@ -1432,8 +1652,97 @@ sum(f_i, i, a, b)
 
 
 
+--------------
+
 # Vector functions
 
+##  vecdot
+
+Computes the dot product between vectors $\vec{a}$ and $\vec{b}$, which should
+have the same size.
+
+~~~wasora
+vecdot(a,b)
+~~~
 
 
 
+##  vecmax
+
+Returns the biggest element of vector $\vec{b}$, taking into account its sign
+(i.e. $1 > -2$).
+
+~~~wasora
+vecmax(b)
+~~~
+
+
+
+##  vecmaxindex
+
+Returns the index of the biggest element of vector $\vec{b}$, taking into account its sign
+(i.e. $2 > -1$).
+
+~~~wasora
+vecmaxindex(b)
+~~~
+
+
+
+##  vecmin
+
+Returns the smallest element of vector $\vec{b}$, taking into account its sign
+(i.e. $-2 < 1$).
+
+~~~wasora
+vecmin(b)
+~~~
+
+
+
+##  vecminindex
+
+Returns the index of the smallest element of vector $\vec{b}$, taking into account its sign
+(i.e. $-2 < 1$).
+
+~~~wasora
+vecminindex(b)
+~~~
+
+
+
+##  vecnorm
+
+Computes euclidean norm of vector $\vec{b}$. Other norms can be computed explicitly
+using the `sum` functional, as illustrated in the example.
+
+~~~wasora
+vecnorm(b)
+~~~
+
+
+
+##  vecsize
+
+Returns the size of vector $\vec{b}$.
+
+~~~wasora
+vecsize(b)
+~~~
+
+
+
+##  vecsum
+
+Computes the sum of all the components of vector $\vec{b}$.
+
+~~~wasora
+vecsum(b)
+~~~
+
+
+
+
+
+
+--------------

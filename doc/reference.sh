@@ -18,8 +18,9 @@ for kw in ${kws}; do
   escapedkw=`echo ${kw} | sed s/_/\\\\\\\\_/g`
 
   # keyword
-  echo "##  \`${kw}\`"
+  echo "##  ${kw}"
   echo
+#   echo -n '> '
   grep "///${tag}+${kw}+desc" ../src/${src}.c | cut -d" " -f2-
   echo  
 
@@ -114,7 +115,7 @@ EOF
   # el cut saca los tags especiales, el gcc permite usar los defines para documentar los defaults,
   # el primer sed transforma un punto solo en un newline
   # el segundo se es para poder poner links como https:/\/ (sin la barra del medio gcc piensa que es un comentario)
-  grep "///${tag}+${kw}+detail" ../src/${src}.c | cut -d" " -f2- | gcc -E -P -include defs.h - | sed 's/.$//' | sed 's_/\\/_//_'
+  grep "///${tag}+${kw}+detail" ../src/${src}.c | cut -d" " -f2- | gcc -E -P -include defs.h - | sed 's/@$//' | sed 's_/\\/_//_'
   echo  
 
   # examples

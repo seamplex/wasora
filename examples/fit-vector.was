@@ -1,0 +1,50 @@
+# example of fitting a set of data to pointwise-defined function
+# i.e. the values of the dependent variable are fitted
+
+VECTOR px SIZE 6 DATA 0 2 4 6 8 10
+VECTOR py SIZE 6 DATA 1 1 1 1 1 1
+
+ALIAS py1 IS py(1)
+ALIAS py2 IS py(2)
+ALIAS py3 IS py(3)
+ALIAS py4 IS py(4)
+ALIAS py5 IS py(5)
+ALIAS py6 IS py(6)
+
+# the function to be fitted
+FUNCTION P(x) VECTOR_DATA px py INTERPOLATION spline
+
+# the experimental data 
+FUNCTION data(x) DATA {
+0   2.02
+1   2.23
+3   2.15
+4   1.99
+5   1.74
+6   1.45
+7   1.10
+8   0.68
+9   0.20
+10  -0.31
+}
+
+FIT P TO data VIA py1 py2 py3 py4 py5 py6
+
+# print the partial solutions (including the intermediate
+# steps needed to numerically compute the gradient)
+PRINT %g step_outer py1 py2 py3 py4 py5 py6
+
+# once the solution converged, output the data
+IF done_outer
+ OUTPUT_FILE fitted fitted-vector.dat
+
+ PRINT_FUNCTION FILE_PATH expdata-vector.dat data
+
+ PRINT FILE fitted TEXT "\# py1 = " py1
+ PRINT FILE fitted TEXT "\# py2 = " py2
+ PRINT FILE fitted TEXT "\# py3 = " py3
+ PRINT FILE fitted TEXT "\# py4 = " py4
+ PRINT FILE fitted TEXT "\# py5 = " py5
+ PRINT FILE fitted TEXT "\# py6 = " py6
+ PRINT_FUNCTION FILE fitted P MIN data_a MAX data_b STEP 0.1*(data_b-data_a)/data_n
+ENDIF

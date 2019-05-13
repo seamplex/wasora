@@ -1,10 +1,12 @@
-end_time = 10
+end_time = 5
 dt = 0.01 # take a small time step
 
-# a ramp of slope 1 between 0 and 1 starting a t=1
-y = limit(heaviside(t-1)*(t-1), 0, 1)
-# compute a first-order lag with a certain characteristic time
-z = lag(y, 1.23456789)
+# the parameters to be guessed by the fit
+xi = 0.987654321
+chi = 1.23456789
 
-# print only one sample every ten time steps
-PRINT t y z SKIP_STEP 10
+# compute a first-order lag with a certain characteristic time
+z = lag(heaviside(t-xi), chi)
+
+# print the function 
+PRINT FILE_PATH lag.dat t y z

@@ -38,7 +38,7 @@ PRINT %g step_outer py1 py2 py3 py4 py5 py6
 IF done_outer
  OUTPUT_FILE fitted fitted-vector.dat
 
- PRINT_FUNCTION FILE_PATH expdata-vector.dat data
+ PRINT_FUNCTION FILE_PATH expdata.dat data
 
  PRINT FILE fitted TEXT "\# py1 = " py1
  PRINT FILE fitted TEXT "\# py2 = " py2

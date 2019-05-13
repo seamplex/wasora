@@ -1,14 +1,5 @@
 changequote([!,!])dnl
-% Wasora reference sheet
-% Jeremy Theler
-
-This reference sheet is for [wasora](index.html) esyscmd([!git describe | sed 's/-/./'!]).
-
-~~~
-$ wasora -i
-esyscmd([!wasora -i!])dnl
-$
-~~~
+% Wasora esyscmd([!git describe | sed 's/-/./' | tr -d '\n'!]) reference sheet
 
 # Keywords
 

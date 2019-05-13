@@ -8,9 +8,10 @@ if [ -z "${tag}" ]; then
   exit
 fi
 
-# git describe | sed 's/-/./' > version.md
+# traemos los defines de wasora.h para poder documentar los defaults en los detales
+grep '#define' ../src/wasora.h > defs.h
 
-kws=`grep "//${tag}+" ../src/${src}.c | awk '{print $1}' | awk -F+ '{print $2}' | sort | uniq` 
+kws=`grep "///${tag}+" ../src/${src}.c | awk '{print $1}' | awk -F+ '{print $2}' | sort | uniq` 
 
 for kw in ${kws}; do
 
@@ -19,11 +20,11 @@ for kw in ${kws}; do
   # keyword
   echo "##  \`${kw}\`"
   echo
-  grep //${tag}+${kw}+desc ../src/${src}.c | cut -d\  -f2-
+  grep "///${tag}+${kw}+desc" ../src/${src}.c | cut -d" " -f2-
   echo  
 
   # usage
-  usage=`grep //${tag}+${kw}+usage ../src/${src}.c | cut -d\  -f2- | xargs`
+  usage=`grep "///${tag}+${kw}+usage" ../src/${src}.c | cut -d" " -f2- | xargs`
   if [ -n "${usage}" ]; then
     echo "~~~wasora"
     echo $usage | sed s/\ \&nbsp\;\ /\\n/g
@@ -32,17 +33,17 @@ for kw in ${kws}; do
   fi
 
   # math+figure
-  math=`cat ../src/${src}.c | grep //${tag}+${kw}+math  | cut -d\  -f2-`
+  math=`cat ../src/${src}.c | grep "///${tag}+${kw}+math"  | cut -d" " -f2-`
 #   if [ -n "$math" ]; then
   if [ ! -z "" ]; then
 
     echo
     echo "\$\$"
-    echo $math
+    echo ${math}
     echo "\$\$"
     echo
 
-    range=`cat ../src/${src}.c | grep //${tag}+${kw}+plotx  | cut -d\  -f2-`
+    range=`cat ../src/${src}.c | grep "///${tag}+${kw}+plotx"  | cut -d" " -f2-`
     if [ -n "$range" ]; then
      if [[ !( -e figures/${kw}.png ) ]]; then
       cd figures
@@ -109,15 +110,19 @@ EOF
 
   # detailed description
   echo
-  grep //${tag}+${kw}+detail ../src/${src}.c | cut -d\  -f2- | sed s!///${tag}+${kw}+detail!\\n!
+#   echo ${kw} 1>&2
+  # el cut saca los tags especiales, el gcc permite usar los defines para documentar los defaults,
+  # el primer sed transforma un punto solo en un newline
+  # el segundo se es para poder poner links como https:/\/ (sin la barra del medio gcc piensa que es un comentario)
+  grep "///${tag}+${kw}+detail" ../src/${src}.c | cut -d" " -f2- | gcc -E -P -include defs.h - | sed 's/.$//' | sed 's_/\\/_//_'
   echo  
 
   # examples
-#   exs=`grep //${tag}+${kw}+example ../src/${src}.c | cut -d\  -f2-` 
+#   exs=`grep ///${tag}+${kw}+example ../src/${src}.c | cut -d" " -f2-` 
   exs=""
   n=0
   for ex in $exs; do
-    n=`echo $n + 1 | bc`
+    n=$((${n} + 1))
     cat << EOF
 ### Example #$n, $ex
 ~~~wasora
@@ -149,7 +154,7 @@ EOF
          cat errors
          exit 1
        fi
-       k=`echo $k + 1 | bc`
+       k=$((${k} + 1))
       done
       cat $ex.term | grep -v Script | sed s/^\\.\$/\$/ >> ../${src}.$ext
       cd ..

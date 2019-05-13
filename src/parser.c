@@ -421,7 +421,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 // ---------------------------------------------------------------------
 ///kw+IMPLICIT+usage IMPLICIT
-///kw+IMPLICIT+desc Defines whether implicit declaration of variables is allowed or not.
+///kw+IMPLICIT+desc Define whether implicit declaration of variables is allowed or not.
 ///kw+IMPLICIT+detail By default, wasora allows variables (but not vectors nor matrices) to be
 ///kw+IMPLICIT+detail implicitly declared. To avoid introducing errors due to typos, explicit
 ///kw+IMPLICIT+detail declaration of variables can be forced by giving `IMPLICIT NONE`.
@@ -439,8 +439,8 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
       
 // ---------------------------------------------------------------------
-///kwDO_NOT_EVALUATE_AT_PARSE_TIMEIMPLICIT+usage DO_NOT_EVALUATE_AT_PARSE_TIME
-///kw+IMPLICIT+desc Asks wasora not to evaluate assignments at parse time.
+///kw+DO_NOT_EVALUATE_AT_PARSE_TIME+usage DO_NOT_EVALUATE_AT_PARSE_TIME
+///kw+DO_NOT_EVALUATE_AT_PARSE_TIME+desc Ask wasora not to evaluate assignments at parse time.
     } else if (strcasecmp(token, "DO_NOT_EVALUATE_AT_PARSE_TIME") == 0) {
 
       wasora.do_not_evaluate_assigns_at_parse_time = 1;
@@ -450,14 +450,14 @@ if (strcasecmp(token, "FROM") == 0) {
 
  // ---------------------------------------------------------------------
 ///kw+TIME_PATH+usage TIME_PATH
-///kw+TIME_PATH+desc Forces transient problems to pass through specific instants of time.
+///kw+TIME_PATH+desc Force transient problems to pass through specific instants of time.
 ///kw+TIME_PATH+detail The time step `dt` will be reduced whenever the distance between
 ///kw+TIME_PATH+detail the current time `t` and the next expression in the list is greater
 ///kw+TIME_PATH+detail than `dt` so as to force `t` to coincide with the expressions given.
 ///kw+TIME_PATH+detail The list of expresssions should evaluate to a sorted list of values.          
     } else if ((strcasecmp(token, "TIME_PATH") == 0)) {
 
-///kw+TIME_PATH+usage [ expr_1 ] [ expr_2 ] ... [ expr_n ]
+///kw+TIME_PATH+usage <expr_1> [ <expr_2>  [ ... <expr_n> ] ]
       i = 0;
       while ((token = wasora_get_next_token(NULL)) != NULL) {
         // el +2 es porque necesito +1 de por si y otro +1 para guardar el ultimo vacio
@@ -476,23 +476,23 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---------------------------------------------------------------------      
 ///kw+INITIAL_CONDITIONS_MODE+usage INITIAL_CONDITIONS_MODE
-///kw+INITIAL_CONDITIONS_MODE+desc Defines how initial conditions of DAE problems are computed.
+///kw+INITIAL_CONDITIONS_MODE+desc Define how initial conditions of DAE problems are computed.
     } else if ((strcasecmp(token, "INITIAL_CONDITIONS_MODE") == 0)) {
 
 ///kw+INITIAL_CONDITIONS_MODE+usage { AS_PROVIDED | FROM_VARIABLES | FROM_DERIVATIVES }
 ///kw+INITIAL_CONDITIONS_MODE+detail In DAE problems, initial conditions may be either:
-///kw+INITIAL_CONDITIONS_MODE+detail
+///kw+INITIAL_CONDITIONS_MODE+detail .
 ///kw+INITIAL_CONDITIONS_MODE+detail  * equal to the provided expressions (`AS_PROVIDED`)
 ///kw+INITIAL_CONDITIONS_MODE+detail  * the derivatives computed from the provided phase-space variables (`FROM_VARIABLES`)
 ///kw+INITIAL_CONDITIONS_MODE+detail  * the phase-space variables computed from the provided derivatives (`FROM_DERIVATIVES`)
-///kw+INITIAL_CONDITIONS_MODE+detail
-///kw+INITIAL_CONDITIONS_MODE+detail In the first case, it is up to the user to fulfill the DAE system at $t = 0$.
+///kw+INITIAL_CONDITIONS_MODE+detail .
+///kw+INITIAL_CONDITIONS_MODE+detail In the first case, it is up to the user to fulfill the DAE system at\ $t = 0$.
 ///kw+INITIAL_CONDITIONS_MODE+detail If the residuals are not small enough, a convergence error will occur.
-///kw+INITIAL_CONDITIONS_MODE+detail The `FROM_VARIABLES` option means calling IDA's `IDACalcIC` routine with the parameter `IDA_YA_YDP_INIT`. 
-///kw+INITIAL_CONDITIONS_MODE+detail The `FROM_DERIVATIVES` option means calling IDA's `IDACalcIC` routine with the parameter IDA_Y_INIT.
+///kw+INITIAL_CONDITIONS_MODE+detail The `FROM_VARIABLES` option means calling IDA’s `IDACalcIC` routine with the parameter `IDA_YA_YDP_INIT`. 
+///kw+INITIAL_CONDITIONS_MODE+detail The `FROM_DERIVATIVES` option means calling IDA’s `IDACalcIC` routine with the parameter IDA_Y_INIT.
 ///kw+INITIAL_CONDITIONS_MODE+detail Wasora should be able to automatically detect which variables in phase-space are differential and
 ///kw+INITIAL_CONDITIONS_MODE+detail which are purely algebraic. However, the `DIFFERENTIAL` keyword may be used to explicitly define them.
-///kw+INITIAL_CONDITIONS_MODE+detail See the "SUNDIALS documentation": "https://computation.llnl.gov/casc/sundials/documentation/ida_guide.pdf" for further information.
+///kw+INITIAL_CONDITIONS_MODE+detail See the (SUNDIALS documentation)[https:/\/computation.llnl.gov/casc/sundials/documentation/ida_guide.pdf] for further information.
       char *keywords[] = {"AS_PROVIDED", "FROM_VARIABLES", "FROM_DERIVATIVES", ""};
       int values[] = {as_provided, from_variables, from_derivatives, 0};
       wasora_call(wasora_parser_keywords_ints(keywords, values, (int *)&wasora_dae.initial_conditions_mode));
@@ -501,20 +501,20 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---------------------------------------------------------------------      
 ///kw+LOAD_PLUGIN+usage LOAD_PLUGIN
-///kw+LOAD_PLUGIN+desc Loads a wasora plug-in from a dynamic shared object.
+///kw+LOAD_PLUGIN+desc Load a wasora plug-in from a dynamic shared object.
     } else if (strcasecmp(token, "LOAD_PLUGIN") == 0) {
 
 ///kw+LOAD_PLUGIN+usage { <file_path> | <plugin_name> }
 ///kw+LOAD_PLUGIN+detail A wasora plugin in the form of a dynamic shared object (i.e. `.so`) can be loaded
 ///kw+LOAD_PLUGIN+detail either with the `LOAD_PLUGIN` keyword or from the command line with the `-p` option.
 ///kw+LOAD_PLUGIN+detail Either a file path or a plugin name can be given. The following locations are tried:
-///kw+LOAD_PLUGIN+detail         
+///kw+LOAD_PLUGIN+detail .        
 ///kw+LOAD_PLUGIN+detail  * the current directory `./`      
 ///kw+LOAD_PLUGIN+detail  * the parent directory `../`
-///kw+LOAD_PLUGIN+detail  * the user's `LD_LIBRARY_PATH`
+///kw+LOAD_PLUGIN+detail  * the user’s `LD_LIBRARY_PATH`
 ///kw+LOAD_PLUGIN+detail  * the cache file `/etc/ld.so.cache`
 ///kw+LOAD_PLUGIN+detail  * the directories `/lib`, `/usr/lib`, `/usr/local/lib`
-///kw+LOAD_PLUGIN+detail         
+///kw+LOAD_PLUGIN+detail .        
 ///kw+LOAD_PLUGIN+detail If a wasora plugin was compiled and installed following the `make install` procedure,
 ///kw+LOAD_PLUGIN+detail the plugin should be loaded by just passing the name to `LOAD_PLUGIN`.
         
@@ -523,7 +523,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---------------------------------------------------------------------      
 ///kw+LOAD_ROUTINE+usage LOAD_ROUTINE
-///kw+LOAD_ROUTINE+desc Loads one or more routines from a dynamic shared object.
+///kw+LOAD_ROUTINE+desc Load one or more routines from a dynamic shared object.
     } else if (strcasecmp(token, "LOAD_ROUTINE") == 0) {
 
       void *library;
@@ -552,7 +552,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---------------------------------------------------------------------      
 ///kw+VAR+usage VAR
-///kw+VAR+desc Defines one or more scalar variables.
+///kw+VAR+desc Define one or more scalar variables.
     } else if ((strcasecmp(token, "VAR") == 0)) {
 
 ///kw+VAR+usage <name_1> [ <name_2> ] ... [ <name_n> ]
@@ -567,7 +567,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---------------------------------------------------------------------      
 ///kw+CONST+usage CONST
-///kw+CONST+desc Marks a scalar variable, vector or matrix as a constant.
+///kw+CONST+desc Mark a scalar variable, vector or matrix as a constant.
     } else if (strcasecmp(token, "CONST") == 0) {
 
       var_t *var;
@@ -599,8 +599,12 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---------------------------------------------------------------------      
 ///kw+ALIAS+usage ALIAS
-///kw+ALIAS+desc Defines a scalar alias of an already-defined indentifier.
-
+///kw+ALIAS+desc Define a scalar alias of an already-defined indentifier.
+///kw+ALIAS+detail The existing object can be a variable, a vector element or a matrix element. 
+///kw+ALIAS+detail In the first case, the name of the variable should be given as the existing object.
+///kw+ALIAS+detail In the second case, to alias the second element of vector `v` to the new name `new`, `v(2)` should be given as the existing object.
+///kw+ALIAS+detail In the third case, to alias second element (2,3) of matrix `M` to the new name `new`, `M(2,3)` should be given as the existing object.
+      
     } else if ((strcasecmp(token, "ALIAS") == 0)) {
 
       char *dummy_par;
@@ -635,7 +639,7 @@ if (strcasecmp(token, "FROM") == 0) {
       if ((alias->matrix = wasora_get_matrix_ptr(existing_object)) == NULL) {
         if ((alias->vector = wasora_get_vector_ptr(existing_object)) == NULL) {
           if ((alias->variable = wasora_get_variable_ptr(existing_object)) == NULL) {
-           wasora_push_error_message("unknown alleged existing object '%s'", existing_object);
+           wasora_push_error_message("unknown allegedly existing object '%s'", existing_object);
            return WASORA_PARSER_ERROR;
           }
         }
@@ -677,7 +681,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---------------------------------------------------------------------
 ///kw+VECTOR+usage VECTOR
-///kw+VECTOR+desc Defines a vector.
+///kw+VECTOR+desc Define a vector.
     } else if ((strcasecmp(token, "VECTOR") == 0)) {
 
       vector_t *vector = NULL;
@@ -737,7 +741,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---------------------------------------------------------------------
 ///kw+MATRIX+usage MATRIX
-///kw+MATRIX+desc Defines a matrix.
+///kw+MATRIX+desc Define a matrix.
     } else if ((strcasecmp(token, "MATRIX") == 0)) {
 
       char *matrixname = NULL;
@@ -786,7 +790,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---------------------------------------------------------------------
 ///kw+FUNCTION+usage FUNCTION
-///kw+FUNCTION+desc Defines a function of one or more variables.
+///kw+FUNCTION+desc Define a function of one or more variables.
     } else if (strcasecmp(token, "FUNCTION") == 0 || ((dummy = strchr(wasora.line, '=')) != NULL && *(dummy-1) == ':')) {
 
       function_t *function = NULL;
@@ -1304,7 +1308,7 @@ if (strcasecmp(token, "FROM") == 0) {
           var_t *dummy_var;
           char *dummy_aux = malloc(strlen(function->name) + 4);
 
-          sprintf(dummy_aux, "%s_a", function->name);
+          snprintf(dummy_aux, strlen(function->name) + 4, "%s_a", function->name);
           if ((dummy_var = wasora_define_variable(dummy_aux)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
@@ -1312,7 +1316,7 @@ if (strcasecmp(token, "FROM") == 0) {
             wasora_realloc_variable_ptr(dummy_var, &function->data_argument[0][0], 0);
           }
 
-          sprintf(dummy_aux, "%s_b", function->name);
+          snprintf(dummy_aux, strlen(function->name) + 4, "%s_b", function->name);
           if ((dummy_var = wasora_define_variable(dummy_aux)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
@@ -1320,7 +1324,7 @@ if (strcasecmp(token, "FROM") == 0) {
             wasora_realloc_variable_ptr(dummy_var, &function->data_argument[0][function->data_size-1], 0);
           }
 
-          sprintf(dummy_aux, "%s_n", function->name);
+          snprintf(dummy_aux, strlen(function->name) + 4, "%s_n", function->name);
           if ((dummy_var = wasora_define_variable(dummy_aux)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
@@ -1343,7 +1347,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
 // --- FILE -----------------------------------------------------
-///kw+FILE+desc Defines a file, either as input or as output, for further reference.
+///kw+FILE+desc Define a file, either as input or as output, for further usage.
 ///kw+FILE+usage < FILE | OUTPUT_FILE | INPUT_FILE >
     } else if (strcasecmp(token, "FILE") == 0 || strcasecmp(token, "OUTPUT_FILE") == 0 || strcasecmp(token, "INPUT_FILE") == 0) {
 
@@ -1431,6 +1435,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---- CLOSE ----------------------------------------------------
 ///kw+CLOSE+usage CLOSE
+///kw+CLOSE+desc Explicitly close an already-`OPEN`ed file.
     } else if (strcasecmp(token, "CLOSE") == 0) {
       
       file_t *file;
@@ -1444,7 +1449,7 @@ if (strcasecmp(token, "FROM") == 0) {
       
 
 // --- IF -----------------------------------------------------
-///kw+IF+desc Begins a conditional block.
+///kw+IF+desc Begin a conditional block.
 ///kw+IF+usage IF expr
 ///kw+IF+usage &nbsp;
 ///kw+IF+usage  <block_of_instructions_if_expr_is_true>
@@ -1526,7 +1531,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
 // ---- SEMAPHORE ----------------------------------------------------
-///kw+SEMAPHORE+desc Performs either a wait or a post operation on a named shared semaphore.
+///kw+SEMAPHORE+desc Perform either a wait or a post operation on a named shared semaphore.
 ///kw+SEMAPHORE+usage [ SEMAPHORE | SEM ]
     } else if ((strcasecmp(token, "SEMAPHORE") == 0) || (strcasecmp(token, "SEM") == 0)) {
 
@@ -1551,8 +1556,8 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
 // ---- READ / WRITE  ----------------------------------------------------
-///kw+READ+desc  Reads data (variables, vectors o matrices) from external objects.
-///kw+WRITE+desc Writes data (variables, vectors o matrices) to external objects.
+///kw+READ+desc Read data (variables, vectors o matrices) from files or shared-memory segments.
+///kw+WRITE+desc Write data (variables, vectors o matrices) to files or shared-memory segments.
 ///kw+WRITE+desc See the `READ` keyword for usage details.
 ///kw+READ+usage [ READ | WRITE ]
     } else if ((strcasecmp(token, "READ") == 0) || (strcasecmp(token, "WRITE") == 0)) {
@@ -1611,7 +1616,7 @@ if (strcasecmp(token, "FROM") == 0) {
           }
 
           // ---- FILE ----------------------------------------------------
-  ///kw+READ+usage [ IGNORE_NULL ]
+///kw+READ+usage [ IGNORE_NULL ]
           } else if (strcasecmp(token, "IGNORE_NULL") == 0) {
 
             io->ignorenull = 1;
@@ -1669,8 +1674,6 @@ if (strcasecmp(token, "FROM") == 0) {
 
       if (io->type == io_undefined)  {
         wasora_push_error_message("undefined I/O resource type");
- ;
-     
         return WASORA_PARSER_ERROR;
       }
 
@@ -1681,7 +1684,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
 // --- PRINT -----------------------------------------------------
-///kw+PRINT+desc Prints plaint-text data to the standard output or to an output file.
+///kw+PRINT+desc Print plaint-text and/or formatted data to the standard output or into an output file.
 ///kw+PRINT+usage PRINT
     } else if (strcasecmp(token, "PRINT") == 0) {
 
@@ -1735,7 +1738,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 ///kw+PRINT+usage [ NONEWLINE ]
         } else if (strcasecmp(token, "NONEWLINE") == 0) {
-///kw+PRINT+detail If the `NONEWLINE` keyword is not provided, default is to write a newline '\\n' character after all the objects are processed.
+///kw+PRINT+detail If the `NONEWLINE` keyword is not provided, default is to write a newline '\n' character after all the objects are processed.
           print->nonewline = 1;
 
 ///kw+PRINT+usage [ SEP <string> ]
@@ -1743,7 +1746,7 @@ if (strcasecmp(token, "FROM") == 0) {
           if (wasora_parser_string(&print->separator) != WASORA_PARSER_OK) {
             return WASORA_PARSER_ERROR;
           }
-///kw+PRINT+detail The `SEP` keywords expects a string used to separate printed objects, the default is a tab '\\t' character.
+///kw+PRINT+detail The `SEP` keywords expects a string used to separate printed objects, the default is a tab '\t' character.
 
 ///kw+PRINT+usage [ NOSEP ]
         } else if (strcasecmp(token, "NOSEP") == 0) {
@@ -1834,7 +1837,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 
 // --- PRINT_FUNCTION -----------------------------------------------------
-///kw+PRINT_FUNCTION+desc Prints one or more functions as a table of values of dependent and independent variables.
+///kw+PRINT_FUNCTION+desc Print one or more functions as a table of values of dependent and independent variables.
 ///kw+PRINT_FUNCTION+usage PRINT_FUNCTION
 ///kw+PRINT_FUNCTION+usage <function_1> [ { function_2 | expr_1 } ... { function_n | expr_n-1 } ]
     } else if (strcasecmp(token, "PRINT_FUNCTION") == 0) {
@@ -1989,7 +1992,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
 // --- PRINT_VECTOR -----------------------------------------------------
-///kw+PRINT_VECTOR+desc Prints one or more vectors.
+///kw+PRINT_VECTOR+desc Print the elements of one or more vectors.
 ///kw+PRINT_VECTOR+usage PRINT_VECTOR
     } else if (strcasecmp(token, "PRINT_VECTOR") == 0) {
 
@@ -2068,7 +2071,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
       
 // --- SOLVE -----------------------------------------------------
-///kw+SOLVE+desc Solves a non-linear system of~$n$ equations with~$n$ unknowns.
+///kw+SOLVE+desc Solve a non-linear system of\ $n$ equations with\ $n$ unknowns.
 ///kw+SOLVE+example solve1.was solve2.was
 ///kw+SOLVE+usage SOLVE
       
@@ -2192,7 +2195,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;      
 
 // --- M4 -----------------------------------------------------
-///kw+M4+desc Calls the `m4` macro processor with definitions from wasora variables.
+///kw+M4+desc Call the `m4` macro processor with definitions from wasora variables or expressions.
 ///kw+M4+usage M4
     } else if (strcasecmp(token, "M4") == 0) {
 
@@ -2273,7 +2276,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
 // --- SHELL -----------------------------------------------------
-///kw+SHELL+desc Executes a shell command.
+///kw+SHELL+desc Execute a shell command.
 ///kw+SHELL+usage SHELL
     } else if (strcasecmp(token, "SHELL") == 0) {
 
@@ -2300,7 +2303,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
 // --- CALL -----------------------------------------------------
-///kw+CALL+desc Executes a previously dynamically-loaded user-provided routine.
+///kw+CALL+desc Call a previously dynamically-loaded user-provided routine.
 ///kw+CALL+usage CALL <name>
     } else if (strcasecmp(token, "CALL") == 0) {
 
@@ -2373,7 +2376,7 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
     // ----- PARAMETRIC  -----------------------------------------------------------------
-///kw+PARAMETRIC+desc Sistematically sweeps a zone of the parameter space.
+///kw+PARAMETRIC+desc Systematically sweep a zone of the parameter space, i.e. perform a parametric run.
     } else if ((strcasecmp(token, "PARAMETRIC") == 0)) {
 
       varlist_t *varlist = NULL;
@@ -2523,6 +2526,12 @@ if (strcasecmp(token, "FROM") == 0) {
     // ----- FIT  -----------------------------------------------------------------
     } else if ((strcasecmp(token, "FIT") == 0)) {
 
+///kw+FIT+desc Fit a function of one or more arguments to a set of data.
+///kw+FIT+detail The function with the data has to be point-wise defined.
+///kw+FIT+detail The function to be fitted hast to be parametrized with at least one of the variables provided after the `VIA` keyword.
+///kw+FIT+detail Only the names of the functions have to be given.
+///kw+FIT+detail Both functions have to have the same number of arguments.
+      
 ///kw+FIT+usage FIT
       char *sigma_name;
       varlist_t *varlist = NULL;
@@ -2580,6 +2589,7 @@ if (strcasecmp(token, "FROM") == 0) {
       }
 
 ///kw+FIT+usage VIA
+///kw+FIT+detail The initial guess of the solution is given by the initial value of the variables listed in the `VIA` keyword.
       if ((token = wasora_get_next_token(NULL)) == NULL) {
         wasora_push_error_message("expected function name");
         return WASORA_PARSER_ERROR;
@@ -2594,6 +2604,8 @@ if (strcasecmp(token, "FROM") == 0) {
 
         // TODO: convergencia por gradiente, incertezas, covarianza, incrementos para gradiente automatico
 ///kw+FIT+usage [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]
+///kw+FIT+detail Analytical expressions for the gradient of the function to be fitted with respect to the parameters to be fitted can be optionally given with the `GRADIENT` keyword.
+///kw+FIT+detail If none is provided, the gradient will be computed numerically using finite differences.
         if (strcasecmp(token, "GRADIENT") == 0) {
  
           if (wasora.fit.p == 0) {
@@ -2612,6 +2624,9 @@ if (strcasecmp(token, "FROM") == 0) {
           }
 
 ///kw+FIT+usage [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ]
+///kw+FIT+detail A range over which the residuals are to be minimized can be given with `RANGE_MIN` and `RANGE_MAX`.
+///kw+FIT+detail For multidimensional fits, the range is an hypercube.
+///kw+FIT+detail If no range is given, all the definition points of the function witht the data are used for the fit.
         } else if (strcasecmp(token, "RANGE_MIN") == 0) {
 
           if (wasora.fit.data->n_arguments == 0) {
@@ -2632,6 +2647,10 @@ if (strcasecmp(token, "FROM") == 0) {
           wasora_call(wasora_parser_expressions(&wasora.fit.range.max, wasora.fit.data->n_arguments));
           
 ///kw+FIT+usage [ DELTAEPSREL <expr> ]
+///kw+FIT+detail Convergence can be controlled by given the relative and absolute tolreances with
+///kw+FIT+detail `DELTAEPSREL` (default DEFAULT_NLIN_FIT_EPSREL) and `DELTAEPSABS` (default DEFAULT_NLIN_FIT_EPSABS),
+///kw+FIT+detail and with the maximum number of iterations `MAX_ITER` (default DEFAULT_NLIN_FIT_MAX_ITER).
+          
         } else if (strcasecmp(token, "DELTAEPSREL") == 0) {
 
           wasora_call(wasora_parser_expression(&wasora.fit.deltaepsrel));
@@ -2654,6 +2673,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 ///kw+FIT+usage [ VERBOSE ]
         } else if (strcasecmp(token, "VERBOSE") == 0) {
+///kw+FIT+detail If the optional keyword `VERBOSE` is given, some data of the intermediate steps is written in the standard output.
 
           wasora.fit.verbose = 1;
 
@@ -2692,7 +2712,7 @@ if (strcasecmp(token, "FROM") == 0) {
         wasora.fit.param[i] = varitem->var;
         
         sigma_name = malloc(strlen(varitem->var->name)+strlen("sigma_")+8);
-        sprintf(sigma_name, "sigma_%s", varitem->var->name);
+        snprintf(sigma_name, strlen(varitem->var->name)+strlen("sigma_")+8, "sigma_%s", varitem->var->name);
         if ((wasora.fit.sigma[i] = wasora_define_variable(sigma_name)) == NULL) {
           return WASORA_PARSER_ERROR;
         }
@@ -2714,12 +2734,14 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
     // ----- MINIMIZE  -----------------------------------------------------------------
+///kw+MINIMIZE+usage MINIMIZE <function>
+///kw+MINIMIZE+desc Find the combination of arguments that give a (relative) minimum of a function, i.e. run an optimization problem.
     } else if (strcasecmp(token, "MINIMIZE") == 0 || strcasecmp(token, "OPTIMIZE") == 0) {
 
       // ponemos esto en true porque normalmente no queremos que imprima todo el chorizo
       wasora.min_mode = 1;
 
-///kw+MINIMIZE+usage MINIMIZE <function>
+///kw+MINIMIZE+usage <function>
       if ((token = wasora_get_next_token(NULL)) == NULL) {
         wasora_push_error_message("expected a function");
         return WASORA_PARSER_ERROR;
@@ -2963,6 +2985,7 @@ if (strcasecmp(token, "FROM") == 0) {
     // ----- PHASE_SPACE -----------------------------------------------------------
     } else if (strcasecmp(token, "PHASE_SPACE") == 0) {
 ///kw+PHASE_SPACE+usage PHASE_SPACE { <vars> | <vectors> | <matrices> }
+///kw+PHASE_SPACE+desc Define which variables, vectors and/or matrices belong to the phase space of the DAE system to be solved.
 
       var_t *variable;
       vector_t *vector;
@@ -3047,7 +3070,8 @@ if (strcasecmp(token, "FROM") == 0) {
               
     // ----- DIFFERENTIAL -----------------------------------------------------------
     } else if (strcasecmp(token, "DIFFERENTIAL") == 0) {
-///kw+DIFFERENTIAL+usage DIFFERENTIAL { <vars> | <vectors> | <matrices> }
+///kw+DIFFERENTIAL+desc Explicitly mark variables, vectors or matrices as “differential” to compute intial conditions of DAE systems.
+///kw+DIFFERENTIAL+usage DIFFERENTIAL { <var_1> <var_2> ... | <vector_1> <vector_2> ... | <matrix_1> <matrix_2> ... }
       
       phase_object_t *phase_object;
       
@@ -3065,7 +3089,7 @@ if (strcasecmp(token, "FROM") == 0) {
       
       // --- DAE -----------------------------------------------------
     } else if (token[0] == '0' || strstr(wasora.line, ".=") != NULL) {
-
+///kw+.=+desc Add an equation to the DAE system to be solved in the phase space spanned by `PHASE_SPACE`.
 ///kw+.=+usage { 0[(i[,j]][<imin:imax[;jmin:jmax]>] | <expr1> } .= <expr2>
       char *equation;
       char *dummy;
@@ -3207,6 +3231,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
     // ----- ASSIGNMENT -----------------------------------------------------------
     } else if ((token = wasora_get_next_token(NULL)) != NULL && strcmp(token, "=") == 0) {
+///kw+=+desc Assign an expression to a variable, a vector or a matrix.
 ///kw+=+usage <var>[ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr>
 ///kw+=+usage <vector>(<expr_i>)[<expr_i_min, expr_i_max>] [ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr>
 ///kw+=+usage <matrix>(<expr_i>,<expr_j>)[<expr_i_min, expr_i_max; expr_j_min, expr_j_max>] [ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr>

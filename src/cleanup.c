@@ -157,12 +157,25 @@ void wasora_free_function(function_t *function) {
 
 
 void wasora_free_var(var_t *var) {
-  if (var->realloced == 0) {
-    free(wasora_value_ptr(var));
+  
+  alias_t *alias;
+  int is_alias = 0;
+  
+  // si somos un alias no tenemos que desalocar nada
+  LL_FOREACH(wasora.aliases, alias) {
+    if (alias->new_variable == var) {
+      is_alias = 1;
+    }
   }
-  free(var->initial_transient);
-  free(var->initial_static);
-  free(var->name);
+  
+  if (is_alias == 0) {
+    if (var->realloced == 0) {
+      free(wasora_value_ptr(var));
+    }
+    free(var->initial_transient);
+    free(var->initial_static);
+    free(var->name);
+  }
 
   HASH_DEL(wasora.vars, var);
   free(var);

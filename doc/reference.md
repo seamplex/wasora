@@ -1,30 +1,10 @@
-% Wasora reference sheet
-% Jeremy Theler
-
-This reference sheet is for [wasora](index.html) v0.6.1-ga49e212
-.
-
-~~~
-$ wasora -i
-wasora v0.6 
-wasora’s an advanced suite for optimization & reactor analysis
-
-Last commit date   : Mon Mar 11 07:24:38 2019 -0300
-Build date         : 2019-04-20 08:08:28
-Build architecture : linux-gnu x86_64
-Builder            : gtheler@tom
-Compiler           : gcc (Debian 8.3.0-6) 8.3.0
-Compiler flags     : -O2
-GSL version        : 2.5
-SUNDIALs version   : 2.5.0
-Readline version   : 7.0
-$
-~~~
+% Wasora v0.6.16-g1d59bb0 reference sheet
 
 # Keywords
 
 ##  `.=`
 
+Add an equation to the DAE system to be solved in the phase space spanned by `PHASE_SPACE`.
 
 ~~~wasora
 { 0[(i[,j]][<imin:imax[;jmin:jmax]>] | <expr1> } .= <expr2>
@@ -34,6 +14,7 @@ $
 
 ##  `=`
 
+Assign an expression to a variable, a vector or a matrix.
 
 ~~~wasora
 <var>[ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr> <vector>(<expr_i>)[<expr_i_min, expr_i_max>] [ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr> <matrix>(<expr_i>,<expr_j>)[<expr_i_min, expr_i_max; expr_j_min, expr_j_max>] [ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr>
@@ -50,25 +31,29 @@ ABORT
 ~~~
 
 
-Whenever the instruction `ABORT` is executed, wasora quits without closing files
-or unlocking shared memory objects. The objective of this instruction is, as
-illustrated in the examples, either to debug complex input files and check the
-values of certain variables or to conditionally abort the execution using `IF`
-clauses.
+Whenever the instruction `ABORT` is executed, wasora quits without closing file
+or unlocking shared memory objects. The objective of this instruction is, a
+illustrated in the examples, either to debug complex input files and check th
+values of certain variables or to conditionally abort the execution using `IF
+clauses
 
 ##  `ALIAS`
 
-Defines a scalar alias of an already-defined indentifier.
+Define a scalar alias of an already-defined indentifier.
 
 ~~~wasora
 ALIAS { <new_var_name> IS <existing_object> | <existing_object> AS <new_name> }
 ~~~
 
 
+The existing object can be a variable, a vector element or a matrix element
+In the first case, the name of the variable should be given as the existing object
+In the second case, to alias the second element of vector `v` to the new name `new`, `v(2)` should be given as the existing object
+In the third case, to alias second element (2,3) of matrix `M` to the new name `new`, `M(2,3)` should be given as the existing object
 
 ##  `CALL`
 
-Executes a previously dynamically-loaded user-provided routine.
+Call a previously dynamically-loaded user-provided routine.
 
 ~~~wasora
 CALL <name> [ expr_1 expr_2 ... expr_n ]
@@ -78,6 +63,7 @@ CALL <name> [ expr_1 expr_2 ... expr_n ]
 
 ##  `CLOSE`
 
+Explicitly close an already-`OPEN`ed file.
 
 ~~~wasora
 CLOSE
@@ -87,7 +73,7 @@ CLOSE
 
 ##  `CONST`
 
-Marks a scalar variable, vector or matrix as a constant.
+Mark a scalar variable, vector or matrix as a constant.
 
 ~~~wasora
 CONST name_1 [ <name_2> ] ... [ <name_n> ]
@@ -104,25 +90,36 @@ DEFAULT_ARGUMENT_VALUE <constant> <string>
 ~~~
 
 
-If a `$n` construction is found in the input file but the
-commandline argument was not given, the default behavior is to
-fail complaining that an extra argument has to be given in the
-commandline. With this keyword, a default value can be assigned if
-no argument is given, thus avoiding the failure and making the argument
-optional.
+If a `$n` construction is found in the input file but th
+commandline argument was not given, the default behavior is t
+fail complaining that an extra argument has to be given in th
+commandline. With this keyword, a default value can be assigned i
+no argument is given, thus avoiding the failure and making the argumen
+optional
 
 ##  `DIFFERENTIAL`
 
+Explicitly mark variables, vectors or matrices as “differential” to compute intial conditions of DAE systems.
 
 ~~~wasora
-DIFFERENTIAL { <vars> | <vectors> | <matrices> }
+DIFFERENTIAL { <var_1> <var_2> ... | <vector_1> <vector_2> ... | <matrix_1> <matrix_2> ... }
+~~~
+
+
+
+##  `DO_NOT_EVALUATE_AT_PARSE_TIME`
+
+Ask wasora not to evaluate assignments at parse time.
+
+~~~wasora
+DO_NOT_EVALUATE_AT_PARSE_TIME
 ~~~
 
 
 
 ##  `FILE`
 
-Defines a file, either as input or as output, for further reference.
+Define a file, either as input or as output, for further usage.
 
 ~~~wasora
 < FILE | OUTPUT_FILE | INPUT_FILE > <name> <printf_format> [ expr_1 expr_2 ... expr_n ] [ INPUT | OUTPUT | MODE <fopen_mode> ] [ OPEN | DO_NOT_OPEN ]
@@ -132,16 +129,31 @@ Defines a file, either as input or as output, for further reference.
 
 ##  `FIT`
 
+Fit a function of one or more arguments to a set of data.
 
 ~~~wasora
 FIT <function_to_be_fitted> TO <function_with_data> VIA <var_1> <var_2> ... <var_n> [ GRADIENT <expr_1> <expr_2> ... <expr_n> ] [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ] [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ] [ DELTAEPSREL <expr> ] [ DELTAEPSABS <expr> ] [ MAX_ITER <expr> ] [ VERBOSE ] [ RERUN | DO_NOT_RERUN ]
 ~~~
 
 
+The function with the data has to be point-wise defined
+The function to be fitted hast to be parametrized with at least one of the variables provided after the `VIA` keyword
+Only the names of the functions have to be given
+Both functions have to have the same number of arguments
+The initial guess of the solution is given by the initial value of the variables listed in the `VIA` keyword
+Analytical expressions for the gradient of the function to be fitted with respect to the parameters to be fitted can be optionally given with the `GRADIENT` keyword
+If none is provided, the gradient will be computed numerically using finite differences
+A range over which the residuals are to be minimized can be given with `RANGE_MIN` and `RANGE_MAX`
+For multidimensional fits, the range is an hypercube
+If no range is given, all the definition points of the function witht the data are used for the fit
+Convergence can be controlled by given the relative and absolute tolreances wit
+`DELTAEPSREL` (default 1e-4) and `DELTAEPSABS` (default 1e-6)
+and with the maximum number of iterations `MAX_ITER` (default 100)
+If the optional keyword `VERBOSE` is given, some data of the intermediate steps is written in the standard output
 
 ##  `FUNCTION`
 
-Defines a function of one or more variables.
+Define a function of one or more variables.
 
 ~~~wasora
 FUNCTION <name>(<var_1>[,var2,...,var_n]) { [ = <expr> | FILE_PATH <file_path> | ROUTINE <name> | | MESH <name> { DATA <data> | VECTOR <vector> { NODES | CELLS } } | [ VECTOR_DATA <vector_1> <vector_2> ... <vector_n> <vector_n+1> ] } [COLUMNS <num_expr_1> <num_expr_2> ... <num_expr_n> <num_expr_n+1> ] [ INTERPOLATION { linear | polynomial | spline | spline_periodic | akima | akima_periodic | steffen | nearest | shepard | modified_shepard | bilinear } ] [ INTERPOLATION_THRESHOLD <expr> ] [ SHEPARD_RADIUS <expr> ] [ SHEPARD_EXPONENT <expr> ] [ SIZES <expr_1> <expr_2> ... <expr_n> ] [ X_INCREASES_FIRST <expr> ] [ DATA <num_expr_1> <num_expr_2> ... <num_expr_N> ]
@@ -161,7 +173,7 @@ HISTORY <variable> <function>
 
 ##  `IF`
 
-Begins a conditional block.
+Begin a conditional block.
 
 ~~~wasora
 IF expr
@@ -175,19 +187,18 @@ ENDIF
 
 ##  `IMPLICIT`
 
-Defines whether implicit declaration of variables is allowed or not.
-Asks wasora not to evaluate assignments at parse time.
+Define whether implicit declaration of variables is allowed or not.
 
 ~~~wasora
 IMPLICIT { NONE | ALLOWED }
 ~~~
 
 
-By default, wasora allows variables (but not vectors nor matrices) to be
-implicitly declared. To avoid introducing errors due to typos, explicit
-declaration of variables can be forced by giving `IMPLICIT NONE`.
-Whether implicit declaration is allowed or explicit declaration is required
-depends on the last `IMPLICIT` keyword given, which by default is `ALLOWED`.
+By default, wasora allows variables (but not vectors nor matrices) to b
+implicitly declared. To avoid introducing errors due to typos, explici
+declaration of variables can be forced by giving `IMPLICIT NONE`
+Whether implicit declaration is allowed or explicit declaration is require
+depends on the last `IMPLICIT` keyword given, which by default is `ALLOWED`
 
 ##  `INCLUDE`
 
@@ -198,64 +209,62 @@ INCLUDE <file_path> [ FROM <num_expr> ] [ TO <num_expr> ]
 ~~~
 
 
-Includes the input file located in the string `file_path` at the current location.
-The effect is the same as copying and pasting the contents of the included file
-at the location of the `INCLUDE` keyword. The path can be relative or absolute.
-Note, however, that when including files inside `IF` blocks that instructions are
-conditionally-executed but all definitions (such as function definitions) are processed at
-parse-time independently from the evaluation of the conditional.
-The optional `FROM` and `TO` keywords can be used to include only portions of a file.          
+Includes the input file located in the string `file_path` at the current location
+The effect is the same as copying and pasting the contents of the included fil
+at the location of the `INCLUDE` keyword. The path can be relative or absolute
+Note, however, that when including files inside `IF` blocks that instructions ar
+conditionally-executed but all definitions (such as function definitions) are processed a
+parse-time independently from the evaluation of the conditional
+The optional `FROM` and `TO` keywords can be used to include only portions of a file
 
 ##  `INITIAL_CONDITIONS_MODE`
 
-Defines how initial conditions of DAE problems are computed.
+Define how initial conditions of DAE problems are computed.
 
 ~~~wasora
 INITIAL_CONDITIONS_MODE { AS_PROVIDED | FROM_VARIABLES | FROM_DERIVATIVES }
 ~~~
 
 
-In DAE problems, initial conditions may be either:
+In DAE problems, initial conditions may be either
 
+ * equal to the provided expressions (`AS_PROVIDED`
+ * the derivatives computed from the provided phase-space variables (`FROM_VARIABLES`
+ * the phase-space variables computed from the provided derivatives (`FROM_DERIVATIVES`
 
- * equal to the provided expressions (`AS_PROVIDED`)
- * the derivatives computed from the provided phase-space variables (`FROM_VARIABLES`)
- * the phase-space variables computed from the provided derivatives (`FROM_DERIVATIVES`)
-
-
-In the first case, it is up to the user to fulfill the DAE system at $t = 0$.
-If the residuals are not small enough, a convergence error will occur.
-The `FROM_VARIABLES` option means calling IDA's `IDACalcIC` routine with the parameter `IDA_YA_YDP_INIT`. 
-The `FROM_DERIVATIVES` option means calling IDA's `IDACalcIC` routine with the parameter IDA_Y_INIT.
-Wasora should be able to automatically detect which variables in phase-space are differential and
-which are purely algebraic. However, the `DIFFERENTIAL` keyword may be used to explicitly define them.
-See the "SUNDIALS documentation": "https://computation.llnl.gov/casc/sundials/documentation/ida_guide.pdf" for further information.
+In the first case, it is up to the user to fulfill the DAE system at\ $t = 0$
+If the residuals are not small enough, a convergence error will occur
+The `FROM_VARIABLES` option means calling IDA’s `IDACalcIC` routine with the parameter `IDA_YA_YDP_INIT`
+The `FROM_DERIVATIVES` option means calling IDA’s `IDACalcIC` routine with the parameter IDA_Y_INIT
+Wasora should be able to automatically detect which variables in phase-space are differential an
+which are purely algebraic. However, the `DIFFERENTIAL` keyword may be used to explicitly define them
+See the (SUNDIALS documentation)[https://computation.llnl.gov/casc/sundials/documentation/ida_guide.pdf] for further information
 
 ##  `LOAD_PLUGIN`
 
-Loads a wasora plug-in from a dynamic shared object.
+Load a wasora plug-in from a dynamic shared object.
 
 ~~~wasora
 LOAD_PLUGIN { <file_path> | <plugin_name> }
 ~~~
 
 
-A wasora plugin in the form of a dynamic shared object (i.e. `.so`) can be loaded
-either with the `LOAD_PLUGIN` keyword or from the command line with the `-p` option.
-Either a file path or a plugin name can be given. The following locations are tried:
-        
- * the current directory `./`      
- * the parent directory `../`
- * the user's `LD_LIBRARY_PATH`
- * the cache file `/etc/ld.so.cache`
- * the directories `/lib`, `/usr/lib`, `/usr/local/lib`
-        
-If a wasora plugin was compiled and installed following the `make install` procedure,
-the plugin should be loaded by just passing the name to `LOAD_PLUGIN`.
+A wasora plugin in the form of a dynamic shared object (i.e. `.so`) can be loade
+either with the `LOAD_PLUGIN` keyword or from the command line with the `-p` option
+Either a file path or a plugin name can be given. The following locations are tried
+
+ * the current directory `./
+ * the parent directory `../
+ * the user’s `LD_LIBRARY_PATH
+ * the cache file `/etc/ld.so.cache
+ * the directories `/lib`, `/usr/lib`, `/usr/local/lib
+
+If a wasora plugin was compiled and installed following the `make install` procedure
+the plugin should be loaded by just passing the name to `LOAD_PLUGIN`
 
 ##  `LOAD_ROUTINE`
 
-Loads one or more routines from a dynamic shared object.
+Load one or more routines from a dynamic shared object.
 
 ~~~wasora
 LOAD_ROUTINE <file_path> <routine_1> [ <routine_2> ... <routine_n> ]
@@ -265,7 +274,7 @@ LOAD_ROUTINE <file_path> <routine_1> [ <routine_2> ... <routine_n> ]
 
 ##  `M4`
 
-Calls the `m4` macro processor with definitions from wasora variables.
+Call the `m4` macro processor with definitions from wasora variables or expressions.
 
 ~~~wasora
 M4 { INPUT_FILE <file_id> | FILE_PATH <file_path> } { OUTPUT_FILE <file_id> | OUTPUT_FILE_PATH <file_path> } [ EXPAND <name> ] ... } [ MACRO <name> [ <format> ] <definition> ] ... }
@@ -275,7 +284,7 @@ M4 { INPUT_FILE <file_id> | FILE_PATH <file_path> } { OUTPUT_FILE <file_id> | OU
 
 ##  `MATRIX`
 
-Defines a matrix.
+Define a matrix.
 
 ~~~wasora
 MATRIX <name> ROWS <expr> COLS <expr> [ DATA num_expr_1 num_expr_2 ... num_expr_n ]
@@ -285,16 +294,17 @@ MATRIX <name> ROWS <expr> COLS <expr> [ DATA num_expr_1 num_expr_2 ... num_expr_
 
 ##  `MINIMIZE`
 
+Find the combination of arguments that give a (relative) minimum of a function, i.e. run an optimization problem.
 
 ~~~wasora
-MINIMIZE <function> [ METHOD { conjugate_fr | conjugate_pr | vector_bfgs2 | vector_bfgs | steepest_descent | nmsimplex2 | nmsimplex | nmsimplex2rand } [ GRADIENT <expr_1> <expr_2> ... <expr_n> ] [ GUESS <expr_1> <expr_2> ... <expr_n> ] [ MIN <expr_1> <expr_2> ... <expr_n> ] [ MAX <expr_1> <expr_2> ... <expr_n> ] [ STEP <expr_1> <expr_2> ... <expr_n> ] [ VERBOSE ] [ NORERUN ] [ MAX_ITER <expr> ] [ TOL <expr> ] [ GRADTOL <expr> ]
+MINIMIZE <function> <function> [ METHOD { conjugate_fr | conjugate_pr | vector_bfgs2 | vector_bfgs | steepest_descent | nmsimplex2 | nmsimplex | nmsimplex2rand } [ GRADIENT <expr_1> <expr_2> ... <expr_n> ] [ GUESS <expr_1> <expr_2> ... <expr_n> ] [ MIN <expr_1> <expr_2> ... <expr_n> ] [ MAX <expr_1> <expr_2> ... <expr_n> ] [ STEP <expr_1> <expr_2> ... <expr_n> ] [ VERBOSE ] [ NORERUN ] [ MAX_ITER <expr> ] [ TOL <expr> ] [ GRADTOL <expr> ]
 ~~~
 
 
 
 ##  `PARAMETRIC`
 
-Sistematically sweeps a zone of the parameter space.
+Systematically sweep a zone of the parameter space, i.e. perform a parametric run.
 
 ~~~wasora
 PARAMETRIC <var_1> [ ... <var_n> ] [ TYPE { linear | logarithmic | random | gaussianrandom | sobol | niederreiter | halton | reversehalton } ] [ MIN <num_expr_1> ... <num_expr_n> ] [ MAX <num_expr_1> ... <num_expr_n> ] [ STEP <num_expr_1> ... <num_expr_n> ] [ NSTEPS <num_expr_1> ... <num_expr_n> ] [ OUTER_STEPS <num_expr> ] [ MAX_DAUGHTERS <num_expr> ] [ OFFSET <num_expr> ] [ ADIABATIC ]
@@ -304,6 +314,7 @@ PARAMETRIC <var_1> [ ... <var_n> ] [ TYPE { linear | logarithmic | random | gaus
 
 ##  `PHASE_SPACE`
 
+Define which variables, vectors and/or matrices belong to the phase space of the DAE system to be solved.
 
 ~~~wasora
 PHASE_SPACE { <vars> | <vectors> | <matrices> }
@@ -313,49 +324,49 @@ PHASE_SPACE { <vars> | <vectors> | <matrices> }
 
 ##  `PRINT`
 
-Prints plaint-text data to the standard output or to an output file.
+Print plaint-text and/or formatted data to the standard output or into an output file.
 
 ~~~wasora
 PRINT [ FILE <file_id> | FILE_PATH <file_path> ] [ NONEWLINE ] [ SEP <string> ] [ NOSEP ] [ HEADER ] [ SKIP_STEP <expr> ] [ SKIP_STATIC_STEP <expr> ] [ SKIP_TIME <expr> ] [ SKIP_HEADER_STEP <expr> ] [ <object_1> <object_2> ... <object_n> ] [ TEXT <string_1> ... TEXT <string_n> ]
 ~~~
 
 
-Each argument `object` that is not a keyword is expected to be part of the output,
-can be either a matrix, a vector, an scalar algebraic expression. If the given object
-cannot be solved into a valid matrix, vector or expression, it is treated as a
-string literal if `IMPLICIT` is `ALLOWED`, otherwise a parser error is raised.
-To explicitly interpret an object as a literal string even if it resolves to a valid
-numerical expression, it should be prefixed with the `TEXT` keyword. Hashes~`#`
-appearing literal strings have to be quoted to prevent the parser to treat them as
-comments within the wasora input file.
-Whenever an argument starts with a porcentage sign '%', it is treated as a
-printf-compatible format definition and all the objects that follow it are printed
-using the given format until a new format definition is found. All the objects are
-treated as double-precision floating point numbers, so only floating point formats      
-should be given. The default format is '%e'.
-Matrices, vectors, scalar expressions, format modifiers and string literals can be
-given in the desired order, and are processed from left to right.
-Vectors are printed element-by-element in a single row. See `PRINT_VECTOR` to print
-vectors column-wise. Matrices are printed element-by-element in a row-major fashion
-if mixed with other objects but in the natural row and column fashion if it is the
-only given object.      
-If the `FILE` keyword is not provided, default is to write to stdout.
-If the `NONEWLINE` keyword is not provided, default is to write a newline '\\n' character after all the objects are processed.
-The `SEP` keywords expects a string used to separate printed objects, the default is a tab '\\t' character.
-Use the `NOSEP` keyword to define an empty string as object separator.
-If the `HEADER` keyword is given, a single line containing the literal text
-given for each object is printed at the very first time the `PRINT` instruction is
-processed, starting with a hash `#` character.           
-If the `SKIP_STEP` (`SKIP_STATIC_STEP`)keyword is given, the instruction is processed only every
-the number of transient (static) steps that results in evaluating the expression,
-which may not be constant. By default the `PRINT` instruction is evaluated every
-step. The `SKIP_HEADER_STEP` keyword works similarly for the optional `HEADER` but
-by default it is only printed once. The `SKIP_TIME` keyword use time advancements
-to choose how to skip printing and may be useful for non-constant time-step problems.
+Each argument `object` that is not a keyword is expected to be part of the output
+can be either a matrix, a vector, an scalar algebraic expression. If the given objec
+cannot be solved into a valid matrix, vector or expression, it is treated as 
+string literal if `IMPLICIT` is `ALLOWED`, otherwise a parser error is raised
+To explicitly interpret an object as a literal string even if it resolves to a vali
+numerical expression, it should be prefixed with the `TEXT` keyword. Hashes~`#
+appearing literal strings have to be quoted to prevent the parser to treat them a
+comments within the wasora input file
+Whenever an argument starts with a porcentage sign '%', it is treated as 
+printf-compatible format definition and all the objects that follow it are printe
+using the given format until a new format definition is found. All the objects ar
+treated as double-precision floating point numbers, so only floating point format
+should be given. The default format is '%e'
+Matrices, vectors, scalar expressions, format modifiers and string literals can b
+given in the desired order, and are processed from left to right
+Vectors are printed element-by-element in a single row. See `PRINT_VECTOR` to prin
+vectors column-wise. Matrices are printed element-by-element in a row-major fashio
+if mixed with other objects but in the natural row and column fashion if it is th
+only given object
+If the `FILE` keyword is not provided, default is to write to stdout
+If the `NONEWLINE` keyword is not provided, default is to write a newline '\n' character after all the objects are processed
+The `SEP` keywords expects a string used to separate printed objects, the default is a tab '\t' character
+Use the `NOSEP` keyword to define an empty string as object separator
+If the `HEADER` keyword is given, a single line containing the literal tex
+given for each object is printed at the very first time the `PRINT` instruction i
+processed, starting with a hash `#` character
+If the `SKIP_STEP` (`SKIP_STATIC_STEP`)keyword is given, the instruction is processed only ever
+the number of transient (static) steps that results in evaluating the expression
+which may not be constant. By default the `PRINT` instruction is evaluated ever
+step. The `SKIP_HEADER_STEP` keyword works similarly for the optional `HEADER` bu
+by default it is only printed once. The `SKIP_TIME` keyword use time advancement
+to choose how to skip printing and may be useful for non-constant time-step problems
 
 ##  `PRINT_FUNCTION`
 
-Prints one or more functions as a table of values of dependent and independent variables.
+Print one or more functions as a table of values of dependent and independent variables.
 
 ~~~wasora
 PRINT_FUNCTION <function_1> [ { function_2 | expr_1 } ... { function_n | expr_n-1 } ] [ FILE <file_id> | FILE_PATH <file_path> ] [ HEADER ] [ MIN <expr_1> <expr_2> ... <expr_m> ] [ MAX <expr_1> <expr_2> ... <expr_m> ] [ STEP <expr_1> <expr_2> ... <expr_m> ] [ NSTEPs <expr_1> <expr_2> ... <expr_m> ] [ FORMAT <print_format> ] [ PHYSICAL_ENTITY <name> ]
@@ -365,7 +376,7 @@ PRINT_FUNCTION <function_1> [ { function_2 | expr_1 } ... { function_n | expr_n-
 
 ##  `PRINT_VECTOR`
 
-Prints one or more vectors.
+Print the elements of one or more vectors.
 
 ~~~wasora
 PRINT_VECTOR [ FILE <file_id> ] FILE_PATH <file_path> ] [ { VERTICAL | HORIZONTAL } ] [ ELEMS_PER_LINE <expr> ] [ FORMAT <print_format> ] <vector_1> [ vector_2 ... vector_n ]
@@ -375,17 +386,17 @@ PRINT_VECTOR [ FILE <file_id> ] FILE_PATH <file_path> ] [ { VERTICAL | HORIZONTA
 
 ##  `READ`
 
- Reads data (variables, vectors o matrices) from external objects.
+Read data (variables, vectors o matrices) from files or shared-memory segments.
 
 ~~~wasora
-[ READ | WRITE ] [ SHM <name> ] [ { ASCII_FILE_PATH | BINARY_FILE_PATH } <file_path> ] [ { ASCII_FILE | BINARY_FILE } <identifier> ] ///kw+READ+usage [ IGNORE_NULL ] [ object_1 object_2 ... object_n ]
+[ READ | WRITE ] [ SHM <name> ] [ { ASCII_FILE_PATH | BINARY_FILE_PATH } <file_path> ] [ { ASCII_FILE | BINARY_FILE } <identifier> ] [ IGNORE_NULL ] [ object_1 object_2 ... object_n ]
 ~~~
 
 
 
 ##  `SEMAPHORE`
 
-Performs either a wait or a post operation on a named shared semaphore.
+Perform either a wait or a post operation on a named shared semaphore.
 
 ~~~wasora
 [ SEMAPHORE | SEM ] <name> { WAIT | POST }
@@ -395,7 +406,7 @@ Performs either a wait or a post operation on a named shared semaphore.
 
 ##  `SHELL`
 
-Executes a shell command.
+Execute a shell command.
 
 ~~~wasora
 SHELL <print_format> [ expr_1 expr_2 ... expr_n ]
@@ -405,7 +416,7 @@ SHELL <print_format> [ expr_1 expr_2 ... expr_n ]
 
 ##  `SOLVE`
 
-Solves a non-linear system of~$n$ equations with~$n$ unknowns.
+Solve a non-linear system of\ $n$ equations with\ $n$ unknowns.
 
 ~~~wasora
 SOLVE <n> UNKNOWNS <var_1> <var_2> ... <var_n> RESIDUALS <expr_1> <expr_2> ... <expr_n> ] GUESS <expr_1> <expr_2> ... <expr_n> ] [ METHOD { dnewton | hybrid | hybrids | broyden } ] [ EPSABS <expr> ] [ EPSREL <expr> ] [ MAX_ITER <expr> ] [ VERBOSE ]
@@ -415,21 +426,21 @@ SOLVE <n> UNKNOWNS <var_1> <var_2> ... <var_n> RESIDUALS <expr_1> <expr_2> ... <
 
 ##  `TIME_PATH`
 
-Forces transient problems to pass through specific instants of time.
+Force transient problems to pass through specific instants of time.
 
 ~~~wasora
-TIME_PATH [ expr_1 ] [ expr_2 ] ... [ expr_n ]
+TIME_PATH <expr_1> [ <expr_2> [ ... <expr_n> ] ]
 ~~~
 
 
-The time step `dt` will be reduced whenever the distance between
-the current time `t` and the next expression in the list is greater
-than `dt` so as to force `t` to coincide with the expressions given.
-The list of expresssions should evaluate to a sorted list of values.          
+The time step `dt` will be reduced whenever the distance betwee
+the current time `t` and the next expression in the list is greate
+than `dt` so as to force `t` to coincide with the expressions given
+The list of expresssions should evaluate to a sorted list of values
 
 ##  `VAR`
 
-Defines one or more scalar variables.
+Define one or more scalar variables.
 
 ~~~wasora
 VAR <name_1> [ <name_2> ] ... [ <name_n> ]
@@ -439,7 +450,7 @@ VAR <name_1> [ <name_2> ] ... [ <name_n> ]
 
 ##  `VECTOR`
 
-Defines a vector.
+Define a vector.
 
 ~~~wasora
 VECTOR <name> SIZE <expr> [ DATA <expr_1> <expr_2> ... <expr_n> | FUNCTION_DATA <function> ]
@@ -449,7 +460,7 @@ VECTOR <name> SIZE <expr> [ DATA <expr_1> <expr_2> ... <expr_n> | FUNCTION_DATA 
 
 ##  `WRITE`
 
-Writes data (variables, vectors o matrices) to external objects.
+Write data (variables, vectors o matrices) to files or shared-memory segments.
 See the `READ` keyword for usage details.
 
 
@@ -526,7 +537,7 @@ MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ N
 
 
 ~~~wasora
-PHYSICAL_ENTITY <name> [ DIMENSION <expr> ] [ MESH <name> ] [ MATERIAL <name> ] [ X_MIN <expr> ] [ X_MAX <expr> ] [ Y_MIN <expr> ] [ Y_MAX <expr> ] [ Z_MIN <expr> ] [ Z_MAX <expr> ] [ BC <bc_1> <bcg_2> ... ]
+PHYSICAL_ENTITY <name> [ DIMENSION <expr> ] [ MESH <name> ] [ MATERIAL <name> ] [ BC <bc_1> <bcg_2> ... ]
 ~~~
 
 
@@ -544,225 +555,6 @@ PHYSICAL_PROPERTY <name> [ <material_name1> <expr1> [ <material_name2> <expr2> ]
 
 
 # Variables
-
-##  `done`
-
-Flag that indicates whether the overall calculation is over.
-
-
-
-##  `done_outer`
-
-Flag that indicates whether the parametric, optimization of fit calculation is over or not.
-It is set to true (i.e. $\neq 0$) by wasora whenever the outer calculation is considered to be finished,
-which can be that the parametric calculation swept the desired parameter space or that the
-optimization algorithm reached the desired convergence criteria.
-If the user sets it to true, the current step is marked as the last outer step and
-the transient calculation ends after finishing the step.
-
-
-
-##  `done_static`
-
-Flag that indicates whether the static calculation is over or not.
-It is set to true (i.e. $\neq 0$) by wasora if `step_static` $\ge$ `static_steps`.
-If the user sets it to true, the current step is marked as the last static step and
-the static calculation ends after finishing the step.
-
-
-
-##  `done_transient`
-
-Flag that indicates whether the transient calculation is over or not.
-It is set to true (i.e. $\neq 0$) by wasora if `t` $\ge$ `end_time`.
-If the user sets it to true, the current step is marked as the last transient step and
-the transient calculation ends after finishing the step.
-
-
-
-##  `dt`
-
-Actual value of the time step for transient calculations. When solving DAE systems,
-this variable is set by wasora. It can be written by the user for example by importing it from another
-transient code by means of shared-memory objects. Care should be taken when
-solving DAE systems and overwriting `t`. Default value is 1/16, which is
-a power of two and roundoff errors are thus reduced.
-
-
-
-##  `end_time`
-
-Final time of the transient calculation, to be set by the user. 
-The default value is zero, meaning no transient calculation.
-
-
-
-##  `i`
-
-Dummy index, used mainly in vector and matrix row subindex expressions.
-
-
-
-##  `infinite`
-
-A very big positive number, which can be used as `end_time = infinite` or
-to define improper integrals with infinite limits. Default is $2^{50} \approx 1 \times 10^{15}$.
-
-
-
-##  `in_outer_initial`
-
-Flag that indicates if the current step is the initial step of an optimization of fit run.
-
-
-
-##  `in_static`
-
-Flag that indicates if wasora is solving the iterative static calculation.
-Flag that indicates if wasora is in the first step of the iterative static calculation.
-Flag that indicates if wasora is in the last step of the iterative static calculation.
-
-
-
-##  `in_transient`
-
-Flag that indicates if wasora is solving transient calculation.
-
-
-
-##  `in_transient_first`
-
-Flag that indicates if wasora is in the first step of the transient calculation.
-
-
-
-##  `in_transient_last`
-
-Flag that indicates if wasora is in the last step of the transient calculation.
-
-
-
-##  `j`
-
-Dummy index, used mainly in matrix column subindex expressions.
-
-
-
-##  `max_dt`
-
-Maximum bound for the time step that wasora should take when solving DAE systems.
-
-
-
-##  `min_dt`
-
-Minimum bound for the time step that wasora should take when solving DAE systems.
-
-
-
-##  `ncores`
-
-The number of online available cores, as returned by `sysconf(_SC_NPROCESSORS_ONLN)`.
-This value can be used in the `MAX_DAUGHTERS` expression of the `PARAMETRIC` keyword
-(i.e `ncores/2`).
-
-
-
-##  `on_gsl_error`
-
-This should be set to a mask that indicates how to proceed if an error ir raised in any
-routine of the GNU Scientific Library. 
-
-
-
-##  `on_ida_error`
-
-This should be set to a mask that indicates how to proceed if an error ir raised in any
-routine of the SUNDIALS IDA Library. 
-
-
-
-##  `on_nan`
-
-This should be set to a mask that indicates how to proceed if Not-A-Number signal (such as a division by zero)
-is generated when evaluating any expression within wasora.
-
-
-
-##  `pi`
-
-A double-precision floating point representaion of the number $\pi$, equal to
-`math.h` 's `M_PI` constant.
-
-
-
-##  `pid`
-
-The UNIX process id of wasora (or the plugin).
-
-
-
-##  `realtime_scale`
-
-If this variable is not zero, then the transient problem is run trying to syncrhonize the
-problem time with realtime, up to a scale given. For example, if the scale is set to one, then
-wasora will advance the problem time at the same pace that the real wall time advances. If set to
-two, wasora's time wil advance twice as fast as real time, and so on. If the calculation time is
-slower than real time modified by the scale, this variable has no effect on the overall behavior
-and execution will proceed as quick as possible with no delays.
-
-
-
-##  `rel_error`
-
-Maximum allowed relative error for the solution of DAE systems. Default value is
-is $1 \times 10^{-6}$. If a fine per-variable error control is needed, special vector
-`abs_error` should be used.
-
-
-
-##  `static_steps`
-
-Number of steps that ought to be taken during the static calculation, to be set by the user. 
-The default value is one, meaning only one static step. 
-
-
-
-##  `step_outer`
-
-Indicates the current step number of the iterative outer calculation (parametric, optimization or fit).
-Indicates the current step number of the iterative inner calculation (optimization or fit).
-
-
-
-##  `step_static`
-
-Indicates the current step number of the iterative static calculation.
-
-
-
-##  `step_transient`
-
-Indicates the current step number of the transient static calculation.
-
-
-
-##  `t`
-
-Actual value of the time for transient calculations. This variable is set by
-wasora, but can be written by the user for example by importing it from another
-transient code by means of shared-memory objects. Care should be taken when
-solving DAE systems and overwriting `t`.
-
-
-
-##  `zero`
-
-A very small positive number, which is taken to avoid roundoff 
-errors when comparing floating point numbers such as replacing $a \leq a_\text{max}$
-with $a < a_\text{max} +$ `zero`. Default is $(1/2)^{-50} \approx 9\times 10^{-16}$ .
-
-
 
 
 
@@ -783,34 +575,9 @@ include those surface elements that belong to boundary physical entities.
 
 
 
-##  `eps`
-
-Small value. Default is $10^{-6}$.
-
-
-
 ##  `nodes`
 
 Number of nodes of the unstructured grid.
-
-
-
-##  `x`
-
-Holder variable for spatial dependance of functions, such spatial distribution
-of physical properties or results of partial differential equations.
-
-
-
-##  `y`
-
-Idem as `x`.
-
-
-
-##  `z`
-
-Idem as `x`.
 
 
 
@@ -1666,92 +1433,6 @@ sum(f_i, i, a, b)
 
 
 # Vector functions
-
-##  `vecdot`
-
-Computes the dot product between vectors $\vec{a}$ and $\vec{b}$, which should
-have the same size.
-
-~~~wasora
-vecdot(a,b)
-~~~
-
-
-
-##  `vecmax`
-
-Returns the biggest element of vector $\vec{b}$, taking into account its sign
-(i.e. $1 > -2$).
-
-~~~wasora
-vecmax(b)
-~~~
-
-
-
-##  `vecmaxindex`
-
-Returns the index of the biggest element of vector $\vec{b}$, taking into account its sign
-(i.e. $2 > -1$).
-
-~~~wasora
-vecmaxindex(b)
-~~~
-
-
-
-##  `vecmin`
-
-Returns the smallest element of vector $\vec{b}$, taking into account its sign
-(i.e. $-2 < 1$).
-
-~~~wasora
-vecmin(b)
-~~~
-
-
-
-##  `vecminindex`
-
-Returns the index of the smallest element of vector $\vec{b}$, taking into account its sign
-(i.e. $-2 < 1$).
-
-~~~wasora
-vecminindex(b)
-~~~
-
-
-
-##  `vecnorm`
-
-Computes euclidean norm of vector $\vec{b}$. Other norms can be computed explicitly
-using the `sum` functional, as illustrated in the example.
-
-~~~wasora
-vecnorm(b)
-~~~
-
-
-
-##  `vecsize`
-
-Returns the size of vector $\vec{b}$.
-
-~~~wasora
-vecsize(b)
-~~~
-
-
-
-##  `vecsum`
-
-Computes the sum of all the components of vector $\vec{b}$.
-
-~~~wasora
-vecsum(b)
-~~~
-
-
 
 
 

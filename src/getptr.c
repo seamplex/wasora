@@ -66,7 +66,7 @@ file_t  *wasora_get_file_ptr(const char *name) {
 }
 
 // devuelve la direccion de la rutina de usuario que se llama name
-double (*wasora_get_routine_ptr(const char *name))(const double *, const char *) {
+double (*wasora_get_routine_ptr(const char *name))(const double *) {
   loadable_routine_t *loadable_routine;
   HASH_FIND_STR(wasora.loadable_routines, name, loadable_routine);
   if (loadable_routine == NULL) {

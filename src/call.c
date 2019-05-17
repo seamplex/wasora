@@ -35,9 +35,9 @@ int wasora_instruction_call(void *arg) {
   }
 
   if (call->n_arguments != 0) {
-    call->function(call->x);
+    call->function(call->x, call->name);
   } else {
-    call->function(NULL);
+    call->function(NULL, NULL);
   }
 
   return WASORA_RUNTIME_OK;

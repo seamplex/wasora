@@ -446,7 +446,7 @@ struct function_t {
   
   // ----- ------- -----------   --        -       - 
   // funcion que hay que llamar para funciones tipo usercall 
-  double (*routine)(const double *);
+  double (*routine)(const double *, const char *);
 
   UT_hash_handle hh;
 };
@@ -472,7 +472,7 @@ struct loadable_routine_t {
   char *name;
   int initialized;
     
-  double (*routine)(const double *);
+  double (*routine)(const double *, const char *);
 // TODO: acordarse de este para poder hacer dlclose
 //  void *library;
 
@@ -743,7 +743,7 @@ struct  assignment_t {
 // llamada a funcion del usuario como instruccion
 struct call_t {
   char *name;
-  double (*function)(const double *);
+  double (*function)(const double *, const char *);
 
   int n_arguments;
   expr_t *arguments;
@@ -1464,7 +1464,7 @@ extern builtin_vectorfunction_t *wasora_get_builtin_vectorfunction_ptr(const cha
 extern builtin_functional_t *wasora_get_builtin_functional_ptr(const char *);
 extern file_t  *wasora_get_file_ptr(const char *);
 extern loadable_routine_t *wasora_get_loadable_routine(const char *);
-extern double (*wasora_get_routine_ptr(const char *))(const double *);
+extern double (*wasora_get_routine_ptr(const char *))(const double *, const char *);
 extern struct semaphore_t *wasora_get_sem_ptr(char *);
 extern vector_t *wasora_get_first_vector(const char *);
 extern matrix_t *wasora_get_first_matrix(const char *);

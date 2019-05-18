@@ -374,8 +374,8 @@ double wasora_evaluate_function(function_t *function, const double *x) {
   } else if (function->type == type_routine) {
     y = function->routine(x);
     
-  } else if (function->type == type_plugin_routine) {
-    y = function->plugin_routine(x, function->name);
+  } else if (function->type == type_internal_routine) {
+    y = function->internal_routine(x, function);
     
   } else if (function->algebraic_expression.n_tokens != 0 && function->n_arguments == 1) {
 

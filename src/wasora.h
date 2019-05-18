@@ -370,7 +370,7 @@ struct function_t {
     type_pointwise_mesh_node,
     type_pointwise_mesh_cell,
     type_routine,
-    type_plugin_routine,
+    type_internal_routine,
   } type;
   
   // cantidad de argumentos que toma la funcion 
@@ -449,8 +449,10 @@ struct function_t {
   // funcion que hay que llamar para funciones tipo usercall 
   double (*routine)(const double *);
   
-  // funcion que hay que llamar para funciones tipo plugincall 
-  double (*plugin_routine)(const double *, const char *);
+  // ----- ------- -----------   --        -       - 
+  // funcion que hay que llamar para funciones internas
+  double (*internal_routine)(const double *, function_t *);
+  void *params;
 
   UT_hash_handle hh;
 };

@@ -374,6 +374,9 @@ double wasora_evaluate_function(function_t *function, const double *x) {
   } else if (function->type == type_routine) {
     y = function->routine(x);
     
+  } else if (function->type == type_routine_internal) {
+    y = function->routine_internal(x, function);
+    
   } else if (function->algebraic_expression.n_tokens != 0 && function->n_arguments == 1) {
 
     // funcion con expresion algebraic unidimensional

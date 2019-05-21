@@ -163,9 +163,9 @@ extern const char factorseparators[];
 
 #define DEFAULT_DERIVATIVE_STEP            (9.765625e-4)         // (1/2)^-10
 
-#define DEFAULT_MULTIDIM_INTERPOLATION_THRESHOLD   (9.5367431640625e-07) // (1/2)^-20
-#define DEFAULT_SHEPARD_RADIUS                     (1.0)
-#define DEFAULT_SHEPARD_EXPONENT                   (2)
+#define DEFAULT_MULTIDIM_INTERPOLATION_THRESHOLD   9.5367431640625e-07 // (1/2)^-20
+#define DEFAULT_SHEPARD_RADIUS                     1.0
+#define DEFAULT_SHEPARD_EXPONENT                   2
 
 #define MINMAX_ARGS       10
 
@@ -425,7 +425,7 @@ struct function_t {
     nearest,
     shepard,
     modified_shepard,
-    rectangle
+    bilinear
   } multidim_interp;
 
   

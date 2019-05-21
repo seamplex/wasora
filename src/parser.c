@@ -803,6 +803,8 @@ if (strcasecmp(token, "FROM") == 0) {
       int level, nargs;
 
 ///kw+FUNCTION+usage <name>(<var_1>[,var2,...,var_n])
+///kw+FUNCTION+detail The number of variables $n$ is given by the number of arguments given between parenthesis after the function name.
+///kw+FUNCTION+detail The arguments are defined as new variables if they had not been already defined as variables.
       // si nos dieron el keyword FUNCTION tenemos que hacer un wasora_get_next_token
       // para obtener el nombre de la funcion, sino ya esta en token
       if (strcasecmp(token, "FUNCTION") == 0) {
@@ -811,8 +813,6 @@ if (strcasecmp(token, "FROM") == 0) {
           return WASORA_PARSER_ERROR;
         }
       }
-
-
 
       // parseamos los argumentos
       if ((dummy = strchr(token, '(')) == NULL) {
@@ -920,6 +920,9 @@ if (strcasecmp(token, "FROM") == 0) {
       while ((token = wasora_get_next_token(NULL)) != NULL && strcasecmp(token, "DATA") != 0) {
 ///kw+FUNCTION+usage {
 ///kw+FUNCTION+usage [ = <expr> |
+///kw+FUNCTION+detail If the function is given as an algebraic expression, the short-hand operator `:=` can be used.
+///kw+FUNCTION+detail That is to say, `FUNCTION f(x) = x^2` is equivalent to `f(x) := x^2`.
+        
         if (strcasecmp(token, "=") == 0 || strcasecmp(token, ":=") == 0) {
 
           function->type = type_algebraic;
@@ -940,12 +943,17 @@ if (strcasecmp(token, "FROM") == 0) {
 
 ///kw+FUNCTION+usage FILE_PATH <file_path> |
         } else if (strcasecmp(token, "FILE_PATH") == 0) {
+///kw+FUNCTION+detail If a `FILE_PATH` is given, an ASCII file containing at least $n+1$ columns is expected.
+///kw+FUNCTION+detail By default, the first $n$ columns are the values of the arguments and the last column is the value of the function at those points.
+///kw+FUNCTION+detail The order of the columns can be changed with the keyword `COLUMNS`, which expects $n+1$ expressions corresponding to the column numbers.
+          
           // TODO: poder pedir que se refresquen los datos en cada paso
           function->type = type_pointwise_file;
           wasora_parser_string(&function->data_file);
 
 ///kw+FUNCTION+usage ROUTINE <name> |
         } else if (strcasecmp(token, "ROUTINE") == 0) {
+///kw+FUNCTION+detail A function of type `ROUTINE` calls an already-defined user-provided routine using the `CALL` keyword and passes the values of the variables in each required evaluation as a `double *` argument.
 
           function->type = type_routine;
 
@@ -959,7 +967,14 @@ if (strcasecmp(token, "FROM") == 0) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+FUNCTION+usage | MESH <name> { DATA <data> | VECTOR <vector> { NODES | CELLS } } |
+///kw+FUNCTION+usage | MESH <name> { DATA <new_vector_name> | VECTOR <existing_vector_name> } { NODES | CELLS } |
+///kw+FUNCTION+detail If `MESH` is given, the definition points are the nodes or the cells of the mesh.
+///kw+FUNCTION+detail The function arguments should be $(x)$, $(x,y)$ or $(x,y,z)$ matching the dimension the mesh.
+///kw+FUNCTION+detail If the keyword `DATA` is used, a new empty vector of the appropriate size is defined.
+///kw+FUNCTION+detail The elements of this new vector can be assigned to the values of the function at the $i$-th node or cell.
+///kw+FUNCTION+detail If the keyword `VECTOR` is used, the values of the dependent variable are taken to be the values of the already-existing vector.
+///kw+FUNCTION+detail Note that this vector should have the size of the number of nodes or cells the mesh has, depending on whether `NODES` or `CELLS` is given.
+          
         } else if (strcasecmp(token, "MESH") == 0) {
 
           if ((token = wasora_get_next_token(NULL)) == NULL) {
@@ -976,7 +991,7 @@ if (strcasecmp(token, "FROM") == 0) {
             wasora_push_error_message("expected keyword DATA or VECTOR");
             return WASORA_PARSER_ERROR;
           }
-          
+
           if (strcasecmp(token, "DATA") == 0) {
             if ((token = wasora_get_next_token(NULL)) == NULL) {
               wasora_push_error_message("expected data name");
@@ -1031,6 +1046,9 @@ if (strcasecmp(token, "FROM") == 0) {
           
 ///kw+FUNCTION+usage [ VECTOR_DATA <vector_1> <vector_2> ... <vector_n> <vector_n+1> ]
 ///kw+FUNCTION+usage }
+///kw+FUNCTION+detail If `VECTOR_DATA` is given, a set of $n+1$ vectors of the same size is expected.
+///kw+FUNCTION+detail The first $n+1$ correspond to the arguments and the last one is the function value.
+          
         } else if (strcasecmp(token, "VECTOR_DATA") == 0 || strcasecmp(token, "VECTORS") == 0) {
 
           function->type = type_pointwise_vector;
@@ -1049,7 +1067,7 @@ if (strcasecmp(token, "FROM") == 0) {
           }
 
 
-///kw+FUNCTION+usage [COLUMNS <num_expr_1> <num_expr_2> ... <num_expr_n> <num_expr_n+1> ]
+///kw+FUNCTION+usage [COLUMNS <expr_1> <expr_2> ... <expr_n> <expr_n+1> ]
         } else if (strcasecmp(token, "COLUMNS") == 0) {
 
           if (nargs == 0) {
@@ -1067,7 +1085,7 @@ if (strcasecmp(token, "FROM") == 0) {
           }
 
 ///kw+FUNCTION+usage [ INTERPOLATION
-///kw+FUNCTION+desc Default interpolation scheme for one-dimensional functions is `DEFAULT_INTERPOLATION`.
+///kw+FUNCTION+detail Interpolation schemes can be given for either one or multi-dimensional functions with `INTERPOLATION`.
         } else if (strcasecmp(token, "INTERPOLATION") == 0) {
 
           if ((token = wasora_get_next_token(NULL)) == NULL) {
@@ -1075,26 +1093,36 @@ if (strcasecmp(token, "FROM") == 0) {
             return WASORA_PARSER_ERROR;
           }
           
+///kw+FUNCTION+detail Available schemes for $n=1$ are:
+///kw+FUNCTION+detail @
 ///kw+FUNCTION+usage {
 ///kw+FUNCTION+usage linear |
+///kw+FUNCTION+detail  * linear
           if (strcasecmp(token, "linear") == 0) {
             function->interp_type = *gsl_interp_linear;
 ///kw+FUNCTION+usage polynomial |
+///kw+FUNCTION+detail  * polynomial, the grade is equal to the number of data minus one
           } else if (strcasecmp(token, "polynomial") == 0) {
             function->interp_type = *gsl_interp_polynomial;
 ///kw+FUNCTION+usage spline |
+///kw+FUNCTION+detail  * spline, cubic (needs at least 3 points)
           } else if (strcasecmp(token, "spline") == 0 || strcasecmp(token, "cspline") == 0 || strcasecmp(token, "splines") == 0) {
             function->interp_type = *gsl_interp_cspline;
 ///kw+FUNCTION+usage spline_periodic |
+///kw+FUNCTION+detail  * spline_periodic 
           } else if (strcasecmp(token, "spline_periodic") == 0 || strcasecmp(token, "cspline_periodic") == 0 || strcasecmp(token, "splines_periodic") == 0) {
             function->interp_type = *gsl_interp_cspline_periodic;
 ///kw+FUNCTION+usage akima |
+///kw+FUNCTION+detail  * akima (needs at least 5 points)
           } else if (strcasecmp(token, "akima") == 0) {
             function->interp_type = *gsl_interp_akima;
 ///kw+FUNCTION+usage akima_periodic |
+///kw+FUNCTION+detail  * akima_periodic (needs at least 5 points)
           } else if (strcasecmp(token, "akima_periodic") == 0) {
             function->interp_type = *gsl_interp_akima_periodic;
+            
 ///kw+FUNCTION+usage steffen |
+///kw+FUNCTION+detail  * steffen, always-monotonic splines-like (available only with GSL >= 2.0)
           } else if (strcasecmp(token, "steffen") == 0) {
 #if (GSL_MAJOR_VERSION < 2)  
 //            wasora_push_error_message("inerpolation steffen is available only for GSL >= 2.0, you have version %s", GSL_VERSION);
@@ -1102,40 +1130,57 @@ if (strcasecmp(token, "FROM") == 0) {
 #else
             function->interp_type = *gsl_interp_steffen;
 #endif
+///kw+FUNCTION+detail @ 
+///kw+FUNCTION+detail Default interpolation scheme for one-dimensional functions is `DEFAULT_INTERPOLATION`.
+///kw+FUNCTION+detail @ 
+///kw+FUNCTION+detail Available schemes for $n>1$ are:
+///kw+FUNCTION+detail @
 ///kw+FUNCTION+usage nearest |
+///kw+FUNCTION+detail  * nearest, $f(\vec{x})$ is equal to the value of the closest definition point
           } else if (strcasecmp(token, "nearest") == 0) {
             function->multidim_interp = nearest;
 ///kw+FUNCTION+usage shepard |
+///kw+FUNCTION+detail  * shepard, [inverse distance weighted average definition points](https:/\/en.wikipedia.org/wiki/Inverse_distance_weighting) (might lead to inefficient evaluation)
           } else if (strcasecmp(token, "shepard") == 0) {
             function->multidim_interp = shepard;
 ///kw+FUNCTION+usage modified_shepard |
+///kw+FUNCTION+detail  * modified_shepard, [average of definition points within a kd-tree](https:/\/en.wikipedia.org/wiki/Inverse_distance_weighting#Modified_Shepard&#39;s_method) (more efficient evaluation provided `SHEPARD_RADIUS` is set to a proper value)
           } else if (strcasecmp(token, "modified_shepard") == 0) {
             function->multidim_interp = modified_shepard;
 ///kw+FUNCTION+usage bilinear
+///kw+FUNCTION+detail  * bilinear, only available if the definition points configure an structured hypercube-like grid. If $n>3$, `SIZES` should be given.
           } else if (strcasecmp(token, "bilinear") == 0 || strcasecmp(token, "rectangle") == 0 || strcasecmp(token, "rectangular") == 0) {
-            function->multidim_interp = rectangle;
+            function->multidim_interp = bilinear;
 ///kw+FUNCTION+usage } ]
           } else {
             wasora_push_error_message("undefined interpolation method '%s'", token);
             return WASORA_PARSER_ERROR;
           }
+///kw+FUNCTION+detail @
 
 ///kw+FUNCTION+usage [ INTERPOLATION_THRESHOLD <expr> ]
+///kw+FUNCTION+detail For $n>1$, if the euclidean distance between the arguments and the definition points is smaller than `INTERPOLATION_THRESHOLD`, the definition point is returned and no interpolation is performed.
+///kw+FUNCTION+detail Default value is square root of `DEFAULT_MULTIDIM_INTERPOLATION_THRESHOLD`.
         } else if (strcasecmp(token, "INTERPOLATION_THRESHOLD") == 0) {
 
            wasora_parser_expression(&function->expr_multidim_threshold);
            
 ///kw+FUNCTION+usage [ SHEPARD_RADIUS <expr> ]
+///kw+FUNCTION+detail The initial radius of points to take into account in `modified_shepard` is given by `SHEPARD_RADIUS`.
+///kw+FUNCTION+detail The radius is doubled until at least one point is found.
+///kw+FUNCTION+detail Default is `DEFAULT_SHEPARD_RADIUS`.
         } else if (strcasecmp(token, "SHEPARD_RADIUS") == 0) {
 
            wasora_parser_expression(&function->expr_shepard_radius);
 
 ///kw+FUNCTION+usage [ SHEPARD_EXPONENT <expr> ]
+///kw+FUNCTION+detail The exponent of the `shepard` method is given by `SHEPARD_EXPONENT`.
+///kw+FUNCTION+detail Default is `DEFAULT_SHEPARD_EXPONENT`.
         } else if (strcasecmp(token, "SHEPARD_EXPONENT") == 0) {
-
            wasora_parser_expression(&function->expr_shepard_exponent);
 
 ///kw+FUNCTION+usage [ SIZES <expr_1> <expr_2> ... <expr_n> ]
+///kw+FUNCTION+detail When requesting `bilinear` interpolation for $n>3$, the number of definition points for each argument variable has to be given with `SIZES`,
         } else if (strcasecmp(token, "SIZES") == 0) {
           
           function->expr_rectangular_mesh_size = calloc(function->n_arguments, sizeof(expr_t));
@@ -1145,6 +1190,7 @@ if (strcasecmp(token, "FROM") == 0) {
           }
           
 ///kw+FUNCTION+usage [ X_INCREASES_FIRST <expr> ]
+///kw+FUNCTION+detail and wether the definition data is sorted with the first argument changing first (`X_INCREASES_FIRST` evaluating to non-zero) or with the last argument changing first (zero).
         } else if (strcasecmp(token,"X_INCREASES_FIRST") == 0) {
           
           wasora_call(wasora_parser_expression(&function->expr_x_increases_first));
@@ -1241,7 +1287,9 @@ if (strcasecmp(token, "FROM") == 0) {
           fclose(data_file);
 
 
-///kw+FUNCTION+usage [ DATA <num_expr_1> <num_expr_2> ... <num_expr_N> ]
+///kw+FUNCTION+usage [ DATA <num_1> <num_2> ... <num_N> ]
+///kw+FUNCTION+detail The function can be pointwise-defined inline in the input using `DATA`. This should be the last keyword of the line, followed by $N=k\cdot (n+1)$ expresions giving $k$ definition points: $n$ arguments and the value of the function.
+///kw+FUNCTION+detail Multiline continuation using brackets `{` and `}` can be used for a clean data organization. See the examples.
         } else if (token != NULL && strcasecmp(token, "DATA") == 0) {
           // leemos del mismo archivo de entrada
           dummy = token + strlen(token)+1;

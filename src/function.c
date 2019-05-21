@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora mathematical functions evaluation
  *
- *  Copyright (C) 2009--2016 jeremy theler
+ *  Copyright (C) 2009--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -314,7 +314,7 @@ int wasora_function_init(function_t *function) {
         }
       }
     
-      if (function->rectangular_mesh == 0 && function->multidim_interp == rectangle) {
+      if (function->rectangular_mesh == 0 && function->multidim_interp == bilinear) {
         wasora_push_error_message("rectangular interpolation of function '%s' needs a rectangular mesh", function->name);
         return WASORA_RUNTIME_ERROR;
       }
@@ -477,32 +477,41 @@ double wasora_evaluate_function(function_t *function, const double *x) {
     } else if (function->multidim_interp == modified_shepard) {
       struct kdres *presults;
       int flag = 0;  // suponemos que NO nos pidieron un punto del problema
+      int n = 0;
       double num = 0;
       double den = 0;
       double w_i, y_i, dist2, diff;
       double *x_i = malloc(function->n_arguments*sizeof(double));
       
-      presults = kd_nearest_range(function->kd, x, function->shepard_radius);
-      while (kd_res_end(presults) == 0) {
-        y_i = *((double *)kd_res_item(presults, x_i));
+      do {
+        presults = kd_nearest_range(function->kd, x, function->shepard_radius);
+        while (kd_res_end(presults) == 0) {
+          n++;
+          y_i = *((double *)kd_res_item(presults, x_i));
         
-        dist2 = 0;
-        for (j = 0; j < function->n_arguments; j++) {
-          diff = (x[j]-x_i[j]);
-          dist2 += diff*diff;
+          dist2 = 0;
+          for (j = 0; j < function->n_arguments; j++) {
+            diff = (x[j]-x_i[j]);
+            dist2 += diff*diff;
+          }
+          if (dist2 < function->multidim_threshold) {
+            y = y_i;
+            flag = 1;   // nos pidieron un punto de la definicion
+            break;
+          } else {
+            w_i = (function->shepard_exponent == 2)? 1.0/dist2 : 1.0/pow(dist2, 0.5*function->shepard_exponent);
+            num += w_i * y_i;
+            den += w_i;
+          }
+          kd_res_next(presults);
         }
-        if (dist2 < function->multidim_threshold) {
-          y = y_i;
-          flag = 1;   // nos pidieron un punto de la definicion
-          break;
-        } else {
-          w_i = (function->shepard_exponent == 2)? 1.0/dist2 : 1.0/pow(dist2, 0.5*function->shepard_exponent);
-          num += w_i * y_i;
-          den += w_i;
+        kd_res_free(presults);
+        
+        // si no encontramos ningun punto, duplicamos el radio
+        if (n == 0) {
+          function->shepard_radius *= 2;
         }
-        kd_res_next(presults);
-      }
-      kd_res_free(presults);
+      } while (n == 0);
 
       
       if (flag == 0) {
@@ -517,7 +526,7 @@ double wasora_evaluate_function(function_t *function, const double *x) {
       }
       free(x_i);
     
-    } else if (function->multidim_interp == rectangle && function->rectangular_mesh_size != NULL) {
+    } else if (function->multidim_interp == bilinear && function->rectangular_mesh_size != NULL) {
 
       // flag que indica si nos pidieron un punto de la definicion
       int flag;

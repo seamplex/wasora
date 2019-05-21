@@ -1,4 +1,4 @@
-% Wasora v0.6.17-g80b64c8 reference sheet
+% Wasora v0.6.23-g5154b2c reference sheet
 
 # Keywords
 
@@ -154,13 +154,58 @@ If the optional keyword `VERBOSE` is given, some data of the intermediate steps 
 ##  FUNCTION
 
 Define a function of one or more variables.
-Default interpolation scheme for one-dimensional functions is `DEFAULT_INTERPOLATION`.
 
 ~~~wasora
-FUNCTION <name>(<var_1>[,var2,...,var_n]) { [ = <expr> | FILE_PATH <file_path> | ROUTINE <name> | | MESH <name> { DATA <data> | VECTOR <vector> { NODES | CELLS } } | [ VECTOR_DATA <vector_1> <vector_2> ... <vector_n> <vector_n+1> ] } [COLUMNS <num_expr_1> <num_expr_2> ... <num_expr_n> <num_expr_n+1> ] [ INTERPOLATION { linear | polynomial | spline | spline_periodic | akima | akima_periodic | steffen | nearest | shepard | modified_shepard | bilinear } ] [ INTERPOLATION_THRESHOLD <expr> ] [ SHEPARD_RADIUS <expr> ] [ SHEPARD_EXPONENT <expr> ] [ SIZES <expr_1> <expr_2> ... <expr_n> ] [ X_INCREASES_FIRST <expr> ] [ DATA <num_expr_1> <num_expr_2> ... <num_expr_N> ]
+FUNCTION <name>(<var_1>[,var2,...,var_n]) { [ = <expr> | FILE_PATH <file_path> | ROUTINE <name> | | MESH <name> { DATA <new_vector_name> | VECTOR <existing_vector_name> } { NODES | CELLS } | [ VECTOR_DATA <vector_1> <vector_2> ... <vector_n> <vector_n+1> ] } [COLUMNS <expr_1> <expr_2> ... <expr_n> <expr_n+1> ] [ INTERPOLATION { linear | polynomial | spline | spline_periodic | akima | akima_periodic | steffen | nearest | shepard | modified_shepard | bilinear } ] [ INTERPOLATION_THRESHOLD <expr> ] [ SHEPARD_RADIUS <expr> ] [ SHEPARD_EXPONENT <expr> ] [ SIZES <expr_1> <expr_2> ... <expr_n> ] [ X_INCREASES_FIRST <expr> ] [ DATA <num_1> <num_2> ... <num_N> ]
 ~~~
 
 
+The number of variables $n$ is given by the number of arguments given between parenthesis after the function name.
+The arguments are defined as new variables if they had not been already defined as variables.
+If the function is given as an algebraic expression, the short-hand operator `:=` can be used.
+That is to say, `FUNCTION f(x) = x^2` is equivalent to `f(x) := x^2`.
+If a `FILE_PATH` is given, an ASCII file containing at least $n+1$ columns is expected.
+By default, the first $n$ columns are the values of the arguments and the last column is the value of the function at those points.
+The order of the columns can be changed with the keyword `COLUMNS`, which expects $n+1$ expressions corresponding to the column numbers.
+A function of type `ROUTINE` calls an already-defined user-provided routine using the `CALL` keyword and passes the values of the variables in each required evaluation as a `double *` argument.
+If `MESH` is given, the definition points are the nodes or the cells of the mesh.
+The function arguments should be $(x)$, $(x,y)$ or $(x,y,z)$ matching the dimension the mesh.
+If the keyword `DATA` is used, a new empty vector of the appropriate size is defined.
+The elements of this new vector can be assigned to the values of the function at the $i$-th node or cell.
+If the keyword `VECTOR` is used, the values of the dependent variable are taken to be the values of the already-existing vector.
+Note that this vector should have the size of the number of nodes or cells the mesh has, depending on whether `NODES` or `CELLS` is given.
+If `VECTOR_DATA` is given, a set of $n+1$ vectors of the same size is expected.
+The first $n+1$ correspond to the arguments and the last one is the function value.
+Interpolation schemes can be given for either one or multi-dimensional functions with `INTERPOLATION`.
+Available schemes for $n=1$ are:
+
+ * linear
+ * polynomial, the grade is equal to the number of data minus one
+ * spline, cubic (needs at least 3 points)
+ * spline_periodic
+ * akima (needs at least 5 points)
+ * akima_periodic (needs at least 5 points)
+ * steffen, always-monotonic splines-like (available only with GSL >= 2.0)
+
+Default interpolation scheme for one-dimensional functions is `(*gsl_interp_linear)`.
+
+Available schemes for $n>1$ are:
+
+ * nearest, $f(\vec{x})$ is equal to the value of the closest definition point
+ * shepard, weighted average of close definition points
+ * modified_shepard, weighted average of close definition points
+ * bilinear, only available if the definition points configure an structured hypercube-like grid. If $n>2$, `SIZES` should be given.
+
+For $n>1$, if the euclidean distance between the arguments and the definition points is smaller than `INTERPOLATION_THRESHOLD`, the definition point is returned and no interpolation is performed.
+Default value is square root of `9.5367431640625e-07`.
+The radius of points to take into account in `shepard` is given by `SHEPARD_RADIUS`.
+Default is `1.0`.
+The exponent of the `shepard` method is given by `SHEPARD_EXPONENT`.
+Default is `2`.
+When requesting `bilinear` interpolation for $n>2$, the number of definition points for each argument variable has to be given with `SIZES`,
+and wether the definition data is sorted with the first argument changing first (`X_INCREASES_FIRST` evaluating to non-zero) or with the last argument changing first (zero).
+The function can be pointwise-defined inline in the input using `DATA`. This should be the last keyword of the line, followed by $N=k\cdot (n+1)$ expresions giving $k$ definition points: $n$ arguments and the value of the function.
+Multiline continuation using brackets `{` and `}` can be used for a clean data organization. See the examples.
 
 ##  HISTORY
 

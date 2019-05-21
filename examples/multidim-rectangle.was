@@ -1,20 +1,18 @@
-IMPLICIT ALLOWED
-
 # evaluate some variables
-nx_1 = 2
-nx_2 = 3
-nx_3 = 3
-nx_4 = 2
+nx1 = 2
+nx2 = 3
+nx3 = 3
+nx4 = 2
 
 true = 1
 
 # we define a function ready to be interpolated (inside the defined domain, so we do not extrapolate).
 # note that SIZES and X_INCREASES_FIRST keywords take expressions as arguments.
-FUNCTION f(x_1,x_2,x_3,x_4) INTERPOLATION rectangle SIZES nx_1 nx_2 nx_3 nx_4 X_INCREASES_FIRST true DATA {
+FUNCTION f(x1,x2,x3,x4) INTERPOLATION bilinear SIZES nx1 nx2 nx3 nx4 X_INCREASES_FIRST true DATA {
 
 # data is ordered in x_increases_first = true form (from left to right).
-# the last column corresponds to the function evaluation f(x_1,x_2,x_3,x_4,x_5),
-# so (nx_1*nx_2*nx_3*nx_4*nx_5) values must be given.
+# the last column corresponds to the function evaluation f(x1,x2,x3,x4,x_5),
+# so (nx1*nx2*nx3*nx4*nx_5) values must be given.
 
 291.365792      793.885004      -131.187788     932.054232      541.999124      
 295.728426      793.885004      -131.187788     932.054232      530.418182      
@@ -73,13 +71,13 @@ FUNCTION f(x_1,x_2,x_3,x_4) INTERPOLATION rectangle SIZES nx_1 nx_2 nx_3 nx_4 X_
 
 # evaluate the function inside the domain so you can check if
 # the interpolation method is working fine.
-PRINT %.4f f(293.001482,799.893568,-130.725966,934.738141)
-PRINT %.4f f(291.849611,796.515689,-130.963923,932.531677)
-PRINT %.4f f(292.238330,794.367029,-130.796258,935.119008)
-PRINT %.4f f(294.714557,800.638990,-130.442109,933.661039)
-PRINT %.4f f(293.184707,798.132305,-130.438898,935.427068)
-PRINT %.4f f(293.373301,797.371760,-131.067196,935.390788)
-PRINT %.4f f(294.107122,795.062852,-130.482171,933.896175)
-PRINT %.4f f(292.836767,795.564913,-131.010053,934.970752)
-PRINT %.4f f(291.965299,798.425648,-130.837968,933.071252)
-PRINT %.4f f(291.631535,797.957979,-130.840373,933.122843)
+PRINT f(293.001482,799.893568,-130.725966,934.738141)
+PRINT f(291.849611,796.515689,-130.963923,932.531677)
+PRINT f(292.238330,794.367029,-130.796258,935.119008)
+PRINT f(294.714557,800.638990,-130.442109,933.661039)
+PRINT f(293.184707,798.132305,-130.438898,935.427068)
+PRINT f(293.373301,797.371760,-131.067196,935.390788)
+PRINT f(294.107122,795.062852,-130.482171,933.896175)
+PRINT f(292.836767,795.564913,-131.010053,934.970752)
+PRINT f(291.965299,798.425648,-130.837968,933.071252)
+PRINT f(291.631535,797.957979,-130.840373,933.122843)

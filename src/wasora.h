@@ -424,7 +424,7 @@ struct function_t {
   enum {
     nearest,
     shepard,
-    modified_shepard,
+    shepard_kd,
     bilinear
   } multidim_interp;
 

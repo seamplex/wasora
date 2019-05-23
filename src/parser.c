@@ -1143,10 +1143,10 @@ if (strcasecmp(token, "FROM") == 0) {
 ///kw+FUNCTION+detail  * shepard, [inverse distance weighted average definition points](https:/\/en.wikipedia.org/wiki/Inverse_distance_weighting) (might lead to inefficient evaluation)
           } else if (strcasecmp(token, "shepard") == 0) {
             function->multidim_interp = shepard;
-///kw+FUNCTION+usage modified_shepard |
-///kw+FUNCTION+detail  * modified_shepard, [average of definition points within a kd-tree](https:/\/en.wikipedia.org/wiki/Inverse_distance_weighting#Modified_Shepard&#39;s_method) (more efficient evaluation provided `SHEPARD_RADIUS` is set to a proper value)
-          } else if (strcasecmp(token, "modified_shepard") == 0) {
-            function->multidim_interp = modified_shepard;
+///kw+FUNCTION+usage shepard_kd |
+///kw+FUNCTION+detail  * shepard_kd, [average of definition points within a kd-tree](https:/\/en.wikipedia.org/wiki/Inverse_distance_weighting#Modified_Shepard&#39;s_method) (more efficient evaluation provided `SHEPARD_RADIUS` is set to a proper value)
+          } else if (strcasecmp(token, "shepard_kd") == 0 || strcasecmp(token, "modified_shepard") == 0) {
+            function->multidim_interp = shepard_kd;
 ///kw+FUNCTION+usage bilinear
 ///kw+FUNCTION+detail  * bilinear, only available if the definition points configure an structured hypercube-like grid. If $n>3$, `SIZES` should be given.
           } else if (strcasecmp(token, "bilinear") == 0 || strcasecmp(token, "rectangle") == 0 || strcasecmp(token, "rectangular") == 0) {
@@ -1166,7 +1166,7 @@ if (strcasecmp(token, "FROM") == 0) {
            wasora_parser_expression(&function->expr_multidim_threshold);
            
 ///kw+FUNCTION+usage [ SHEPARD_RADIUS <expr> ]
-///kw+FUNCTION+detail The initial radius of points to take into account in `modified_shepard` is given by `SHEPARD_RADIUS`.
+///kw+FUNCTION+detail The initial radius of points to take into account in `shepard_kd` is given by `SHEPARD_RADIUS`. If no points are found, the radius is double until at least one definition point is found.
 ///kw+FUNCTION+detail The radius is doubled until at least one point is found.
 ///kw+FUNCTION+detail Default is `DEFAULT_SHEPARD_RADIUS`.
         } else if (strcasecmp(token, "SHEPARD_RADIUS") == 0) {

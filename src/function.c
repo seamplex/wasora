@@ -326,7 +326,7 @@ int wasora_function_init(function_t *function) {
       }
   */
 
-      if (function->n_arguments > 1 && (function->multidim_interp == nearest || function->multidim_interp == modified_shepard)) {
+      if (function->n_arguments > 1 && (function->multidim_interp == nearest || function->multidim_interp == shepard_kd)) {
 
         double *point;
 
@@ -474,13 +474,14 @@ double wasora_evaluate_function(function_t *function, const double *x) {
       }
       
       
-    } else if (function->multidim_interp == modified_shepard) {
+    } else if (function->multidim_interp == shepard_kd) {
       struct kdres *presults;
       int flag = 0;  // suponemos que NO nos pidieron un punto del problema
       int n = 0;
       double num = 0;
       double den = 0;
       double w_i, y_i, dist2, diff;
+      double dist;
       double *x_i = malloc(function->n_arguments*sizeof(double));
       
       do {
@@ -499,7 +500,9 @@ double wasora_evaluate_function(function_t *function, const double *x) {
             flag = 1;   // nos pidieron un punto de la definicion
             break;
           } else {
-            w_i = (function->shepard_exponent == 2)? 1.0/dist2 : 1.0/pow(dist2, 0.5*function->shepard_exponent);
+//            w_i = (function->shepard_exponent == 2)? 1.0/dist2 : 1.0/pow(dist2, 0.5*function->shepard_exponent);
+            dist = sqrt(dist2);
+            w_i = pow((function->shepard_radius-dist)/(function->shepard_radius*dist), function->shepard_exponent);
             num += w_i * y_i;
             den += w_i;
           }

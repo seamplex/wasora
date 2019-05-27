@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora algebraic expressions parsing & evaluation routines
  *
- *  Copyright (C) 2009--2015 jeremy theler
+ *  Copyright (C) 2009--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -237,7 +237,7 @@ double wasora_evaluate_expression_in_string(const char *string) {
 //  parsea una cadena conteniendo una expresion algebraica y rellena la estructura algebraic_expr
 int wasora_parse_expression(const char *string, expr_t *expr) {
 
-  if (string == NULL) {
+  if (string == NULL || strcmp(string, "") == 0) {
     return WASORA_PARSER_OK;
   }
   // conviene pasarle al wasora_parser.de expresiones una copia de string asi la puede romper como quiera

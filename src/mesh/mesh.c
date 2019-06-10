@@ -67,7 +67,12 @@ int wasora_instruction_mesh(void *arg) {
   mesh->bounding_box_min.associated_elements = NULL;
   mesh->bounding_box_max.associated_elements = NULL;
   
-  scale_factor = wasora_evaluate_expression(mesh->scale_factor);
+  
+  if (mesh->scale_factor->n_tokens != 0) {
+    scale_factor = wasora_evaluate_expression(mesh->scale_factor);
+  } else {
+    scale_factor = 1;
+  }
   offset[0] = wasora_evaluate_expression(mesh->offset_x);
   offset[1] = wasora_evaluate_expression(mesh->offset_y);
   offset[2] = wasora_evaluate_expression(mesh->offset_z);
@@ -80,7 +85,8 @@ int wasora_instruction_mesh(void *arg) {
   for (j = 0; j < mesh->n_nodes; j++) {
     for (d = 0; d < 3; d++) {
       if (scale_factor != 0 || offset[d] != 0) {
-        mesh->node[j].x[j] = scale_factor*mesh->node[j].x[j] - offset[j];
+        mesh->node[j].x[d] *= scale_factor;
+        mesh->node[j].x[d] -= offset[d];
       }
       
       if (mesh->spatial_dimensions < 1 && fabs(mesh->node[j].x[0]) > 1e-6) {

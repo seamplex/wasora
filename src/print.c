@@ -317,6 +317,11 @@ int wasora_instruction_print_function(void *arg) {
         // las cosas que nos pidieron
         LL_FOREACH(print_function->tokens, print_token) {
 
+          // momento! hay que incializar, puede darse el caso de que no se haya inicializado todavia
+          if (!print_token->function->initialized)  {
+            wasora_call(wasora_function_init(print_token->function));
+          }
+          
           // imprimimos lo que nos pidieron
           if (print_token->function != NULL) {
             if (print_token->function == print_function->first_function || print_token->function->data_size == print_function->first_function->data_size) {

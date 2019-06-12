@@ -82,7 +82,7 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
   physical_entity_t *physical_entity;
   mesh_t *mesh; 
   int already_exists = 0;
-
+  
   if (name == NULL) {
     wasora_push_error_message("mandatory name needed for physical entity");
     return NULL;
@@ -127,6 +127,8 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
       if ((physical_entity->var_vol = wasora_define_variable(dummy_aux)) == NULL) {
         return NULL;
       }
+    } else {
+      wasora_pop_error_message();
     }
     free(dummy_aux);
 
@@ -136,8 +138,10 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
       if ((physical_entity->vector_cog = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
         return NULL;
       }
-      free(dummy_aux);
-    }
+    } else {
+      wasora_pop_error_message();
+    }  
+    free(dummy_aux);
 
     // reacciones
     asprintf(&dummy_aux, "%s_RF", physical_entity->name);
@@ -145,7 +149,9 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
       if ((physical_entity->vector_R0 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
         return NULL;
       }
-    }
+    } else {
+      wasora_pop_error_message();
+    }      
     free(dummy_aux);
 
     asprintf(&dummy_aux, "%s_RM", physical_entity->name);
@@ -153,8 +159,10 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
       if ((physical_entity->vector_R1 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
         return NULL;
       }
-      free(dummy_aux);
+    } else {
+      wasora_pop_error_message();
     }
+    free(dummy_aux);
   } 
 
   return physical_entity;

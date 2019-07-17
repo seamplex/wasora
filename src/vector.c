@@ -113,3 +113,13 @@ int wasora_vector_init(vector_t *vector) {
   return WASORA_RUNTIME_OK;
 
 }
+
+
+int wasora_instruction_vector_sort(void *arg) {
+  
+  vector_t *vector = (vector_t *)arg;
+  
+  gsl_sort_vector(vector->value);
+  
+  return WASORA_RUNTIME_OK;
+}

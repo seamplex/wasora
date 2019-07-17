@@ -33,6 +33,7 @@
 #include <gsl/gsl_sf.h>
 #include <gsl/gsl_interp.h>
 #include <gsl/gsl_version.h>
+#include <gsl/gsl_heapsort.h>
 
 #include "wasora.h"
 #include "builtin.h"
@@ -739,6 +740,19 @@ if (strcasecmp(token, "FROM") == 0) {
       free(vectorname);
       return WASORA_PARSER_OK;
 
+// ---------------------------------------------------------------------
+///kw+VECTOR_SORT+usage VECTOR_SORT
+///kw+VECTOR_SORT+desc Sort the elements of a vector into ascending numerical order.
+    } else if ((strcasecmp(token, "VECTOR_SORT") == 0)) {
+      
+      vector_t *vector = NULL;
+
+///kw+VECTOR+usage <vector>
+      wasora_call(wasora_parser_vector(&vector));
+      wasora_define_instruction(wasora_instruction_vector_sort, vector);
+      
+      return WASORA_PARSER_OK;
+      
 // ---------------------------------------------------------------------
 ///kw+MATRIX+usage MATRIX
 ///kw+MATRIX+desc Define a matrix.

@@ -1624,6 +1624,7 @@ extern double wasora_vector_get_initial_transient(vector_t *, const size_t);
 extern double wasora_vector_get_initial_static(vector_t *, const size_t);
 extern int wasora_vector_set(vector_t *, const size_t, double);
 extern int wasora_vector_init(vector_t *);
+extern int wasora_instruction_vector_sort(void *);
 
 // version.c
 extern void wasora_show_help();

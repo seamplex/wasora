@@ -1,0 +1,11 @@
+VECTOR a SIZE 10
+
+a(i) = random(0,10)
+
+PRINT "before"
+PRINT_VECTOR a
+
+PRINT "after"
+VECTOR_SORT a
+PRINT_VECTOR a
+

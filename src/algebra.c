@@ -66,7 +66,10 @@ double wasora_evaluate_expression(expr_t *algebraic_expr) {
       case EXPR_VECTOR:
     
         if (!token[i].vector->initialized) {
-          wasora_call(wasora_vector_init(token[i].vector));
+          if (wasora_vector_init(token[i].vector) != WASORA_RUNTIME_OK) {
+            wasora_push_error_message("initialization of vector %s failed", token[i].vector->name);
+            wasora_runtime_error();
+          }
         }
         
         index_i = lrint(wasora_evaluate_expression(&token[i].arg[0]));

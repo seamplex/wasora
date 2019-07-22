@@ -20,6 +20,7 @@
  *------------------- ------------  ----    --------  --     -       -         -
  */
 #include <wasora.h>
+#include <gsl/gsl_sort_vector.h>
 
 
 double wasora_vector_get(vector_t *vector, const size_t i) {

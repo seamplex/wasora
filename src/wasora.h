@@ -185,6 +185,8 @@ typedef struct vector_t vector_t;
 typedef struct matrix_t matrix_t;
 typedef struct alias_t alias_t;
 
+typedef struct sorted_vector_t sorted_vector_t;
+
 typedef struct phase_object_t phase_object_t;
 typedef struct dae_t dae_t;
 
@@ -336,6 +338,13 @@ struct multidim_range_t {
   expr_t *max;
   expr_t *step;
   expr_t *nsteps;
+};
+
+struct sorted_vector_t {
+  int descending;
+  
+  vector_t *v1;
+  vector_t *v2;
 };
   
   
@@ -1625,6 +1634,7 @@ extern double wasora_vector_get_initial_static(vector_t *, const size_t);
 extern int wasora_vector_set(vector_t *, const size_t, double);
 extern int wasora_vector_init(vector_t *);
 extern int wasora_instruction_vector_sort(void *);
+extern int wasora_instruction_vector_sort2(void *);
 
 // version.c
 extern void wasora_show_help();

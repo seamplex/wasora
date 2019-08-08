@@ -106,14 +106,14 @@ Logo and graphics
 
 The official wasora logotype is shown in the figure below. The
 original is a vector image in SVG format that can be found in the `doc`
-subdirectory of the wasora [repository](https://bitbucket.org/wasora/wasora). Usage in the form
+subdirectory of the wasora [repository](https://github.com/wasora/wasora). Usage in the form
 of other vector formats (e.g. PDF or EPS) is allowed. Conversion to
 lossless-compressed bitmap formats (e.g. PNG or TIFF) is discouraged but
 may be needed if the media format does not support vector graphics (note
 that HTML does support plain SVG). Conversion to compressed bitmap
 formats with pixel-level degradation (i.e. JPEG) is forbidden.
 
-![The wasora logo, available in the `doc` subdirectory of the [repository](https://bitbucket.org/wasora/wasora).](logo.svg){#logoa}
+![The wasora logo, available in the `doc` subdirectory of the [repository](https://github.com/wasora/wasora).](logo.svg){#logoa}
 
 The logo is distributed under the terms of the GNU GPLv3. It may be
 freely modified as long as the distribution satifies the license and the

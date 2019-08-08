@@ -1,4 +1,4 @@
-% Wasora v0.6.23-g5154b2c reference sheet
+% Wasora v0.6.32-gdb184bd reference sheet
 
 # Keywords
 
@@ -156,7 +156,7 @@ If the optional keyword `VERBOSE` is given, some data of the intermediate steps 
 Define a function of one or more variables.
 
 ~~~wasora
-FUNCTION <name>(<var_1>[,var2,...,var_n]) { [ = <expr> | FILE_PATH <file_path> | ROUTINE <name> | | MESH <name> { DATA <new_vector_name> | VECTOR <existing_vector_name> } { NODES | CELLS } | [ VECTOR_DATA <vector_1> <vector_2> ... <vector_n> <vector_n+1> ] } [COLUMNS <expr_1> <expr_2> ... <expr_n> <expr_n+1> ] [ INTERPOLATION { linear | polynomial | spline | spline_periodic | akima | akima_periodic | steffen | nearest | shepard | modified_shepard | bilinear } ] [ INTERPOLATION_THRESHOLD <expr> ] [ SHEPARD_RADIUS <expr> ] [ SHEPARD_EXPONENT <expr> ] [ SIZES <expr_1> <expr_2> ... <expr_n> ] [ X_INCREASES_FIRST <expr> ] [ DATA <num_1> <num_2> ... <num_N> ]
+FUNCTION <name>(<var_1>[,var2,...,var_n]) { [ = <expr> | FILE_PATH <file_path> | ROUTINE <name> | | MESH <name> { DATA <new_vector_name> | VECTOR <existing_vector_name> } { NODES | CELLS } | [ VECTOR_DATA <vector_1> <vector_2> ... <vector_n> <vector_n+1> ] } [COLUMNS <expr_1> <expr_2> ... <expr_n> <expr_n+1> ] [ INTERPOLATION { linear | polynomial | spline | spline_periodic | akima | akima_periodic | steffen | nearest | shepard | shepard_kd | bilinear } ] [ INTERPOLATION_THRESHOLD <expr> ] [ SHEPARD_RADIUS <expr> ] [ SHEPARD_EXPONENT <expr> ] [ SIZES <expr_1> <expr_2> ... <expr_n> ] [ X_INCREASES_FIRST <expr> ] [ DATA <num_1> <num_2> ... <num_N> ]
 ~~~
 
 
@@ -192,17 +192,18 @@ Default interpolation scheme for one-dimensional functions is `(*gsl_interp_line
 Available schemes for $n>1$ are:
 
  * nearest, $f(\vec{x})$ is equal to the value of the closest definition point
- * shepard, weighted average of close definition points
- * modified_shepard, weighted average of close definition points
- * bilinear, only available if the definition points configure an structured hypercube-like grid. If $n>2$, `SIZES` should be given.
+ * shepard, [inverse distance weighted average definition points](https://en.wikipedia.org/wiki/Inverse_distance_weighting) (might lead to inefficient evaluation)
+ * shepard_kd, [average of definition points within a kd-tree](https://en.wikipedia.org/wiki/Inverse_distance_weighting#Modified_Shepard&#39;s_method) (more efficient evaluation provided `SHEPARD_RADIUS` is set to a proper value)
+ * bilinear, only available if the definition points configure an structured hypercube-like grid. If $n>3$, `SIZES` should be given.
 
 For $n>1$, if the euclidean distance between the arguments and the definition points is smaller than `INTERPOLATION_THRESHOLD`, the definition point is returned and no interpolation is performed.
 Default value is square root of `9.5367431640625e-07`.
-The radius of points to take into account in `shepard` is given by `SHEPARD_RADIUS`.
+The initial radius of points to take into account in `shepard_kd` is given by `SHEPARD_RADIUS`. If no points are found, the radius is double until at least one definition point is found.
+The radius is doubled until at least one point is found.
 Default is `1.0`.
 The exponent of the `shepard` method is given by `SHEPARD_EXPONENT`.
 Default is `2`.
-When requesting `bilinear` interpolation for $n>2$, the number of definition points for each argument variable has to be given with `SIZES`,
+When requesting `bilinear` interpolation for $n>3$, the number of definition points for each argument variable has to be given with `SIZES`,
 and wether the definition data is sorted with the first argument changing first (`X_INCREASES_FIRST` evaluating to non-zero) or with the last argument changing first (zero).
 The function can be pointwise-defined inline in the input using `DATA`. This should be the last keyword of the line, followed by $N=k\cdot (n+1)$ expresions giving $k$ definition points: $n$ arguments and the value of the function.
 Multiline continuation using brackets `{` and `}` can be used for a clean data organization. See the examples.
@@ -489,7 +490,17 @@ VAR <name_1> [ <name_2> ] ... [ <name_n> ]
 Define a vector.
 
 ~~~wasora
-VECTOR <name> SIZE <expr> [ DATA <expr_1> <expr_2> ... <expr_n> | FUNCTION_DATA <function> ]
+VECTOR <name> SIZE <expr> [ DATA <expr_1> <expr_2> ... <expr_n> | FUNCTION_DATA <function> ] <vector>
+~~~
+
+
+
+##  VECTOR_SORT
+
+Sort the elements of a vector into ascending numerical order.
+
+~~~wasora
+VECTOR_SORT
 ~~~
 
 

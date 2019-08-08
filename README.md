@@ -95,7 +95,7 @@ sudo apt-get install m4 make autoconf automake gcc git findutils libgsl-dev libs
 Clone the wasora repository, bootstrap, configure, compile and check:
 
 ```
-git clone https://bitbucket.org/seamplex/wasora/
+git clone https://github.com/seamplex/wasora.git
 cd wasora
 ./autogen.sh
 ./configure
@@ -124,7 +124,7 @@ make check
 sudo make install
 ```
 
-You can receive an email notification each time wasora is updated by watching the [Bitbucket repository](https://bitbucket.org/seamplex/wasora/src). Log in to Bitbucket, and choose “Watch repository” from the top-right menu.
+You can receive an email notification each time wasora is updated by watching the [Github repository](https://github.com/seamplex/wasora.git). Log in to Github and in the upper-right corner, click Watching from the "Watch" drop-down menu. 
 See the file `INSTALL` for detailed installation instructions.
 
 
@@ -203,17 +203,11 @@ The `make check` command may not show the actual output of the examples but the 
 
 Almost any single feature included in the code was needed at least once by [the author](http://www.seamplex.com/jeremy) during his career in the nuclear industry. Nevertheless, wasora is aimed at solving general mathematical problems (see below for a description of the [wasora Real Book](#the-wasora-real-book)). Should a particular calculation be needed, wasora's features may be extended by the implementation of dynamically-loaded plugins, for example:
 
-[besssugo](https://bitbucket.org/seamplex/bessugo)
-:   builds scientific videos out of wasora computations
-
 [fino](https://www.seamplex.com/fino)
 :   solves partial differential equations using the finite element method
 
 [milonga](https://www.seamplex.com/milonga)
 :   solves the multigroup neutron diffusion equation
-
-[waspy](https://bitbucket.org/seamplex/waspy)
-:   runs Python code within wasora sharing variables, vectors and matrices
 
 [xdfrrpf](https://bitbucket.org/tenuc/wasora/xdfrrpf)
 :   eXtracts Data From RELAP Restart-Plot Files
@@ -261,15 +255,15 @@ Wasora is distributed under the terms of the [GNU General Public License](http:/
 >
 > Also, for our own protection, we must make certain that everyone finds out that there is no warranty for wasora. If wasora is modified by someone else and passed on, we want their recipients to know that what they have is not what we distributed, so that any problems introduced by others will not reflect on our reputation.
 >
-> The precise conditions of the license for wasora are found in the [General Public License](https://bitbucket.org/seamplex/wasora/src/master/COPYING) that accompanies the source code. Further information about this license is available from the GNU Project webpage <http://www.gnu.org/copyleft/gpl-faq.html>.
+> The precise conditions of the license for wasora are found in the [General Public License](https://github.com/seamplex/wasora/blob/master/COPYING) that accompanies the source code. Further information about this license is available from the GNU Project webpage <http://www.gnu.org/copyleft/gpl-faq.html>.
 
 
 # Further information
 
 Home page: <https://www.seamplex.com/wasora>  
-Repository: <https://bitbucket.org/seamplex/wasora>  
+Repository: <https://github.com/seamplex/wasora>  
 Mailing list and bug reports: <wasora@seamplex.com>  (you need to subscribe first at <wasora+subscribe@seamplex.com>)  
-Follow us: [Twitter](https://twitter.com/seamplex/) [YouTube](https://www.youtube.com/channel/UCC6SzVLxO8h6j5rLlfCQPhA) [LinkedIn](https://www.linkedin.com/company/seamplex/) [Bitbucket](https://bitbucket.org/seamplex/)
+Follow us: [Twitter](https://twitter.com/seamplex/) [YouTube](https://www.youtube.com/channel/UCC6SzVLxO8h6j5rLlfCQPhA) [LinkedIn](https://www.linkedin.com/company/seamplex/) [Github](https://github.com/seamplex)
 
 ----------------------------------------------------
 
@@ -277,4 +271,4 @@ wasora is copyright ©2009--2019 Jeremy Theler
 wasora is licensed under [GNU GPL version 3](http://www.gnu.org/copyleft/gpl.html) or (at your option) any later version.  
 wasora is free software: you are free to change and redistribute it.  
 There is NO WARRANTY, to the extent permitted by law.  
-See the file [`COPYING`](https://bitbucket.org/seamplex/wasora/src/master/COPYING) for copying conditions.  
+See the file [`COPYING`](https://github.com/seamplex/wasora/blob/master/COPYING) for copying conditions.  

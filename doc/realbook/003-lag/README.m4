@@ -12,7 +12,7 @@ Whenever the special variable `end_time` is non-zero, wasora enters into transie
 
 ## lag.was
 
-This example generates a signal $r(t)$ which is zero except for $a < t < b$, where it takes the value one. Then, the signal $y(t)$  is computed as a first-order lag of $r(t)$ with a characteristic time $\tau$. The output consists of three columns containing $t$, $r(t)$ and $y(t)$. By using the keyword `HEADER` a commented line is pre-prended to the output with a textual representation of the expressions passed to `PRINT` which are automatically understood by "qdp": "https://bitbucket.org/gtheler/qdp" so a reasonable figure can be obtained with virtually no effort, as shown in terminal mimic where the output of wasora is piped to `qdp`.
+This example generates a signal $r(t)$ which is zero except for $a < t < b$, where it takes the value one. Then, the signal $y(t)$  is computed as a first-order lag of $r(t)$ with a characteristic time $\tau$. The output consists of three columns containing $t$, $r(t)$ and $y(t)$. By using the keyword `HEADER` a commented line is pre-prended to the output with a textual representation of the expressions passed to `PRINT` which are automatically understood by [qdp](https://github.com/seamplex/qdp) so a reasonable figure can be obtained with virtually no effort, as shown in terminal mimic where the output of wasora is piped to `qdp`.
 
 ```wasora
 include(lag.was)dnl
@@ -36,7 +36,7 @@ include(compact.was)dnl
 include(compact.term)dnl
 ```
 
-The reported difference is due to the presence of the `HEADER` keyword in the first input so [qdp](https://bitbucket.org/gtheler/qdp) can automatically label the bullets.
+The reported difference is due to the presence of the `HEADER` keyword in the first input so [qdp](https://github.com/seamplex/qdp) can automatically label the bullets.
 kate 
 
 ## quasi-sine.was

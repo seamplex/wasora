@@ -189,7 +189,7 @@ although the English variation /wɒ'soʊɹɑ/ and even the German version
 The official wasora logotype is shown in the figure below. The original
 is a vector image in SVG format that can be found in the @code{doc}
 subdirectory of the wasora
-@uref{https://bitbucket.org/wasora/wasora,repository}. Usage in the form
+@uref{https://github.com/seamplex/wasora,repository}. Usage in the form
 of other vector formats (e.g. PDF or EPS) is allowed. Conversion to
 lossless-compressed bitmap formats (e.g. PNG or TIFF) is discouraged but
 may be needed if the media format does not support vector graphics (note
@@ -198,9 +198,9 @@ formats with pixel-level degradation (i.e. JPEG) is forbidden.
 
 @float
 @image{logo,,,The wasora logo, available in the @code{doc} subdirectory
-of the @uref{https://bitbucket.org/wasora/wasora,repository}.,svg}
+of the @uref{https://github.com/seamplex/wasora,repository}.,svg}
 @caption{The wasora logo, available in the @code{doc} subdirectory of
-the @uref{https://bitbucket.org/wasora/wasora,repository}.}
+the @uref{https://github.com/seamplex/wasora,repository}.}
 @end float
 
 The logo is distributed under the terms of the GNU GPLv3. It may be

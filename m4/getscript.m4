@@ -74,7 +74,7 @@ define([GET_STEP2],[dnl
 # step 2: clone or update repo
 if test ! -d ./name; then
   echo -n "2. cloning name repository..."  | tee -a ../get.log; echo >> ../get.log
-  git clone https://bitbucket.org/seamplex/name.git >> ../get.log; echo >> ../get.log
+  git clone https://github.com/seamplex/name.git >> ../get.log; echo >> ../get.log
   cd name
   echo "ok!"
 else

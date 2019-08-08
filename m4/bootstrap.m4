@@ -1,6 +1,6 @@
 dnl This file is part of wasora and/or one of its plugins
 dnl GPL v3+ (c) 2009-2019 jeremy theler
-dnl <https://bitbucket.org/seamplex/wasora>
+dnl <https://www.seamplex.com/wasora>
 dnl
 changequote([,])dnl esto es para poder usar los backticks de bash
 divert(-1)dnl

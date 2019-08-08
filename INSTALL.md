@@ -19,7 +19,7 @@ sudo apt-get install m4 make autoconf automake gcc git findutils libgsl-dev libs
 Clone the wasora repository, bootstrap, configure, compile and check:
 
 ```
-git clone https://bitbucket.org/seamplex/wasora/
+git clone https://github.com/seamplex/wasora/
 cd wasora
 ./autogen.sh
 ./configure
@@ -42,7 +42,7 @@ make check
 ```
 
 
-You can receive an email notification each time wasora is updated by watching the [Bitbucket repository](https://bitbucket.org/seamplex/wasora/src). Log in to Bitbucket, and choose “Watch repository” from the top-right menu.
+You can receive an email notification each time wasora is updated by watching the [Github repository](https://github.com/seamplex/wasora). Log in to Github, and choose “Watch repository” from the top-right menu.
 
 
 # Required libraries
@@ -62,7 +62,7 @@ Therefore, in Debian-based GNU/Linux boxes, one would do
 
     # apt-get install libgsl0-dev libsundials-serial-dev libreadline-dev
 
-and all the required libraries (and development headers) should be detected by configure. Note that some wasora plugins (such as [milonga](http://bitbucket.org/wasora/milonga)) may need further additional libraries (for instance [PETSc](http://www.mcs.anl.gov/petsc/) and [SLEPc](http://www.grycap.upv.es/slepc/)).
+and all the required libraries (and development headers) should be detected by configure. Note that some wasora plugins (such as [milonga](http://github.com/wasora/milonga)) may need further additional libraries (for instance [PETSc](http://www.mcs.anl.gov/petsc/) and [SLEPc](http://www.grycap.upv.es/slepc/)).
 
 If `configure` is still unable to detect the GSL, it can be instructed to download and compile it in a local subdirectory using the `--enable-download-gsl` option:
 
@@ -146,9 +146,8 @@ See the file `README` for a brief description of wasora.
 See the directory `examples` for the test suite and other examples.  
 See the contents of directory `doc` for full documentation.  
 
-Home page: <http://wasora.bitbucket.org>  
+Home page: <http://www.seamplex.com/wasora>  
 Mailing list and bug reports: <https://groups.google.com/a/seamplex.com/forum/#!forum/wasora>  
-FAQ: <http://wasora.bitbucket.org/FAQ.html>  
 
 
 
@@ -156,7 +155,7 @@ wasora is copyright (C) 2009--2018 Germán (jeremy) Theler
 wasora is licensed under [GNU GPL version 3](http://www.gnu.org/copyleft/gpl.html) or (at your option) any later version.  
 wasora is free software: you are free to change and redistribute it.  
 There is NO WARRANTY, to the extent permitted by law.  
-See the file [`COPYING`](https://bitbucket.org/wasora/wasora/src/default/COPYING) for copying conditions.  
+See the file [`COPYING`](https://github.com/seamplex/wasora/blob/master/COPYING) for copying conditions.
 
 The text below the cutting line corresponds to the original FSF instructions for installing software (as wasora) that follows the GNU configure & make convention.
 

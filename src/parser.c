@@ -745,54 +745,54 @@ if (strcasecmp(token, "FROM") == 0) {
 ///kw+VECTOR_SORT+desc Sort the elements of a vector using a specific numerical order.
     } else if ((strcasecmp(token, "VECTOR_SORT") == 0)) {
       
-      sorted_vector_t *sorted_vector = calloc(1, sizeof(sorted_vector_t));
+      vector_sort_t *vector_sort = calloc(1, sizeof(vector_sort_t));
 
 ///kw+VECTOR+usage <vector>
-      wasora_call(wasora_parser_vector(&sorted_vector->v1));
+      wasora_call(wasora_parser_vector(&vector_sort->v1));
       
       if ((token = wasora_get_next_token(NULL)) != NULL) {
         
         if (strcasecmp(token, "ASCENDING_ORDER") == 0)
-          sorted_vector->descending = 0;
+          vector_sort->descending = 0;
         else if (strcasecmp(token, "DESCENDING_ORDER") == 0)
-          sorted_vector->descending = 1;
+          vector_sort->descending = 1;
         else {
           wasora_push_error_message("unknown keyword '%s'", token);
           return WASORA_PARSER_ERROR;
         }
       }
       
-      wasora_define_instruction(wasora_instruction_vector_sort, sorted_vector);
+      wasora_define_instruction(wasora_instruction_vector_sort, vector_sort);
       
       return WASORA_PARSER_OK;
       
 // ---------------------------------------------------------------------
 ///kw+VECTOR_SORT2+usage VECTOR_SORT2
 ///kw+VECTOR_SORT2+desc Sorts v1 using a specific numerical order, while
-///kw+VECTOR_SORT2+desc making the same rearrangement of vector v2
+///kw+VECTOR_SORT2+desc making the same rearrangement of vector v2.
     } else if ((strcasecmp(token, "VECTOR_SORT2") == 0)) {
       
-      sorted_vector_t *sorted_vector = calloc(1, sizeof(sorted_vector_t));
+      vector_sort_t *vector_sort = calloc(1, sizeof(vector_sort_t));
       
 ///kw+VECTOR+usage <vector>
-      wasora_call(wasora_parser_vector(&sorted_vector->v1));
+      wasora_call(wasora_parser_vector(&vector_sort->v1));
       
 ///kw+VECTOR+usage <vector>
-      wasora_call(wasora_parser_vector(&sorted_vector->v2));
+      wasora_call(wasora_parser_vector(&vector_sort->v2));
       
       if ((token = wasora_get_next_token(NULL)) != NULL) {
         
         if (strcasecmp(token, "ASCENDING_ORDER") == 0)
-          sorted_vector->descending = 0;
+          vector_sort->descending = 0;
         else if (strcasecmp(token, "DESCENDING_ORDER") == 0)
-          sorted_vector->descending = 1;
+          vector_sort->descending = 1;
         else {
           wasora_push_error_message("unknown keyword '%s'", token);
           return WASORA_PARSER_ERROR;
         }
       }
       
-      wasora_define_instruction(wasora_instruction_vector_sort2, sorted_vector);
+      wasora_define_instruction(wasora_instruction_vector_sort2, vector_sort);
       
       return WASORA_PARSER_OK;
       

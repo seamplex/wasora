@@ -50,7 +50,7 @@ The examples contained in the wasora Real Book are taken from a variety of engin
  3. an hypothetical terminal is mimicked which illustrates how wasora is to be called, optionally with invocation to further tools for plotting or comparing results 
  4. the results in the form of figures are shown and discussed
 
-Most of the figures are created by [qdp](https://bitbucket.org/gtheler/qdp) which stands for *quick & dirty plot* and is a shell script that interfaces with [pyxplot](http://pyxplot.org.uk/) to generate plots of data within a single command.
+Most of the figures are created by [qdp](https://github.com/seamplex/qdp) which stands for *quick & dirty plot* and is a shell script that interfaces with [pyxplot](http://pyxplot.org.uk/) to generate plots of data within a single command.
 
 
 # Contents

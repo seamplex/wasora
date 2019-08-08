@@ -173,42 +173,42 @@ freely distributed under a GPL-compatible license plus other related
 tools (the script qdp and the documentation system techgdoc) is known as
 the *wasora suite*, namely
 
--   [wasora](https://bitbucket.org/wasora/wasora): the main code that
+-   [wasora](https://github.com/seamplex/wasora): the main code that
     solves general mathematical problems and loads one or more plugins
 
--   [skel](https://bitbucket.org/wasora/skel): template to write a
+-   [skel](https://bitbucket.org/seamplex/skel): template to write a
     wasora plugin from scratch
 
--   [besssugo](https://bitbucket.org/wasora/besssugo): a graphical
+-   [besssugo](https://bitbucket.org/seamplex/besssugo): a graphical
     visualization plugin for wasora
 
--   [milonga](https://bitbucket.org/wasora/milonga): core-level
+-   [milonga](https://github.com/seamplex/milonga): core-level
     neutronic code that solves neutron diffusion or transport on
     unstructured grids
 
--   [fino](https://bitbucket.org/wasora/fino): plugin to solve general
+-   [fino](https://github.com/seamplex/fino): plugin to solve general
     partial differential equations using the finite element method
 
--   [waspy](https://bitbucket.org/wasora/waspy): plugin to execute
+-   [waspy](https://bitbucket.org/seamplex/waspy): plugin to execute
     python code within wasora
 
--   [qdp](https://bitbucket.org/wasora/qdp): a shell script to generate
+-   [qdp](https://bitbucket.org/seamplex/qdp): a shell script to generate
     scientific plots from the commandline
 
--   [techgdoc](https://bitbucket.org/wasora/techgdoc): a set of scripts
+-   [techgdoc](https://bitbucket.org/seamplex/techgdoc): a set of scripts
     and macros that help to create, modify and track technical documents
 
 These codes share a common framework (the wasora framework) and are
 written in the same spirit. Many of them make extensive use of other
-free libraries (e.g. PETSc, SLEPc, SDL). They are hosted on Bitbucket
-using a distributed version control system (either Git or Mercurial).
+free libraries (e.g. PETSc, SLEPc, SDL). They are hosted on Github
+using Git as the distributed version control system.
 The list of codes can be accessed at
 
-<https://bitbucket.org/wasora>
+<https://github.com/seamplex>
 
 Besides the repository with the code itself, each project contains a
 wiki and an issue tracker. A public mailing list is available at
-[wasora\@seamplex.com](wasora@seamplex.com). Contributions are
+<wasora@seamplex.com>. Contributions are
 welcome by first forking the tree and then sending back a pull request.
 
 There exist other plugins that involve private know-how and which are

@@ -13,7 +13,7 @@ This example shows how functions can be defined and used in wasora.
 
 ## algebraic.was
 
-Two algebraic functions $f(x)$ and $g(x)$ are defined and afterward printed and plotted using [qdp](https://bitbucket.org/seamplex/qdp), along with the integral of their product.
+Two algebraic functions $f(x)$ and $g(x)$ are defined and afterward printed and plotted using [qdp](https://github.com/seamplex/qdp), along with the integral of their product.
 
 ```wasora
 include(algebraic.was)dnl

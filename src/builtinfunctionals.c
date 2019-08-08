@@ -177,11 +177,11 @@ double builtin_integral(factor_t *a, var_t *var_x) {
   // TODO: poner en aux para no tener que hacer alloc cada vez
   w = gsl_integration_workspace_alloc(intervals);
 
-  if (x_lower < -wasora_var(wasora_special_var(infinite)) && x_upper > +0.9*wasora_var(wasora_special_var(infinite))) {
+  if (x_lower < -0.9*wasora_var(wasora_special_var(infinite)) && x_upper > +0.9*wasora_var(wasora_special_var(infinite))) {
     gsl_integration_qagi(&function_to_integrate, 1e-8, epsrel, intervals, w, &result, &error);
-  } else if (x_lower < -wasora_var(wasora_special_var(infinite))) {
+  } else if (x_lower < -0.9*wasora_var(wasora_special_var(infinite))) {
     gsl_integration_qagil(&function_to_integrate, x_upper, 1e-8, epsrel, intervals, w, &result, &error);
-  } else if (x_upper > wasora_var(wasora_special_var(infinite))) {
+  } else if (x_upper > +0.9*wasora_var(wasora_special_var(infinite))) {
     gsl_integration_qagiu(&function_to_integrate, x_lower, 1e-8, epsrel, intervals, w, &result, &error);
   } else {
     gsl_integration_qag(&function_to_integrate, x_lower, x_upper, 1e-8, epsrel, intervals, pointskey, w, &result, &error);

@@ -120,24 +120,16 @@ int wasora_instruction_vector_sort(void *arg) {
   
   vector_sort_t *vector_sort = (vector_sort_t *)arg;
   
-  gsl_sort_vector(vector_sort->v1->value);
-  
-  if (vector_sort->descending)
-    gsl_vector_reverse(vector_sort->v1->value);
-  
-  return WASORA_RUNTIME_OK;
-}
-
-int wasora_instruction_vector_sort2(void *arg) {
-  
-  vector_sort_t *vector_sort = (vector_sort_t *)arg;
-  
-  // sorts v1 by ascending numerical order, while making the same rearrangement of vector v2
-  gsl_sort_vector2(vector_sort->v1->value, vector_sort->v2->value);
+  if (vector_sort->v2 == NULL)
+    gsl_sort_vector(vector_sort->v1->value);
+  else
+    gsl_sort_vector2(vector_sort->v1->value, vector_sort->v2->value);
   
   if (vector_sort->descending) {
     gsl_vector_reverse(vector_sort->v1->value);
-    gsl_vector_reverse(vector_sort->v2->value);
+    
+    if (vector_sort->v2 != NULL)
+      gsl_vector_reverse(vector_sort->v2->value);
   }
   
   return WASORA_RUNTIME_OK;

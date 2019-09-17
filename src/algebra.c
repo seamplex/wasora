@@ -384,8 +384,9 @@ int wasora_parse_factor(char *string, factor_t *factor) {
   int got_it = 0;
 
   backup = strdup(string);
-  
-  if (isdigit((int)(*string)) || *string == '-' || *string == '+') {
+
+  // o un numero explicito, o un signo explicito o un punto para los yanquis que escriben ".1" en lugar de "0.1"  
+  if (isdigit((int)(*string)) || *string == '-' || *string == '+' || *string == '.') {
     // un numerito
     sscanf(string, "%lf%n", &constant, &n);
     if (factor != NULL) {

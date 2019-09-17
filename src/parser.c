@@ -742,14 +742,33 @@ if (strcasecmp(token, "FROM") == 0) {
 
 // ---------------------------------------------------------------------
 ///kw+VECTOR_SORT+usage VECTOR_SORT
-///kw+VECTOR_SORT+desc Sort the elements of a vector into ascending numerical order.
+///kw+VECTOR_SORT+desc Sort the elements of a vector using a specific numerical order,
+///kw+VECTOR_SORT+desc potentially making the same rearrangement of another vector.
     } else if ((strcasecmp(token, "VECTOR_SORT") == 0)) {
       
-      vector_t *vector = NULL;
+      vector_sort_t *vector_sort = calloc(1, sizeof(vector_sort_t));
 
-///kw+VECTOR+usage <vector>
-      wasora_call(wasora_parser_vector(&vector));
-      wasora_define_instruction(wasora_instruction_vector_sort, vector);
+///kw+VECTOR_SORT+usage <vector>
+      wasora_call(wasora_parser_vector(&vector_sort->v1));
+      
+      while ((token = wasora_get_next_token(NULL)) != NULL) {
+        
+///kw+VECTOR_SORT+usage [ ASCENDING_ORDER | DESCENDING_ORDER ]
+        if (strcasecmp(token, "ASCENDING_ORDER") == 0)
+          vector_sort->descending = 0;
+        else if (strcasecmp(token, "DESCENDING_ORDER") == 0)
+          vector_sort->descending = 1;
+        
+///kw+VECTOR_SORT+usage [ <vector> ]
+        else if ((vector_sort->v2 = wasora_get_vector_ptr(token)) != NULL) {
+          continue;
+        } else {
+          wasora_push_error_message("unknown keyword or vector identifier '%s'", token);
+          return WASORA_PARSER_ERROR;
+        }
+      }
+      
+      wasora_define_instruction(wasora_instruction_vector_sort, vector_sort);
       
       return WASORA_PARSER_OK;
       

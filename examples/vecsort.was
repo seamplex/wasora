@@ -1,11 +1,25 @@
-VECTOR a SIZE 10
+VECTOR a SIZE 3
+VECTOR b SIZE 3
 
-a(i) = random(0,10)
+a(i) = random(0,10,123)
+b(i) = random(0,10,456)
 
+PRINT
 PRINT "before"
-PRINT_VECTOR a
+PRINT_VECTOR a b
 
+# sort elements of vector a in descending numerical order
+# while making the same rearrangement of vector b
+VECTOR_SORT a b DESCENDING_ORDER
+
+PRINT
 PRINT "after"
-VECTOR_SORT a
-PRINT_VECTOR a
+PRINT_VECTOR a b
+
+# sort elements of vector b in ascending numerical order
+VECTOR_SORT b ASCENDING_ORDER
+
+PRINT
+PRINT "finally"
+PRINT_VECTOR a b
 

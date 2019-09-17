@@ -185,6 +185,8 @@ typedef struct vector_t vector_t;
 typedef struct matrix_t matrix_t;
 typedef struct alias_t alias_t;
 
+typedef struct vector_sort_t vector_sort_t;
+
 typedef struct phase_object_t phase_object_t;
 typedef struct dae_t dae_t;
 
@@ -336,6 +338,13 @@ struct multidim_range_t {
   expr_t *max;
   expr_t *step;
   expr_t *nsteps;
+};
+
+struct vector_sort_t {
+  int descending;
+  
+  vector_t *v1;
+  vector_t *v2;
 };
   
   

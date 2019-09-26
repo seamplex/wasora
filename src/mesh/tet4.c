@@ -376,8 +376,9 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
   }
   gsl_linalg_LU_decomp (T, p, &s);
   if ((xi = fabs(gsl_linalg_LU_det (T, s))) < 1e-20) {
-    wasora_push_error_message("element %d is degenerate", element->tag);
-    wasora_runtime_error();
+//    wasora_push_error_message("element %d is degenerate", element->tag);
+//    wasora_runtime_error();
+    return 0;
   }
   gsl_linalg_LU_solve (T, p, xx4, lambda);
 

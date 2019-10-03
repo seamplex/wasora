@@ -32,10 +32,11 @@
 #include "wasora.h"
 
 void *wasora_get_shared_pointer(char *name, size_t size) {
-  void *pointer;
+  void *pointer = NULL;
   int dangling_pid;
   int fd;
 
+#if !defined(LD_STATIC)
   if ((dangling_pid = wasora_create_lock(name, 0)) != 0) {
     wasora_push_error_message("shared memory segment '%s' is being used by process %d", name, dangling_pid);
     wasora_runtime_error();
@@ -62,7 +63,7 @@ void *wasora_get_shared_pointer(char *name, size_t size) {
   }
 
   close(fd);
-
+#endif
   return pointer;
 }
 
@@ -76,9 +77,10 @@ void wasora_free_shared_pointer(void *pointer, char *name, size_t size) {
 
 
 sem_t *wasora_get_semaphore(char *name) {
-  sem_t *semaphore;
+  sem_t *semaphore = NULL;
   int dangling_pid;
 
+#if !defined(LD_STATIC)
   if ((dangling_pid = wasora_create_lock(name, 1)) != 0) {
     wasora_push_error_message("sempahore '%s' is being used by process %d", name, dangling_pid);
     wasora_runtime_error();
@@ -90,6 +92,7 @@ sem_t *wasora_get_semaphore(char *name) {
     perror(name);
     return NULL;
   }
+#endif
 
   return semaphore;
 }

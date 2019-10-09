@@ -5,7 +5,10 @@ inputs: lag compact quasi-sine
 tags: end_time dt lag HEADER
 ...
 
+case_nav
+
 # case_title
+
 
 Whenever the special variable `end_time` is non-zero, wasora enters into transient mode. These examples introduce transient problems by illustrating how first-order lags can be used to filter signals.
 

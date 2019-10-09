@@ -5,7 +5,11 @@ inputs: algebraic inline file vectors satwater
 tags: FUNCTION PRINT_FUNCTION MIN MAX STEP VAR FILE FILE_PATH VECTORS NUMBER OUTPUT_FILE INTERPOLATION cspline akima linear sin cos log sqrt derivative integral
 ...
 
+case_nav
+
+
 # case_title
+
 
 This example shows how functions can be defined and used in wasora.
 

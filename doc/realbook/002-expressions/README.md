@@ -5,7 +5,14 @@ inputs: expr hoc
 tags: PRINT = expressions TEXT
 ...
 
+-------
+
+:::{.text-center}
+[Previous](../001-peano) | [Index](../) | [Next](../003-lag)
+:::
+
 # Algebraic expressions
+
 
 These examples show how algebraic expressions work in wasora, which is basically as they should. The basic operators are composed by the four basic operations `+`, `-`, `*` and `/` plus the exponentation operator `^`. Parenthesis also work as expected, and can be nested up to any level. Other operators such as comparisons and logicals are introduced in other examples. 
 
@@ -63,6 +70,7 @@ Note that the double quotes are not needed, as there are no spaces in `1+2*sin(0
 
 
 -------
+
 :::{.text-center}
 [Previous](../001-peano) | [Index](../) | [Next](../003-lag)
 :::

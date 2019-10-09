@@ -5,7 +5,15 @@ inputs: fibo_vector fibo_iterative fibo_formula
 tags: VECTOR SIZE PRINT_VECTOR FORMAT IF ELSE ENDIF := static_steps vecsize sqrt 
 ...
 
+-------
+
+:::{.text-center}
+[Previous](../005-lorenz) | [Index](../) | [Next](../007-functions)
+:::
+
+
 # The Fibonacci sequence
+
 
 A thorough discussion of the beauty and applications of the Fibonacci sequence is of course out of both this Real Book and its author league. For sure the reader is already familiar with this set of natural numbers. The three examples that follow show how to use wasora to compute the Fibonacci numbers, first by constructing a vector of a certain size and setting each element to be equal to the sum of the two previous elements, then iteratively computing
 
@@ -183,6 +191,7 @@ $
 
 
 -------
+
 :::{.text-center}
 [Previous](../005-lorenz) | [Index](../) | [Next](../007-functions)
 :::

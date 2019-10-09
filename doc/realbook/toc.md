@@ -9,3 +9,4 @@
  * [One-dimensional functions](007-functions)
  * [Fun with integrals](008-integrals)
  * [Two-dimensional functions](010-2dfunctions)
+ * [Newton, Lagrange & Hamilton](012-mechanics)

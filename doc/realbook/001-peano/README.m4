@@ -5,6 +5,8 @@ inputs: peano
 tags: PRINT expressions
 ...
 
+case_nav
+
 # case_title
 
 This example shows how the sum $1+1$ can be computed and printed to the standard output---i.e. the screen---in a variety of ways.

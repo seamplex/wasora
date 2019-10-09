@@ -66,7 +66,7 @@ for i in ${list}; do
 #    fi
 #   fi
 
-  saltear=0
+  saltear=1
  
   input=`echo ${input} | sed s/~//`
   echo "    ${input}"

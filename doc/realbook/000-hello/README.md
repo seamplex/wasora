@@ -5,7 +5,14 @@ inputs: hello
 tags: PRINT TEXT
 ...
 
+-------
+
+:::{.text-center}
+[Previous](../) | [Index](../) | [Next](../001-peano)
+:::
+
 # Hello world
+
 
 The classical example that displays “hello world!” at the standard output and exits.
 
@@ -26,6 +33,7 @@ $
 The keyword `TEXT` is not strictly needed (unless given the `IMPLICIT NONE` keyword), as the construction `hello world!` does not resolve to any known symbol. However, it is a good practice to explictly precede any text with the `TEXT` keyword.
 
 -------
+
 :::{.text-center}
 [Previous](../) | [Index](../) | [Next](../001-peano)
 :::

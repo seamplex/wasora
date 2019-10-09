@@ -5,6 +5,12 @@ inputs: peano
 tags: PRINT expressions
 ...
 
+-------
+
+:::{.text-center}
+[Previous](../000-hello) | [Index](../) | [Next](../002-expressions)
+:::
+
 # The Peano axiom
 
 This example shows how the sum $1+1$ can be computed and printed to the standard output---i.e. the screen---in a variety of ways.
@@ -35,6 +41,7 @@ $
 ```
 
 -------
+
 :::{.text-center}
 [Previous](../000-hello) | [Index](../) | [Next](../002-expressions)
 :::

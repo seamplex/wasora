@@ -1,0 +1,9 @@
+# hamiltonian of the simple pendulum
+H(theta,p_theta) := p_theta^2/(2*m*l^2) - m*g*l*cos(theta) 
+
+# hamilton equations
+PHASE_SPACE theta p_theta
+VAR theta' p_theta'
+
+theta_dot    .= +derivative(H(theta, p_theta'), p_theta', p_theta)
+p_theta_dot  .= -derivative(H(theta', p_theta), theta', theta)

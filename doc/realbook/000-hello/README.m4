@@ -5,7 +5,10 @@ inputs: hello
 tags: PRINT TEXT
 ...
 
+case_nav
+
 # case_title
+
 
 The classical example that displays “hello world!” at the standard output and exits.
 

@@ -5,7 +5,14 @@ inputs: lag compact quasi-sine
 tags: end_time dt lag HEADER
 ...
 
+-------
+
+:::{.text-center}
+[Previous](../002-expressions) | [Index](../) | [Next](../004-exp)
+:::
+
 # First-order lags
+
 
 Whenever the special variable `end_time` is non-zero, wasora enters into transient mode. These examples introduce transient problems by illustrating how first-order lags can be used to filter signals.
 
@@ -106,6 +113,7 @@ $
 ![Output of `quasi-sine.was`](quasi-sine.svg)
 
 -------
+
 :::{.text-center}
 [Previous](../002-expressions) | [Index](../) | [Next](../004-exp)
 :::

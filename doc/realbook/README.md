@@ -7,6 +7,22 @@
 
 __Abstract.__ As with jazz, [wasora](https://www.seamplex.com/wasora) is best mastered when played. Welcome thus to *The wasora Realbook* which, as the [original](http://en.wikipedia.org/wiki/Real_Book), will guide you through wasora with annotated examples of increasing complexity and difficulty. The examples come with introductions, wasora inputs, terminal mimics, figures and discussions. This book is a living document that is eager to be fed by users willing to share experiences.
 
+# Contents
+
+
+ * [Hello world](000-hello)
+ * [The Peano axiom](001-peano)
+ * [Algebraic expressions](002-expressions)
+ * [First-order lags](003-lag)
+ * [A simple differential equation](004-exp)
+ * [The Lorenz chaotic system](005-lorenz)
+ * [The Fibonacci sequence](006-fibonacci)
+ * [One-dimensional functions](007-functions)
+ * [Fun with integrals](008-integrals)
+ * [Two-dimensional functions](010-2dfunctions)
+ * [Newton, Lagrange & Hamilton](012-mechanics)
+
+
 # Introduction
 
 [Wasora](https://www.seamplex.com/wasora) is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing algebraic expressions, data for function interpolation, differential equations and output instructions amongst other facilities.
@@ -51,20 +67,5 @@ The examples contained in the wasora Real Book are taken from a variety of engin
  4. the results in the form of figures are shown and discussed
 
 Most of the figures are created by [qdp](https://github.com/seamplex/qdp) which stands for *quick & dirty plot* and is a shell script that interfaces with [pyxplot](http://pyxplot.org.uk/) to generate plots of data within a single command.
-
-
-# Contents
-
-
- * [Hello world](000-hello)
- * [The Peano axiom](001-peano)
- * [Algebraic expressions](002-expressions)
- * [First-order lags](003-lag)
- * [A simple differential equation](004-exp)
- * [The Lorenz chaotic system](005-lorenz)
- * [The Fibonacci sequence](006-fibonacci)
- * [One-dimensional functions](007-functions)
- * [Fun with integrals](008-integrals)
- * [Two-dimensional functions](010-2dfunctions)
 
 

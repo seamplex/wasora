@@ -1,0 +1,4 @@
+PHASE_SPACE theta omega
+
+0 .= m*l*omega_dot + m*g*sin(theta)
+theta_dot .= omega

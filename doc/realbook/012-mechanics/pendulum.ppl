@@ -1,0 +1,20 @@
+set preamble "\usepackage{amsmath}"
+set width 12*unit(cm)
+set axis x arrow nomirrored
+set axis y arrow nomirrored
+set nomxtics
+
+set key bottom
+
+set xlabel "$t$ [sec]"
+set ylabel "$\theta$ [rad]"
+set terminal pdf
+set output "pendulum.pdf"
+
+plot "newton.dat"   w lp lw 5 plw 2 pt 1  ps 1.5 color orange     ti "Newton",\
+     "lagrange.dat" w lp lw 3 plw 2 pt 15 ps 1.0 color black      ti "Lagrange",\
+     "hamilton.dat" w lp lw 1 plw 2 pt 16 ps 0.5 color turquoise  ti "Hamilton"
+
+set terminal png dpi 127
+set output "pendulum.png"
+replot

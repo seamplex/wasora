@@ -1,0 +1,37 @@
+# parametric computation to study how the period of a single
+# pendulum changes with the amplitude
+m = 1.111
+l = 1.234
+g = 9.806
+
+# start with a long end_time, we will finish the solution
+# before with the special variable done
+end_time = 20
+
+# one hundred steps of parametric study over the amplitude
+PARAMETRIC a MIN 1e-3 MAX 0.75*pi OUTER_STEPS 100
+
+# initial condition equal to the parametric variable a
+theta_0 = a
+INITIAL_CONDITIONS_MODE FROM_VARIABLES
+
+# include the equations to solve according to
+# the commandline argument
+INCLUDE newton.was
+
+# build a function f(t) with the time history of theta
+HISTORY theta f
+
+# end after one single period
+done = t>0.9*2*pi*sqrt(l/g) & theta>(0.99*a)
+
+# once we solved up to end_time, we try to locate
+# at what times f(t) = 0
+IF done
+ VAR t'
+ approx = 2*pi*sqrt(l/g)
+ t1 = root(f(t'), t', 0, t/2)
+ t2 = root(f(t'), t', t/2, t)
+ real = 2*(t2-t1)
+ PRINT a real approx HEADER
+ENDIF

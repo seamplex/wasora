@@ -1,0 +1,9 @@
+# lagrangian of the simple pendulum
+L(theta,thetadot) := 1/2*m*(l*thetadot)^2 + m*g*l*cos(theta)
+
+# lagrange equations
+PHASE_SPACE theta dL_dthetadot 
+VAR theta' theta_dot'
+
+dL_dthetadot     .= derivative(L(theta, theta_dot'), theta_dot', theta_dot)
+dL_dthetadot_dot .= derivative(L(theta', theta_dot), theta', theta)

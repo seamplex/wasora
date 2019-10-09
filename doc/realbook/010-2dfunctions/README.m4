@@ -5,9 +5,12 @@ inputs: paraboloid nearest rectangle scattered compwater
 tags: FUNCTION := FILE_PATH DATA INTERPOLATION nearest rectangle PRINT_FUNCTION MIN MAX STEP NUMBER FILE OUTPUT_FILE 
 ...
 
+case_nav
+
 # case_title
 
-These examples illustrate the facilities wasora provides to interpolate two-dimensional functions. As shown in section ref{007-functions}, multidimensional functions may be defined using algebraic expressions, inline data, external files, vectors or dynamically-loaded routines. The main focus of this section is to illustrate the difference between algebraic and pointwise-defined two-dimensional functions, and to further illustrate the difference between a nearest-neighbor interpolation (based on a $k$-dimensional tree structure) and a rectangle interpolation (based on finite-elements-like shape functions for quadrangles).
+
+These examples illustrate the facilities wasora provides to interpolate two-dimensional functions. As shown in section [007-functions], multidimensional functions may be defined using algebraic expressions, inline data, external files, vectors or dynamically-loaded routines. The main focus of this section is to illustrate the difference between algebraic and pointwise-defined two-dimensional functions, and to further illustrate the difference between a nearest-neighbor interpolation (based on a $k$-dimensional tree structure) and a rectangle interpolation (based on finite-elements-like shape functions for quadrangles).
 
 ## paraboloid.was
 

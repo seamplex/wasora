@@ -5,7 +5,14 @@ inputs: lorenz
 tags: PHASE_SPACE CONST PRINT HEADER .= = 
 ...
 
+-------
+
+:::{.text-center}
+[Previous](../004-exp) | [Index](../) | [Next](../006-fibonacci)
+:::
+
 # The Lorenz chaotic system
+
 
 This example shows how to solve the chaotic [Lorenz’ dynamical system](http://en.wikipedia.org/wiki/Lorenz_system)---you know the one of the butterfly. The differential equations are
 
@@ -65,6 +72,7 @@ The ability to solve the Lorenz system---that has both intrigued and inspired me
 ![The Lorenz attractor in phase space](lorenz3d.svg)
 
 -------
+
 :::{.text-center}
 [Previous](../004-exp) | [Index](../) | [Next](../006-fibonacci)
 :::

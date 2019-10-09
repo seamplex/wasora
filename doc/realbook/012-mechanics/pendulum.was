@@ -1,0 +1,27 @@
+# parameters of the pendulum, assumed in SI units
+m = 1.111
+l = 1.234
+g = 9.806
+
+# initial conditions
+theta_0 = pi-1
+INITIAL_CONDITIONS_MODE FROM_VARIABLES
+
+# running time
+end_time = 10
+
+# include the equations to solve according to
+# the commandline argument
+INCLUDE $1.was
+
+
+# write a header with some information
+IF in_static
+ PRINT "\# $1's simple pendulum"
+ PRINT "\# m = " m
+ PRINT "\# l = " l
+ PRINT "\# g = " g
+ENDIF
+
+# and at all times, theta and theta_dot vs time
+PRINT t theta theta_dot

@@ -5,7 +5,15 @@ inputs: exp exp-dt
 tags: PHASE_SPACE PRINT HEADER = .= end_time min_dt max_dt rel_error
 ...
 
+-------
+
+:::{.text-center}
+[Previous](../003-lag) | [Index](../) | [Next](../005-lorenz)
+:::
+
+
 # A simple differential equation
+
 
 The examples in this section show how a single ordinary differential equation can be solved with wasora. Indeed this is one of its main features, namely the ability to solve systems of differential-algebraic equations written as natural algebraic expressions. In particular, the equation the examples solve is
 
@@ -75,6 +83,7 @@ It can be seen that all the solutions coincide with the analytical expression. E
 
 
 -------
+
 :::{.text-center}
 [Previous](../003-lag) | [Index](../) | [Next](../005-lorenz)
 :::

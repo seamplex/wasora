@@ -5,7 +5,10 @@ inputs: lorenz
 tags: PHASE_SPACE CONST PRINT HEADER .= = 
 ...
 
+case_nav
+
 # case_title
+
 
 This example shows how to solve the chaotic [Lorenz’ dynamical system](http://en.wikipedia.org/wiki/Lorenz_system)---you know the one of the butterfly. The differential equations are
 

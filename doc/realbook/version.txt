@@ -1,5 +1,5 @@
 $ wasora -i
-wasora v0.6.31-g13aba49+Δ 
+wasora v0.6.41-gf216814
 wasora’s an advanced suite for optimization & reactor analysis
 
 wasora is copyright (C) 2009-2019 jeremy theler

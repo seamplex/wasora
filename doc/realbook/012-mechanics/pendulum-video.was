@@ -1,0 +1,33 @@
+FUNCTION theta(t) FILE_PATH $1.dat
+FUNCTION omega(t) FILE_PATH $1.dat COLUMNS 1 3
+
+VAR m g l
+IF in_static
+ READ ASCII_FILE_PATH $1.dat m l g
+ENDIF
+
+# end after one single period
+end_time = infinite
+done = omega(t)>0 & theta(t)>(theta(0)-2e-3)
+dt = 1/$2
+
+WINDOW WIDTH 480 HEIGHT 480 CAPTION "the simple pendulum" COORDINATES 240 240 200 -200 200
+
+# the center of the bob
+x = +sin(theta(t))
+y = -cos(theta(t))
+
+# the vertical
+SEGMENT X1 0 Y1 0 X2 0 Y2 +1.5  COLOR grey90
+SEGMENT X1 0 Y1 0 X2 0 Y2 -1.5  COLOR grey70
+
+# the string
+SEGMENT X1 0 Y1 0 X2 x Y2 y
+
+# the bob (and the light reflection)
+CIRCLE X x        Y y        R 0.050*m COLOR black
+CIRCLE X x+0.02*m Y y+0.02*m R 0.008*m COLOR snow
+
+FILE frame $1-%04g.png step_transient MODE w
+BESSSUGO_DRAW
+BESSSUGO_DUMP FILE frame

@@ -5,7 +5,14 @@ inputs: sigma resonance lag-comparison
 tags: VAR PRINT TEXT integral gauss_kronrod gauss_legendre lag_bilinear lag_euler exp
 ...
 
+-------
+
+:::{.text-center}
+[Previous](../007-functions) | [Index](../) | [Next](../010-2dfunctions)
+:::
+
 # Fun with integrals
+
 
 Who can have fun with integrals? Well, of course we nerds do. And, indeed, I get a lot of fun when nowadays I am faced to solving complicated integrals with numerical tools such as [wasora](https://www.saemplex.com/wasora) and compare the situation to the old days of undergraduate school when *integrals* meant *pencil and paper*. Poor me!
 
@@ -49,7 +56,7 @@ PRINT TEXT "sigma =" sigma TEXT "W m^(-2) K^(-4)"
 
 ```bash
 $ wasora sigma.was
-sigma =	1.32499e-43	W m^(-2) K^(-4)	
+sigma =	5.67037e-08	W m^(-2) K^(-4)	
 $ 
 ```
 
@@ -181,6 +188,7 @@ $
 
 
 -------
+
 :::{.text-center}
 [Previous](../007-functions) | [Index](../) | [Next](../010-2dfunctions)
 :::

@@ -5,7 +5,15 @@ inputs: algebraic inline file vectors satwater
 tags: FUNCTION PRINT_FUNCTION MIN MAX STEP VAR FILE FILE_PATH VECTORS NUMBER OUTPUT_FILE INTERPOLATION cspline akima linear sin cos log sqrt derivative integral
 ...
 
+-------
+
+:::{.text-center}
+[Previous](../006-fibonacci) | [Index](../) | [Next](../008-integrals)
+:::
+
+
 # One-dimensional functions
+
 
 This example shows how functions can be defined and used in wasora.
 
@@ -198,6 +206,7 @@ $
 ![Derivative of density with respect to temperature $\partial \rho/\partial T$](drhodt.svg)
 
 -------
+
 :::{.text-center}
 [Previous](../006-fibonacci) | [Index](../) | [Next](../008-integrals)
 :::

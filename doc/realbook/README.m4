@@ -7,6 +7,10 @@
 
 __Abstract.__ As with jazz, [wasora](https://www.seamplex.com/wasora) is best mastered when played. Welcome thus to *The wasora Realbook* which, as the [original](http://en.wikipedia.org/wiki/Real_Book), will guide you through wasora with annotated examples of increasing complexity and difficulty. The examples come with introductions, wasora inputs, terminal mimics, figures and discussions. This book is a living document that is eager to be fed by users willing to share experiences.
 
+# Contents
+
+include(toc.md)
+
 # Introduction
 
 [Wasora](https://www.seamplex.com/wasora) is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing algebraic expressions, data for function interpolation, differential equations and output instructions amongst other facilities.
@@ -52,8 +56,4 @@ The examples contained in the wasora Real Book are taken from a variety of engin
 
 Most of the figures are created by [qdp](https://github.com/seamplex/qdp) which stands for *quick & dirty plot* and is a shell script that interfaces with [pyxplot](http://pyxplot.org.uk/) to generate plots of data within a single command.
 
-
-# Contents
-
-include(toc.md)
 

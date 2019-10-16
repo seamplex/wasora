@@ -931,7 +931,7 @@ int mesh_gmsh_write_scalar(mesh_post_t *mesh_post, function_t *function, centeri
     // numero de datos
     fprintf(mesh_post->file->pointer, "%d\n", mesh->n_cells);
 
-    if (function->type == type_pointwise_mesh_cell) {
+    if (function->type == type_pointwise_mesh_cell && function->mesh == mesh) {
       for (i = 0; i < function->data_size; i++) {
         fprintf(mesh_post->file->pointer, "%d %g\n", mesh->cell[i].element->tag, function->data_value[i]);
       }
@@ -945,7 +945,7 @@ int mesh_gmsh_write_scalar(mesh_post_t *mesh_post, function_t *function, centeri
     // numero de datos
     fprintf(mesh_post->file->pointer, "%d\n", mesh->n_nodes);              
   
-    if (function->type == type_pointwise_mesh_node) {
+    if (function->type == type_pointwise_mesh_node && function->mesh == mesh) {
       for (i = 0; i < function->data_size; i++) {
         fprintf(mesh_post->file->pointer, "%d %g\n", mesh->node[i].tag, function->data_value[i]);
       }

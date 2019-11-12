@@ -1,0 +1,6 @@
+PHASE_SPACE a
+end_time = 1
+a_0 = 1
+a_dot .= -a
+HISTORY a b
+PRINT t a b(t-0.1)

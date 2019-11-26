@@ -143,28 +143,7 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
     }  
     free(dummy_aux);
 
-    // reacciones
-    asprintf(&dummy_aux, "%s_RF", physical_entity->name);
-    if (wasora_check_name(dummy_aux) == WASORA_PARSER_OK) {
-      if ((physical_entity->vector_R0 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
-        return NULL;
-      }
-    } else {
-      wasora_pop_error_message();
-    }      
-    free(dummy_aux);
-
-    asprintf(&dummy_aux, "%s_RM", physical_entity->name);
-    if (wasora_check_name(dummy_aux) == WASORA_PARSER_OK) {
-      if ((physical_entity->vector_R1 = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
-        return NULL;
-      }
-    } else {
-      wasora_pop_error_message();
-    }
-    free(dummy_aux);
   } 
-
   return physical_entity;
 }
 

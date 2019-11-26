@@ -1945,18 +1945,14 @@ struct physical_entity_t {
   // (1 = x<0, 2 = x>0, 3 = y<0, 4 = y>0, 5 = z<0, 6 = z>0)
   expr_t pos[6];
   
+  // o area o longitud segun dimension, a veces se llama masa
   double volume;
   // centro de gravedad
   double cog[3];
-  // reacciones
-  double F[3];  // momento de orden cero (i.e. fuerza)
-  double M[3];  // momento de orden uno  (i.e. momento)
   
   var_t *var_vol;
   vector_t *vector_cog;
-  vector_t *vector_R0;
-  vector_t *vector_R1;
-    
+  
   // una linked list es muy cara
   int n_elements;
   int i_element;

@@ -35,6 +35,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
   var_t *result = mesh_integrate->result;
   
   // esto es lo mismo que findmax y que fillvector
+  // TODO: pelar ojo a las expresiones de x y de nx
   if (function != NULL) {
     if (mesh_integrate->centering == centering_cells) {
       if (function->type == type_pointwise_mesh_cell && function->mesh == mesh) {
@@ -115,6 +116,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
             w = mesh_integration_weight(mesh, element, v);
             mesh_compute_x(element, mesh->fem.r, mesh->fem.x);
             mesh_update_coord_vars(gsl_vector_ptr(mesh->fem.x, 0));
+            mesh_compute_normal(element);
             integral += w * wasora_evaluate_expression(expr);
           }
         }
@@ -126,6 +128,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
               w = mesh_integration_weight(mesh, element, v);
               mesh_compute_x(element, mesh->fem.r, mesh->fem.x);
               mesh_update_coord_vars(gsl_vector_ptr(mesh->fem.x, 0));
+              mesh_compute_normal(element);
               integral += w * wasora_evaluate_expression(expr);
             }
           }

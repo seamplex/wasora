@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora common framework header
  *
- *  Copyright (C) 2009--2018 jeremy theler
+ *  Copyright (C) 2009--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -1847,6 +1847,13 @@ struct {
     var_t *z;
     var_t *arr_x[3];   // x, y y z en un array de tamanio 3
     vector_t *vec_x;
+    
+    var_t *nx;
+    var_t *ny;
+    var_t *nz;
+    var_t *arr_n[3];
+    vector_t *vec_n;
+    
     var_t *eps;
 
     var_t *nodes;
@@ -2355,6 +2362,7 @@ extern int mesh_compute_r(element_t *, gsl_vector *, gsl_vector *);
 extern int mesh_compute_r_at_node(element_t *, int, gsl_vector *);
 extern int mesh_compute_l(mesh_t *, element_t *);
 extern double mesh_compute_fem_objects_at_gauss(mesh_t *, element_t *, int);
+extern int mesh_compute_normal(element_t *);
 extern int mesh_update_coord_vars(double *);
 
 extern int mesh_compute_B(mesh_t *, element_t *);

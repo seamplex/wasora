@@ -26,43 +26,145 @@
 #include <stdlib.h>
 #include <string.h>
 
-int frdfromgmsh_types[18] = {
- ELEMENT_TYPE_UNDEFINED,
- ELEMENT_TYPE_HEXAHEDRON,
- ELEMENT_TYPE_PRISM,
- ELEMENT_TYPE_HEXAHEDRON20,
- ELEMENT_TYPE_TETRAHEDRON,
- ELEMENT_TYPE_UNDEFINED,  // prism15
- ELEMENT_TYPE_TETRAHEDRON10,
- ELEMENT_TYPE_TRIANGLE,
- ELEMENT_TYPE_TRIANGLE6,
- ELEMENT_TYPE_QUADRANGLE,
- ELEMENT_TYPE_QUADRANGLE8,
- ELEMENT_TYPE_LINE,
- ELEMENT_TYPE_LINE3,
+/*
+     _________________________________________________________________
+    |                               |                                 |
+    | №№      CalculiX type         |  №№         VTK type            |
+    |_______________________________|_________________________________|
+    |    |          |               |      |                          |
+    |  1 | C3D8     |  8 node brick | = 12 | VTK_HEXAHEDRON           |
+    |    | F3D8     |               |      |                          |
+    |    | C3D8R    |               |      |                          |
+    |    | C3D8I    |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    |  2 | C3D6     |  6 node wedge | = 13 | VTK_WEDGE                |
+    |    | F3D6     |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    |  3 | C3D4     |  4 node tet   | = 10 | VTK_TETRA                |
+    |    | F3D4     |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    |  4 | C3D20    | 20 node brick | = 25 | VTK_QUADRATIC_HEXAHEDRON |
+    |    | C3D20R   |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    |  5 | C3D15    | 15 node wedge | ~ 13 | VTK_WEDGE                |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    |  6 | C3D10    | 10 node tet   | = 24 | VTK_QUADRATIC_TETRA      |
+    |    | C3D10T   |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    |  7 | S3       |  3 node shell | =  5 | VTK_TRIANGLE             |
+    |    | M3D3     |               |      |                          |
+    |    | CPS3     |               |      |                          |
+    |    | CPE3     |               |      |                          |
+    |    | CAX3     |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    |  8 | S6       |  6 node shell | = 22 | VTK_QUADRATIC_TRIANGLE   |
+    |    | M3D6     |               |      |                          |
+    |    | CPS6     |               |      |                          |
+    |    | CPE6     |               |      |                          |
+    |    | CAX6     |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    |  9 | S4       |  4 node shell | =  9 | VTK_QUAD                 |
+    |    | S4R      |               |      |                          |
+    |    | M3D4     |               |      |                          |
+    |    | M3D4R    |               |      |                          |
+    |    | CPS4     |               |      |                          |
+    |    | CPS4R    |               |      |                          |
+    |    | CPE4     |               |      |                          |
+    |    | CPE4R    |               |      |                          |
+    |    | CAX4     |               |      |                          |
+    |    | CAX4R    |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    | 10 | S8       |  8 node shell | = 23 | VTK_QUADRATIC_QUAD       |
+    |    | S8R      |               |      |                          |
+    |    | M3D8     |               |      |                          |
+    |    | M3D8R    |               |      |                          |
+    |    | CPS8     |               |      |                          |
+    |    | CPS8R    |               |      |                          |
+    |    | CPE8     |               |      |                          |
+    |    | CPE8R    |               |      |                          |
+    |    | CAX8     |               |      |                          |
+    |    | CAX8R    |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    | 11 | B21      |  2 node beam  | =  3 | VTK_LINE                 |
+    |    | B31      |               |      |                          |
+    |    | B31R     |               |      |                          |
+    |    | T2D2     |               |      |                          |
+    |    | T3D2     |               |      |                          |
+    |    | GAPUNI   |               |      |                          |
+    |    | DASHPOTA |               |      |                          |
+    |    | SPRING2  |               |      |                          |
+    |    | SPRINGA  |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    | 12 | B32      |  3 node beam  | = 21 | VTK_QUADRATIC_EDGE       |
+    |    | B32R     |               |      |                          |
+    |    | T3D3     |               |      |                          |
+    |    | D        |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+    |    |          |               |      |                          |
+    | ?? | SPRING1  |  1 node       | =  1 | VTK_VERTEX               |
+    |    | DCOUP3D  |               |      |                          |
+    |    | MASS     |               |      |                          |
+    |____|__________|_______________|______|__________________________|
+ 
+    © Ihor Mirzov, August 2019
+    Distributed under GNU General Public License v3.0
+
+    Convert Calculix element type to VTK.
+    Keep in mind that CalculiX expands shell elements.
+    In vtk elements nodes are numbered starting from 0, not from 1.
+
+    For frd see http://www.dhondt.de/cgx_2.15.pdf pages 117-123 (chapter 10)
+    For vtk see https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf pages 9-10
+   
+*/
+
+int frdfromgmsh_types[] = {
+ ELEMENT_TYPE_UNDEFINED,     // 0
+ ELEMENT_TYPE_HEXAHEDRON,    // 1
+ ELEMENT_TYPE_PRISM,         // 2
+ ELEMENT_TYPE_TETRAHEDRON,   // 3
+ ELEMENT_TYPE_HEXAHEDRON20,  // 4
+ ELEMENT_TYPE_UNDEFINED,     // 5
+ ELEMENT_TYPE_TETRAHEDRON10, // 6
+ ELEMENT_TYPE_TRIANGLE,      // 7
+ ELEMENT_TYPE_TRIANGLE6,     // 8
+ ELEMENT_TYPE_QUADRANGLE,    // 9
+ ELEMENT_TYPE_QUADRANGLE8,   // 10
+ ELEMENT_TYPE_LINE,          // 11
+ ELEMENT_TYPE_LINE3,         // 12
+ ELEMENT_TYPE_POINT          // 13
 };
+
 int mesh_frd_readmesh(mesh_t *mesh) {
 
   char buffer[BUFFER_SIZE];
   char tmp[BUFFER_SIZE];
-  double scale_factor;
   double offset[3];
-  int i, j;
-  int id;
+  double scale_factor;
+  double scalar;
+  
+  int i, j, j_gmsh;
+  int tag;
   int type;
   int tags[2];
   int node;
-//  int dimension;
-//  int cell_id;
   int spatial_dimensions;
   int bulk_dimensions;
   int order;
   
-  int format;
-  int minusone, minustwo, minusthree;
-  
-//  char *dummy;
-//  char *name;
+  int numnod, ictype, numstp, format, ncomps, irtype, menu;
+  int minusone, minustwo, minusthree, minusfour, minusfive;
   
   if (mesh->file->pointer == NULL) {
     wasora_call(wasora_instruction_open_file(mesh->file));
@@ -84,9 +186,19 @@ int mesh_frd_readmesh(mesh_t *mesh) {
       ;
     
     // ------------------------------------------------------  
+    } else if (strncmp("    1C", buffer, 6) == 0) {
+      // case name at buffer+6
+      ;
+      
+    // ------------------------------------------------------  
+    } else if (strncmp("    1U", buffer, 6) == 0) {
+      // user-provided field at buffer+6 and user-provided data afterwards
+      ;
+      
+    // ------------------------------------------------------  
     } else if (strncmp("    2C", buffer, 6) == 0) {
  
-      // la cantidad de nodos
+      // la cantidad de nodos y el formato
       if (sscanf(buffer, "%s %d %d", tmp, &mesh->n_nodes, &format) != 3) {
         wasora_push_error_message("error parsing number of nodes '%s'", buffer);
         return WASORA_RUNTIME_ERROR;
@@ -96,7 +208,7 @@ int mesh_frd_readmesh(mesh_t *mesh) {
         return WASORA_RUNTIME_ERROR;
       }
       if (format > 1) {
-        wasora_push_error_message("format %d not supported'", format);
+        wasora_push_error_message("node format %d not supported'", format);
         return WASORA_RUNTIME_ERROR;
       }
       
@@ -112,30 +224,32 @@ int mesh_frd_readmesh(mesh_t *mesh) {
           return WASORA_RUNTIME_ERROR;
         }
 
-        if (fscanf(mesh->file->pointer, "%d", &id) == 0) {
+        if (fscanf(mesh->file->pointer, "%d", &tag) == 0) {
           return WASORA_RUNTIME_ERROR;
         }
-        // nuestros id son de C
-        id--;
-        mesh->node[id].index_mesh = id;
-        mesh->node[id].tag = id+1;
+        if (i+1 != tag) {
+          wasora_push_error_message("nodes in file '%s' are sparse", mesh->file->path);
+          return WASORA_RUNTIME_ERROR;
+        }
+        mesh->node[i].tag = tag;
+        mesh->node[i].index_mesh = i;
 
         for (j = 0; j < 3; j++) {
-          if (fscanf(mesh->file->pointer, "%lf", &mesh->node[id].x[j]) == 0) {
+          if (fscanf(mesh->file->pointer, "%lf", &mesh->node[i].x[j]) == 0) {
             return WASORA_RUNTIME_ERROR;
           }
           if (scale_factor != 0 || offset[j] != 0) {
-            mesh->node[id].x[j] = scale_factor*mesh->node[id].x[j] - offset[j];
+            mesh->node[i].x[j] = scale_factor*mesh->node[i].x[j] - offset[j];
           }
         }
         
-        if (spatial_dimensions < 1 && fabs(mesh->node[id].x[0]) > 1e-6) {
+        if (spatial_dimensions < 1 && fabs(mesh->node[i].x[0]) > 1e-6) {
           spatial_dimensions = 1;
         }
-        if (spatial_dimensions < 2 && fabs(mesh->node[id].x[1]) > 1e-6) {
+        if (spatial_dimensions < 2 && fabs(mesh->node[i].x[1]) > 1e-6) {
           spatial_dimensions = 2;
         }
-        if (spatial_dimensions < 3 && fabs(mesh->node[id].x[2]) > 1e-6) {
+        if (spatial_dimensions < 3 && fabs(mesh->node[i].x[2]) > 1e-6) {
           spatial_dimensions = 3;
         }
       }
@@ -180,23 +294,22 @@ int mesh_frd_readmesh(mesh_t *mesh) {
           return WASORA_RUNTIME_ERROR;
         }
         
-        if (fscanf(mesh->file->pointer, "%d", &id) == 0) {
+        if (fscanf(mesh->file->pointer, "%d", &tag) == 0) {
           return WASORA_RUNTIME_ERROR;
         }
-        id--; // nuestras id son de C
-        mesh->element[id].tag = id+1;
-        mesh->element[id].index = id;
+        mesh->element[i].index = i;
+        mesh->element[i].tag = tag;
     
         if (fscanf(mesh->file->pointer, "%d", &type) == 0) {
           return WASORA_RUNTIME_ERROR;
         }
-        if (type > 12) {
-          wasora_push_error_message("elements type '%d' shold be less than 13", type);
+        if (type > 13) {
+          wasora_push_error_message("element type '%d' shold be less than 14", type);
           return WASORA_RUNTIME_ERROR;
         }
-        mesh->element[id].type = &(wasora_mesh.element_type[frdfromgmsh_types[type]]);
-        if (mesh->element[id].type->nodes == 0) {
-          wasora_push_error_message("elements of type '%s' are not supported in this version :-(", mesh->element[id].type->name);
+        mesh->element[i].type = &(wasora_mesh.element_type[frdfromgmsh_types[type]]);
+        if (mesh->element[i].type->nodes == 0) {
+          wasora_push_error_message("elements of type '%s' are not supported in this version :-(", mesh->element[i].type->name);
           return WASORA_RUNTIME_ERROR;
         }
 
@@ -221,23 +334,23 @@ int mesh_frd_readmesh(mesh_t *mesh) {
 */      
 
         // vemos la dimension del elemento -> la mayor es la de la malla
-        if (mesh->element[id].type->dim > bulk_dimensions) {
-          bulk_dimensions = mesh->element[id].type->dim;
+        if (mesh->element[i].type->dim > bulk_dimensions) {
+          bulk_dimensions = mesh->element[i].type->dim;
         }
         
         // el orden
-        if (mesh->element[id].type->order > order) {
-          order = mesh->element[id].type->order;
+        if (mesh->element[i].type->order > order) {
+          order = mesh->element[i].type->order;
         }
         
         // nos acordamos del elemento que tenga el mayor numero de nodos
-        if (mesh->element[id].type->nodes > mesh->max_nodes_per_element) {
-          mesh->max_nodes_per_element = mesh->element[id].type->nodes;
+        if (mesh->element[i].type->nodes > mesh->max_nodes_per_element) {
+          mesh->max_nodes_per_element = mesh->element[i].type->nodes;
         }
 
         // y del que tenga mayor cantidad de vecinos
-        if (mesh->element[id].type->faces > mesh->max_faces_per_element) {
-          mesh->max_faces_per_element = mesh->element[id].type->faces;
+        if (mesh->element[i].type->faces > mesh->max_faces_per_element) {
+          mesh->max_faces_per_element = mesh->element[i].type->faces;
         }
     
         // el -2
@@ -250,18 +363,34 @@ int mesh_frd_readmesh(mesh_t *mesh) {
           return WASORA_RUNTIME_ERROR;
         }
         
-        mesh->element[id].node = calloc(mesh->element[id].type->nodes, sizeof(node_t *));
-        for (j = 0; j < mesh->element[id].type->nodes; j++) {
-          if (fscanf(mesh->file->pointer, "%d", &node) == 0) {
-            return WASORA_RUNTIME_ERROR;
+        mesh->element[i].node = calloc(mesh->element[i].type->nodes, sizeof(node_t *));
+        for (j = 0; j < mesh->element[i].type->nodes; j++) {
+          do {
+            if (fscanf(mesh->file->pointer, "%d", &node) == 0) {
+              return WASORA_RUNTIME_ERROR;
+            }
+            if (node > mesh->n_nodes) {
+              wasora_push_error_message("node %d in element %d does not exist", node, tag);
+              return WASORA_RUNTIME_ERROR;
+            }
+          } while (node == -2);
+          
+          // pelar ojo al orden!
+          // el tet10 tiene un unico cambio
+          // ojo que hexa20y wedge 2nd order tambien tienen cambios
+          if (mesh->element[i].type->id == ELEMENT_TYPE_TETRAHEDRON10) {
+            if (j == 8) {
+              j_gmsh = 9;
+            } else if (j == 9) {
+              j_gmsh = 8;
+            } else {
+              j_gmsh = j;
+            }
           }
-          if (node > mesh->n_nodes) {
-            wasora_push_error_message("node %d in element %d does not exist", node, id);
-            return WASORA_RUNTIME_ERROR;
-          }
-          mesh->element[id].node[j] = &mesh->node[node-1];
-          mesh_add_element_to_list(&mesh->element[id].node[j]->associated_elements, &mesh->element[id]);
-          // habria que ver si la dimension es la del problema?
+          
+          mesh->element[i].node[j_gmsh] = &mesh->node[node-1];
+          mesh_add_element_to_list(&mesh->element[i].node[j_gmsh]->associated_elements, &mesh->element[i]);
+          
 /*          
           if (mesh->element[id].physical_entity != NULL && mesh->element[id].physical_entity->material != NULL) {
             mesh_add_material_to_list(&mesh->element[id].node[j]->materials_list, mesh->element[id].physical_entity->material);
@@ -279,7 +408,133 @@ int mesh_frd_readmesh(mesh_t *mesh) {
         wasora_push_error_message("expected minus three as line starter", buffer);
         return WASORA_RUNTIME_ERROR;
       }
-       
+     
+    // ------------------------------------------------------      
+    } else if (strncmp("  100C", buffer, 6) == 0) {
+      
+      node_data_t *node_data;
+      function_t **function;
+      
+      // la cantidad de nodos
+      if (sscanf(buffer+32, "%d", &numnod) != 1) {
+        wasora_push_error_message("error parsing 100CL '%s'", buffer);
+        return WASORA_RUNTIME_ERROR;
+      }
+
+      if (sscanf(buffer+57, "%d %d", &ictype, &numstp) != 2) {
+        wasora_push_error_message("error parsing 100CL '%s'", buffer);
+        return WASORA_RUNTIME_ERROR;
+      }
+      
+      if (sscanf(buffer+74, "%d", &format) != 1) {
+        wasora_push_error_message("error parsing 100CL '%s'", buffer);
+        return WASORA_RUNTIME_ERROR;
+      }
+      
+      
+      if (numnod != mesh->n_nodes || ictype != 0 || numstp != 1 || format > 1) {
+        continue;
+      }
+      
+      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
+        wasora_push_error_message("error parsing -4");
+        return WASORA_RUNTIME_ERROR;
+      }
+      
+      if (sscanf(buffer, "%d %s %d %d", &minusfour, tmp, &ncomps, &irtype) != 4) {
+        wasora_push_error_message("error parsing -4 '%s'", buffer);
+        return WASORA_RUNTIME_ERROR;
+      }
+      
+      if (minusfour != -4) {
+        wasora_push_error_message("error parsing -4 '%s'", buffer);
+        return WASORA_RUNTIME_ERROR;
+      }
+      
+      if (irtype != 1) {
+        continue;
+      }
+      
+      // esto es un array de apuntadores, arrancamos en null y si
+      // el nombre en el frd coincide con alguna de las funciones
+      // que nos pidieron, entonces lo hacemos apuntar ahi
+      function = calloc(ncomps, sizeof(function_t *));
+      
+      for (i = 0; i < ncomps; i++) {
+        function[i] = NULL;
+        
+        if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
+          wasora_push_error_message("error parsing -5");
+          return WASORA_RUNTIME_ERROR;
+        }
+        
+        if (sscanf(buffer, "%d %s %d", &minusfive, tmp, &menu) != 3) {
+          wasora_push_error_message("error parsing -5 '%s'", buffer);
+          return WASORA_RUNTIME_ERROR;
+        }
+        
+        if (minusfive != -5) {
+          wasora_push_error_message("error parsing -5 '%s'", buffer);
+          return WASORA_RUNTIME_ERROR;
+        }
+        if (menu != 1) {
+          wasora_push_error_message("menu should be 1 '%s'", buffer);
+          return WASORA_RUNTIME_ERROR;
+        }
+        
+        LL_FOREACH(mesh->node_datas, node_data) {
+          if (strcmp(tmp, node_data->name_in_mesh) == 0) {
+            function[i] = node_data->function;
+            
+            function[i]->type = type_pointwise_mesh_node;
+            function[i]->mesh = mesh;
+            function[i]->data_argument = mesh->nodes_argument;
+            function[i]->data_size = numnod;
+            function[i]->data_value = calloc(numnod, sizeof(double));
+            
+          }
+        }
+        
+        
+        // esto es algo inventado por el viejo de calculix, donde son indices que aparecen
+        // a veces si y a veces no, el cuento es que si la funcion se llama ALL no hay
+        // datos sino que viene de calcular el modulo del vector desplazamiento
+        if (strcmp(tmp, "ALL") == 0) {
+          ncomps--;  // esto funciona solo si ALL es la ultima funcion
+        }
+        
+      }
+        
+      for (j = 0; j < numnod; j++) {
+        fscanf(mesh->file->pointer, "%d %d", &minusone, &node);
+        if (minusone != -1) {
+          wasora_push_error_message("expected -1 '%s'", buffer);
+          return WASORA_RUNTIME_ERROR;
+        }
+        if (node < 1 || node > mesh->n_nodes) {
+          wasora_push_error_message("invalid node number '%d'", node);
+          return WASORA_RUNTIME_ERROR;
+        }
+          
+        for (i = 0; i < ncomps; i++) {
+          // no entran mas de 6 por vez, hay que leer un -2 si hay mas
+          fscanf(mesh->file->pointer, "%lf", &scalar);
+          if (function[i] != NULL) {
+            function[i]->data_value[node-1] = scalar;
+          }
+        }
+      }
+      
+      // el -3
+      if (fscanf(mesh->file->pointer, "%d", &minusthree) != 1) {
+        wasora_push_error_message("error parsing -3");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (minusthree != -3) {
+        wasora_push_error_message("expected minus three as line starter", buffer);
+        return WASORA_RUNTIME_ERROR;
+      }
+      
     // ------------------------------------------------------      
     }
   }

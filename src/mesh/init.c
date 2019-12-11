@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related initialization routines
  *
- *  Copyright (C) 2014--2018 jeremy theler
+ *  Copyright (C) 2014--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -49,7 +49,34 @@ int wasora_mesh_init_before_parser(void) {
   wasora_mesh.vars.arr_x[0] = wasora_mesh.vars.x;
   wasora_mesh.vars.arr_x[1] = wasora_mesh.vars.y;
   wasora_mesh.vars.arr_x[2] = wasora_mesh.vars.z;
+  
+  
+  // idem para la normal
+  wasora_mesh.vars.vec_n = wasora_define_vector("n_global", 3, NULL, NULL);
+  // como ahora hacemos alias de a los elementos del vector n_global lo inicializamos
+  wasora_call(wasora_vector_init(wasora_mesh.vars.vec_n));
 
+  
+//va+x+name nx
+//va+x+desc Holder variable for the local outward normal in surfaces.
+  wasora_mesh.vars.nx = wasora_define_variable("nx");
+  wasora_realloc_variable_ptr(wasora_mesh.vars.nx, gsl_vector_ptr(wasora_value_ptr(wasora_mesh.vars.vec_n), 0), 0);
+
+//va+y+name ny
+//va+y+desc Idem as `nx`.
+  wasora_mesh.vars.ny = wasora_define_variable("ny");
+  wasora_realloc_variable_ptr(wasora_mesh.vars.ny, gsl_vector_ptr(wasora_value_ptr(wasora_mesh.vars.vec_n), 1), 0);
+
+//va+z+name z
+//va+z+desc Idem as `x`.
+  wasora_mesh.vars.nz = wasora_define_variable("nz");
+  wasora_realloc_variable_ptr(wasora_mesh.vars.nz, gsl_vector_ptr(wasora_value_ptr(wasora_mesh.vars.vec_n), 2), 0);
+
+// y ya que estamos las ponemos en un array numerico
+  wasora_mesh.vars.arr_n[0] = wasora_mesh.vars.nx;
+  wasora_mesh.vars.arr_n[1] = wasora_mesh.vars.ny;
+  wasora_mesh.vars.arr_n[2] = wasora_mesh.vars.nz;  
+  
 ///va+nodes+name nodes
 ///va+nodes+desc Number of nodes of the unstructured grid.
   wasora_mesh.vars.nodes = wasora_define_variable("nodes");

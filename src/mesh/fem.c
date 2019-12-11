@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related FEM routines
  *
- *  Copyright (C) 2014--2018 jeremy theler
+ *  Copyright (C) 2014--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -446,3 +446,15 @@ int mesh_update_coord_vars(double *x) {
   wasora_var(wasora_mesh.vars.z) = x[2];    
   return WASORA_RUNTIME_OK;
 }
+
+int mesh_compute_normal(element_t *element) {
+  double n[3];
+
+  wasora_call(mesh_compute_outward_normal(element, n));
+  wasora_var_value(wasora_mesh.vars.nx) = n[0];
+  wasora_var_value(wasora_mesh.vars.ny) = n[1];
+  wasora_var_value(wasora_mesh.vars.nz) = n[2];
+  
+  return 0;
+}  
+

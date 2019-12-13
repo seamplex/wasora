@@ -386,6 +386,8 @@ int mesh_frd_readmesh(mesh_t *mesh) {
             } else {
               j_gmsh = j;
             }
+          } else {
+            j_gmsh = j;
           }
           
           mesh->element[i].node[j_gmsh] = &mesh->node[node-1];

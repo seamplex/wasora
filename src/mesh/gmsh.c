@@ -167,8 +167,8 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             return WASORA_PARSER_ERROR;
           }
           // y la dimension correcta
-          if (physical_entity->dimension == -1) {
-            // si tiene -1 le ponemos la que acabamos de leer
+          if (physical_entity->dimension <= 0) {
+            // si tiene 0 le ponemos la que acabamos de leer
             physical_entity->dimension = dimension;
           } else if (physical_entity->dimension != dimension) {
             // si no coincide nos quejamos

@@ -33,8 +33,12 @@ double mesh_compute_quality(mesh_t *mesh, element_t *element) {
 
   // calculamos el jacobiano principal
   gsl_vector_set(mesh->fem.r, 0, element->type->barycenter_coords[0]);
-  gsl_vector_set(mesh->fem.r, 1, element->type->barycenter_coords[0]);
-  gsl_vector_set(mesh->fem.r, 2, element->type->barycenter_coords[0]);
+  if (element->type->dim > 1) {
+    gsl_vector_set(mesh->fem.r, 1, element->type->barycenter_coords[1]);
+    if (element->type->dim > 2) {
+      gsl_vector_set(mesh->fem.r, 2, element->type->barycenter_coords[2]);
+    }
+  } 
   mesh_compute_dxdr(element, mesh->fem.r, mesh->fem.dxdr);
   det0 = fabs(mesh_determinant(element->type->dim, mesh->fem.dxdr));
 

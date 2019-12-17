@@ -109,7 +109,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
         }
       }
     } else {
-      if (physical_entity->n_elements != 0) {
+      if (physical_entity != NULL && physical_entity->n_elements != 0) {
         for (i = 0; i < physical_entity->n_elements; i++) {
           element = &mesh->element[physical_entity->element[i]];
           for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {

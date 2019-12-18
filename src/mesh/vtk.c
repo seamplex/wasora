@@ -357,11 +357,13 @@ int mesh_vtk_write_vector(mesh_post_t *mesh_post, function_t **function, centeri
 int mesh_vtk_readmesh(mesh_t *mesh) {
 
   char buffer[BUFFER_SIZE];
-  char tmp[BUFFER_SIZE];
+  char tmp[2*BUFFER_SIZE];
   char name[BUFFER_SIZE];
+  double f[3];
   int *celldata;
   int version_maj, version_min;
   int numdata, check, celltype;
+  int vector_function;
   int i, j, k, l;
   int j_gmsh;
   
@@ -488,12 +490,90 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
       return WASORA_RUNTIME_ERROR;
     }
 
-    // TODO: high-order lagrange    
     for (k = 0; k < NUMBER_ELEMENT_TYPE; k++) {
       if (vtkfromgmsh_types[k] == celltype) {
         mesh->element[i].type = &(wasora_mesh.element_type[k]);
       }
     }
+    
+    
+    
+    if (mesh->element[i].type == NULL) {
+      // puede ser alguno de los high-order
+      if (celltype == 60 || celltype == 68) {
+        // line
+        if (celldata[l] == 2) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE];
+        } else if (celldata[l] == 3) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE3];
+        } else {
+          wasora_push_error_message("high-order lines are supported up to order two");
+          return WASORA_RUNTIME_ERROR;
+        }
+      } else if (celltype == 61 || celltype == 69) {
+        // triangle
+        if (celldata[l] == 3) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE];
+        } else if (celldata[l] == 6) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE6];
+        } else {
+          wasora_push_error_message("high-order triangles are supported up to order two");
+          return WASORA_RUNTIME_ERROR;
+        }
+      } else if (celltype == 62 || celltype == 70) {
+        // quad
+        if (celldata[l] == 4) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE];
+        } else if (celldata[l] == 8) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE8];
+        } else if (celldata[l] == 9) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE9];
+        } else {
+          wasora_push_error_message("high-order quadrangles are supported up to order two");
+          return WASORA_RUNTIME_ERROR;
+        }
+      } else if (celltype == 64 || celltype == 71) {
+        // tetrahedron
+        if (celldata[l] == 4) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON];
+        } else if (celldata[l] == 10) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON10];
+        } else {
+          wasora_push_error_message("high-order tetrahedra are supported up to order two");
+          return WASORA_RUNTIME_ERROR;
+        }
+      } else if (celltype == 67 || celltype == 72) {
+        // hexahedron
+        if (celldata[l] == 8) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON];
+        } else if (celldata[l] == 20) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON20];
+        } else if (celldata[l] == 27) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON27];
+        } else {
+          wasora_push_error_message("high-order hexahedra are supported up to order two");
+          return WASORA_RUNTIME_ERROR;
+        }
+      } else if (celltype == 65 || celltype == 73) {
+        // prism/wedge
+        if (celldata[l] == 6) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_PRISM];
+        } else {
+          wasora_push_error_message("high-order wedges are supported up to order one");
+          return WASORA_RUNTIME_ERROR;
+        }
+      } else if (celltype == 66 || celltype == 74) {
+        // prism/wedge
+        if (celldata[l] == 5) {
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_PYRAMID];
+        } else {
+          wasora_push_error_message("high-order pyramids are supported up to order one");
+          return WASORA_RUNTIME_ERROR;
+        }
+      }
+    }
+    
+    
     
     // tipo de elemento
     if (mesh->element[i].type == NULL) {
@@ -545,7 +625,8 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
     if (strncmp("POINT_DATA", buffer, 10) == 0) {
       
       node_data_t *node_data;
-      function_t *function = NULL;
+      function_t *scalar = NULL;
+      function_t *vector[3] = {NULL, NULL, NULL};
       
       if (sscanf(buffer, "POINT_DATA %d", &check) != 1) {
         wasora_push_error_message("expecting POINT_DATA");
@@ -557,19 +638,28 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
         return WASORA_RUNTIME_ERROR;
       }
       
-      // SCALARS name double
+      // SCALARS/VECTOR name double
       do {
         if (!feof(mesh->file->pointer)) {
           fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
         } else {
-          wasora_push_error_message("expecting SCALARS");
+          wasora_push_error_message("expecting SCALARS/VECTORS");
           return WASORA_RUNTIME_ERROR;
         }  
-      } while (strncmp(buffer, "SCALARS", 7) != 0);
+      } while (strncmp(buffer, "SCALARS", 7) != 0 && strncmp(buffer, "VECTORS", 7) != 0);
       
-      if (sscanf(buffer, "SCALARS %s %s", name, tmp) != 2) {
-       wasora_push_error_message("expected SCALARS");
-       return WASORA_RUNTIME_ERROR;
+      if (strncmp(buffer, "SCALARS", 7) == 0) {
+        if (sscanf(buffer, "SCALARS %s %s", name, tmp) != 2) {
+          wasora_push_error_message("expected SCALARS");
+          return WASORA_RUNTIME_ERROR;
+        }
+        vector_function = 0;
+      } else if (strncmp(buffer, "VECTORS", 7) == 0) {
+        if (sscanf(buffer, "VECTORS %s %s", name, tmp) != 2) {
+          wasora_push_error_message("expected VECTORS");
+          return WASORA_RUNTIME_ERROR;
+        }
+        vector_function = 1;
       }
   
       if (strncmp(tmp, "double", 6) != 0 && strncmp(tmp, "float", 5) != 0) {
@@ -577,41 +667,84 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
         return WASORA_RUNTIME_ERROR;
       }
 
-      // vemos si nos pidieron leer este escalar
+      // vemos si nos pidieron leer este escalar o vector
       LL_FOREACH(mesh->node_datas, node_data) {
-        if (strcmp(name, node_data->name_in_mesh) == 0) {
-          function = node_data->function;
-        }
+        if (vector_function == 0) {
+          if (strcmp(name, node_data->name_in_mesh) == 0) {
+            scalar = node_data->function;
+          }
+        } else {
+          for (i = 0; i < 3; i++) {
+            // probamos con name1 name2 name3
+            // el 2*buffer_size es para que no se queje el compilador con -Wall
+            snprintf(tmp, 2*BUFFER_SIZE-1, "%s%d", name, i+1);
+            if (strcmp(tmp, node_data->name_in_mesh) == 0) {
+              vector[i] = node_data->function;
+            }
+            // ahora con namex namey namez
+            snprintf(tmp, 2*BUFFER_SIZE-1, "%s%c", name, 'x'+i);
+            if (strcmp(tmp, node_data->name_in_mesh) == 0) {
+              vector[i] = node_data->function;
+            }
+          }  
+        }  
       }
       
       
-      // si no tenemos funcion seguimos de largo e inogramos todo el bloque
-      if (function == NULL) {
+      // si no tenemos que leer nada seguimos de largo e inogramos todo el bloque
+      if (scalar == NULL && vector[0] == NULL && vector[1] == NULL && vector[2] == NULL) {
         continue;
       }
       
+      // LOOKUP_TABLE default (solo para escalares)
+      if (vector_function == 0) {
+        do {
+          if (!feof(mesh->file->pointer)) {
+            fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+          } else {
+            wasora_push_error_message("expecting LOOKUP_TABLE");
+            return WASORA_RUNTIME_ERROR;
+          }  
+        } while (strncmp(buffer, "LOOKUP_TABLE", 12) != 0);
       
-      // LOOKUP_TABLE default
-      do {
-        if (!feof(mesh->file->pointer)) {
-          fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
-        } else {
-          wasora_push_error_message("expecting LOOKUP_TABLE");
-          return WASORA_RUNTIME_ERROR;
-        }  
-      } while (strncmp(buffer, "LOOKUP_TABLE", 12) != 0);
+        // si llegamos hasta aca, tenemos una funcion
+        scalar->type = type_pointwise_mesh_node;
+        scalar->mesh = mesh;
+        scalar->data_argument = mesh->nodes_argument;
+        scalar->data_size = mesh->n_nodes;
+        scalar->data_value = calloc(mesh->n_nodes, sizeof(double));
       
-      // si llegamos hasta aca, tenemos una funcion
-      function->type = type_pointwise_mesh_node;
-      function->mesh = mesh;
-      function->data_argument = mesh->nodes_argument;
-      function->data_size = mesh->n_nodes;
-      function->data_value = calloc(mesh->n_nodes, sizeof(double));
+        for (j = 0; j < mesh->n_nodes; j++) {
+          if (fscanf(mesh->file->pointer, "%lf", &scalar->data_value[j]) != 1) {
+            wasora_push_error_message("ran out of SCALARS data");
+            return WASORA_RUNTIME_ERROR;
+          }  
+        }
+        
+      } else {
+
+        // si llegamos hasta aca, tenemos una funcion
+        for (i = 0; i < 3; i++) {
+          if (vector[i] != NULL) {
+            vector[i]->type = type_pointwise_mesh_node;
+            vector[i]->mesh = mesh;
+            vector[i]->data_argument = mesh->nodes_argument;
+            vector[i]->data_size = mesh->n_nodes;
+            vector[i]->data_value = calloc(mesh->n_nodes, sizeof(double));
+          }  
+        }
       
-      for (j = 0; j < mesh->n_nodes; j++) {
-        if (fscanf(mesh->file->pointer, "%lf", &function->data_value[j]) != 1) {
-          wasora_push_error_message("run out of SCALARS data");
-          return WASORA_RUNTIME_ERROR;
+        for (j = 0; j < mesh->n_nodes; j++) {
+          if (fscanf(mesh->file->pointer, "%lf %lf %lf", &f[0], &f[1], &f[2]) != 3) {
+            wasora_push_error_message("ran out of VECTORS data");
+            return WASORA_RUNTIME_ERROR;
+          }
+            
+          for (i = 0; i < 3; i++) {
+            if (vector[i] != NULL) {
+              vector[i]->data_value[j] = f[i];
+            }
+          }  
         }
       }
     }

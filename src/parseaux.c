@@ -470,7 +470,7 @@ int wasora_read_line(FILE *file_ptr) {
   i = 0;
   while ( !((c == EOF) || (in_brackets == 0 && c == '\n')) ) {
     if (in_comment == 0) {
-      if (c == '#') {
+      if (c == '#' || c == ';') {
         in_comment = 1;
       } else if (c == '{') {
         in_brackets = 1;

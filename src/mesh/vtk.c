@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
- *  wasora's mesh-related vtk output routines
+ *  wasora's mesh-related vtk routines
  *
- *  Copyright (C) 2014--2017 jeremy theler
+ *  Copyright (C) 2014--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -28,7 +28,7 @@
 
 // conversion de gmsh a vtk
 //Sacado de https://github.com/Kitware/VTK/blob/master/Common/DataModel/vtkCellType.h
-int vtkfromgmsh_types[18] = {
+int vtkfromgmsh_types[NUMBER_ELEMENT_TYPE] = {
   0,    // ELEMENT_TYPE_UNDEFINED
   3,    // ELEMENT_TYPE_LINE
   5,    // ELEMENT_TYPE_TRIANGLE
@@ -350,4 +350,276 @@ int mesh_vtk_write_vector(mesh_post_t *mesh_post, function_t **function, centeri
   
   return WASORA_RUNTIME_OK;
   
+}
+
+
+
+int mesh_vtk_readmesh(mesh_t *mesh) {
+
+  char buffer[BUFFER_SIZE];
+  char tmp[BUFFER_SIZE];
+  char name[BUFFER_SIZE];
+  int *celldata;
+  int version_maj, version_min;
+  int numdata, check, celltype;
+  int i, j, k, l;
+  int j_gmsh;
+  
+  
+  if (mesh->file->pointer == NULL) {
+    wasora_call(wasora_instruction_open_file(mesh->file));
+  }
+  
+  // header
+  if (fscanf(mesh->file->pointer, "# vtk DataFile Version %d.%d", &version_maj, &version_min) != 2) {
+    wasora_push_error_message("wrong VTK header");
+    return WASORA_RUNTIME_ERROR;
+  }
+
+  // el \n
+  fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+
+  // el nombre del caso, lo tiramos
+  fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+
+  // el formato debe ser ASCII
+  fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+  if (strncmp(buffer, "ASCII", 5) != 0) {
+    wasora_push_error_message("only ASCII VTK files are supported, not '%s'", buffer);
+    return WASORA_RUNTIME_ERROR;
+  }
+ 
+  // dataset unstructured grid
+  do {
+    if (!feof(mesh->file->pointer)) {
+      fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+    } else {
+      wasora_push_error_message("expecting DATASET");
+      return WASORA_RUNTIME_ERROR;
+    }  
+  } while (strncmp(buffer, "DATASET", 7) != 0);
+  
+  if (strncmp(buffer, "DATASET UNSTRUCTURED_GRID", 25) != 0) {
+    wasora_push_error_message("only UNSTRUCTURED_GRID data is supported in VTK");
+    return WASORA_RUNTIME_ERROR;
+  }
+  
+  // POINTS n_nodes double
+  do {
+    if (!feof(mesh->file->pointer)) {
+      fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+    } else {
+      wasora_push_error_message("expecting POINTS");
+      return WASORA_RUNTIME_ERROR;
+    }  
+  } while (strncmp(buffer, "POINTS", 6) != 0);
+  
+  if (sscanf(buffer, "POINTS %d %s", &mesh->n_nodes, tmp) != 2) {
+    wasora_push_error_message("expected POINTS");
+    return WASORA_RUNTIME_ERROR;
+  }
+  
+  if (strncmp(tmp, "double", 6) != 0 && strncmp(tmp, "float", 5) != 0) {
+    wasora_push_error_message("either float or double data expected");
+    return WASORA_RUNTIME_ERROR;
+  }
+  
+  mesh->node = calloc(mesh->n_nodes, sizeof(node_t));
+  for (j = 0; j < mesh->n_nodes; j++) {
+    fscanf(mesh->file->pointer, "%lf %lf %lf", &mesh->node[j].x[0], &mesh->node[j].x[1], &mesh->node[j].x[2]);
+    mesh->node[j].index_mesh = j;
+    mesh->node[j].tag = j+1;
+  }
+
+  
+  // CELLS n_cells numdata
+  do {
+    if (!feof(mesh->file->pointer)) {
+      fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+    } else {
+      wasora_push_error_message("expecting CELLS");
+      return WASORA_RUNTIME_ERROR;
+    }  
+  } while (strncmp(buffer, "CELLS", 5) != 0);
+  
+      
+  if (sscanf(buffer, "CELLS %d %d", &mesh->n_elements, &numdata) != 2) {
+    wasora_push_error_message("expected CELLS");
+    return WASORA_RUNTIME_ERROR;
+  }
+  
+  celldata = malloc(numdata*sizeof(int));
+  for (i = 0; i < numdata; i++) {
+    if (fscanf(mesh->file->pointer, "%d", &celldata[i]) != 1) {
+      wasora_push_error_message("run out of CELLS data");
+      return WASORA_RUNTIME_ERROR;
+    }  
+  }
+  
+
+  // CELL_TYPES n_cells
+  do {
+    if (!feof(mesh->file->pointer)) {
+      fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+    } else {
+      wasora_push_error_message("expecting CELL_TYPES");
+      return WASORA_RUNTIME_ERROR;
+    }  
+  } while (strncmp(buffer, "CELL_TYPES", 10) != 0);
+  
+      
+  if (sscanf(buffer, "CELL_TYPES %d", &check) != 1) {
+    wasora_push_error_message("expected CELL_TYPES");
+    return WASORA_RUNTIME_ERROR;
+  }
+  
+  if (mesh->n_elements != check) {
+    wasora_push_error_message("CELL has %d and CELL_TYPES has %d", mesh->n_elements, check);
+    return WASORA_RUNTIME_ERROR;
+    
+  }
+  
+  
+  l = 0;
+  mesh->element = calloc(mesh->n_elements, sizeof(element_t));
+  for (i = 0; i < mesh->n_elements; i++) {
+    if (fscanf(mesh->file->pointer, "%d", &celltype) != 1) {
+      wasora_push_error_message("run out of CELLS data");
+      return WASORA_RUNTIME_ERROR;
+    }
+
+    // TODO: high-order lagrange    
+    for (k = 0; k < NUMBER_ELEMENT_TYPE; k++) {
+      if (vtkfromgmsh_types[k] == celltype) {
+        mesh->element[i].type = &(wasora_mesh.element_type[k]);
+      }
+    }
+    
+    // tipo de elemento
+    if (mesh->element[i].type == NULL) {
+      wasora_push_error_message("vtk elements of type '%d' are not supported in this version :-(", celltype);
+      return WASORA_RUNTIME_ERROR;
+    }
+    if (mesh->element[i].type->nodes == 0) {
+      wasora_push_error_message("elements of type '%s' are not supported in this version :-(", mesh->element[i].type->name);
+      return WASORA_RUNTIME_ERROR;
+    }
+    
+    // nodos, tenemos la informacion en celldata
+    if (mesh->element[i].type->nodes != celldata[l++]) {
+      wasora_push_error_message("CELL %d gives %d nodes but type '%s' has %d nodes", i, celldata[l], mesh->element[i].type->name, mesh->element[i].type->nodes);
+      return WASORA_RUNTIME_ERROR;
+    }
+    
+    mesh->element[i].index = i;
+    mesh->element[i].tag = i+1;
+    
+    mesh->element[i].node = calloc(mesh->element[i].type->nodes, sizeof(node_t *));
+    for (j = 0; j < mesh->element[i].type->nodes; j++) {
+    
+      // pelar ojo al orden!
+      // el tet10 tiene un unico cambio
+      // ojo que los hexa20 y 27 tambien tienen cosas raras
+      if (mesh->element[i].type->id == ELEMENT_TYPE_TETRAHEDRON10) {
+        if (j == 8) {
+          j_gmsh = 9;
+        } else if (j == 9) {
+          j_gmsh = 8;
+        } else {
+          j_gmsh = j;
+        }
+      } else {
+        j_gmsh = j;
+      }
+      
+      mesh->element[i].node[j_gmsh] = &mesh->node[celldata[l++]];
+    }
+    
+    // y miramos aca si hay que renombrar
+  }
+
+
+  // listo el pollo, ya tenemos la malla, ahora vemos que mas hay
+  while (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) != NULL) {
+    
+    if (strncmp("POINT_DATA", buffer, 10) == 0) {
+      
+      node_data_t *node_data;
+      function_t *function = NULL;
+      
+      if (sscanf(buffer, "POINT_DATA %d", &check) != 1) {
+        wasora_push_error_message("expecting POINT_DATA");
+        return WASORA_RUNTIME_ERROR;
+      }
+      
+      if (mesh->n_nodes != check) {
+        wasora_push_error_message("expecting %d POINT_DATA instead of %d", mesh->n_nodes, check);
+        return WASORA_RUNTIME_ERROR;
+      }
+      
+      // SCALARS name double
+      do {
+        if (!feof(mesh->file->pointer)) {
+          fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+        } else {
+          wasora_push_error_message("expecting SCALARS");
+          return WASORA_RUNTIME_ERROR;
+        }  
+      } while (strncmp(buffer, "SCALARS", 7) != 0);
+      
+      if (sscanf(buffer, "SCALARS %s %s", name, tmp) != 2) {
+       wasora_push_error_message("expected SCALARS");
+       return WASORA_RUNTIME_ERROR;
+      }
+  
+      if (strncmp(tmp, "double", 6) != 0 && strncmp(tmp, "float", 5) != 0) {
+        wasora_push_error_message("either float or double data expected");
+        return WASORA_RUNTIME_ERROR;
+      }
+
+      // vemos si nos pidieron leer este escalar
+      LL_FOREACH(mesh->node_datas, node_data) {
+        if (strcmp(name, node_data->name_in_mesh) == 0) {
+          function = node_data->function;
+        }
+      }
+      
+      
+      // si no tenemos funcion seguimos de largo e inogramos todo el bloque
+      if (function == NULL) {
+        continue;
+      }
+      
+      
+      // LOOKUP_TABLE default
+      do {
+        if (!feof(mesh->file->pointer)) {
+          fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+        } else {
+          wasora_push_error_message("expecting LOOKUP_TABLE");
+          return WASORA_RUNTIME_ERROR;
+        }  
+      } while (strncmp(buffer, "LOOKUP_TABLE", 12) != 0);
+      
+      // si llegamos hasta aca, tenemos una funcion
+      function->type = type_pointwise_mesh_node;
+      function->mesh = mesh;
+      function->data_argument = mesh->nodes_argument;
+      function->data_size = mesh->n_nodes;
+      function->data_value = calloc(mesh->n_nodes, sizeof(double));
+      
+      for (j = 0; j < mesh->n_nodes; j++) {
+        if (fscanf(mesh->file->pointer, "%lf", &function->data_value[j]) != 1) {
+          wasora_push_error_message("run out of SCALARS data");
+          return WASORA_RUNTIME_ERROR;
+        }
+      }
+    }
+  }
+  
+  
+  
+  
+  
+  return WASORA_RUNTIME_OK;
 }

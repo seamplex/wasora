@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related routines
  *
- *  Copyright (C) 2014--2018 jeremy theler
+ *  Copyright (C) 2014--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -52,6 +52,8 @@ int wasora_instruction_mesh(void *arg) {
     wasora_call(mesh_create_structured(mesh));
   } else if (mesh->format == mesh_format_gmsh) {
     wasora_call(mesh_gmsh_readmesh(mesh));
+  } else if (mesh->format == mesh_format_vtk) {
+    wasora_call(mesh_vtk_readmesh(mesh));
   } else if (mesh->format == mesh_format_frd) {
     wasora_call(mesh_frd_readmesh(mesh));
   } else {

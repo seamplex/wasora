@@ -310,21 +310,21 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
 
         mesh->node = calloc(mesh->n_nodes, sizeof(node_t));
 
-        for (i = 0; i < mesh->n_nodes; i++) {
+        for (j = 0; j < mesh->n_nodes; j++) {
           if (fscanf(mesh->file->pointer, "%d %lf %lf %lf",
                   &tag,
-                  &mesh->node[i].x[0],
-                  &mesh->node[i].x[1],
-                  &mesh->node[i].x[2]) < 4) {
+                  &mesh->node[j].x[0],
+                  &mesh->node[j].x[1],
+                  &mesh->node[j].x[2]) < 4) {
             return WASORA_RUNTIME_ERROR;
           }
           // en msh2 los tags son indices
-          if (i+1 != tag) {
+          if (j+1 != tag) {
             wasora_push_error_message("nodes in file '%s' are sparse", mesh->file->path);
             return WASORA_RUNTIME_ERROR;
           }
-          mesh->node[i].tag = tag;
-          mesh->node[i].index_mesh = i;
+          mesh->node[j].tag = tag;
+          mesh->node[j].index_mesh = j;
         }
         
       } else if (version_maj == 4) {
@@ -679,6 +679,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         }
       }
       
+      // si no tenemos funcion seguimos de largo e inogramos todo el bloque
       if (function == NULL) {
         continue;
       }

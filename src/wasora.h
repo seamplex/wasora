@@ -1773,7 +1773,7 @@ typedef enum {
   } centering_t;
 
 
-// le copiamos a gmsh
+// usamos los de gmsh, convertimos a vtk y frd con tablas
 #define ELEMENT_TYPE_UNDEFINED      0
 #define ELEMENT_TYPE_LINE           1
 #define ELEMENT_TYPE_TRIANGLE       2
@@ -2334,6 +2334,7 @@ extern int mesh_vtk_write_structured_mesh(mesh_t *, FILE *);
 extern int mesh_vtk_write_unstructured_mesh(mesh_t *, FILE *);
 extern int mesh_vtk_write_scalar(mesh_post_t *, function_t *, centering_t);
 extern int mesh_vtk_write_vector(mesh_post_t *, function_t **, centering_t);
+extern int mesh_vtk_readmesh(mesh_t *);
 
 // init.c
 extern int wasora_mesh_init_before_parser(void);

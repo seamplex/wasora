@@ -623,11 +623,7 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
   while (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) != NULL) {
     
     if (strncmp("POINT_DATA", buffer, 10) == 0) {
-      
-      node_data_t *node_data;
-      function_t *scalar = NULL;
-      function_t *vector[3] = {NULL, NULL, NULL};
-      
+
       if (sscanf(buffer, "POINT_DATA %d", &check) != 1) {
         wasora_push_error_message("expecting POINT_DATA");
         return WASORA_RUNTIME_ERROR;
@@ -638,15 +634,11 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
         return WASORA_RUNTIME_ERROR;
       }
       
-      // SCALARS/VECTOR name double
-      do {
-        if (!feof(mesh->file->pointer)) {
-          fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
-        } else {
-          wasora_push_error_message("expecting SCALARS/VECTORS");
-          return WASORA_RUNTIME_ERROR;
-        }  
-      } while (strncmp(buffer, "SCALARS", 7) != 0 && strncmp(buffer, "VECTORS", 7) != 0);
+    } else if (strncmp(buffer, "SCALARS", 7) == 0 || strncmp(buffer, "VECTORS", 7) == 0) {
+      
+      node_data_t *node_data;
+      function_t *scalar = NULL;
+      function_t *vector[3] = {NULL, NULL, NULL};
       
       if (strncmp(buffer, "SCALARS", 7) == 0) {
         if (sscanf(buffer, "SCALARS %s %s", name, tmp) != 2) {

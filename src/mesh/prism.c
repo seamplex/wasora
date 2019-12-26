@@ -53,7 +53,8 @@ int mesh_six_node_prism_init(void) {
   // el primero es el default
   // ---- seis puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 6);
+    gauss->V = 6;
+    mesh_alloc_gauss(gauss, element_type, gauss->V = 6);
    
     gauss->w[0] = 1.0/6.0;
     gauss->r[0][0] = 1.0/6.0;
@@ -89,7 +90,8 @@ int mesh_six_node_prism_init(void) {
     
   // ---- un punto de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
+    gauss->V = 1;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
   
     gauss->w[0] = 0.5 * 1.0;
     gauss->r[0][0] = 0;

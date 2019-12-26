@@ -23,39 +23,42 @@
 
 #include <gsl/gsl_math.h>
 
-double mesh_compute_quality(mesh_t *mesh, element_t *element) {
+int mesh_compute_quality(mesh_t *mesh, element_t *element) {
 
   double det, det0;
   double det_local_min = 1e6;
-//  int node_local_min;
-  int j;
+  int v, m;
   
+  if (element->quality == 0) {
 
-  // calculamos el jacobiano principal
-  gsl_vector_set(mesh->fem.r, 0, element->type->barycenter_coords[0]);
-  if (element->type->dim > 1) {
-    gsl_vector_set(mesh->fem.r, 1, element->type->barycenter_coords[1]);
-    if (element->type->dim > 2) {
-      gsl_vector_set(mesh->fem.r, 2, element->type->barycenter_coords[2]);
-    }
-  } 
-  mesh_compute_dxdr(element, mesh->fem.r, mesh->fem.dxdr);
-  det0 = fabs(mesh_determinant(element->type->dim, mesh->fem.dxdr));
-
-  for (j = 0; j < element->type->nodes; j++) {
-
-    // esto da exactamente ceros o unos (o 0.5 para nodos intermedios)
-    wasora_call(mesh_compute_r_at_node(element, j, mesh->fem.r));
-    // calcula el jacobiano (matrix)
+    // calculamos el jacobiano principal
+    gsl_vector_set(mesh->fem.r, 0, element->type->barycenter_coords[0]);
+    if (element->type->dim > 1) {
+      gsl_vector_set(mesh->fem.r, 1, element->type->barycenter_coords[1]);
+      if (element->type->dim > 2) {
+        gsl_vector_set(mesh->fem.r, 2, element->type->barycenter_coords[2]);
+      }
+    } 
     mesh_compute_dxdr(element, mesh->fem.r, mesh->fem.dxdr);
-    det = mesh_determinant(element->type->dim, mesh->fem.dxdr);
+    det0 = fabs(mesh_determinant(element->type->dim, mesh->fem.dxdr));
 
-    if (det < det_local_min) {
-      det_local_min = det;
-//      node_local_min = j;
+    for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
+
+      // calculamos las coordenadas del punto de gauss
+      for (m = 0; m < element->type->dim; m++) {
+        gsl_vector_set(mesh->fem.r, m, element->type->gauss[GAUSS_POINTS_CANONICAL].r[v][m]);
+      }
+      // calcula el jacobiano (matrix)
+      mesh_compute_dxdr(element, mesh->fem.r, mesh->fem.dxdr);
+      det = mesh_determinant(element->type->dim, mesh->fem.dxdr);
+
+      if (det < det_local_min) {
+        det_local_min = det;
+      }
     }
-//    printf("%d\t%d\t%e\t%e\t%e\n", element->id, j, det, det0, det/det0);
+
+    element->quality = det_local_min/det0;
   }
 
-  return det_local_min/det0;
+  return WASORA_RUNTIME_OK;  
 }

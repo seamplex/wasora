@@ -81,7 +81,8 @@ v
   
   // ---- un punto de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
+    gauss->V = 1;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
   
     gauss->w[0] = 0.5 * 1.0;
     gauss->r[0][0] = 1.0/3.0;
@@ -91,7 +92,8 @@ v
     
   // ---- tres puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 3);
+    gauss->V = 3;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
   
     gauss->w[0] = 1.0/2.0 * 1.0/3.0;
     gauss->r[0][0] = 1.0/6.0;

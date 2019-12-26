@@ -118,7 +118,8 @@ Hexahedron:
   // el primero es el default
   // ---- ocho puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 8);
+    gauss->V = 8;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
 
     gauss->w[0] = 8 * 1.0/8.0;
     gauss->r[0][0] = -1.0/M_SQRT3;
@@ -164,7 +165,8 @@ Hexahedron:
     
   // ---- un punto de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
+    gauss->V = 1;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
   
     gauss->w[0] = 8 * 1.0;
     gauss->r[0][0] = 0;

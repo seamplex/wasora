@@ -137,6 +137,7 @@ Tetrahedron:
 }
 
 void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
+  double a, b;
   gauss_t *gauss;
 
   element_type->gauss = calloc(2, sizeof(gauss_t));
@@ -144,34 +145,76 @@ void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
   // el primero es el default
   // ---- cuatro puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 4);
+    gauss->V = 4;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    
+    a = (5.0-sqrt(5))/20.0;
+    b = (5.0+3.0*sqrt(5))/20.0;
     
     gauss->w[0] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[0][0] = (5.0-sqrt(5))/20.0;
-    gauss->r[0][1] = (5.0-sqrt(5))/20.0;
-    gauss->r[0][2] = (5.0-sqrt(5))/20.0;
+    gauss->r[0][0] = a;
+    gauss->r[0][1] = a;
+    gauss->r[0][2] = a;
   
     gauss->w[1] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[1][0] = (5.0+3.0*sqrt(5))/20.0;
-    gauss->r[1][1] = (5.0-sqrt(5))/20.0;
-    gauss->r[1][2] = (5.0-sqrt(5))/20.0;
+    gauss->r[1][0] = b;
+    gauss->r[1][1] = a;
+    gauss->r[1][2] = a;
  
     gauss->w[2] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[2][0] = (5.0-sqrt(5))/20.0;
-    gauss->r[2][1] = (5.0+3.0*sqrt(5))/20.0;
-    gauss->r[2][2] = (5.0-sqrt(5))/20.0;
+    gauss->r[2][0] = a;
+    gauss->r[2][1] = b;
+    gauss->r[2][2] = a;
     
     gauss->w[3] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[3][0] = (5.0-sqrt(5))/20.0;
-    gauss->r[3][1] = (5.0-sqrt(5))/20.0;
-    gauss->r[3][2] = (5.0+3.0*sqrt(5))/20.0;
+    gauss->r[3][0] = a;
+    gauss->r[3][1] = a;
+    gauss->r[3][2] = b;
     
     
     mesh_init_shape_at_gauss(gauss, element_type);
     
+    // matriz de extrapolacion
+    gsl_vector *r = gsl_vector_alloc(3);
+    gauss->extrap = gsl_matrix_alloc(gauss->V, gauss->V);
+    
+    gsl_vector_set(r, 0, -a/(b-a));
+    gsl_vector_set(r, 1, -a/(b-a));
+    gsl_vector_set(r, 2, -a/(b-a));            
+    gsl_matrix_set(gauss->extrap, 0, 0, mesh_four_node_tetrahedron_h(0, r));
+    gsl_matrix_set(gauss->extrap, 0, 1, mesh_four_node_tetrahedron_h(1, r));
+    gsl_matrix_set(gauss->extrap, 0, 2, mesh_four_node_tetrahedron_h(2, r));
+    gsl_matrix_set(gauss->extrap, 0, 3, mesh_four_node_tetrahedron_h(3, r));
+
+    gsl_vector_set(r, 0, 1+(1-b)/(b-a));
+    gsl_vector_set(r, 1, -a/(b-a));
+    gsl_vector_set(r, 2, -a/(b-a));            
+    gsl_matrix_set(gauss->extrap, 1, 0, mesh_four_node_tetrahedron_h(0, r));
+    gsl_matrix_set(gauss->extrap, 1, 1, mesh_four_node_tetrahedron_h(1, r));
+    gsl_matrix_set(gauss->extrap, 1, 2, mesh_four_node_tetrahedron_h(2, r));
+    gsl_matrix_set(gauss->extrap, 1, 3, mesh_four_node_tetrahedron_h(3, r));
+
+    gsl_vector_set(r, 0, -a/(b-a));
+    gsl_vector_set(r, 1, 1+(1-b)/(b-a));
+    gsl_vector_set(r, 2, -a/(b-a));            
+    gsl_matrix_set(gauss->extrap, 2, 0, mesh_four_node_tetrahedron_h(0, r));
+    gsl_matrix_set(gauss->extrap, 2, 1, mesh_four_node_tetrahedron_h(1, r));
+    gsl_matrix_set(gauss->extrap, 2, 2, mesh_four_node_tetrahedron_h(2, r));
+    gsl_matrix_set(gauss->extrap, 2, 3, mesh_four_node_tetrahedron_h(3, r));
+
+    gsl_vector_set(r, 0, -a/(b-a));
+    gsl_vector_set(r, 1, -a/(b-a));
+    gsl_vector_set(r, 2, 1+(1-b)/(b-a));            
+    gsl_matrix_set(gauss->extrap, 3, 0, mesh_four_node_tetrahedron_h(0, r));
+    gsl_matrix_set(gauss->extrap, 3, 1, mesh_four_node_tetrahedron_h(1, r));
+    gsl_matrix_set(gauss->extrap, 3, 2, mesh_four_node_tetrahedron_h(2, r));
+    gsl_matrix_set(gauss->extrap, 3, 3, mesh_four_node_tetrahedron_h(3, r));    
+    
+    
   // ---- un punto de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
+    gauss->V = 1;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
   
     gauss->w[0] = 1.0/6.0 * 1.0;
     gauss->r[0][0] = 1.0/4.0;
@@ -407,11 +450,15 @@ double mesh_tetrahedron_vol(element_t *element) {
 
   double a[3], b[3], c[3];
   
-  mesh_subtract(element->node[0]->x, element->node[1]->x, a);
-  mesh_subtract(element->node[0]->x, element->node[2]->x, b);
-  mesh_subtract(element->node[0]->x, element->node[3]->x, c);
+  if (element->volume == 0) {
+    mesh_subtract(element->node[0]->x, element->node[1]->x, a);
+    mesh_subtract(element->node[0]->x, element->node[2]->x, b);
+    mesh_subtract(element->node[0]->x, element->node[3]->x, c);
   
-  return 1.0/(1.0*2.0*3.0) * fabs(mesh_cross_dot(c, a, b));
+    element->volume = 1.0/(1.0*2.0*3.0) * fabs(mesh_cross_dot(c, a, b));
+  }  
+  
+  return element->volume;
 
 // AFEM.Ch09.pdf
 // 6V = J = x 21 (y 23 z 34 − y34 z 23 ) + x32 (y34 z 12 − y12 z34 ) + x 43 (y12 z23 − y23 z 12),

@@ -31,15 +31,16 @@
 #include "thirdparty/utlist.h"
 
 
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_matrix.h>
+
 #include <gsl/gsl_spline.h>
 #include <gsl/gsl_multifit_nlin.h>
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_multiroots.h>
-#include <gsl/gsl_siman.h>
+#include <gsl/gsl_rng.h>
 
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_matrix.h>
 
 
 #ifdef HAVE_IDA
@@ -1792,8 +1793,8 @@ typedef enum {
 #define ELEMENT_TYPE_HEXAHEDRON20   17
 #define NUMBER_ELEMENT_TYPE         18
 
-#define GAUSS_POINTS_SINGLE       0
-#define GAUSS_POINTS_CANONICAL    1
+#define GAUSS_POINTS_CANONICAL    0
+#define GAUSS_POINTS_SINGLE       1
 
 struct material_t {
   char *name;
@@ -1881,6 +1882,11 @@ struct node_t {
 
   double x[3];           // coordenadas espaciales del nodo
   int *index_dof;        // indice del vector incognita para cada uno de los grados de libertad
+  
+  double *phi;           // funciones solucion en el nodo
+  gsl_matrix *dphidx;    // derivada del dof m con respecto a la coordenada g
+                         // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
+  double *f;             // funciones arbitrarias (sigmas y taus)
 
   element_list_item_t *associated_elements;
 };
@@ -1925,6 +1931,10 @@ struct gauss_t {
   
   double **h;          // funciones de forma evaluadas en los puntos de gauss h[v][j]
   double ***dhdr;      // derivadas evaluadas dhdr[v][j][m]
+  
+  // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
+  gsl_matrix *extrap;  // matrix de VxV para extrapolar valores desde los puntos de gauss a los nodos de primer orden
+  
 };
 
 
@@ -2003,6 +2013,17 @@ struct bc_t {
 struct element_t {
   int index;
   int tag;
+  
+  double quality;
+  double volume;
+  double weight;
+  double *w;
+  gsl_matrix **dhdx;
+  
+  // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
+  gsl_matrix **dphidx_gauss;  // derivadas de los dofs en los puntos de gauss canonicos
+  gsl_matrix **dphidx_node;   // derivadas de los dofs en los nodos (extrapolados o evaluados)
+  double **property_node;
 
   element_type_t *type;                      // apuntador a tipo de elemento
   physical_entity_t *physical_entity;        // apuntador a la entidad fisica
@@ -2381,7 +2402,7 @@ extern element_t *mesh_find_node_neighbor_of_dim(node_t *, int);
 extern int wasora_mesh_parse_line(char *);
 
 // quality.c
-extern double mesh_compute_quality(mesh_t *, element_t *);
+extern int mesh_compute_quality(mesh_t *, element_t *);
 
 // struct.c
 extern int mesh_create_structured(mesh_t *);

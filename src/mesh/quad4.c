@@ -88,7 +88,8 @@ Quadrangle:
   // el primero es el default
   // ---- cuatro puntos de Gauss ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 4);
+    gauss->V = 4;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
   
     gauss->w[0] = 4 * 0.25;
     gauss->r[0][0] = -1.0/M_SQRT3;
@@ -110,7 +111,8 @@ Quadrangle:
     
   // ---- un punto de Gauss  ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
+    gauss->V = 1;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
   
     gauss->w[0] = 4 * 1.0;
     gauss->r[0][0] = 0.0;

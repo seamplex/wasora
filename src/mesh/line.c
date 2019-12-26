@@ -72,7 +72,8 @@ Line:
   // el primero es constante
   // ---- un punto de Gauss ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
+    gauss->V = 1;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
   
     gauss->w[0] = 2 * 1.0;
     gauss->r[0][0] = 0;
@@ -81,7 +82,8 @@ Line:
     
   // ---- dos puntos de Gauss ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 2);
+    gauss->V = 2;
+    mesh_alloc_gauss(gauss, element_type, gauss->V);
   
     gauss->w[0] = 2 * 0.5;
     gauss->r[0][0] = -1.0/M_SQRT3;

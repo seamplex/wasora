@@ -72,8 +72,7 @@ Line:
   // el primero es constante
   // ---- un punto de Gauss ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    gauss->V = 1;
-    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 2 * 1.0;
     gauss->r[0][0] = 0;
@@ -82,8 +81,7 @@ Line:
     
   // ---- dos puntos de Gauss ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    gauss->V = 2;
-    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    mesh_alloc_gauss(gauss, element_type, 2);
   
     gauss->w[0] = 2 * 0.5;
     gauss->r[0][0] = -1.0/M_SQRT3;
@@ -97,10 +95,8 @@ Line:
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_two_node_line_h(int k, gsl_vector *gsl_r) {
-  double r;
-
-  r = gsl_vector_get(gsl_r, 0);
+double mesh_two_node_line_h(int k, double *vec_r) {
+  double r = vec_r[0];
 
   // numeracion gmsh
   switch (k) {
@@ -116,7 +112,7 @@ double mesh_two_node_line_h(int k, gsl_vector *gsl_r) {
 
 }
 
-double mesh_two_node_line_dhdr(int k, int m, gsl_vector *arg) {
+double mesh_two_node_line_dhdr(int k, int m, double *arg) {
 
   switch(k) {
     case 0:

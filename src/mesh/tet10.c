@@ -124,15 +124,10 @@ Tetrahedron10:
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_ten_node_tetrahedron_h(int j, gsl_vector *gsl_r) {
-  double r;
-  double s;
-  double t;
-//  double h[10];
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
-  t = gsl_vector_get(gsl_r, 2);
+double mesh_ten_node_tetrahedron_h(int j, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
+  double t = vec_r[2];
 
   // bathe page 375 re-numerado para gmsh, hay que swapear 8 y 10
 /*  
@@ -189,14 +184,10 @@ double mesh_ten_node_tetrahedron_h(int j, gsl_vector *gsl_r) {
 
 }
 
-double mesh_ten_node_tetrahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
-  double r;
-  double s;
-  double t;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
-  t = gsl_vector_get(gsl_r, 2);
+double mesh_ten_node_tetrahedron_dhdr(int j, int m, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
+  double t = vec_r[2];
   
   switch (j) {
     case 0:

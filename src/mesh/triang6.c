@@ -119,12 +119,9 @@ Triangle6:
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_six_node_triang_h(int j, gsl_vector *gsl_r) {
-  double r;
-  double s;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
+double mesh_six_node_triang_h(int j, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
 
   switch (j) {
     case 0:
@@ -152,12 +149,9 @@ double mesh_six_node_triang_h(int j, gsl_vector *gsl_r) {
 
 }
 
-double mesh_six_node_triang_dhdr(int j, int m, gsl_vector *gsl_r) {
-  double r;
-  double s;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
+double mesh_six_node_triang_dhdr(int j, int m, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
 
   switch(j) {
     case 0:

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related function interpolation routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -151,7 +151,7 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   // calculamos el valor de y
   y = 0;
   for (j = 0; j < chosen_element->type->nodes; j++) {
-    y += chosen_element->type->h(j, r) * f->data_value[chosen_element->node[j]->index_mesh];    
+    y += chosen_element->type->h(j, gsl_vector_ptr(r,0)) * f->data_value[chosen_element->node[j]->index_mesh];    
   }
   
   gsl_vector_free(r);
@@ -218,7 +218,7 @@ int mesh_interp_residual(const gsl_vector *test, void *params, gsl_vector *resid
   for (i = 0; i < element->type->dim; i++) {
     xi = x[i];
     for (j = 0; j< element->type->nodes; j++) {
-      xi -= element->type->h(j, (gsl_vector *)test) * element->node[j]->x[i];
+      xi -= element->type->h(j, (double *)gsl_vector_const_ptr(test, 0)) * element->node[j]->x[i];
     }
     gsl_vector_set(residual, i, xi);
   }
@@ -241,7 +241,7 @@ int mesh_interp_jacob(const gsl_vector *test, void *params, gsl_matrix *J) {
       for (k = 0; k < element->type->nodes; k++) {
         // es negativo por como definimos el residuo
         // el cast explicito es para sacarnos de encima el const
-        xi -= element->type->dhdr(k, j, (gsl_vector *)test) * element->node[k]->x[i];
+        xi -= element->type->dhdr(k, j, (double *)gsl_vector_const_ptr(test, 0)) * element->node[k]->x[i];
       }
       gsl_matrix_set(J, i, j, xi);
     }

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related quality routines
  *
- *  Copyright (C) 2018 jeremy theler
+ *  Copyright (C) 2018--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -27,30 +27,34 @@ int mesh_compute_quality(mesh_t *mesh, element_t *element) {
 
   double det, det0;
   double det_local_min = 1e6;
-  int v, m;
+  int v, m, m_prime, j;
+  
   
   if (element->quality == 0) {
 
     // calculamos el jacobiano principal
-    gsl_vector_set(mesh->fem.r, 0, element->type->barycenter_coords[0]);
-    if (element->type->dim > 1) {
-      gsl_vector_set(mesh->fem.r, 1, element->type->barycenter_coords[1]);
-      if (element->type->dim > 2) {
-        gsl_vector_set(mesh->fem.r, 2, element->type->barycenter_coords[2]);
+    gsl_matrix *dxdr = gsl_matrix_calloc(element->type->dim, element->type->dim);
+    for (m = 0; m < element->type->dim; m++) {
+      for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
+        for (j = 0; j < element->type->nodes; j++) {
+          gsl_matrix_add_to_element(dxdr, m, m_prime, element->type->dhdr(j, m_prime, element->type->barycenter_coords) * element->node[j]->x[m]);
+        }
       }
-    } 
-    mesh_compute_dxdr(element, mesh->fem.r, mesh->fem.dxdr);
-    det0 = fabs(mesh_determinant(element->type->dim, mesh->fem.dxdr));
-
+    }
+    det0 = fabs(mesh_determinant(element->type->dim, dxdr));
+    
     for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
 
-      // calculamos las coordenadas del punto de gauss
+      gsl_matrix_set_zero(dxdr);
       for (m = 0; m < element->type->dim; m++) {
-        gsl_vector_set(mesh->fem.r, m, element->type->gauss[GAUSS_POINTS_CANONICAL].r[v][m]);
+        for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
+          for (j = 0; j < element->type->nodes; j++) {
+            gsl_matrix_add_to_element(dxdr, m, m_prime, element->type->dhdr(j, m_prime, element->type->gauss[GAUSS_POINTS_CANONICAL].r[v]) * element->node[j]->x[m]);
+          }  
+        }
       }
-      // calcula el jacobiano (matrix)
-      mesh_compute_dxdr(element, mesh->fem.r, mesh->fem.dxdr);
-      det = mesh_determinant(element->type->dim, mesh->fem.dxdr);
+      
+      det = mesh_determinant(element->type->dim, dxdr);
 
       if (det < det_local_min) {
         det_local_min = det;
@@ -58,6 +62,8 @@ int mesh_compute_quality(mesh_t *mesh, element_t *element) {
     }
 
     element->quality = det_local_min/det0;
+    
+    gsl_matrix_free(dxdr);
   }
 
   return WASORA_RUNTIME_OK;  

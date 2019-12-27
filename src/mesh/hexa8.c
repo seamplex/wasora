@@ -177,14 +177,10 @@ Hexahedron:
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_eight_node_hexahedron_h(int j, gsl_vector *gsl_r) {
-  double r;
-  double s;
-  double t;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
-  t = gsl_vector_get(gsl_r, 2);
+double mesh_eight_node_hexahedron_h(int j, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
+  double t = vec_r[2];
 
   switch (j) {
     case 0:
@@ -217,14 +213,10 @@ double mesh_eight_node_hexahedron_h(int j, gsl_vector *gsl_r) {
 
 }
 
-double mesh_eight_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
-  double r;
-  double s;
-  double t;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
-  t = gsl_vector_get(gsl_r, 2);
+double mesh_eight_node_hexahedron_dhdr(int j, int m, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
+  double t = vec_r[2];
 
   switch (j) {
     case 0:

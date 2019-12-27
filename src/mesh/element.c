@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related element routines
  *
- *  Copyright (C) 2015--2018 jeremy theler
+ *  Copyright (C) 2015--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -210,7 +210,7 @@ int wasora_mesh_element_types_init(void) {
 
 int mesh_alloc_gauss(gauss_t *gauss, element_type_t *element_type, int V) {
 
-  int v, j;
+  int v;
   int dim = (element_type->dim != 0) ? element_type->dim : 1;
 
   gauss->V = V;
@@ -223,10 +223,7 @@ int mesh_alloc_gauss(gauss_t *gauss, element_type_t *element_type, int V) {
     gauss->r[v] = calloc(dim, sizeof(double));
     
     gauss->h[v] = calloc(element_type->nodes, sizeof(double));
-    gauss->dhdr[v] = calloc(element_type->nodes, sizeof(double *));
-    for (j = 0; j < element_type->nodes; j++) {
-      gauss->dhdr[v][j] = calloc(dim, sizeof(double));
-    }
+    gauss->dhdr[v] = gsl_matrix_calloc(element_type->nodes, dim);
   }
   
   return WASORA_RUNTIME_OK;
@@ -235,24 +232,18 @@ int mesh_alloc_gauss(gauss_t *gauss, element_type_t *element_type, int V) {
 
 int mesh_init_shape_at_gauss(gauss_t *gauss, element_type_t *element_type) {
   
-  int v, j, d;
-  gsl_vector *r = gsl_vector_alloc(element_type->dim);
+  int v, j, m;
   
   for (v = 0; v < gauss->V; v++) {
     for (j = 0; j < element_type->nodes; j++) {
 
-      for (d = 0; d < element_type->dim; d++) {
-        gsl_vector_set(r, d, gauss->r[v][d]);
-      }
-
-      gauss->h[v][j] = element_type->h(j, r);
-      for (d = 0; d < element_type->dim; d++) {
-        gauss->dhdr[v][j][d] = element_type->dhdr(j, d, r);
+      gauss->h[v][j] = element_type->h(j, gauss->r[v]);
+      for (m = 0; m < element_type->dim; m++) {
+        gsl_matrix_set(gauss->dhdr[v], j, m, element_type->dhdr(j, m, gauss->r[v]));
       }
       
     }
   }
-  gsl_vector_free(r);
   
   return WASORA_RUNTIME_OK;
 }

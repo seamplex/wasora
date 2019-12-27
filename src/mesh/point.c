@@ -56,8 +56,7 @@ int mesh_one_node_point_init(void) {
     gauss->r[0][0] = 0.0;
     gauss->r[0][0] = 0.0;
 
-    gauss->h[0][0] = 1;  
-    gauss->dhdr[0][0][0] = 1;
+    mesh_init_shape_at_gauss(gauss, element_type);
     
     
   // ---- un punto de Gauss sobre el elemento unitario ----  
@@ -69,17 +68,16 @@ int mesh_one_node_point_init(void) {
     gauss->r[0][0] = 0.0;
     gauss->r[0][0] = 0.0;
 
-    gauss->h[0][0] = 1;  
-    gauss->dhdr[0][0][0] = 1;
+    mesh_init_shape_at_gauss(gauss, element_type);
 
   
   return WASORA_RUNTIME_OK;
 }
-double mesh_one_node_point_h(int i, gsl_vector *gsl_r) {
+double mesh_one_node_point_h(int i, double *vec_r) {
   return 1;
 }
 
-double mesh_one_node_point_dhdr(int i, int j, gsl_vector *gsl_r) {
+double mesh_one_node_point_dhdr(int i, int j, double *vec_r) {
   return 0;
 }
 

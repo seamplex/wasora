@@ -241,8 +241,12 @@ int mesh_point_in_quadrangle(element_t *element, const double *x) {
 }
 
 double mesh_quad_vol(element_t *element) {
+
+  if (element->volume == 0) {
+    element->volume = 0.5*(fabs(mesh_subtract_cross_2d(element->node[0]->x, element->node[1]->x, element->node[2]->x)) +
+                           fabs(mesh_subtract_cross_2d(element->node[2]->x, element->node[3]->x, element->node[0]->x)) );
+  }  
   
-  return 0.5*(fabs(mesh_subtract_cross_2d(element->node[0]->x, element->node[1]->x, element->node[2]->x)) +
-              fabs(mesh_subtract_cross_2d(element->node[2]->x, element->node[3]->x, element->node[0]->x)) );
+  return element->volume;
 }
 

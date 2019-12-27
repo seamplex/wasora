@@ -2366,8 +2366,11 @@ extern void mesh_compute_l(mesh_t *, element_t *);
 extern int mesh_compute_normal(element_t *);
 extern int mesh_update_coord_vars(double *);
 
-extern void mesh_inverse(int, gsl_matrix *, gsl_matrix *);
-extern double mesh_determinant(int, gsl_matrix *);
+extern void mesh_inverse(gsl_matrix *, gsl_matrix *);
+extern double mesh_determinant(gsl_matrix *);
+
+extern void mesh_compute_dxdr(element_t *, double *, gsl_matrix *);
+extern void mesh_compute_dhdx(element_t *, double *, gsl_matrix *, gsl_matrix *);
 
 extern void mesh_compute_dhdx_at_gauss(element_t *, int);
 extern void mesh_compute_drdx_at_gauss(element_t *, int);

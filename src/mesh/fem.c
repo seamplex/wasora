@@ -27,23 +27,23 @@
 
 
 // evalua el jacobiano de las r con respecto a las x invirtiendo el jacobiano directo
-void mesh_inverse(int dim, gsl_matrix *direct, gsl_matrix *inverse) {
+void mesh_inverse(gsl_matrix *direct, gsl_matrix *inverse) {
 
   double invdet;
 
-  switch(dim) {
+  switch(direct->size1) {
     case 1:
     	gsl_matrix_set(inverse, 0, 0, 1.0/gsl_matrix_get(direct, 0, 0));
       break;
     case 2:
-      invdet = 1.0/mesh_determinant(2, direct);
+      invdet = 1.0/mesh_determinant(direct);
       gsl_matrix_set(inverse, 0, 0, +invdet*gsl_matrix_get(direct, 1, 1));
       gsl_matrix_set(inverse, 0, 1, -invdet*gsl_matrix_get(direct, 0, 1));
       gsl_matrix_set(inverse, 1, 0, -invdet*gsl_matrix_get(direct, 1, 0));
       gsl_matrix_set(inverse, 1, 1,  invdet*gsl_matrix_get(direct, 0, 0));
       break;
     case 3:
-      invdet = 1.0/mesh_determinant(3, direct);
+      invdet = 1.0/mesh_determinant(direct);
       gsl_matrix_set(inverse, 0, 0, +invdet*(gsl_matrix_get(direct, 2, 2)*gsl_matrix_get(direct, 1, 1) -
                                              gsl_matrix_get(direct, 2, 1)*gsl_matrix_get(direct, 1, 2)));
       gsl_matrix_set(inverse, 0, 1, -invdet*(gsl_matrix_get(direct, 2, 2)*gsl_matrix_get(direct, 0, 1) -
@@ -117,11 +117,9 @@ with DET  =  a11(a33a22-a32a23)-a21(a33a12-a32a13)+a31(a23a12-a22a13)
 //}
 
 // calcula el determinante de una matriz //
-// OJO! pedimos el tamanio explicitamente porque puede darse el caso
-// que A sea mas grande de lo debido y solo interese una partecita
-double mesh_determinant(int d, gsl_matrix *A) {
+double mesh_determinant(gsl_matrix *A) {
 
-  switch(d) {
+  switch(A->size1) {
     case 0:
       return 1.0;
     break;
@@ -146,9 +144,10 @@ double mesh_determinant(int d, gsl_matrix *A) {
 }
 
 // calcula los gradientes de las h con respecto a las x evaluadas en r
-void mesh_compute_dhdx(element_t *element, gsl_vector *r, gsl_matrix *drdx, gsl_matrix *dhdx) {
+void mesh_compute_dhdx(element_t *element, double *r, gsl_matrix *drdx, gsl_matrix *dhdx) {
 
-/*  
+  int j, m, m_prime;
+  
   gsl_matrix_set_zero(dhdx);
   for (j = 0; j < element->type->nodes; j++) {
     for (m = 0; m < element->type->dim; m++) {
@@ -157,7 +156,7 @@ void mesh_compute_dhdx(element_t *element, gsl_vector *r, gsl_matrix *drdx, gsl_
       }
     }
   }
-*/
+
   return;
 
 }
@@ -189,7 +188,7 @@ void mesh_compute_dhdx_at_gauss(element_t *element, int v) {
   for (j = 0; j < element->type->nodes; j++) {
     for (m = 0; m < element->type->dim; m++) {
       for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
-        // TODO: matrix-matrix
+        // TODO: matrix-matrix?
       	gsl_matrix_add_to_element(dhdx, j, m, gsl_matrix_get(element->type->gauss->dhdr[v], j, m_prime) * gsl_matrix_get(element->drdx[v], m_prime, m));
       }
     }
@@ -198,6 +197,19 @@ void mesh_compute_dhdx_at_gauss(element_t *element, int v) {
   return;
 
 }
+
+void mesh_compute_h(element_t *element, double *r, double *h) {
+
+  int j;
+
+  for (j = 0; j < element->type->nodes; j++) {
+    h[j] = element->type->h(j, r);
+  }
+
+  return;
+
+}
+
 
 void mesh_compute_drdx_at_gauss(element_t *element, int v) {
   
@@ -215,25 +227,47 @@ void mesh_compute_drdx_at_gauss(element_t *element, int v) {
   }
   
   
-  mesh_inverse(element->type->dim, element->dxdr[v], element->drdx[v]);
+  mesh_inverse(element->dxdr[v], element->drdx[v]);
   
   return;
   
 }
 
 
-void mesh_compute_h(element_t *element, gsl_vector *r, gsl_vector *h) {
+
+void mesh_compute_dxdr(element_t *element, double *r, gsl_matrix *dxdr) {
+
+  int m, m_prime, j;
+  
+  // OJO! esto solo camina en elementos volumetricos, ver dxdr_at_gauss
+  for (m = 0; m < element->type->dim; m++) {
+    for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
+      for (j = 0; j < element->type->nodes; j++) {
+        gsl_matrix_add_to_element(dxdr, m, m_prime, element->type->dhdr(j, m_prime, r) * element->node[j]->x[m]);
+      }
+    }
+  }
+  
   return;
 }
 
-void mesh_compute_dxdr(element_t *element, gsl_vector *r, gsl_matrix *dxdr) {
+
+void mesh_compute_x(element_t *element, double *r, double *x) {
+
+  int j, m;
+
+  
+  // solo para elementos volumetricos
+  for (m = 0; m < 3; m++) {
+    x[m] = 0;
+    for (j = 0; j < element->type->nodes; j++) {
+      x[m] += element->type->h(j, r) * element->node[j]->x[m];
+    }
+  }
+
   return;
 }
-/*
-void mesh_compute_x(element_t *element, gsl_vector *r, gsl_vector *x) {
-  return;
-}
-*/
+
 /*
 void mesh_inverse(int, gsl_matrix *dxdr, gsl_matrix *drdx) {
   return;
@@ -256,7 +290,7 @@ void mesh_compute_integration_weight_at_gauss(element_t *element, int v) {
     mesh_compute_dxdr_at_gauss(element, v);
   }
   
-  element->w[v] = element->type->gauss[GAUSS_POINTS_CANONICAL].w[v] * fabs(mesh_determinant(element->type->dim, element->dxdr[v]));
+  element->w[v] = element->type->gauss[GAUSS_POINTS_CANONICAL].w[v] * fabs(mesh_determinant(element->dxdr[v]));
 
   return;
 }
@@ -285,7 +319,8 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v) {
 
   if (element->type->dim == 0) {
     // un puntito
-    gsl_matrix_set(dxdr, 0, 0, 1.0);
+    //gsl_matrix_set(dxdr, 0, 0, 1.0);
+    ;
   } else if (element->type->dim == 1 && (element->node[0]->x[1] != 0 || element->node[1]->x[1] != 0 ||
                                          element->node[0]->x[2] != 0 || element->node[1]->x[2] != 0)) {
     
@@ -419,21 +454,6 @@ void mesh_compute_x_at_gauss(element_t *element, int v) {
   
 }
 
-void mesh_compute_x(element_t *element, gsl_vector *r, gsl_vector *x) {
-
-//  int j, m;
-
-  gsl_vector_set_zero(x);
-/*  
-  for (j = 0; j < element->type->nodes; j++) {
-    for (m = 0; m < 3; m++) {
-      gsl_vector_add_to_element(x, m, element->type->h(j, r) * element->node[j]->x[m]);
-    }
-  }
-*/
-  return;
-}
-
 int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
 
   int j, j_prime;
@@ -488,22 +508,7 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
   return WASORA_RUNTIME_OK;
 }
 
-/*
-int mesh_compute_r_at_node(element_t *element, int j, double *r) {
-  int d;
-  
-  if (element->type->node_coords == NULL) {
-    wasora_push_error_message("element type %d does not have information about nodes", element->type->id);
-    return WASORA_RUNTIME_ERROR;
-  }
-  
-  for (d = 0; d < element->type->dim; d++) {
-    gsl_vector_set(r, d, element->type->node_coords[j][d]);
-  }
- 
-  return WASORA_RUNTIME_OK;
-}
-*/
+
 void mesh_compute_H_at_gauss(element_t *element, int v, int dofs) {
   int j;
   int d;
@@ -541,7 +546,7 @@ void mesh_compute_B_at_gauss(element_t *element, int v, int dofs) {
     return;
   }
   
-  if (element->dhdx == NULL) {
+  if (element->dhdx == NULL || element->dhdx[v] == NULL) {
     mesh_compute_dhdx_at_gauss(element, v);
   }
   

@@ -41,7 +41,7 @@ int mesh_compute_quality(mesh_t *mesh, element_t *element) {
         }
       }
     }
-    det0 = fabs(mesh_determinant(element->type->dim, dxdr));
+    det0 = fabs(mesh_determinant(dxdr));
     
     for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
 
@@ -54,7 +54,7 @@ int mesh_compute_quality(mesh_t *mesh, element_t *element) {
         }
       }
       
-      det = mesh_determinant(element->type->dim, dxdr);
+      det = mesh_determinant(dxdr);
 
       if (det < det_local_min) {
         det_local_min = det;

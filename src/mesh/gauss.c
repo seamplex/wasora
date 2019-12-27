@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related gauss integration routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2019 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -27,32 +27,26 @@
 
 double mesh_integral_over_element(function_t *function, element_t *element, expr_t *weight) {
 
-  double w;
-  double xi;
   double integral = 0;
+  double xi;
 
   int v;
   int j;
-  int d;
-  
-  mesh_t *mesh = function->mesh;
   
   for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
-    w = mesh_integration_weight(mesh, element, v);
+    mesh_compute_integration_weight_at_gauss(element, v);
 
     xi = 0;
     for (j = 0; j < element->type->nodes; j++) {
-      xi += gsl_vector_get(mesh->fem.h, j) * function->data_value[element->node[j]->index_mesh];
+      xi += element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j] * function->data_value[element->node[j]->index_mesh];
     }
 
     if (weight == NULL) {
-      integral += w * xi;
+      integral += element->w[v] * xi;
     } else {
-      for (d = 0; d < element->type->dim; d++) {
-        gsl_vector_set(mesh->fem.r, d, element->type->gauss[GAUSS_POINTS_CANONICAL].r[v][d]);
-      }
-    	mesh_compute_x(element, mesh->fem.r, wasora_value_ptr(wasora_mesh.vars.vec_x));
-      integral += wasora_evaluate_expression(weight) * w * xi;
+    	mesh_compute_x_at_gauss(element, v);
+      mesh_update_coord_vars(element->x[v]);
+      integral += wasora_evaluate_expression(weight) * element->w[v] * xi;
     }
   }
 
@@ -60,57 +54,3 @@ double mesh_integral_over_element(function_t *function, element_t *element, expr
 
 }
 
-
-void mesh_alloc_fem_objects(mesh_t *mesh) {
-  int M, J, G, N;
-
-  M = mesh->bulk_dimensions;
-  J = mesh->max_nodes_per_element;
-  G = mesh->degrees_of_freedom;
-  N = J*G;
-
-  gsl_vector_free(mesh->fem.r);
-  mesh->fem.r = gsl_vector_alloc(M);
-  mesh->fem.x = wasora_value_ptr(wasora_mesh.vars.vec_x);
-  gsl_vector_free(mesh->fem.h);
-  mesh->fem.h = gsl_vector_alloc(J);
-  gsl_matrix_free(mesh->fem.dhdr);
-  mesh->fem.dhdr = gsl_matrix_alloc(J, M);
-  gsl_matrix_free(mesh->fem.dhdx);
-  mesh->fem.dhdx = gsl_matrix_alloc(J, M);
-  gsl_matrix_free(mesh->fem.drdx);
-  mesh->fem.drdx = gsl_matrix_alloc(M, M);
-  gsl_matrix_free(mesh->fem.dxdr);
-  mesh->fem.dxdr = gsl_matrix_alloc(M, M);
-  if (N != 0) {
-    free(mesh->fem.l);
-    mesh->fem.l = calloc(N, sizeof(int));
-  }
-
-  return;
-}
-
-double mesh_integration_weight(mesh_t *mesh, element_t *element, int v) {
-
-  int d;
-  
-  // miramos l porque los otros pueden estar definidos si no definimos
-  // mesh->dof antes de leer la malla
-  if (mesh->fem.l == NULL) {
-    mesh_alloc_fem_objects(mesh);
-  }
-  
-  // calculamos las coordenadas del punto de gauss
-  for (d = 0; d < element->type->dim; d++) {
-    gsl_vector_set(mesh->fem.r, d, element->type->gauss[GAUSS_POINTS_CANONICAL].r[v][d]);
-  }
-
-  // evaluamos las funciones de forma en r
-  mesh_compute_h(element, mesh->fem.r, mesh->fem.h);
-
-  // dxdr
-  mesh_compute_dxdr(element, mesh->fem.r, mesh->fem.dxdr);
-
-  // calculamos el peso de integracion por el determinante del jacobiano
-  return element->type->gauss[GAUSS_POINTS_CANONICAL].w[v] * fabs(mesh_determinant(element->type->dim, mesh->fem.dxdr));
-}

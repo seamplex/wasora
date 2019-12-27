@@ -189,12 +189,9 @@ int mesh_eight_node_quadrangle_init(void) {
 
 //Taken from https://www.code-aster.org/V2/doc/default/fr/man_r/r3/r3.01.01.pdf
 //The aster node ordering of aster and gmsh are equal.
-double mesh_eight_node_quad_h(int j, gsl_vector *gsl_r) {
-  double r;
-  double s;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
+double mesh_eight_node_quad_h(int j, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
 
   switch (j) {
     case 0:
@@ -227,12 +224,9 @@ double mesh_eight_node_quad_h(int j, gsl_vector *gsl_r) {
 
 }
 
-double mesh_eight_node_quad_dhdr(int j, int m, gsl_vector *gsl_r) {
-  double r;
-  double s;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
+double mesh_eight_node_quad_dhdr(int j, int m, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
 
   switch(j) {
     case 0:

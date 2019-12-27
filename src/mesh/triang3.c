@@ -81,8 +81,7 @@ v
   
   // ---- un punto de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    gauss->V = 1;
-    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 0.5 * 1.0;
     gauss->r[0][0] = 1.0/3.0;
@@ -92,8 +91,7 @@ v
     
   // ---- tres puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    gauss->V = 3;
-    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    mesh_alloc_gauss(gauss, element_type, 3);
   
     gauss->w[0] = 1.0/2.0 * 1.0/3.0;
     gauss->r[0][0] = 1.0/6.0;
@@ -112,12 +110,9 @@ v
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_three_node_triang_h(int j, gsl_vector *gsl_r) {
-  double r;
-  double s;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
+double mesh_three_node_triang_h(int j, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
 
   switch (j) {
     case 0:
@@ -135,7 +130,8 @@ double mesh_three_node_triang_h(int j, gsl_vector *gsl_r) {
 
 }
 
-double mesh_three_node_triang_dhdr(int j, int m, gsl_vector *gsl_r) {
+double mesh_three_node_triang_dhdr(int j, int m, double *vec_r) {
+  
   switch(j) {
     case 0:
       if (m == 0) {

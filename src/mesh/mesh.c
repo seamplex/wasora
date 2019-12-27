@@ -38,7 +38,7 @@ int wasora_instruction_mesh(void *arg) {
   int bulk_dimensions = 0;
   double scale_factor;
   double offset[3];
-  double w, vol;
+  double vol;
   double cog[3];
   double x_min[3];
   double x_max[3];
@@ -211,13 +211,13 @@ int wasora_instruction_mesh(void *arg) {
       for (i = 0; i < physical_entity->n_elements; i++) {
         element = &mesh->element[physical_entity->element[i]];
         for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
-          w = mesh_integration_weight(mesh, element, v);
+          mesh_compute_integration_weight_at_gauss(element, v);
 
           for (j = 0; j < element->type->nodes; j++) {
-            vol += w * gsl_vector_get(mesh->fem.h, j);
-            cog[0] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[0];
-            cog[1] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[1];
-            cog[2] += w * gsl_vector_get(mesh->fem.h, j) * element->node[j]->x[2];
+            vol += element->w[v] * element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j];
+            cog[0] += element->w[v] * element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j] * element->node[j]->x[0];
+            cog[1] += element->w[v] * element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j] * element->node[j]->x[1];
+            cog[2] += element->w[v] * element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j] * element->node[j]->x[2];
           }
         }
       }
@@ -410,24 +410,6 @@ int mesh_free(mesh_t *mesh) {
   }
   mesh->node = NULL;
   mesh->n_nodes = 0;
-
-  if (mesh->fem.r != NULL) {
-    gsl_vector_free(mesh->fem.r);
-    mesh->fem.r = NULL;
-    gsl_vector_free(mesh->fem.h);
-    mesh->fem.h = NULL;
-    gsl_matrix_free(mesh->fem.dhdr);
-    mesh->fem.dhdr = NULL;
-    gsl_matrix_free(mesh->fem.dhdx);
-    mesh->fem.dhdx = NULL;
-    gsl_matrix_free(mesh->fem.drdx);
-    mesh->fem.drdx = NULL;
-    gsl_matrix_free(mesh->fem.dxdr);
-    mesh->fem.dxdr = NULL;
-    free(mesh->fem.l);
-    mesh->fem.l = NULL;
-  }
-  
   mesh->max_first_neighbor_nodes = 1;
 
   for (physical_entity = mesh->physical_entities; physical_entity != NULL; physical_entity = physical_entity->hh.next) {

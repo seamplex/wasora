@@ -138,6 +138,7 @@ Tetrahedron:
 
 void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
   double a, b;
+  double r[3];
   gauss_t *gauss;
 
   element_type->gauss = calloc(2, sizeof(gauss_t));
@@ -145,8 +146,7 @@ void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
   // el primero es el default
   // ---- cuatro puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    gauss->V = 4;
-    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    mesh_alloc_gauss(gauss, element_type, 4);
     
     a = (5.0-sqrt(5))/20.0;
     b = (5.0+3.0*sqrt(5))/20.0;
@@ -175,36 +175,35 @@ void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
     mesh_init_shape_at_gauss(gauss, element_type);
     
     // matriz de extrapolacion
-    gsl_vector *r = gsl_vector_alloc(3);
     gauss->extrap = gsl_matrix_alloc(gauss->V, gauss->V);
     
-    gsl_vector_set(r, 0, -a/(b-a));
-    gsl_vector_set(r, 1, -a/(b-a));
-    gsl_vector_set(r, 2, -a/(b-a));            
+    r[0] = -a/(b-a);
+    r[1] = -a/(b-a);
+    r[2] = -a/(b-a);
     gsl_matrix_set(gauss->extrap, 0, 0, mesh_four_node_tetrahedron_h(0, r));
     gsl_matrix_set(gauss->extrap, 0, 1, mesh_four_node_tetrahedron_h(1, r));
     gsl_matrix_set(gauss->extrap, 0, 2, mesh_four_node_tetrahedron_h(2, r));
     gsl_matrix_set(gauss->extrap, 0, 3, mesh_four_node_tetrahedron_h(3, r));
 
-    gsl_vector_set(r, 0, 1+(1-b)/(b-a));
-    gsl_vector_set(r, 1, -a/(b-a));
-    gsl_vector_set(r, 2, -a/(b-a));            
+    r[0] = 1+(1-b)/(b-a);
+    r[1] = -a/(b-a);
+    r[2] = -a/(b-a);
     gsl_matrix_set(gauss->extrap, 1, 0, mesh_four_node_tetrahedron_h(0, r));
     gsl_matrix_set(gauss->extrap, 1, 1, mesh_four_node_tetrahedron_h(1, r));
     gsl_matrix_set(gauss->extrap, 1, 2, mesh_four_node_tetrahedron_h(2, r));
     gsl_matrix_set(gauss->extrap, 1, 3, mesh_four_node_tetrahedron_h(3, r));
 
-    gsl_vector_set(r, 0, -a/(b-a));
-    gsl_vector_set(r, 1, 1+(1-b)/(b-a));
-    gsl_vector_set(r, 2, -a/(b-a));            
+    r[0] = -a/(b-a);
+    r[1] = 1+(1-b)/(b-a);
+    r[2] = -a/(b-a);
     gsl_matrix_set(gauss->extrap, 2, 0, mesh_four_node_tetrahedron_h(0, r));
     gsl_matrix_set(gauss->extrap, 2, 1, mesh_four_node_tetrahedron_h(1, r));
     gsl_matrix_set(gauss->extrap, 2, 2, mesh_four_node_tetrahedron_h(2, r));
     gsl_matrix_set(gauss->extrap, 2, 3, mesh_four_node_tetrahedron_h(3, r));
 
-    gsl_vector_set(r, 0, -a/(b-a));
-    gsl_vector_set(r, 1, -a/(b-a));
-    gsl_vector_set(r, 2, 1+(1-b)/(b-a));            
+    r[0] = -a/(b-a);
+    r[1] = -a/(b-a);
+    r[2] = 1+(1-b)/(b-a);
     gsl_matrix_set(gauss->extrap, 3, 0, mesh_four_node_tetrahedron_h(0, r));
     gsl_matrix_set(gauss->extrap, 3, 1, mesh_four_node_tetrahedron_h(1, r));
     gsl_matrix_set(gauss->extrap, 3, 2, mesh_four_node_tetrahedron_h(2, r));
@@ -213,8 +212,7 @@ void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
     
   // ---- un punto de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    gauss->V = 1;
-    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 1.0/6.0 * 1.0;
     gauss->r[0][0] = 1.0/4.0;
@@ -226,14 +224,10 @@ void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
   return;
 }
 
-double mesh_four_node_tetrahedron_h(int j, gsl_vector *gsl_r) {
-  double r;
-  double s;
-  double t;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
-  t = gsl_vector_get(gsl_r, 2);
+double mesh_four_node_tetrahedron_h(int j, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
+  double t = vec_r[2];
 
   switch (j) {
     case 0:
@@ -325,16 +319,7 @@ double mesh_four_node_tetrahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
 }
 */
 
-double mesh_four_node_tetrahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
-/*  
-  double r;
-  double s;
-  double t;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
-  t = gsl_vector_get(gsl_r, 2);
-*/
+double mesh_four_node_tetrahedron_dhdr(int j, int m, double *vec_r) {
   
   switch (j) {
     case 0:

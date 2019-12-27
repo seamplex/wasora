@@ -412,14 +412,10 @@ Node here(gmsh)       Node reference        r        s        t
 25                      26                  0        0        1
 26                      27                  0        0        0
 */
-double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r) {
-  double r;
-  double s;
-  double t;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
-  t = gsl_vector_get(gsl_r, 2);
+double mesh_twentyseven_node_hexahedron_h(int j, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
+  double t = vec_r[2];
 
   switch (j) {
     case 0:
@@ -509,14 +505,10 @@ double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r) {
 
 }
 
-double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
-  double r;
-  double s;
-  double t;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
-  t = gsl_vector_get(gsl_r, 2);
+double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
+  double t = vec_r[2];
 
   switch (j) {
     case 0:

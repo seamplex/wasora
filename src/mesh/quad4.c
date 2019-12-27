@@ -88,8 +88,7 @@ Quadrangle:
   // el primero es el default
   // ---- cuatro puntos de Gauss ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    gauss->V = 4;
-    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    mesh_alloc_gauss(gauss, element_type, 4);
   
     gauss->w[0] = 4 * 0.25;
     gauss->r[0][0] = -1.0/M_SQRT3;
@@ -111,8 +110,7 @@ Quadrangle:
     
   // ---- un punto de Gauss  ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    gauss->V = 1;
-    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 4 * 1.0;
     gauss->r[0][0] = 0.0;
@@ -123,12 +121,9 @@ Quadrangle:
   return WASORA_RUNTIME_OK;    
 }
 
-double mesh_four_node_quad_h(int j, gsl_vector *gsl_r) {
-  double r;
-  double s;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
+double mesh_four_node_quad_h(int j, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
 
   switch (j) {
     case 0:
@@ -149,12 +144,9 @@ double mesh_four_node_quad_h(int j, gsl_vector *gsl_r) {
 
 }
 
-double mesh_four_node_quad_dhdr(int j, int m, gsl_vector *gsl_r) {
-  double r;
-  double s;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
+double mesh_four_node_quad_dhdr(int j, int m, double *vec_r) {
+  double r = vec_r[0];
+  double s = vec_r[1];
 
   switch(j) {
     case 0:

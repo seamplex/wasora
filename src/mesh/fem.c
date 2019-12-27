@@ -148,9 +148,7 @@ double mesh_determinant(int d, gsl_matrix *A) {
 // calcula los gradientes de las h con respecto a las x evaluadas en r
 void mesh_compute_dhdx(element_t *element, gsl_vector *r, gsl_matrix *drdx, gsl_matrix *dhdx) {
 
-  int j;
-  int m, m_prime;
-
+/*  
   gsl_matrix_set_zero(dhdx);
   for (j = 0; j < element->type->nodes; j++) {
     for (m = 0; m < element->type->dim; m++) {
@@ -159,30 +157,132 @@ void mesh_compute_dhdx(element_t *element, gsl_vector *r, gsl_matrix *drdx, gsl_
       }
     }
   }
-
+*/
   return;
 
 }
 
-void mesh_compute_h(element_t *element, gsl_vector *r, gsl_vector *h) {
 
+// calcula los gradientes de las h con respecto a las x evaluadas en r
+void mesh_compute_dhdx_at_gauss(element_t *element, int v) {
+
+  int m, m_prime;
   int j;
+  gsl_matrix *dhdx;
+  
+  
+  if (element->dhdx == NULL) {
+    element->dhdx = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(gsl_matrix *));
+  }
+  if (element->dhdx[v] == NULL) {
+    element->dhdx[v] = gsl_matrix_calloc(element->type->nodes, element->type->dim);
+  } else {
+    return;
+  }
+  
+  if (element->drdx == NULL || element->drdx[v] == NULL) {
+    mesh_compute_drdx_at_gauss(element, v);
+  }
 
+  dhdx = element->dhdx[v];
+  
   for (j = 0; j < element->type->nodes; j++) {
-    gsl_vector_set(h, j, element->type->h(j, r));
+    for (m = 0; m < element->type->dim; m++) {
+      for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
+        // TODO: matrix-matrix
+      	gsl_matrix_add_to_element(dhdx, j, m, gsl_matrix_get(element->type->gauss->dhdr[v], j, m_prime) * gsl_matrix_get(element->drdx[v], m_prime, m));
+      }
+    }
   }
 
   return;
 
 }
 
+void mesh_compute_drdx_at_gauss(element_t *element, int v) {
+  
+  if (element->drdx == NULL) {
+    element->drdx = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(gsl_matrix *));
+  }
+  if (element->drdx[v] == NULL) {
+    element->drdx[v] = gsl_matrix_calloc(element->type->dim, element->type->dim);
+  } else {
+    return;
+  }
+  
+  if (element->dxdr == NULL || element->dxdr[v] == NULL) {
+    mesh_compute_dxdr_at_gauss(element, v);
+  }
+  
+  
+  mesh_inverse(element->type->dim, element->dxdr[v], element->drdx[v]);
+  
+  return;
+  
+}
+
+
+void mesh_compute_h(element_t *element, gsl_vector *r, gsl_vector *h) {
+  return;
+}
+
 void mesh_compute_dxdr(element_t *element, gsl_vector *r, gsl_matrix *dxdr) {
+  return;
+}
+/*
+void mesh_compute_x(element_t *element, gsl_vector *r, gsl_vector *x) {
+  return;
+}
+*/
+/*
+void mesh_inverse(int, gsl_matrix *dxdr, gsl_matrix *drdx) {
+  return;
+}
+*/
+//void mesh_compute_dhdx(element, fino.mesh->fem.r, fino.mesh->fem.drdx, fino.mesh->fem.dhdx);
+
+double mesh_integration_weight(mesh_t *mesh, element_t *element, int v) {
+  return 0;
+}
+
+
+void mesh_compute_integration_weight_at_gauss(element_t *element, int v) {
+  
+  if (element->w == NULL) {
+    element->w = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(double));
+  }
+  
+  if (element->dxdr == NULL || element->dxdr[v] == NULL) {
+    mesh_compute_dxdr_at_gauss(element, v);
+  }
+  
+  element->w[v] = element->type->gauss[GAUSS_POINTS_CANONICAL].w[v] * fabs(mesh_determinant(element->type->dim, element->dxdr[v]));
+
+  return;
+}
+
+
+
+void mesh_compute_dxdr_at_gauss(element_t *element, int v) {
 
   int m, m_prime;
   int j;
-
-  gsl_matrix_set_zero(dxdr);
+  double *r;
+  gsl_matrix *dxdr;
   
+  
+  if (element->dxdr == NULL) {
+    element->dxdr = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(gsl_matrix *));
+  }
+  if (element->dxdr[v] == NULL) {
+    element->dxdr[v] = gsl_matrix_calloc(element->type->dim, element->type->dim);
+  } else {
+    return;
+  }
+
+  dxdr = element->dxdr[v];
+  r = element->type->gauss->r[v];
+
   if (element->type->dim == 0) {
     // un puntito
     gsl_matrix_set(dxdr, 0, 0, 1.0);
@@ -243,6 +343,7 @@ void mesh_compute_dxdr(element_t *element, gsl_vector *r, gsl_matrix *dxdr) {
                    [                               2     2 ]
                    [    v0 v2        v1 v2     - v1  - v0  ]
 */    
+
     if (fabs(s) < wasora_var(wasora_mesh.vars.eps)) {
       // too late, pero la transformacion es una traslacion
       R[0][0] = 1;
@@ -284,7 +385,8 @@ void mesh_compute_dxdr(element_t *element, gsl_vector *r, gsl_matrix *dxdr) {
     for (m = 0; m < element->type->dim; m++) {
       for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
         for (j = 0; j < element->type->nodes; j++) {
-          gsl_matrix_add_to_element(dxdr, m, m_prime, element->type->dhdr(j, m_prime, r) * element->node[j]->x[m]);
+          // TODO: producto matrix-vector
+          gsl_matrix_add_to_element(dxdr, m, m_prime, gsl_matrix_get(element->type->gauss->dhdr[v], j, m_prime) * element->node[j]->x[m]);
         }
       }
     }
@@ -295,17 +397,40 @@ void mesh_compute_dxdr(element_t *element, gsl_vector *r, gsl_matrix *dxdr) {
 }
 
 
-void mesh_compute_x(element_t *element, gsl_vector *r, gsl_vector *x) {
+void mesh_compute_x_at_gauss(element_t *element, int v) {
 
   int j, m;
+  
+  if (element->x == NULL) {
+    element->x = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(double *));
+  }
+  if (element->x[v] == NULL) {
+    element->x[v] = calloc(3, sizeof(double));
+  } else {
+    return;
+  }
+  
+  for (j = 0; j < element->type->nodes; j++) {
+    for (m = 0; m < 3; m++) {
+      element->x[v][m] += element->type->gauss->h[v][j] * element->node[j]->x[m];
+    }
+  }
+  
+  
+}
+
+void mesh_compute_x(element_t *element, gsl_vector *r, gsl_vector *x) {
+
+//  int j, m;
 
   gsl_vector_set_zero(x);
+/*  
   for (j = 0; j < element->type->nodes; j++) {
     for (m = 0; m < 3; m++) {
       gsl_vector_add_to_element(x, m, element->type->h(j, r) * element->node[j]->x[m]);
     }
   }
-
+*/
   return;
 }
 
@@ -363,8 +488,8 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
   return WASORA_RUNTIME_OK;
 }
 
-
-int mesh_compute_r_at_node(element_t *element, int j, gsl_vector *r) {
+/*
+int mesh_compute_r_at_node(element_t *element, int j, double *r) {
   int d;
   
   if (element->type->node_coords == NULL) {
@@ -378,65 +503,77 @@ int mesh_compute_r_at_node(element_t *element, int j, gsl_vector *r) {
  
   return WASORA_RUNTIME_OK;
 }
-
-int mesh_compute_H(mesh_t *mesh, element_t *element) {
+*/
+void mesh_compute_H_at_gauss(element_t *element, int v, int dofs) {
   int j;
   int d;
-  
-  for (d = 0; d < mesh->degrees_of_freedom; d++) {
-    for (j = 0; j < element->type->nodes; j++) {
-      gsl_matrix_set(mesh->fem.H, d, mesh->degrees_of_freedom*j+d, element->type->h(j, mesh->fem.r));
-    }
+
+  if (element->H == NULL) {
+    element->H = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(gsl_matrix *));
+  }
+  if (element->H[v] == NULL) {
+    element->H[v] = gsl_matrix_calloc(dofs, dofs*element->type->nodes);
+  } else {
+    return;
   }
   
-  return WASORA_RUNTIME_OK;
+  for (d = 0; d < dofs; d++) {
+    for (j = 0; j < element->type->nodes; j++) {
+      gsl_matrix_set(element->H[v], d, dofs*j+d, element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j]);
+    }
+  }
+
+  return;
   
 }
 
-int mesh_compute_B(mesh_t *mesh, element_t *element) {
+
+void mesh_compute_B_at_gauss(element_t *element, int v, int dofs) {
 
   int m, d, j;  
   
-  for (m = 0; m < mesh->bulk_dimensions; m++) {
-    for (d = 0; d < mesh->degrees_of_freedom; d++) {
+  if (element->B == NULL) {
+    element->B = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(gsl_matrix *));
+  }
+  if (element->B[v] == NULL) {
+    element->B[v] = gsl_matrix_calloc(dofs*element->type->dim, dofs*element->type->nodes);
+  } else {
+    return;
+  }
+  
+  if (element->dhdx == NULL) {
+    mesh_compute_dhdx_at_gauss(element, v);
+  }
+  
+  
+  for (m = 0; m < element->type->dim; m++) {
+    for (d = 0; d < dofs; d++) {
       for (j = 0; j < element->type->nodes; j++) {
-        gsl_matrix_set(mesh->fem.B, mesh->degrees_of_freedom*m+d, mesh->degrees_of_freedom*j+d, gsl_matrix_get(mesh->fem.dhdx, j, m));
+        gsl_matrix_set(element->B[v], dofs*m+d, dofs*j+d, gsl_matrix_get(element->dhdx[v], j, m));
       }
     }
   }
  
-  return WASORA_RUNTIME_ERROR;
+  return;
 }
 
-int mesh_compute_l(mesh_t *mesh, element_t *element) {
+void mesh_compute_l(mesh_t *mesh, element_t *element) {
   int j, d;
+  
+  if (element->l == NULL) {
+    element->l = calloc(element->type->nodes * mesh->degrees_of_freedom, sizeof(double));
+  } else {
+    return;
+  }
   
   // armamos el vector l que indica como ensamblar
   for (j = 0; j < element->type->nodes; j++) {
     for (d = 0; d < mesh->degrees_of_freedom; d++) {
-      mesh->fem.l[mesh->degrees_of_freedom*j + d] = element->node[j]->index_dof[d];
+      element->l[mesh->degrees_of_freedom*j + d] = element->node[j]->index_dof[d];
     }
   }
   
-  return WASORA_RUNTIME_OK;
-  
-}
-
-double mesh_compute_fem_objects_at_gauss(mesh_t *mesh, element_t *element, int v) {
-  double w;
-  
-  w = mesh_integration_weight(mesh, element, v);
-  
-  mesh_compute_x(element, mesh->fem.r, mesh->fem.x);
-  mesh_compute_H(mesh, element);
-  mesh_inverse(mesh->bulk_dimensions, mesh->fem.dxdr, mesh->fem.drdx);
-  mesh_compute_dhdx(element, mesh->fem.r, mesh->fem.drdx, mesh->fem.dhdx);
-  mesh_compute_B(mesh, element);
-
-  // el vector con los indices globales que indica como ensamblar
-  mesh_compute_l(mesh, element);
-  
-  return w;
+  return;
   
 }
 

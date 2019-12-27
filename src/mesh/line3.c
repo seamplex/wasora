@@ -98,10 +98,8 @@ Line3:
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_three_node_line_h(int k, gsl_vector *gsl_r) {
-  double r;
-
-  r = gsl_vector_get(gsl_r, 0);
+double mesh_three_node_line_h(int k, double *vec_r) {
+  double r = vec_r[0];
 
   // numeracion gmsh
   switch (k) {
@@ -120,10 +118,8 @@ double mesh_three_node_line_h(int k, gsl_vector *gsl_r) {
 
 }
 
-double mesh_three_node_line_dhdr(int k, int m, gsl_vector *arg) {
-  double r;
-
-  r = gsl_vector_get(arg, 0);
+double mesh_three_node_line_dhdr(int k, int m, double *vec_r) {
+  double r = vec_r[0];
 
   switch(k) {
     case 0:

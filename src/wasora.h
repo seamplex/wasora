@@ -1915,8 +1915,8 @@ struct element_type_t {
   node_relative_t **node_parents;
   
   // apuntadores a funciones de forma y sus derivadas
-  double (*h)(int, gsl_vector *);
-  double (*dhdr)(int, int, gsl_vector *);
+  double (*h)(int, double *);
+  double (*dhdr)(int, int, double *);
   int (*point_in_element)(element_t *, const double *);
   double (*element_volume)(element_t *);
   
@@ -1930,7 +1930,7 @@ struct gauss_t {
   double **r;          // coordenadas (r[v][m] es la coordenada del punto v en la dimension m)
   
   double **h;          // funciones de forma evaluadas en los puntos de gauss h[v][j]
-  double ***dhdr;      // derivadas evaluadas dhdr[v][j][m]
+  gsl_matrix **dhdr;   // derivadas evaluadas dhdr[v](j,m)
   
   // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
   gsl_matrix *extrap;  // matrix de VxV para extrapolar valores desde los puntos de gauss a los nodos de primer orden
@@ -2017,7 +2017,16 @@ struct element_t {
   double quality;
   double volume;
   double weight;
-  double *w;
+  double *w;                  // pesos de integracion en gauss
+  double **x;                 // coordenadas naturales de los puntos de gauss
+  
+  int *l;                     // lista de indices de los DOFs de los nodos
+  
+  // en los puntos de gauss
+  gsl_matrix **H;
+  gsl_matrix **B;
+  gsl_matrix **dxdr;
+  gsl_matrix **drdx;
   gsl_matrix **dhdx;
   
   // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
@@ -2189,29 +2198,6 @@ struct mesh_t {
   void *kd_nodes;
   void *kd_cells;
 
-  struct {
-    // nomenclatura como en la documentacion
-    int M;            // dimensiones
-    int J;            // nodos locales
-    int D;            // grados de libertad
-    int N;            // tamanio de la matriz elemental N = JG
-    int MD;           // producto MD
-    int V;            // puntos de integracion (gauss incluyendo dimensiones)
-
-    gsl_vector *r;    // coordenadas naturales
-    gsl_vector *x;    // coordenadas globales
-    gsl_vector *h;    // funciones de forma
-    gsl_matrix *dhdr; // jacobiano de las funciones de forma con respecto a las coordenadas naturales
-    gsl_matrix *dhdx; // jacobiano de las funciones de forma con respecto a las coordenadas reales
-    gsl_matrix *drdx; // jacobiano de las coordenadas naturales con respecto a las reales
-    gsl_matrix *dxdr; // jacobiano de las coordenadas reales con respecto a las naturales
-    
-    gsl_matrix *H;
-    gsl_matrix *B;
-    
-    int *l;           // vector con mapeo de indices locales a globales
-  } fem;
-
   physical_entity_t *origin;
   physical_entity_t *left;
   physical_entity_t *right;
@@ -2374,21 +2360,26 @@ extern int mesh_interp_solve_for_r(element_t *, const double *, gsl_vector *);
 
 
 // fem.c
-extern void mesh_compute_dxdr(element_t *, gsl_vector *, gsl_matrix *);
-extern void mesh_inverse(int, gsl_matrix *, gsl_matrix *);
-extern double mesh_determinant(int, gsl_matrix *);
-extern void mesh_compute_dhdx(element_t *, gsl_vector *, gsl_matrix *, gsl_matrix *);
-extern void mesh_compute_h(element_t *, gsl_vector *, gsl_vector *);
-extern void mesh_compute_x(element_t *, gsl_vector *, gsl_vector *);
 extern int mesh_compute_r(element_t *, gsl_vector *, gsl_vector *);
 extern int mesh_compute_r_at_node(element_t *, int, gsl_vector *);
-extern int mesh_compute_l(mesh_t *, element_t *);
-extern double mesh_compute_fem_objects_at_gauss(mesh_t *, element_t *, int);
+extern void mesh_compute_l(mesh_t *, element_t *);
 extern int mesh_compute_normal(element_t *);
 extern int mesh_update_coord_vars(double *);
 
+extern void mesh_inverse(int, gsl_matrix *, gsl_matrix *);
+extern double mesh_determinant(int, gsl_matrix *);
+
+extern void mesh_compute_dhdx_at_gauss(element_t *, int);
+extern void mesh_compute_drdx_at_gauss(element_t *, int);
+extern void mesh_compute_dxdr_at_gauss(element_t *, int);
+extern void mesh_compute_integration_weight_at_gauss(element_t *, int);
+extern void mesh_compute_H_at_gauss(element_t *, int, int);
+extern void mesh_compute_B_at_gauss(element_t *, int, int);
+extern void mesh_compute_x_at_gauss(element_t *, int);
+
+
 extern int mesh_compute_B(mesh_t *, element_t *);
-int mesh_compute_H(mesh_t *, element_t *);
+extern int mesh_compute_H(mesh_t *, element_t *);
 
 // neighbors.c
 extern int mesh_count_common_nodes(element_t *, element_t *, int *);
@@ -2412,90 +2403,90 @@ extern int wasora_mesh_struct_find_cell(int, double *, double *, double);
 
 // point.c
 extern int mesh_one_node_point_init(void);
-extern double mesh_one_node_point_h(int, gsl_vector *);
-extern double mesh_one_node_point_dhdr(int, int, gsl_vector *);
+extern double mesh_one_node_point_h(int, double *);
+extern double mesh_one_node_point_dhdr(int, int, double *);
 extern double mesh_point_vol(element_t *);
 
 
 // line.c
 extern int mesh_two_node_line_init(void);
-extern double mesh_two_node_line_h(int, gsl_vector *);
-extern double mesh_two_node_line_dhdr(int, int, gsl_vector *);
+extern double mesh_two_node_line_h(int, double *);
+extern double mesh_two_node_line_dhdr(int, int, double *);
 extern int mesh_point_in_line(element_t *, const double *);
 extern double mesh_line_vol(element_t *);
 
 // line3.c
 extern int mesh_three_node_line_init(void);
-extern double mesh_three_node_line_h(int, gsl_vector *);
-extern double mesh_three_node_line_dhdr(int, int, gsl_vector *);
+extern double mesh_three_node_line_h(int, double *);
+extern double mesh_three_node_line_dhdr(int, int, double *);
 
 // triang3.c
 extern int mesh_three_node_triangle_init(void);
-extern double mesh_three_node_triang_h(int, gsl_vector *);
-extern double mesh_three_node_triang_dhdr(int, int, gsl_vector *);
+extern double mesh_three_node_triang_h(int, double *);
+extern double mesh_three_node_triang_dhdr(int, int, double *);
 extern int mesh_point_in_triangle(element_t *, const double *);
 extern double mesh_triang_vol(element_t *);
 
 
 // triang6.c
 extern int mesh_six_node_triangle_init(void);
-extern double mesh_six_node_triang_h(int, gsl_vector *);
-extern double mesh_six_node_triang_dhdr(int, int, gsl_vector *);
+extern double mesh_six_node_triang_h(int, double *);
+extern double mesh_six_node_triang_dhdr(int, int, double *);
 
 // quad4.c
 extern int mesh_four_node_quadrangle_init(void);
-extern double mesh_four_node_quad_h(int, gsl_vector *);
-extern double mesh_four_node_quad_dhdr(int, int, gsl_vector *);
+extern double mesh_four_node_quad_h(int, double *);
+extern double mesh_four_node_quad_dhdr(int, int, double *);
 extern int mesh_point_in_quadrangle(element_t *, const double *);
 extern double mesh_quad_vol(element_t *);
 
 // quad8.c
 extern int mesh_eight_node_quadrangle_init(void);
-extern double mesh_eight_node_quad_h(int , gsl_vector *);
-extern double mesh_eight_node_quad_dhdr(int , int , gsl_vector *);
+extern double mesh_eight_node_quad_h(int , double *);
+extern double mesh_eight_node_quad_dhdr(int , int , double *);
 
 // quad9.c
 extern int mesh_nine_node_quadrangle_init(void);
-extern double mesh_nine_node_quad_h(int , gsl_vector *);
-extern double mesh_nine_node_quad_dhdr(int , int , gsl_vector *);
+extern double mesh_nine_node_quad_h(int , double *);
+extern double mesh_nine_node_quad_dhdr(int , int , double *);
 
 
 // hexahedron8.c
 extern int mesh_eight_node_hexahedron_init(void);
-extern double mesh_eight_node_hexahedron_h(int, gsl_vector *);
-extern double mesh_eight_node_hexahedron_dhdr(int, int, gsl_vector *);
+extern double mesh_eight_node_hexahedron_h(int, double *);
+extern double mesh_eight_node_hexahedron_dhdr(int, int, double *);
 extern int mesh_point_in_hexahedron(element_t *, const double *);
 extern double mesh_hexahedron_vol(element_t *);
 
 // hexahedron20.c
 extern int mesh_twenty_node_hexaedron_init(void);
-extern double mesh_twenty_node_hexahedron_h(int j, gsl_vector *gsl_r);
-extern double mesh_twenty_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
+extern double mesh_twenty_node_hexahedron_h(int, double *);
+extern double mesh_twenty_node_hexahedron_dhdr(int, int, double *);
 
 // hexahedron27.c
 extern int mesh_twentyseven_node_hexaedron_init(void);
 extern void mesh_hexa_gauss27_init(element_type_t *);
-extern double mesh_twentyseven_node_hexahedron_h(int j, gsl_vector *gsl_r);
-extern double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, gsl_vector *gsl_r);
+extern double mesh_twentyseven_node_hexahedron_h(int, double *);
+extern double mesh_twentyseven_node_hexahedron_dhdr(int, int, double *);
 
 // tet4.c
 extern int mesh_four_node_tetrahedron_init(void);
 extern void mesh_tetrahedron_gauss_init(element_type_t *);
-extern double mesh_four_node_tetrahedron_h(int, gsl_vector *);
-extern double mesh_four_node_tetrahedron_dhdr(int, int, gsl_vector *);
+extern double mesh_four_node_tetrahedron_h(int, double *);
+extern double mesh_four_node_tetrahedron_dhdr(int, int, double *);
 extern int mesh_point_in_tetrahedron(element_t *, const double *);
 extern double mesh_tetrahedron_vol(element_t *);
 
 // tet10.c
 extern int mesh_ten_node_tetrahedron_init(void);
-extern double mesh_ten_node_tetrahedron_h(int, gsl_vector *);
-extern double mesh_ten_node_tetrahedron_dhdr(int, int, gsl_vector *);
+extern double mesh_ten_node_tetrahedron_h(int, double *);
+extern double mesh_ten_node_tetrahedron_dhdr(int, int, double *);
 
 
 // prism.c
 extern int mesh_six_node_prism_init(void);
-extern double mesh_six_node_prism_h(int, gsl_vector *);
-extern double mesh_six_node_prism_dhdr(int, int, gsl_vector *);
+extern double mesh_six_node_prism_h(int, double *);
+extern double mesh_six_node_prism_dhdr(int, int, double *);
 extern int mesh_point_in_prism(element_t *, const double *);
 extern double mesh_prism_vol(element_t *);
 

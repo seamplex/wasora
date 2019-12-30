@@ -144,19 +144,40 @@ double mesh_determinant(gsl_matrix *A) {
 }
 
 // calcula los gradientes de las h con respecto a las x evaluadas en r
-void mesh_compute_dhdx(element_t *element, double *r, gsl_matrix *drdx, gsl_matrix *dhdx) {
+void mesh_compute_dhdx(element_t *element, double *r, gsl_matrix *drdx_ref, gsl_matrix *dhdx) {
 
+  gsl_matrix *dxdr;
+  gsl_matrix *drdx;
   int j, m, m_prime;
+  
+  if (drdx_ref != NULL) {
+    // si ya nos dieron drdx usamos esa
+    drdx = drdx_ref;
+    
+  } else {
+    // sino la calculamos
+    drdx = gsl_matrix_calloc(element->type->dim, element->type->dim);
+    dxdr = gsl_matrix_calloc(element->type->dim, element->type->dim);
+    
+    mesh_compute_dxdr(element, r, dxdr);
+    mesh_inverse(dxdr, drdx);
+  }
+  
   
   gsl_matrix_set_zero(dhdx);
   for (j = 0; j < element->type->nodes; j++) {
     for (m = 0; m < element->type->dim; m++) {
       for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
-      	gsl_matrix_add_to_element(dhdx, j, m, element->type->dhdr(j, m_prime, r) * gsl_matrix_get(drdx, m_prime, m));
+        gsl_matrix_add_to_element(dhdx, j, m, element->type->dhdr(j, m_prime, r) * gsl_matrix_get(drdx, m_prime, m));
       }
     }
   }
 
+  if (drdx_ref == NULL) {
+    gsl_matrix_free(drdx);
+    gsl_matrix_free(dxdr);
+  }
+  
   return;
 
 }

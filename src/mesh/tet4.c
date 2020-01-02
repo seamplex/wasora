@@ -137,7 +137,7 @@ Tetrahedron:
 }
 
 void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
-  double a, b;
+  double a, b, c, d;
   double r[3];
   gauss_t *gauss;
 
@@ -177,33 +177,36 @@ void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
     // matriz de extrapolacion
     gauss->extrap = gsl_matrix_alloc(gauss->V, gauss->V);
     
-    r[0] = -a/(b-a);
-    r[1] = -a/(b-a);
-    r[2] = -a/(b-a);
+    c = -a/(b-a);
+    d = 1+(1-b)/(b-a);
+    
+    r[0] = c;
+    r[1] = c;
+    r[2] = c;
     gsl_matrix_set(gauss->extrap, 0, 0, mesh_four_node_tetrahedron_h(0, r));
     gsl_matrix_set(gauss->extrap, 0, 1, mesh_four_node_tetrahedron_h(1, r));
     gsl_matrix_set(gauss->extrap, 0, 2, mesh_four_node_tetrahedron_h(2, r));
     gsl_matrix_set(gauss->extrap, 0, 3, mesh_four_node_tetrahedron_h(3, r));
 
-    r[0] = 1+(1-b)/(b-a);
-    r[1] = -a/(b-a);
-    r[2] = -a/(b-a);
+    r[0] = d;
+    r[1] = c;
+    r[2] = c;
     gsl_matrix_set(gauss->extrap, 1, 0, mesh_four_node_tetrahedron_h(0, r));
     gsl_matrix_set(gauss->extrap, 1, 1, mesh_four_node_tetrahedron_h(1, r));
     gsl_matrix_set(gauss->extrap, 1, 2, mesh_four_node_tetrahedron_h(2, r));
     gsl_matrix_set(gauss->extrap, 1, 3, mesh_four_node_tetrahedron_h(3, r));
 
-    r[0] = -a/(b-a);
-    r[1] = 1+(1-b)/(b-a);
-    r[2] = -a/(b-a);
+    r[0] = c;
+    r[1] = d;
+    r[2] = c;
     gsl_matrix_set(gauss->extrap, 2, 0, mesh_four_node_tetrahedron_h(0, r));
     gsl_matrix_set(gauss->extrap, 2, 1, mesh_four_node_tetrahedron_h(1, r));
     gsl_matrix_set(gauss->extrap, 2, 2, mesh_four_node_tetrahedron_h(2, r));
     gsl_matrix_set(gauss->extrap, 2, 3, mesh_four_node_tetrahedron_h(3, r));
 
-    r[0] = -a/(b-a);
-    r[1] = -a/(b-a);
-    r[2] = 1+(1-b)/(b-a);
+    r[0] = c;
+    r[1] = c;
+    r[2] = d;
     gsl_matrix_set(gauss->extrap, 3, 0, mesh_four_node_tetrahedron_h(0, r));
     gsl_matrix_set(gauss->extrap, 3, 1, mesh_four_node_tetrahedron_h(1, r));
     gsl_matrix_set(gauss->extrap, 3, 2, mesh_four_node_tetrahedron_h(2, r));

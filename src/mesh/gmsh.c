@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related gmsh routines
  *
- *  Copyright (C) 2014--2019 jeremy theler
+ *  Copyright (C) 2014--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -76,7 +76,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         version_maj = 4;
         version_min = 1;       
       } else {
-        wasora_push_error_message("mesh '%s' has an incompatible version '%s', only version 2.2, 4.0 or 4.1 are supported", mesh->file->path, buffer);
+        wasora_push_error_message("mesh '%s' has an incompatible version '%s', only versions 2.2, 4.0 and 4.1 are supported", mesh->file->path, buffer);
         return WASORA_RUNTIME_ERROR;
       }
   
@@ -318,6 +318,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
                   &mesh->node[j].x[2]) < 4) {
             return WASORA_RUNTIME_ERROR;
           }
+          
           // en msh2 los tags son indices
           if (j+1 != tag) {
             wasora_push_error_message("nodes in file '%s' are sparse", mesh->file->path);
@@ -325,6 +326,12 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           }
           mesh->node[j].tag = tag;
           mesh->node[j].index_mesh = j;
+          
+          // si nos dieron degrees of freedom entonces tenemos que allocar
+          // lugar para la solucion phi de alguna PDE
+          if (mesh->degrees_of_freedom != 0) {
+            mesh->node[j].phi = calloc(mesh->degrees_of_freedom, sizeof(double));
+          }
         }
         
       } else if (version_maj == 4) {
@@ -396,6 +403,13 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
               
               // en msh4 los tags son los indices de la malla global
               mesh->node[i].index_mesh = i;
+              
+              // si nos dieron degrees of freedom entonces tenemos que allocar
+              // lugar para la solucion phi de alguna PDE
+              if (mesh->degrees_of_freedom != 0) {
+                mesh->node[i].phi = calloc(mesh->degrees_of_freedom, sizeof(double));
+              }
+              
               i++;
             }
           } else {
@@ -419,6 +433,12 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
               // en msh4 los tags son los indices de la malla global
               mesh->node[i].index_mesh = i;
               tag2index[mesh->node[i].tag] = i;
+              
+              // si nos dieron degrees of freedom entonces tenemos que allocar
+              // lugar para la solucion phi de alguna PDE
+              if (mesh->degrees_of_freedom != 0) {
+                mesh->node[i].phi = calloc(mesh->degrees_of_freedom, sizeof(double));
+              }
               
               i++;
             }

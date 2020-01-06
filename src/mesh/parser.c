@@ -773,14 +773,6 @@ int wasora_mesh_parse_line(char *line) {
         return WASORA_PARSER_ERROR;
       }
       
-      if (dimension == 0) {
-        if (material != NULL) {
-          dimension = mesh->bulk_dimensions;
-        } else if (bcs != NULL) {
-          dimension = mesh->bulk_dimensions-1;
-        } 
-      }
-      
       if (name == NULL) {
         wasora_push_error_message("NAME is mandatory for PHYSICAL_ENTITY");
         return WASORA_PARSER_ERROR;

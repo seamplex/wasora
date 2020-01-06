@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora version and description routines
  *
- *  Copyright (C) 2009--2018 jeremy theler
+ *  Copyright (C) 2009--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -176,7 +176,7 @@ void wasora_copyright(void) {
   printf("wasora is copyright (C) %d-%d jeremy theler\n\
 an is licensed under GNU GPL version 3 or later.\n\
 wasora is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n", 2009, 2019); 
+There is NO WARRANTY, to the extent permitted by law.\n", 2009, 2020); 
 }
 
 void wasora_longversion(void) {

@@ -610,9 +610,9 @@ int wasora_mesh_parse_line(char *line) {
           free(name);
           
 ///kw+MESH_FIND_MINMAX+usage [ MIN <MIN> ]
-        } else if (strcasecmp(token, "MAX") == 0) {
+        } else if (strcasecmp(token, "MIN") == 0) {
           wasora_call(wasora_parser_string(&variable));
-          if ((mesh_find_minmax->max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+          if ((mesh_find_minmax->min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
 

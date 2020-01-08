@@ -1674,7 +1674,7 @@ extern int wasora_instruction_abort(void *);
 extern int wasora_instruction_mesh(void *);
 extern int wasora_instruction_mesh_post(void *);
 extern int wasora_instruction_mesh_fill_vector(void *);
-extern int wasora_instruction_mesh_find_max(void *);
+extern int wasora_instruction_mesh_find_minmax(void *);
 extern int wasora_instruction_mesh_integrate(void *arg);
 
 
@@ -1746,7 +1746,7 @@ typedef struct material_list_item_t material_list_item_t;
 typedef struct mesh_post_t mesh_post_t;
 typedef struct mesh_post_dist_t mesh_post_dist_t;
 typedef struct mesh_fill_vector_t mesh_fill_vector_t;
-typedef struct mesh_find_max_t mesh_find_max_t;
+typedef struct mesh_find_minmax_t mesh_find_minmax_t;
 typedef struct mesh_integrate_t mesh_integrate_t;
 
 // es esta mas arriba porque se necesita en print_function
@@ -1870,7 +1870,7 @@ struct {
   physical_property_t *physical_properties;
   mesh_post_t *posts;
   mesh_fill_vector_t *fill_vectors;
-  mesh_find_max_t *find_maxs;
+  mesh_find_minmax_t *find_minmaxs;
   mesh_integrate_t *integrates;
 
 } wasora_mesh;
@@ -2265,20 +2265,26 @@ struct mesh_fill_vector_t {
   mesh_fill_vector_t *next;
 };
 
-struct mesh_find_max_t {
+struct mesh_find_minmax_t {
   mesh_t *mesh;
   physical_entity_t *physical_entity;
   function_t *function;
   expr_t expr;
   centering_t centering;
   
+  var_t *min;
+  var_t *i_min;
+  var_t *x_min;
+  var_t *y_min;
+  var_t *z_min;
+
   var_t *max;
   var_t *i_max;
   var_t *x_max;
   var_t *y_max;
   var_t *z_max;
       
-  mesh_find_max_t *next;
+  mesh_find_minmax_t *next;
 };
 
 

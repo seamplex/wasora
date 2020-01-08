@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related parser routines
  *
- *  Copyright (C) 2014--2018 jeremy theler
+ *  Copyright (C) 2014--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -569,73 +569,122 @@ int wasora_mesh_parse_line(char *line) {
       wasora_define_instruction(wasora_instruction_mesh_fill_vector, mesh_fill_vector);
       return WASORA_PARSER_OK;
       
-// --- MESH_FIND_MAX ------------------------------------------------------
-    } else if (strcasecmp(token, "MESH_FIND_MAX") == 0) {
+// --- MESH_FIND_MINMAX ------------------------------------------------------
+    } else if (strcasecmp(token, "MESH_FIND_MINMAX") == 0) {
 
-///kw+MESH_FIND_MAX+usage MESH_FIND_MAX
-      mesh_find_max_t *mesh_find_max = calloc(1, sizeof(mesh_find_max_t));
       
-      // con esto le pegamos la mayor parte de las veces
-//      mesh_find_max->cell_centered = wasora_mesh.default_cell_centered;
-
+///kw+MESH_FIND_MINMAX+usage MESH_FIND_MINMAX
+      mesh_find_minmax_t *mesh_find_minmax = calloc(1, sizeof(mesh_find_minmax_t));
+      char *variable;
+      
       while ((token = wasora_get_next_token(NULL)) != NULL) {
-///kw+MESH_FIND_MAX+usage { FUNCTION <function>
+///kw+MESH_FIND_MINMAX+usage { FUNCTION <function>
         if (strcasecmp(token, "FUNCTION") == 0) {
-          wasora_call(wasora_parser_function(&mesh_find_max->function));
+          wasora_call(wasora_parser_function(&mesh_find_minmax->function));
 
-///kw+MESH_FIND_MAX+usage | EXPRESSION <expr> }
+///kw+MESH_FIND_MINMAX+usage | EXPRESSION <expr> }
         } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
-          wasora_call(wasora_parser_expression(&mesh_find_max->expr));
+          wasora_call(wasora_parser_expression(&mesh_find_minmax->expr));
         
-///kw+MESH_FIND_MAX+usage [ MESH <name> ]
+///kw+MESH_FIND_MINMAX+usage [ MESH <name> ]
         } else if (strcasecmp(token, "MESH") == 0) {
           char *mesh_name;
           wasora_call(wasora_parser_string(&mesh_name));
-          if ((mesh_find_max->mesh = wasora_get_mesh_ptr(mesh_name)) == NULL) {
+          if ((mesh_find_minmax->mesh = wasora_get_mesh_ptr(mesh_name)) == NULL) {
             wasora_push_error_message("unknown mesh '%s'", mesh_name);
             free(mesh_name);
             return WASORA_PARSER_ERROR;
           }
           free(mesh_name);
 
-///kw+MESH_FIND_MAX+usage [ PHYSICAL_ENTITY <physical_entity_name> ]
+///kw+MESH_FIND_MINMAX+usage [ PHYSICAL_ENTITY <physical_entity_name> ]
         } else if (strcasecmp(token, "PHYSICAL_ENTITY") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
-          if ((mesh_find_max->physical_entity = wasora_get_physical_entity_ptr(name, mesh_find_max->mesh)) == NULL) {
-            if ((mesh_find_max->physical_entity = wasora_define_physical_entity(name, mesh_find_max->mesh, 0)) == NULL) {
+          if ((mesh_find_minmax->physical_entity = wasora_get_physical_entity_ptr(name, mesh_find_minmax->mesh)) == NULL) {
+            if ((mesh_find_minmax->physical_entity = wasora_define_physical_entity(name, mesh_find_minmax->mesh, 0)) == NULL) {
               free(name);
               return WASORA_PARSER_ERROR;
             }
           }
           free(name);
           
-///kw+MESH_FIND_MAX+usage [ NODES
-        } else if (strcasecmp(token, "NODES") == 0) {
-          mesh_find_max->centering = centering_nodes;
-///kw+MESH_FIND_MAX+usage | CELLS ]
-        } else if (strcasecmp(token, "CELLS") == 0) {
-          mesh_find_max->centering = centering_cells;
-          
-///kw+MESH_FIND_MAX+usage [ MAX <variable> ]
+///kw+MESH_FIND_MINMAX+usage [ MIN <MIN> ]
         } else if (strcasecmp(token, "MAX") == 0) {
-          wasora_call(wasora_parser_variable(&mesh_find_max->max));
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
 
-///kw+MESH_FIND_MAX+usage [ I_MAX <variable> ]
-        } else if (strcasecmp(token, "I_MAX") == 0 || strcasecmp(token, "INDEX") == 0) {
-          wasora_call(wasora_parser_variable(&mesh_find_max->i_max));
+///kw+MESH_FIND_MINMAX+usage [ I_MIN <variable> ]
+        } else if (strcasecmp(token, "I_MIN") == 0 || strcasecmp(token, "INDEX_MIN") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->i_min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
 
-///kw+MESH_FIND_MAX+usage [ X_MAX <variable> ]
-        } else if (strcasecmp(token, "X_MAX") == 0) {
-          wasora_call(wasora_parser_variable(&mesh_find_max->x_max));
+///kw+MESH_FIND_MINMAX+usage [ X_MIN <variable> ]
+        } else if (strcasecmp(token, "X_MIN") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->x_min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
           
-///kw+MESH_FIND_MAX+usage [ Y_MAX <variable> ]
-        } else if (strcasecmp(token, "Y_MAX") == 0) {
-          wasora_call(wasora_parser_variable(&mesh_find_max->y_max));
+///kw+MESH_FIND_MINMAX+usage [ Y_MIN <variable> ]
+        } else if (strcasecmp(token, "Y_MIN") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->y_min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
 
-///kw+MESH_FIND_MAX+usage [Z_MAX <variable> ]
+///kw+MESH_FIND_MINMAX+usage [Z_MIN <variable> ]
+        } else if (strcasecmp(token, "Z_MIN") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->z_min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
+          
+///kw+MESH_FIND_MINMAX+usage [ MAX <variable> ]
+        } else if (strcasecmp(token, "MAX") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
+
+///kw+MESH_FIND_MINMAX+usage [ I_MAX <variable> ]
+        } else if (strcasecmp(token, "I_MAX") == 0 || strcasecmp(token, "INDEX_MAX") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->i_max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
+
+///kw+MESH_FIND_MINMAX+usage [ X_MAX <variable> ]
+        } else if (strcasecmp(token, "X_MAX") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->x_max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
+          
+///kw+MESH_FIND_MINMAX+usage [ Y_MAX <variable> ]
+        } else if (strcasecmp(token, "Y_MAX") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->y_max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
+
+///kw+MESH_FIND_MINMAX+usage [Z_MAX <variable> ]
         } else if (strcasecmp(token, "Z_MAX") == 0) {
-          wasora_call(wasora_parser_variable(&mesh_find_max->z_max));
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->z_max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
+
+///kw+MESH_FIND_MINMAX+usage [ NODES
+        } else if (strcasecmp(token, "NODES") == 0) {
+          mesh_find_minmax->centering = centering_nodes;
+///kw+MESH_FIND_MINMAX+usage | CELLS ]
+        } else if (strcasecmp(token, "CELLS") == 0) {
+          mesh_find_minmax->centering = centering_cells;
 
         } else {
           wasora_push_error_message("unknown keyword '%s'", token);
@@ -644,22 +693,22 @@ int wasora_mesh_parse_line(char *line) {
       }
                 
       // si hay una sola malla usamos esa, si hay mas hay que pedir cual
-      if (mesh_find_max->mesh == NULL) {
+      if (mesh_find_minmax->mesh == NULL) {
         if (wasora_mesh.main_mesh == wasora_mesh.meshes) {
-          mesh_find_max->mesh = wasora_mesh.main_mesh;
+          mesh_find_minmax->mesh = wasora_mesh.main_mesh;
         } else {
           wasora_push_error_message("do not know what mesh should the post-processing be applied to");
           return WASORA_PARSER_ERROR;
         }
       }
       
-      if (mesh_find_max->function == NULL && mesh_find_max->expr.n_tokens == 0) {
+      if (mesh_find_minmax->function == NULL && mesh_find_minmax->expr.n_tokens == 0) {
         wasora_push_error_message("neither FUNCTION nor EXPRESSION given");
         return WASORA_PARSER_ERROR;
       }
       
-      LL_APPEND(wasora_mesh.find_maxs, mesh_find_max);
-      wasora_define_instruction(wasora_instruction_mesh_find_max, mesh_find_max);
+      LL_APPEND(wasora_mesh.find_minmaxs, mesh_find_minmax);
+      wasora_define_instruction(wasora_instruction_mesh_find_minmax, mesh_find_minmax);
       return WASORA_PARSER_OK;      
 
 // ---- PHYSICAL_ENTITY ----------------------------------------------------

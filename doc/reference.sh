@@ -9,7 +9,13 @@ if [ -z "${tag}" ]; then
 fi
 
 # traemos los defines de wasora.h para poder documentar los defaults en los detales
-grep '#define' ../src/wasora.h > defs.h
+if [ -e ../src/wasora.h ]; then
+  grep '#define' ../src/wasora.h > defs.h
+elif [ -e ../../src/wasora.h ]; then
+  grep '#define' ../../src/wasora.h > defs.h
+else
+  touch defs.h
+fi
 
 kws=`grep "///${tag}+" ../src/${src}.c | awk '{print $1}' | awk -F+ '{print $2}' | sort | uniq` 
 

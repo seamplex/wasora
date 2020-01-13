@@ -291,7 +291,7 @@ int wasora_mesh_parse_line(char *line) {
         } else if (strcasecmp(token, "FILE") == 0) {
           wasora_call(wasora_parser_file(&mesh_post->file));
           if (mesh_post->file->mode == NULL) {
-            mesh_post->file->mode = strdup("r");
+            mesh_post->file->mode = strdup("w");
           }
 ///kw+MESH_POST+usage FILE_PATH <file_path> }
         } else if (strcasecmp(token, "FILE_PATH") == 0) {

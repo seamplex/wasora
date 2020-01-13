@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora auxiliary parsing routines
  *
- *  Copyright (C) 2009--2013 jeremy theler
+ *  Copyright (C) 2009--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -135,16 +135,15 @@ int wasora_parser_string_format(char **string, int *n_args) {
   }
   *string = strdup(token);
       
-  dummy = token;
+  dummy = *string;
   while (*dummy != '\0') {
     if (*dummy == '\\') {
       dummy++;
     } else if (*dummy == '%' && *(dummy+1) == '%') {
       dummy++;
     } else if (*dummy == '%') {
-      if (*dummy+1 == 'd') {
-        wasora_push_error_message("format should expect double-precision floating point arguments (i.e. %g), not integers");
-        return WASORA_PARSER_ERROR;
+      if (dummy[1] == 'd') {
+        dummy[1] = 'g';
       }
       (*n_args)++;
     }

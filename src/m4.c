@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora M4 routines
  *
- *  Copyright (C) 2015--2018 jeremy theler
+ *  Copyright (C) 2015--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -20,9 +20,14 @@
  *------------------- ------------  ----    --------  --     -       -         -
  */
 
+#define _GNU_SOURCE  
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #include "wasora.h"
 
@@ -33,12 +38,13 @@ int wasora_instruction_m4(void *arg) {
 
   char *input_file_path;
   char *output_file_path;
-  char *commandline = malloc(BUFFER_SIZE);
-  char *delta = malloc(BUFFER_SIZE);
-  char *templ = malloc(BUFFER_SIZE);
-  int totalchars = 0;
-  int deltachars = 0;
+  char templ[BUFFER_SIZE];
   
+  int n_args_for_m4;
+  char **args_for_m4;
+  
+  int i, status;  
+  pid_t pid, child;
   
   if ((input_file_path = wasora_evaluate_string(m4->input_file->format, m4->input_file->n_args, m4->input_file->arg)) == NULL) {
     return WASORA_RUNTIME_ERROR;
@@ -47,41 +53,84 @@ int wasora_instruction_m4(void *arg) {
     return WASORA_RUNTIME_ERROR;
   }
   
-  totalchars = sprintf(commandline, "m4");
   
+  n_args_for_m4 = 2; // el ejecutable y el null del final
   LL_FOREACH(m4->macros, macro) {
-    if (macro->print_token.text != NULL) {
-      if ((deltachars = snprintf(delta, BUFFER_SIZE, " -D%s=\"%s\"", macro->name, macro->print_token.text)) >= BUFFER_SIZE) {
-        wasora_push_error_message("buffer not big enough");
-        return WASORA_RUNTIME_ERROR;
-      }
-    } else {
-      // TODO: ver como hacer esto de una
-      if (snprintf(templ, BUFFER_SIZE, " -D%%s=\"%s\"", macro->print_token.format) >= BUFFER_SIZE) {
-        wasora_push_error_message("buffer not big enough");
-        return WASORA_RUNTIME_ERROR;
-      }
-      if ((deltachars = snprintf(delta, BUFFER_SIZE, templ, macro->name, wasora_evaluate_expression(&macro->print_token.expression))) >= BUFFER_SIZE) {
-        wasora_push_error_message("buffer not big enough");
-        return WASORA_RUNTIME_ERROR;
-      }
-    }
-    if ((totalchars += deltachars) > BUFFER_SIZE) {
-      commandline = realloc(commandline, totalchars + BUFFER_SIZE);
-    }
-    strcat(commandline, delta);
+    n_args_for_m4++;
   }
   
-  sprintf(delta, " %s > %s", input_file_path, output_file_path);
-  strcat(commandline, delta);
-  
-  if (system(commandline) != 0) {
+  // alocamos
+  args_for_m4 = calloc(n_args_for_m4, sizeof(char *));
+  i = 0;
+  args_for_m4[i++] = strdup("m4");
+  // y loopeamos
+  LL_FOREACH(m4->macros, macro) {  
+    if (macro->print_token.text != NULL) {
+      
+      asprintf(&args_for_m4[i++], "-D%s=%s", macro->name, macro->print_token.text);
+      
+    } else {
+      // TODO: ver como hacer esto de una
+      if (snprintf(templ, BUFFER_SIZE, "-D%%s=%s", macro->print_token.format) >= BUFFER_SIZE) {
+        wasora_push_error_message("buffer not big enough");
+        return WASORA_RUNTIME_ERROR;
+      }
+      
+      asprintf(&args_for_m4[i++], templ, macro->name, wasora_evaluate_expression(&macro->print_token.expression));
+    }
+  }
+
+  // esto no hace falta, pero lo hacemos por elegancia
+  args_for_m4[i] = NULL;
+
+  if ((pid = fork()) == 0) {
+    
+    int input_fd, output_fd;
+    
+    // abrimos input y output
+    if ((input_fd = open(input_file_path, O_RDONLY)) == -1) {
+      wasora_push_error_message("cannot read '%s'", input_file_path);
+      return WASORA_RUNTIME_ERROR;
+    }
+    
+    if ((output_fd = open(output_file_path, O_WRONLY | O_CREAT, 0666)) == -1) {
+      wasora_push_error_message("cannot write '%s'", input_file_path);
+      return WASORA_RUNTIME_ERROR;
+    }
+    
+    // duplicamos y cerramos
+    dup2(input_fd, 0);
+    close(input_fd);
+
+    dup2(output_fd, 1);
+    close(output_fd);
+    
+    // exec!
+    execvp("m4", args_for_m4);
+
+    // if execv returns, it must have failed. 
+    wasora_push_error_message("m4 not found");
     return WASORA_RUNTIME_ERROR;
-  };
+    
+  } else if (pid > 0) {
+    
+    // father
+    if ((child = waitpid(pid, &status, 0)) == -1) {
+      wasora_push_error_message("m4 exec failed");
+      return WASORA_RUNTIME_ERROR;
+    }
+        
+  } else {
+    
+    wasora_push_error_message("m4 fork() failed");
+    return WASORA_RUNTIME_ERROR;
+    
+  }
   
-  free(templ);
-  free(delta);
-  free(commandline);
+  for (i = 0; i < n_args_for_m4; i++) {
+    free(args_for_m4[i]);
+  }
+  free(args_for_m4);
   free(input_file_path);
   free(output_file_path);
   

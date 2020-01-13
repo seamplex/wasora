@@ -58,6 +58,9 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH+usage [ FILE <file_id> |
         } else if (strcasecmp(token, "FILE") == 0) {
           wasora_call(wasora_parser_file(&file));
+          if (file->mode == NULL) {
+            file->mode = strdup("r");
+          }
           structured = 0;
           
 ///kw+MESH+usage FILE_PATH <file_path> ]
@@ -287,6 +290,9 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_POST+usage { FILE <name> |
         } else if (strcasecmp(token, "FILE") == 0) {
           wasora_call(wasora_parser_file(&mesh_post->file));
+          if (mesh_post->file->mode == NULL) {
+            mesh_post->file->mode = strdup("r");
+          }
 ///kw+MESH_POST+usage FILE_PATH <file_path> }
         } else if (strcasecmp(token, "FILE_PATH") == 0) {
           char *file_path;

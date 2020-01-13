@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora parser
  *
- *  Copyright (C) 2009--2019 jeremy theler
+ *  Copyright (C) 2009--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -1491,13 +1491,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
       }
 
-/*      
- * dejamos que no nos digan nada, si no dicen nada entonces no abrimos  
- *    if (mode == NULL) {
-        wasora_push_error_message("file '%s' needs to have a mode or to be declared either as input or output", name);
-        return WASORA_PARSER_ERROR;
-      }
- */
+      // si no nos dicen que es, no abrimos
       if (mode == NULL) {
         do_not_open = 1;
       }
@@ -2324,7 +2318,10 @@ if (strcasecmp(token, "FROM") == 0) {
             if ((token = wasora_get_next_token(NULL)) == NULL) {
               wasora_push_error_message("expected macro definition");
               return WASORA_PARSER_ERROR;
-            } 
+            }
+            if (macro->print_token.format[0] == 'd') {
+              macro->print_token.format[0] = 'g';
+            }
           } else {
             macro->print_token.format = strdup(DEFAULT_M4_FORMAT);
           }

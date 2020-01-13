@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora file access routines
  *
- *  Copyright (C) 2013-2014 jeremy theler
+ *  Copyright (C) 2013-2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -31,7 +31,8 @@
 
 char *wasora_evaluate_string(char *format, int nargs, expr_t *arg) {
 
-  char *string = malloc(strlen(format) + 1 + nargs*32);
+  int size = strlen(format)+1 + nargs*32;
+  char *string = malloc(size+1);
 /*  double *evaluated_args = malloc(nargs * sizeof(double));
   
   for (i = 0; i < nargs; i++) {
@@ -41,32 +42,32 @@ char *wasora_evaluate_string(char *format, int nargs, expr_t *arg) {
   
   switch (nargs) {
     case 0:
-      sprintf(string, "%s", format);
+      snprintf(string, size, "%s", format);
     break;
     case 1:
-      sprintf(string, format,
+      snprintf(string, size, format,
               wasora_evaluate_expression(&arg[0]));
     break;
     case 2:
-      sprintf(string, format,
+      snprintf(string, size, format,
               wasora_evaluate_expression(&arg[0]),
               wasora_evaluate_expression(&arg[1]));
     break;
     case 3:
-      sprintf(string, format,
+      snprintf(string, size, format,
               wasora_evaluate_expression(&arg[0]),
               wasora_evaluate_expression(&arg[1]),
               wasora_evaluate_expression(&arg[2]));
     break;
     case 4:
-      sprintf(string, format,
+      snprintf(string, size, format,
               wasora_evaluate_expression(&arg[0]),
               wasora_evaluate_expression(&arg[1]),
               wasora_evaluate_expression(&arg[2]),
               wasora_evaluate_expression(&arg[3]));
     break;
     case 5:
-      sprintf(string, format,
+      snprintf(string, size, format,
               wasora_evaluate_expression(&arg[0]),
               wasora_evaluate_expression(&arg[1]),
               wasora_evaluate_expression(&arg[2]),
@@ -74,7 +75,7 @@ char *wasora_evaluate_string(char *format, int nargs, expr_t *arg) {
               wasora_evaluate_expression(&arg[4]));
     break;
     case 6:
-      sprintf(string, format,
+      snprintf(string, size, format,
               wasora_evaluate_expression(&arg[0]),
               wasora_evaluate_expression(&arg[1]),
               wasora_evaluate_expression(&arg[2]),
@@ -83,7 +84,7 @@ char *wasora_evaluate_string(char *format, int nargs, expr_t *arg) {
               wasora_evaluate_expression(&arg[5]));
     break;
     case 7:
-      sprintf(string, format,
+      snprintf(string, size, format,
               wasora_evaluate_expression(&arg[0]),
               wasora_evaluate_expression(&arg[1]),
               wasora_evaluate_expression(&arg[2]),
@@ -93,7 +94,7 @@ char *wasora_evaluate_string(char *format, int nargs, expr_t *arg) {
               wasora_evaluate_expression(&arg[6]));
     break;
     case 8:
-      sprintf(string, format,
+      snprintf(string, size, format,
               wasora_evaluate_expression(&arg[0]),
               wasora_evaluate_expression(&arg[1]),
               wasora_evaluate_expression(&arg[2]),

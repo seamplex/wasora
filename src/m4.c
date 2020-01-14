@@ -122,7 +122,8 @@ int wasora_instruction_m4(void *arg) {
         
   } else {
     
-    wasora_push_error_message("m4 fork() failed");
+    wasora_push_error_message("m4 fork() failed: %s", strerror(errno));
+//    perror(NULL);
     return WASORA_RUNTIME_ERROR;
     
   }

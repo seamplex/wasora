@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related routines
  *
- *  Copyright (C) 2014--2019 jeremy theler
+ *  Copyright (C) 2014--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -33,6 +33,7 @@ int wasora_instruction_mesh(void *arg) {
   function_t *function, *tmp_function;
   element_list_item_t *associated_element;
   element_t *element;
+  node_data_t *node_data;
   int i, j, d, v;
   int first_neighbor_nodes;
   int bulk_dimensions = 0;
@@ -182,6 +183,15 @@ int wasora_instruction_mesh(void *arg) {
     wasora_var(wasora_mesh.vars.cells) = (double)mesh->n_cells;
     wasora_var(wasora_mesh.vars.nodes) = (double)mesh->n_nodes;
     wasora_var(wasora_mesh.vars.elements) = (double)mesh->n_elements;
+  }
+  
+  // vemos si nos quedo alguna funcion sin leer
+  LL_FOREACH(mesh->node_datas, node_data) {
+    if (node_data->function->mesh == NULL) {
+      wasora_push_error_message("cannot find function '%s' in mesh '%s", node_data->name_in_mesh, mesh->name);
+      return WASORA_RUNTIME_ERROR;
+    }
+    
   }
   
   // barremos todas las funciones, si encontramos alguna que tenga una malla la linkeamos a esta

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related routines to read frd files from calculix
  *
- *  Copyright (C) 2018 jeremy theler
+ *  Copyright (C) 2018--2020 jeremy theler
  *
  *  This file is part of wasora.
  *

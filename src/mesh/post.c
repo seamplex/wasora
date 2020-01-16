@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related post-processing generation routines
  *
- *  Copyright (C) 2014--2016 jeremy theler
+ *  Copyright (C) 2014--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -28,11 +28,11 @@ int wasora_instruction_mesh_post(void *arg) {
   mesh_post_t *mesh_post = (mesh_post_t *)arg;
   mesh_post_dist_t *mesh_post_dist;
 
-  if (mesh_post->file->pointer == NULL) {
-    if (wasora_instruction_open_file(mesh_post->file) != WASORA_RUNTIME_OK) {
-      return WASORA_RUNTIME_ERROR;
-    }
+  // hay que cerrar el file y volver a abrirlo
+  if (mesh_post->file->pointer != NULL) {
+    wasora_call(wasora_instruction_close_file(mesh_post->file));
   }
+  wasora_call(wasora_instruction_open_file(mesh_post->file));
 
 
   // si primero llamo a gmsh write header no puedo chequear si el archivo

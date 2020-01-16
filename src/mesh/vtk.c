@@ -305,7 +305,7 @@ int mesh_vtk_write_vector(mesh_post_t *mesh_post, function_t **function, centeri
       mesh_post->cell_init = 1;
     }
       
-    fprintf(mesh_post->file->pointer, "VECTORS %s-%s-%s double\n", function[0]->name, function[1]->name, function[1]->name);
+    fprintf(mesh_post->file->pointer, "VECTORS %s_%s_%s double\n", function[0]->name, function[1]->name, function[1]->name);
       
     for (i = 0; i < mesh->n_cells; i++) {
       fprintf(mesh_post->file->pointer, "%g %g %g\n", wasora_evaluate_function(function[0], mesh->cell[i].x),

@@ -1019,7 +1019,7 @@ int mesh_gmsh_write_vector(mesh_post_t *mesh_post, function_t **function, center
   // un tag de string  
   fprintf(mesh_post->file->pointer, "1\n");
   // nombre de la vista
-  fprintf(mesh_post->file->pointer, "\"%s-%s-%s\"\n", function[0]->name, function[1]->name, function[2]->name);
+  fprintf(mesh_post->file->pointer, "\"%s_%s_%s\"\n", function[0]->name, function[1]->name, function[2]->name);
   // la otra (opcional) es el esquema de interpolacion
   
   // un tag real (el unico)  

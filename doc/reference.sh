@@ -31,10 +31,10 @@ for kw in ${kws}; do
   echo  
 
   # usage
-  usage=`grep "///${tag}+${kw}+usage" ../src/${src}.c | cut -d" " -f2- | xargs`
+  usage=`grep "///${tag}+${kw}+usage" ../src/${src}.c | cut -d" " -f2-`
   if [ -n "${usage}" ]; then
     echo "~~~wasora"
-    echo $usage | sed s/\ \&nbsp\;\ /\\n/g
+    grep "///${tag}+${kw}+usage" ../src/${src}.c | cut -d" " -f2- | xargs | tr @ \\n | sed s/\ \&nbsp\;\ /\\n/g
     echo "~~~"
     echo
   fi
@@ -119,7 +119,7 @@ EOF
   echo
 #   echo ${kw} 1>&2
   # el cut saca los tags especiales, el gcc permite usar los defines para documentar los defaults,
-  # el primer sed transforma un punto solo en un newline
+  # el primer sed transforma una arroba seguida de un newline en un newline
   # el segundo se es para poder poner links como https:/\/ (sin la barra del medio gcc piensa que es un comentario)
   grep "///${tag}+${kw}+detail" ../src/${src}.c | cut -d" " -f2- | gcc -E -P -include defs.h - | sed 's/@$//' | sed 's_/\\/_//_'
   echo  

@@ -409,30 +409,32 @@ int mesh_free(mesh_t *mesh) {
         }
       }
       
-      for (v = 0; v < mesh->element[i].type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
-      
-        if (mesh->element[i].x != NULL) {
-          free(mesh->element[i].x[v]);
+      if (mesh->element[i].type != NULL && mesh->element[i].type->gauss != NULL) {
+        for (v = 0; v < mesh->element[i].type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
+
+          if (mesh->element[i].x != NULL) {
+            free(mesh->element[i].x[v]);
+          }
+          if (mesh->element[i].H != NULL) {
+            gsl_matrix_free(mesh->element[i].H[v]);
+          }  
+          if (mesh->element[i].B != NULL) {
+            gsl_matrix_free(mesh->element[i].B[v]);
+          }  
+          if (mesh->element[i].dxdr != NULL) {
+            gsl_matrix_free(mesh->element[i].dxdr[v]);
+          }
+          if (mesh->element[i].drdx != NULL) {
+            gsl_matrix_free(mesh->element[i].drdx[v]);
+          }  
+          if (mesh->element[i].dhdx != NULL) {
+            gsl_matrix_free(mesh->element[i].dhdx[v]);
+          }  
+          if (mesh->element[i].dphidx_gauss != NULL) {
+            gsl_matrix_free(mesh->element[i].dphidx_gauss[v]);
+          }  
         }
-        if (mesh->element[i].H != NULL) {
-          gsl_matrix_free(mesh->element[i].H[v]);
-        }  
-        if (mesh->element[i].B != NULL) {
-          gsl_matrix_free(mesh->element[i].B[v]);
-        }  
-        if (mesh->element[i].dxdr != NULL) {
-          gsl_matrix_free(mesh->element[i].dxdr[v]);
-        }
-        if (mesh->element[i].drdx != NULL) {
-          gsl_matrix_free(mesh->element[i].drdx[v]);
-        }  
-        if (mesh->element[i].dhdx != NULL) {
-          gsl_matrix_free(mesh->element[i].dhdx[v]);
-        }  
-        if (mesh->element[i].dphidx_gauss != NULL) {
-          gsl_matrix_free(mesh->element[i].dphidx_gauss[v]);
-        }  
-      }
+      }  
       
       if (mesh->element[i].w != NULL) {
         free(mesh->element[i].w);

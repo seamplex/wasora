@@ -2464,6 +2464,7 @@ extern double mesh_nine_node_quad_dhdr(int , int , double *);
 extern int mesh_eight_node_hexahedron_init(void);
 extern double mesh_eight_node_hexahedron_h(int, double *);
 extern double mesh_eight_node_hexahedron_dhdr(int, int, double *);
+extern void mesh_hexa_gauss8_init(element_type_t *);
 extern int mesh_point_in_hexahedron(element_t *, const double *);
 extern double mesh_hexahedron_vol(element_t *);
 

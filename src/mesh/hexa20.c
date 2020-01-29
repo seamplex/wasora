@@ -157,70 +157,8 @@ int mesh_twenty_node_hexaedron_init(void) {
   wasora_mesh_add_node_parent(&element_type->node_parents[19], 7);
   wasora_mesh_compute_coords_from_parent(element_type, 19);    
 
-  mesh_hexa_gauss27_init(element_type);
-  
-/*  
-  // dos juegos de puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
-  
-  // el primero es el default
-  // ---- ocho puntos de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 8);
+  mesh_hexa_gauss8_init(element_type);
 
-    gauss->w[0] = 8 * 1.0/8.0;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-    gauss->r[0][1] = -1.0/M_SQRT3;
-    gauss->r[0][2] = -1.0/M_SQRT3;
-
-    gauss->w[1] = 8 * 1.0/8.0;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-    gauss->r[1][1] = -1.0/M_SQRT3;
-    gauss->r[1][2] = -1.0/M_SQRT3;
-
-    gauss->w[2] = 8 * 1.0/8.0;
-    gauss->r[2][0] = +1.0/M_SQRT3;
-    gauss->r[2][1] = +1.0/M_SQRT3;
-    gauss->r[2][2] = -1.0/M_SQRT3;
-
-    gauss->w[3] = 8 * 1.0/8.0;
-    gauss->r[3][0] = -1.0/M_SQRT3;
-    gauss->r[3][1] = +1.0/M_SQRT3;
-    gauss->r[3][2] = -1.0/M_SQRT3;
-
-    gauss->w[4] = 8 * 1.0/8.0;
-    gauss->r[4][0] = -1.0/M_SQRT3;
-    gauss->r[4][1] = -1.0/M_SQRT3;
-    gauss->r[4][2] = +1.0/M_SQRT3;
-
-    gauss->w[5] = 8 * 1.0/8.0;
-    gauss->r[5][0] = +1.0/M_SQRT3;
-    gauss->r[5][1] = -1.0/M_SQRT3;
-    gauss->r[5][2] = +1.0/M_SQRT3;
-
-    gauss->w[6] = 8 * 1.0/8.0;
-    gauss->r[6][0] = +1.0/M_SQRT3;
-    gauss->r[6][1] = +1.0/M_SQRT3;
-    gauss->r[6][2] = +1.0/M_SQRT3;
-
-    gauss->w[7] = 8 * 1.0/8.0;
-    gauss->r[7][0] = -1.0/M_SQRT3;
-    gauss->r[7][1] = +1.0/M_SQRT3;
-    gauss->r[7][2] = +1.0/M_SQRT3;
-  
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
-  // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
-  
-    gauss->w[0] = 8 * 1.0;
-    gauss->r[0][0] = 0;
-    gauss->r[0][1] = 0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);  
-*/  
-  
   return WASORA_RUNTIME_OK;
 }
 /*

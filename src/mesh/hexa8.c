@@ -32,7 +32,6 @@
 int mesh_eight_node_hexahedron_init(void) {
   
   element_type_t *element_type;
-  gauss_t *gauss;
   int j;
 
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON];
@@ -112,14 +111,22 @@ Hexahedron:
   element_type->node_coords[7][1] = +1;
   element_type->node_coords[7][2] = +1;
   
+  mesh_hexa_gauss8_init(element_type);
+  
+  return WASORA_RUNTIME_OK;
+}
+
+void mesh_hexa_gauss8_init(element_type_t *element_type) {
+
+  gauss_t *gauss;
+  
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // el primero es el default
   // ---- ocho puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    gauss->V = 8;
-    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    mesh_alloc_gauss(gauss, element_type, 8);
 
     gauss->w[0] = 8 * 1.0/8.0;
     gauss->r[0][0] = -1.0/M_SQRT3;
@@ -165,8 +172,7 @@ Hexahedron:
     
   // ---- un punto de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    gauss->V = 1;
-    mesh_alloc_gauss(gauss, element_type, gauss->V);
+    mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 8 * 1.0;
     gauss->r[0][0] = 0;
@@ -174,8 +180,9 @@ Hexahedron:
 
     mesh_init_shape_at_gauss(gauss, element_type);  
   
-  return WASORA_RUNTIME_OK;
+  return;
 }
+
 
 double mesh_eight_node_hexahedron_h(int j, double *vec_r) {
   double r = vec_r[0];

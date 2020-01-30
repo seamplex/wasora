@@ -31,9 +31,9 @@ int mesh_one_node_point_init(void) {
   element_type_t *element_type;
   gauss_t *gauss;
   
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_POINT];
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_POINT1];
   element_type->name = strdup("point");
-  element_type->id = ELEMENT_TYPE_POINT;
+  element_type->id = ELEMENT_TYPE_POINT1;
   element_type->dim = 0;
   element_type->order = 0;
   element_type->nodes = 1;

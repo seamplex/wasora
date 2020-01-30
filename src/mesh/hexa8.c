@@ -29,21 +29,21 @@
 // hexahedro de ocho nodos
 // --------------------------------------------------------------
 
-int mesh_eight_node_hexahedron_init(void) {
+int mesh_hexa8_init(void) {
   
   element_type_t *element_type;
   int j;
 
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON];
-  element_type->name = strdup("hex8");
-  element_type->id = ELEMENT_TYPE_HEXAHEDRON;
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON8];
+  element_type->name = strdup("hexa8");
+  element_type->id = ELEMENT_TYPE_HEXAHEDRON8;
   element_type->dim = 3;
   element_type->order = 1;
   element_type->nodes = 8;
   element_type->faces = 6;
   element_type->nodes_per_face = 4;
-  element_type->h = mesh_eight_node_hexahedron_h;
-  element_type->dhdr = mesh_eight_node_hexahedron_dhdr;
+  element_type->h = mesh_hexa8_h;
+  element_type->dhdr = mesh_hexa8_dhdr;
   element_type->point_in_element = mesh_point_in_hexahedron;
   element_type->element_volume = mesh_hexahedron_vol;
 
@@ -184,7 +184,7 @@ void mesh_hexa_gauss8_init(element_type_t *element_type) {
 }
 
 
-double mesh_eight_node_hexahedron_h(int j, double *vec_r) {
+double mesh_hexa8_h(int j, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
   double t = vec_r[2];
@@ -220,7 +220,7 @@ double mesh_eight_node_hexahedron_h(int j, double *vec_r) {
 
 }
 
-double mesh_eight_node_hexahedron_dhdr(int j, int m, double *vec_r) {
+double mesh_hexa8_dhdr(int j, int m, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
   double t = vec_r[2];

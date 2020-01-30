@@ -28,21 +28,21 @@
 // --------------------------------------------------------------
 // hexahedro de 27 nodos
 // --------------------------------------------------------------
-int mesh_twentyseven_node_hexaedron_init(void) {
+int mesh_hexa27_init(void) {
   
   element_type_t *element_type;
   int j;
 
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON27];
-  element_type->name = strdup("hex27");
+  element_type->name = strdup("hexa27");
   element_type->id = ELEMENT_TYPE_HEXAHEDRON27;
   element_type->dim = 3;
   element_type->order = 2;
   element_type->nodes = 27;
   element_type->faces = 6;
   element_type->nodes_per_face = 9;
-  element_type->h = mesh_twentyseven_node_hexahedron_h;
-  element_type->dhdr = mesh_twentyseven_node_hexahedron_dhdr;
+  element_type->h = mesh_hexa27_h;
+  element_type->dhdr = mesh_hexa27_dhdr;
   element_type->point_in_element = mesh_point_in_hexahedron;
   element_type->element_volume = mesh_hexahedron_vol;
 
@@ -412,7 +412,7 @@ Node here(gmsh)       Node reference        r        s        t
 25                      26                  0        0        1
 26                      27                  0        0        0
 */
-double mesh_twentyseven_node_hexahedron_h(int j, double *vec_r) {
+double mesh_hexa27_h(int j, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
   double t = vec_r[2];
@@ -505,7 +505,7 @@ double mesh_twentyseven_node_hexahedron_h(int j, double *vec_r) {
 
 }
 
-double mesh_twentyseven_node_hexahedron_dhdr(int j, int m, double *vec_r) {
+double mesh_hexa27_dhdr(int j, int m, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
   double t = vec_r[2];

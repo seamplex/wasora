@@ -480,7 +480,7 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
   int j, j_prime;
   
   
-  if (element->type->id == ELEMENT_TYPE_TETRAHEDRON || element->type->id == ELEMENT_TYPE_TETRAHEDRON10) {
+  if (element->type->id == ELEMENT_TYPE_TETRAHEDRON4 || element->type->id == ELEMENT_TYPE_TETRAHEDRON10) {
 //    double xi0, one;
     double sixV;
 //    double sixV01;

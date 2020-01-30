@@ -220,8 +220,8 @@ int mesh_create_structured(mesh_t *mesh) {
       mesh->max_nodes_per_element = 2;
       mesh->max_faces_per_element = 2;
       mesh->max_first_neighbor_nodes = 3;
-      volume_element_type = ELEMENT_TYPE_LINE;
-      surface_element_type = ELEMENT_TYPE_POINT;
+      volume_element_type = ELEMENT_TYPE_LINE2;
+      surface_element_type = ELEMENT_TYPE_POINT1;
       
       mesh->node = calloc(mesh->n_nodes, sizeof(node_t));
       i_node = 0;
@@ -238,8 +238,8 @@ int mesh_create_structured(mesh_t *mesh) {
       mesh->max_nodes_per_element = 4;
       mesh->max_faces_per_element = 4;
       mesh->max_first_neighbor_nodes = 9;
-      volume_element_type = ELEMENT_TYPE_QUADRANGLE;
-      surface_element_type = ELEMENT_TYPE_LINE;
+      volume_element_type = ELEMENT_TYPE_QUADRANGLE4;
+      surface_element_type = ELEMENT_TYPE_LINE2;
       
       mesh->node = calloc(mesh->n_nodes, sizeof(node_t));
       i_node = 0;
@@ -259,8 +259,8 @@ int mesh_create_structured(mesh_t *mesh) {
       mesh->max_nodes_per_element = 8;
       mesh->max_faces_per_element = 6;
       mesh->max_first_neighbor_nodes = 27;
-      volume_element_type = ELEMENT_TYPE_HEXAHEDRON;
-      surface_element_type = ELEMENT_TYPE_QUADRANGLE;
+      volume_element_type = ELEMENT_TYPE_HEXAHEDRON8;
+      surface_element_type = ELEMENT_TYPE_QUADRANGLE4;
       
       mesh->node = calloc(mesh->n_nodes, sizeof(node_t));
       i_node = 0;
@@ -311,7 +311,7 @@ int mesh_create_structured(mesh_t *mesh) {
   i_element = 0;
   
   // el origen
-  mesh_create_element(&mesh->element[i_element], i_element, i_element+1, ELEMENT_TYPE_POINT, mesh->origin);
+  mesh_create_element(&mesh->element[i_element], i_element, i_element+1, ELEMENT_TYPE_POINT1, mesh->origin);
   mesh->element[i_element].node[0] = &mesh->node[0];
   mesh_add_element_to_list(&mesh->node[0].associated_elements, &mesh->element[i_element]);
   i_element++;

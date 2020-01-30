@@ -26,21 +26,21 @@
 // --------------------------------------------------------------
 // cuadrangulo de cuatro nodos
 // --------------------------------------------------------------
-int mesh_four_node_quadrangle_init(void) {
+int mesh_quad4_init(void) {
   
   element_type_t *element_type;
   int j;
   
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE];
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE4];
   element_type->name = strdup("quad4");
-  element_type->id = ELEMENT_TYPE_QUADRANGLE;
+  element_type->id = ELEMENT_TYPE_QUADRANGLE4;
   element_type->dim = 2;
   element_type->order = 1;
   element_type->nodes = 4;
   element_type->faces = 4;
   element_type->nodes_per_face = 2;
-  element_type->h = mesh_four_node_quad_h;
-  element_type->dhdr = mesh_four_node_quad_dhdr;
+  element_type->h = mesh_quad4_h;
+  element_type->dhdr = mesh_quad4_dhdr;
   element_type->point_in_element = mesh_point_in_quadrangle;
   element_type->element_volume = mesh_quad_vol;
 
@@ -131,7 +131,7 @@ void mesh_quad_gauss4_init(element_type_t *element_type) {
 }
 
 
-double mesh_four_node_quad_h(int j, double *vec_r) {
+double mesh_quad4_h(int j, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
 
@@ -154,7 +154,7 @@ double mesh_four_node_quad_h(int j, double *vec_r) {
 
 }
 
-double mesh_four_node_quad_dhdr(int j, int m, double *vec_r) {
+double mesh_quad4_dhdr(int j, int m, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
 
@@ -232,7 +232,7 @@ int mesh_point_in_quadrangle(element_t *element, const double *x) {
 
   element_t triang;
 
-  triang.type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE];
+  triang.type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE3];
   triang.node = calloc(triang.type->nodes, sizeof(node_t *));
 
   for (i = 0; i < element->type->faces; i++) {

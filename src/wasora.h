@@ -1776,22 +1776,23 @@ typedef enum {
 
 // usamos los de gmsh, convertimos a vtk y frd con tablas
 #define ELEMENT_TYPE_UNDEFINED      0
-#define ELEMENT_TYPE_LINE           1
-#define ELEMENT_TYPE_TRIANGLE       2
-#define ELEMENT_TYPE_QUADRANGLE     3
-#define ELEMENT_TYPE_TETRAHEDRON    4
-#define ELEMENT_TYPE_HEXAHEDRON     5
-#define ELEMENT_TYPE_PRISM          6
-#define ELEMENT_TYPE_PYRAMID        7
+#define ELEMENT_TYPE_LINE2          1
+#define ELEMENT_TYPE_TRIANGLE3      2
+#define ELEMENT_TYPE_QUADRANGLE4    3
+#define ELEMENT_TYPE_TETRAHEDRON4   4
+#define ELEMENT_TYPE_HEXAHEDRON8    5
+#define ELEMENT_TYPE_PRISM6         6
+#define ELEMENT_TYPE_PYRAMID5       7
 #define ELEMENT_TYPE_LINE3          8
 #define ELEMENT_TYPE_TRIANGLE6      9
 #define ELEMENT_TYPE_QUADRANGLE9    10
 #define ELEMENT_TYPE_TETRAHEDRON10  11
 #define ELEMENT_TYPE_HEXAHEDRON27   12 
-#define ELEMENT_TYPE_POINT          15
+#define ELEMENT_TYPE_POINT1         15
 #define ELEMENT_TYPE_QUADRANGLE8    16
 #define ELEMENT_TYPE_HEXAHEDRON20   17
-#define NUMBER_ELEMENT_TYPE         18
+#define ELEMENT_TYPE_PRISM15        18
+#define NUMBER_ELEMENT_TYPE         19
 
 #define GAUSS_POINTS_CANONICAL    0
 #define GAUSS_POINTS_SINGLE       1
@@ -2418,91 +2419,95 @@ extern double mesh_point_vol(element_t *);
 
 
 // line.c
-extern int mesh_two_node_line_init(void);
-extern double mesh_two_node_line_h(int, double *);
-extern double mesh_two_node_line_dhdr(int, int, double *);
+extern int mesh_line2_init(void);
+extern double mesh_line2_h(int, double *);
+extern double mesh_line2_dhdr(int, int, double *);
 extern int mesh_point_in_line(element_t *, const double *);
 extern double mesh_line_vol(element_t *);
 
 // line3.c
-extern int mesh_three_node_line_init(void);
-extern double mesh_three_node_line_h(int, double *);
-extern double mesh_three_node_line_dhdr(int, int, double *);
+extern int mesh_line3_init(void);
+extern double mesh_line3_h(int, double *);
+extern double mesh_line3_dhdr(int, int, double *);
 
 // triang3.c
-extern int mesh_three_node_triangle_init(void);
-extern double mesh_three_node_triang_h(int, double *);
-extern double mesh_three_node_triang_dhdr(int, int, double *);
+extern int mesh_triang3_init(void);
+extern double mesh_triang3_h(int, double *);
+extern double mesh_triang3_dhdr(int, int, double *);
 extern int mesh_point_in_triangle(element_t *, const double *);
 extern double mesh_triang_vol(element_t *);
 
 
 // triang6.c
-extern int mesh_six_node_triangle_init(void);
-extern double mesh_six_node_triang_h(int, double *);
-extern double mesh_six_node_triang_dhdr(int, int, double *);
+extern int mesh_triang6_init(void);
+extern double mesh_triang6_h(int, double *);
+extern double mesh_triang6_dhdr(int, int, double *);
 
 // quad4.c
-extern int mesh_four_node_quadrangle_init(void);
+extern int mesh_quad4_init(void);
 extern void mesh_quad_gauss4_init(element_type_t *);
-extern double mesh_four_node_quad_h(int, double *);
-extern double mesh_four_node_quad_dhdr(int, int, double *);
+extern double mesh_quad4_h(int, double *);
+extern double mesh_quad4_dhdr(int, int, double *);
 extern int mesh_point_in_quadrangle(element_t *, const double *);
 extern double mesh_quad_vol(element_t *);
 
 // quad8.c
-extern int mesh_eight_node_quadrangle_init(void);
-extern double mesh_eight_node_quad_h(int , double *);
-extern double mesh_eight_node_quad_dhdr(int , int , double *);
+extern int mesh_quad8_init(void);
+extern double mesh_quad8_h(int , double *);
+extern double mesh_quad8_dhdr(int , int , double *);
 
 // quad9.c
-extern int mesh_nine_node_quadrangle_init(void);
+extern int mesh_quad9_init(void);
 extern void mesh_quad_gauss9_init(element_type_t *);
-extern double mesh_nine_node_quad_h(int , double *);
-extern double mesh_nine_node_quad_dhdr(int , int , double *);
+extern double mesh_quad9_h(int , double *);
+extern double mesh_quad9_dhdr(int , int , double *);
 
 
 // hexahedron8.c
-extern int mesh_eight_node_hexahedron_init(void);
-extern double mesh_eight_node_hexahedron_h(int, double *);
-extern double mesh_eight_node_hexahedron_dhdr(int, int, double *);
+extern int mesh_hexa8_init(void);
+extern double mesh_hexa8_h(int, double *);
+extern double mesh_hexa8_dhdr(int, int, double *);
 extern void mesh_hexa_gauss8_init(element_type_t *);
 extern int mesh_point_in_hexahedron(element_t *, const double *);
 extern double mesh_hexahedron_vol(element_t *);
 
 // hexahedron20.c
-extern int mesh_twenty_node_hexaedron_init(void);
-extern double mesh_twenty_node_hexahedron_h(int, double *);
-extern double mesh_twenty_node_hexahedron_dhdr(int, int, double *);
+extern int mesh_hexa20_init(void);
+extern double mesh_hexa20_h(int, double *);
+extern double mesh_hexa20_dhdr(int, int, double *);
 
 // hexahedron27.c
-extern int mesh_twentyseven_node_hexaedron_init(void);
+extern int mesh_hexa27_init(void);
 extern void mesh_hexa_gauss27_init(element_type_t *);
-extern double mesh_twentyseven_node_hexahedron_h(int, double *);
-extern double mesh_twentyseven_node_hexahedron_dhdr(int, int, double *);
+extern double mesh_hexa27_h(int, double *);
+extern double mesh_hexa27_dhdr(int, int, double *);
 
 // tet4.c
-extern int mesh_four_node_tetrahedron_init(void);
-extern void mesh_tetrahedron_gauss_init(element_type_t *);
-extern double mesh_four_node_tetrahedron_h(int, double *);
-extern double mesh_four_node_tetrahedron_dhdr(int, int, double *);
+extern int mesh_tet4_init(void);
+extern void mesh_tet_gauss4_init(element_type_t *);
+extern double mesh_tet4_h(int, double *);
+extern double mesh_tet4_dhdr(int, int, double *);
 extern int mesh_point_in_tetrahedron(element_t *, const double *);
 extern double mesh_tetrahedron_vol(element_t *);
 
 // tet10.c
-extern int mesh_ten_node_tetrahedron_init(void);
-extern double mesh_ten_node_tetrahedron_h(int, double *);
-extern double mesh_ten_node_tetrahedron_dhdr(int, int, double *);
+extern int mesh_tet10_init(void);
+extern double mesh_tet10_h(int, double *);
+extern double mesh_tet10_dhdr(int, int, double *);
 
 
-// prism.c
-extern int mesh_six_node_prism_init(void);
+// prism6.c
+extern int mesh_prism6_init(void);
 extern void mesh_prism_gauss6_init(element_type_t *);
-extern double mesh_six_node_prism_h(int, double *);
-extern double mesh_six_node_prism_dhdr(int, int, double *);
+extern double mesh_prism6_h(int, double *);
+extern double mesh_prism6_dhdr(int, int, double *);
 extern int mesh_point_in_prism(element_t *, const double *);
 extern double mesh_prism_vol(element_t *);
 
+// prism6.c
+extern int mesh_prism15_init(void);
+extern double mesh_prism15_h(int, double *);
+extern double mesh_prism15_dhdr(int, int, double *);
 
 // geom.c
 extern void mesh_subtract(const double *, const double *, double *);

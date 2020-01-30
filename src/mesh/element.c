@@ -151,35 +151,36 @@ int wasora_mesh_element_types_init(void) {
   element_type->element_volume = NULL;
   
   // line ----------------------------------------------------------------------
-  mesh_two_node_line_init();
-  mesh_three_node_line_init();
+  mesh_line2_init();
+  mesh_line3_init();
 
   // triangles -----------------------------------------------------------------
-  mesh_three_node_triangle_init();
-  mesh_six_node_triangle_init();
+  mesh_triang3_init();
+  mesh_triang6_init();
   
   // quadrangles ----------------------------------------------------------------
-  mesh_four_node_quadrangle_init();
-  mesh_eight_node_quadrangle_init();
-  mesh_nine_node_quadrangle_init();
+  mesh_quad4_init();
+  mesh_quad8_init();
+  mesh_quad9_init();
   
   // tetrahedra  ---------------------------------------------------------------
-  mesh_four_node_tetrahedron_init();
-  mesh_ten_node_tetrahedron_init();
+  mesh_tet4_init();
+  mesh_tet10_init();
   
   // hexahedra ---------------------------------------------------------------- 
-  mesh_eight_node_hexahedron_init();
-  mesh_twenty_node_hexaedron_init();
-  mesh_twentyseven_node_hexaedron_init();
+  mesh_hexa8_init();
+  mesh_hexa20_init();
+  mesh_hexa27_init();
     
   // prism ---------------------------------------------------------------------
-  mesh_six_node_prism_init();
+  mesh_prism6_init();
+  mesh_prism15_init();
 
   // not supported  
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_PYRAMID];
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_PYRAMID5];
   element_type->dim = 3;
-  element_type->name = strdup("pyramid");
-  element_type->id = ELEMENT_TYPE_PYRAMID;
+  element_type->name = strdup("pyramid5");
+  element_type->id = ELEMENT_TYPE_PYRAMID5;
   element_type->nodes = 0;
 
   wasora_mesh.element_type[13].name = strdup("prism18");

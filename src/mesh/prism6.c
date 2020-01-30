@@ -29,21 +29,21 @@
 // prisma de seis nodos
 // --------------------------------------------------------------
 
-int mesh_six_node_prism_init(void) {
+int mesh_prism6_init(void) {
 
   element_type_t *element_type;
   int j;
 
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_PRISM];
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_PRISM6];
   element_type->name = strdup("prism6");
-  element_type->id = ELEMENT_TYPE_PRISM;
+  element_type->id = ELEMENT_TYPE_PRISM6;
   element_type->dim = 3;
   element_type->order = 1;
   element_type->nodes = 6;
   element_type->faces = 5;
   element_type->nodes_per_face = 4;   // Ojo aca que en nodos por cara pusimos el maximo valor (4) ya que depende de la cara
-  element_type->h = mesh_six_node_prism_h;
-  element_type->dhdr = mesh_six_node_prism_dhdr;
+  element_type->h = mesh_prism6_h;
+  element_type->dhdr = mesh_prism6_dhdr;
   element_type->point_in_element = mesh_point_in_prism;
   element_type->element_volume = mesh_prism_vol;
 
@@ -171,7 +171,7 @@ void mesh_prism_gauss6_init(element_type_t *element_type) {
   
   return;
 }
-double mesh_six_node_prism_h(int j, double *vec_r) {
+double mesh_prism6_h(int j, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
   double t = vec_r[2];
@@ -201,7 +201,7 @@ double mesh_six_node_prism_h(int j, double *vec_r) {
 
 }
 
-double mesh_six_node_prism_dhdr(int j, int m, double *vec_r) {
+double mesh_prism6_dhdr(int j, int m, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
   double t = vec_r[2];

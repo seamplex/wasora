@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related triangle element routines
  *
- *  Copyright (C) 2014-2018 jeremy theler
+ *  Copyright (C) 2014-2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -24,22 +24,22 @@
 #include <math.h>
 
 
-int mesh_three_node_triangle_init(void) {
+int mesh_triang3_init(void) {
 
   element_type_t *element_type;
   gauss_t *gauss;
   int j;
   
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE];
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE3];
   element_type->name = strdup("triang3");
-  element_type->id = ELEMENT_TYPE_TRIANGLE;
+  element_type->id = ELEMENT_TYPE_TRIANGLE3;
   element_type->dim = 2;
   element_type->order = 1;
   element_type->nodes = 3;
   element_type->faces = 3;
   element_type->nodes_per_face = 2;
-  element_type->h = mesh_three_node_triang_h;
-  element_type->dhdr = mesh_three_node_triang_dhdr;
+  element_type->h = mesh_triang3_h;
+  element_type->dhdr = mesh_triang3_dhdr;
   element_type->point_in_element = mesh_point_in_triangle;
   element_type->element_volume = mesh_triang_vol;
 
@@ -110,7 +110,7 @@ v
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_three_node_triang_h(int j, double *vec_r) {
+double mesh_triang3_h(int j, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
 
@@ -130,7 +130,7 @@ double mesh_three_node_triang_h(int j, double *vec_r) {
 
 }
 
-double mesh_three_node_triang_dhdr(int j, int m, double *vec_r) {
+double mesh_triang3_dhdr(int j, int m, double *vec_r) {
   
   switch(j) {
     case 0:

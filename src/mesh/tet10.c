@@ -27,7 +27,7 @@
 // tetrahedro isoparametrico de cuatro nodos sobre el triangulo unitario
 // ---------------------------------------------------------------------
 
-int mesh_ten_node_tetrahedron_init(void) {
+int mesh_tet10_init(void) {
   
   element_type_t *element_type;
   int j;
@@ -40,8 +40,8 @@ int mesh_ten_node_tetrahedron_init(void) {
   element_type->nodes = 10;
   element_type->faces = 4;
   element_type->nodes_per_face = 6;
-  element_type->h = mesh_ten_node_tetrahedron_h;
-  element_type->dhdr = mesh_ten_node_tetrahedron_dhdr;
+  element_type->h = mesh_tet10_h;
+  element_type->dhdr = mesh_tet10_dhdr;
   element_type->point_in_element = mesh_point_in_tetrahedron;
   element_type->element_volume = mesh_tetrahedron_vol;
 
@@ -119,12 +119,12 @@ Tetrahedron10:
   wasora_mesh_add_node_parent(&element_type->node_parents[9], 1);
   wasora_mesh_compute_coords_from_parent(element_type, 9);  
   
-  mesh_tetrahedron_gauss_init(element_type);
+  mesh_tet_gauss4_init(element_type);
 
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_ten_node_tetrahedron_h(int j, double *vec_r) {
+double mesh_tet10_h(int j, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
   double t = vec_r[2];
@@ -184,7 +184,7 @@ double mesh_ten_node_tetrahedron_h(int j, double *vec_r) {
 
 }
 
-double mesh_ten_node_tetrahedron_dhdr(int j, int m, double *vec_r) {
+double mesh_tet10_dhdr(int j, int m, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
   double t = vec_r[2];

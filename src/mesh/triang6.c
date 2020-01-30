@@ -23,7 +23,7 @@
 
 #include <math.h>
 
-int mesh_six_node_triangle_init(void) {
+int mesh_triang6_init(void) {
 
   element_type_t *element_type;
   gauss_t *gauss;
@@ -37,8 +37,8 @@ int mesh_six_node_triangle_init(void) {
   element_type->nodes = 6;
   element_type->faces = 3;
   element_type->nodes_per_face = 3;
-  element_type->h = mesh_six_node_triang_h;
-  element_type->dhdr = mesh_six_node_triang_dhdr;
+  element_type->h = mesh_triang6_h;
+  element_type->dhdr = mesh_triang6_dhdr;
   element_type->point_in_element = mesh_point_in_triangle;
   element_type->element_volume = mesh_triang_vol;
 
@@ -119,7 +119,7 @@ Triangle6:
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_six_node_triang_h(int j, double *vec_r) {
+double mesh_triang6_h(int j, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
 
@@ -149,7 +149,7 @@ double mesh_six_node_triang_h(int j, double *vec_r) {
 
 }
 
-double mesh_six_node_triang_dhdr(int j, int m, double *vec_r) {
+double mesh_triang6_dhdr(int j, int m, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
 

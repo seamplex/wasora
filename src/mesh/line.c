@@ -28,22 +28,22 @@
 // --------------------------------------------------------------
 
 
-int mesh_two_node_line_init(void) {
+int mesh_line2_init(void) {
 
   element_type_t *element_type;
   gauss_t *gauss;
   int j;
   
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE];
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE2];
   element_type->name = strdup("line2");
-  element_type->id = ELEMENT_TYPE_LINE;
+  element_type->id = ELEMENT_TYPE_LINE2;
   element_type->dim = 1;
   element_type->order = 1;
   element_type->nodes = 2;
   element_type->faces = 2;
   element_type->nodes_per_face = 1;
-  element_type->h = mesh_two_node_line_h;
-  element_type->dhdr = mesh_two_node_line_dhdr;
+  element_type->h = mesh_line2_h;
+  element_type->dhdr = mesh_line2_dhdr;
   element_type->point_in_element = mesh_point_in_line;
   element_type->element_volume = mesh_line_vol;
 
@@ -95,7 +95,7 @@ Line:
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_two_node_line_h(int k, double *vec_r) {
+double mesh_line2_h(int k, double *vec_r) {
   double r = vec_r[0];
 
   // numeracion gmsh
@@ -112,7 +112,7 @@ double mesh_two_node_line_h(int k, double *vec_r) {
 
 }
 
-double mesh_two_node_line_dhdr(int k, int m, double *arg) {
+double mesh_line2_dhdr(int k, int m, double *arg) {
 
   switch(k) {
     case 0:

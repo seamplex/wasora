@@ -28,21 +28,21 @@
 // tetrahedro isoparametrico de cuatro nodos sobre el triangulo unitario
 // ---------------------------------------------------------------------
 
-int mesh_four_node_tetrahedron_init(void) {
+int mesh_tet4_init(void) {
   
   element_type_t *element_type;
   int j;
   
-  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON];
+  element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON4];
   element_type->name = strdup("tet4");
-  element_type->id = ELEMENT_TYPE_TETRAHEDRON;
+  element_type->id = ELEMENT_TYPE_TETRAHEDRON4;
   element_type->dim = 3;
   element_type->order = 1;
   element_type->nodes = 4;
   element_type->faces = 4;
   element_type->nodes_per_face = 3;
-  element_type->h = mesh_four_node_tetrahedron_h;
-  element_type->dhdr = mesh_four_node_tetrahedron_dhdr;
+  element_type->h = mesh_tet4_h;
+  element_type->dhdr = mesh_tet4_dhdr;
   element_type->point_in_element = mesh_point_in_tetrahedron;
   element_type->element_volume = mesh_tetrahedron_vol;
 
@@ -97,12 +97,12 @@ Tetrahedron:
   element_type->node_coords[3][1] = 0;
   element_type->node_coords[3][2] = 1;
   
-  mesh_tetrahedron_gauss_init(element_type);
+  mesh_tet_gauss4_init(element_type);
 
   return WASORA_RUNTIME_OK;
 }
 
-void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
+void mesh_tet_gauss4_init(element_type_t *element_type) {
   double a, b, c, d;
   double r[3];
   gauss_t *gauss;
@@ -149,34 +149,34 @@ void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
     r[0] = c;
     r[1] = c;
     r[2] = c;
-    gsl_matrix_set(gauss->extrap, 0, 0, mesh_four_node_tetrahedron_h(0, r));
-    gsl_matrix_set(gauss->extrap, 0, 1, mesh_four_node_tetrahedron_h(1, r));
-    gsl_matrix_set(gauss->extrap, 0, 2, mesh_four_node_tetrahedron_h(2, r));
-    gsl_matrix_set(gauss->extrap, 0, 3, mesh_four_node_tetrahedron_h(3, r));
+    gsl_matrix_set(gauss->extrap, 0, 0, mesh_tet4_h(0, r));
+    gsl_matrix_set(gauss->extrap, 0, 1, mesh_tet4_h(1, r));
+    gsl_matrix_set(gauss->extrap, 0, 2, mesh_tet4_h(2, r));
+    gsl_matrix_set(gauss->extrap, 0, 3, mesh_tet4_h(3, r));
 
     r[0] = d;
     r[1] = c;
     r[2] = c;
-    gsl_matrix_set(gauss->extrap, 1, 0, mesh_four_node_tetrahedron_h(0, r));
-    gsl_matrix_set(gauss->extrap, 1, 1, mesh_four_node_tetrahedron_h(1, r));
-    gsl_matrix_set(gauss->extrap, 1, 2, mesh_four_node_tetrahedron_h(2, r));
-    gsl_matrix_set(gauss->extrap, 1, 3, mesh_four_node_tetrahedron_h(3, r));
+    gsl_matrix_set(gauss->extrap, 1, 0, mesh_tet4_h(0, r));
+    gsl_matrix_set(gauss->extrap, 1, 1, mesh_tet4_h(1, r));
+    gsl_matrix_set(gauss->extrap, 1, 2, mesh_tet4_h(2, r));
+    gsl_matrix_set(gauss->extrap, 1, 3, mesh_tet4_h(3, r));
 
     r[0] = c;
     r[1] = d;
     r[2] = c;
-    gsl_matrix_set(gauss->extrap, 2, 0, mesh_four_node_tetrahedron_h(0, r));
-    gsl_matrix_set(gauss->extrap, 2, 1, mesh_four_node_tetrahedron_h(1, r));
-    gsl_matrix_set(gauss->extrap, 2, 2, mesh_four_node_tetrahedron_h(2, r));
-    gsl_matrix_set(gauss->extrap, 2, 3, mesh_four_node_tetrahedron_h(3, r));
+    gsl_matrix_set(gauss->extrap, 2, 0, mesh_tet4_h(0, r));
+    gsl_matrix_set(gauss->extrap, 2, 1, mesh_tet4_h(1, r));
+    gsl_matrix_set(gauss->extrap, 2, 2, mesh_tet4_h(2, r));
+    gsl_matrix_set(gauss->extrap, 2, 3, mesh_tet4_h(3, r));
 
     r[0] = c;
     r[1] = c;
     r[2] = d;
-    gsl_matrix_set(gauss->extrap, 3, 0, mesh_four_node_tetrahedron_h(0, r));
-    gsl_matrix_set(gauss->extrap, 3, 1, mesh_four_node_tetrahedron_h(1, r));
-    gsl_matrix_set(gauss->extrap, 3, 2, mesh_four_node_tetrahedron_h(2, r));
-    gsl_matrix_set(gauss->extrap, 3, 3, mesh_four_node_tetrahedron_h(3, r));    
+    gsl_matrix_set(gauss->extrap, 3, 0, mesh_tet4_h(0, r));
+    gsl_matrix_set(gauss->extrap, 3, 1, mesh_tet4_h(1, r));
+    gsl_matrix_set(gauss->extrap, 3, 2, mesh_tet4_h(2, r));
+    gsl_matrix_set(gauss->extrap, 3, 3, mesh_tet4_h(3, r));    
     
     
   // ---- un punto de Gauss sobre el elemento unitario ----  
@@ -193,7 +193,7 @@ void mesh_tetrahedron_gauss_init(element_type_t *element_type) {
   return;
 }
 
-double mesh_four_node_tetrahedron_h(int j, double *vec_r) {
+double mesh_tet4_h(int j, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
   double t = vec_r[2];
@@ -218,7 +218,7 @@ double mesh_four_node_tetrahedron_h(int j, double *vec_r) {
 }
 
 
-double mesh_four_node_tetrahedron_dhdr(int j, int m, double *vec_r) {
+double mesh_tet4_dhdr(int j, int m, double *vec_r) {
   
   switch (j) {
     case 0:

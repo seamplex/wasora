@@ -26,7 +26,7 @@
 // --------------------------------------------------------------
 // cuadrangulo de cuatro nodos
 // --------------------------------------------------------------
-int mesh_nine_node_quadrangle_init(void) {
+int mesh_quad9_init(void) {
   
   element_type_t *element_type;
   int j;
@@ -39,8 +39,8 @@ int mesh_nine_node_quadrangle_init(void) {
   element_type->nodes = 9;
   element_type->faces = 4;
   element_type->nodes_per_face = 3;
-  element_type->h = mesh_nine_node_quad_h;
-  element_type->dhdr = mesh_nine_node_quad_dhdr;
+  element_type->h = mesh_quad9_h;
+  element_type->dhdr = mesh_quad9_dhdr;
   element_type->point_in_element = mesh_point_in_quadrangle;
   element_type->element_volume = mesh_quad_vol;
 
@@ -177,7 +177,7 @@ void mesh_quad_gauss9_init(element_type_t *element_type) {
 
 //Taken from https://www.code-aster.org/V2/doc/default/fr/man_r/r3/r3.01.01.pdf
 //The node ordering of aster and gmsh are equal (yei!).
-double mesh_nine_node_quad_h(int j, double *vec_r) {
+double mesh_quad9_h(int j, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
 
@@ -215,7 +215,7 @@ double mesh_nine_node_quad_h(int j, double *vec_r) {
 
 }
 
-double mesh_nine_node_quad_dhdr(int j, int m, double *vec_r) {
+double mesh_quad9_dhdr(int j, int m, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];
 

@@ -503,7 +503,7 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
       if (celltype == 60 || celltype == 68) {
         // line
         if (celldata[l] == 2) {
-          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE];
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE2];
         } else if (celldata[l] == 3) {
           mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE3];
         } else {
@@ -513,7 +513,7 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
       } else if (celltype == 61 || celltype == 69) {
         // triangle
         if (celldata[l] == 3) {
-          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE];
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE3];
         } else if (celldata[l] == 6) {
           mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE6];
         } else {
@@ -523,7 +523,7 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
       } else if (celltype == 62 || celltype == 70) {
         // quad
         if (celldata[l] == 4) {
-          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE];
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE4];
         } else if (celldata[l] == 8) {
           mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE8];
         } else if (celldata[l] == 9) {
@@ -535,7 +535,7 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
       } else if (celltype == 64 || celltype == 71) {
         // tetrahedron
         if (celldata[l] == 4) {
-          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON];
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON4];
         } else if (celldata[l] == 10) {
           mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON10];
         } else {
@@ -545,7 +545,7 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
       } else if (celltype == 67 || celltype == 72) {
         // hexahedron
         if (celldata[l] == 8) {
-          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON];
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON8];
         } else if (celldata[l] == 20) {
           mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON20];
         } else if (celldata[l] == 27) {
@@ -557,7 +557,7 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
       } else if (celltype == 65 || celltype == 73) {
         // prism/wedge
         if (celldata[l] == 6) {
-          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_PRISM];
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_PRISM6];
         } else {
           wasora_push_error_message("high-order wedges are supported up to order one");
           return WASORA_RUNTIME_ERROR;
@@ -565,7 +565,7 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
       } else if (celltype == 66 || celltype == 74) {
         // prism/wedge
         if (celldata[l] == 5) {
-          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_PYRAMID];
+          mesh->element[i].type = &wasora_mesh.element_type[ELEMENT_TYPE_PYRAMID5];
         } else {
           wasora_push_error_message("high-order pyramids are supported up to order one");
           return WASORA_RUNTIME_ERROR;

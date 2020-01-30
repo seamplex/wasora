@@ -28,7 +28,7 @@
 // --------------------------------------------------------------
 
 
-int mesh_three_node_line_init(void) {
+int mesh_line3_init(void) {
 
   element_type_t *element_type;
   gauss_t *gauss;
@@ -42,8 +42,8 @@ int mesh_three_node_line_init(void) {
   element_type->nodes = 3;
   element_type->faces = 2;
   element_type->nodes_per_face = 1;
-  element_type->h = mesh_three_node_line_h;
-  element_type->dhdr = mesh_three_node_line_dhdr;
+  element_type->h = mesh_line3_h;
+  element_type->dhdr = mesh_line3_dhdr;
   element_type->point_in_element = mesh_point_in_line;
   element_type->element_volume = mesh_line_vol;
 
@@ -98,7 +98,7 @@ Line3:
   return WASORA_RUNTIME_OK;
 }
 
-double mesh_three_node_line_h(int k, double *vec_r) {
+double mesh_line3_h(int k, double *vec_r) {
   double r = vec_r[0];
 
   // numeracion gmsh
@@ -118,7 +118,7 @@ double mesh_three_node_line_h(int k, double *vec_r) {
 
 }
 
-double mesh_three_node_line_dhdr(int k, int m, double *vec_r) {
+double mesh_line3_dhdr(int k, int m, double *vec_r) {
   double r = vec_r[0];
 
   switch(k) {

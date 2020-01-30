@@ -2497,6 +2497,7 @@ extern double mesh_ten_node_tetrahedron_dhdr(int, int, double *);
 
 // prism.c
 extern int mesh_six_node_prism_init(void);
+extern void mesh_prism_gauss6_init(element_type_t *);
 extern double mesh_six_node_prism_h(int, double *);
 extern double mesh_six_node_prism_dhdr(int, int, double *);
 extern int mesh_point_in_prism(element_t *, const double *);

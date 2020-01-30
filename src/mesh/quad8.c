@@ -30,8 +30,6 @@
 int mesh_eight_node_quadrangle_init(void) {
   
   element_type_t *element_type;
-  gauss_t *gauss;
-  double a, w1, w2, w3;
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE8];

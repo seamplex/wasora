@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related prism element routines
  *
- *  Copyright (C) 2015--2017 jeremy theler & ezequiel manavela chiapero
+ *  Copyright (C) 2015--2020 jeremy theler & ezequiel manavela chiapero
  *
  *  This file is part of wasora.
  *
@@ -32,7 +32,7 @@
 int mesh_six_node_prism_init(void) {
 
   element_type_t *element_type;
-  gauss_t *gauss;
+  int j;
 
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_PRISM];
   element_type->name = strdup("prism");
@@ -47,8 +47,78 @@ int mesh_six_node_prism_init(void) {
   element_type->point_in_element = mesh_point_in_prism;
   element_type->element_volume = mesh_prism_vol;
 
-  // tres juegos de puntos de gauss
-  element_type->gauss = calloc(3, sizeof(gauss_t));
+    // coordenadas de los nodos
+/*  
+Prism:                    
+
+           w
+           ^
+           |
+           3             
+         ,/|`\           
+       ,/  |  `\         
+     ,/    |    `\       
+    4------+------5      
+    |      |      |      
+    |    ,/|`\    |      
+    |  ,/  |  `\  |      
+    |,/    |    `\|      
+   ,|      |      |\     
+ ,/ |      0      | `\   
+u   |    ,/ `\    |    v 
+    |  ,/     `\  |      
+    |,/         `\|      
+    1-------------2      
+*/
+  
+  element_type->node_coords = calloc(element_type->nodes, sizeof(double *));
+  element_type->node_parents = calloc(element_type->nodes, sizeof(node_relative_t *));
+  for (j = 0; j < element_type->nodes; j++) {
+    element_type->node_coords[j] = calloc(element_type->dim, sizeof(double));  
+  }
+  
+  element_type->first_order_nodes++;  
+  element_type->node_coords[0][0] = 0;
+  element_type->node_coords[0][1] = 0;
+  element_type->node_coords[0][2] = -1;
+  
+  element_type->first_order_nodes++;  
+  element_type->node_coords[1][0] = 1;
+  element_type->node_coords[1][1] = 0;
+  element_type->node_coords[1][2] = -1;
+  
+  element_type->first_order_nodes++;  
+  element_type->node_coords[2][0] = 0;
+  element_type->node_coords[2][1] = 1;
+  element_type->node_coords[2][2] = -1;
+  
+  element_type->first_order_nodes++;  
+  element_type->node_coords[3][0] = 0;
+  element_type->node_coords[3][1] = 0;
+  element_type->node_coords[3][2] = 1;
+  
+  element_type->first_order_nodes++;  
+  element_type->node_coords[4][0] = 1;
+  element_type->node_coords[4][1] = 0;
+  element_type->node_coords[4][2] = 1;
+  
+  element_type->first_order_nodes++;  
+  element_type->node_coords[5][0] = 0;
+  element_type->node_coords[5][1] = 1;
+  element_type->node_coords[5][2] = 1;
+
+  mesh_prism_gauss6_init(element_type);
+
+  return WASORA_RUNTIME_OK;
+}
+
+
+void mesh_prism_gauss6_init(element_type_t *element_type) {
+
+  gauss_t *gauss;
+  
+  // dos juegos de puntos de gauss
+  element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // el primero es el default
   // ---- seis puntos de Gauss sobre el elemento unitario ----  
@@ -97,49 +167,10 @@ int mesh_six_node_prism_init(void) {
     gauss->r[0][0] = 0;
     gauss->r[0][1] = 0;
 
-    mesh_init_shape_at_gauss(gauss, element_type);  
-    
-  // ---- seis puntos de Gauss sobre el elemento unitario ----  
-/*    
-    gauss = &element_type->gauss[2];
-    mesh_alloc_gauss(gauss, element_type, 6, "6-tensor");
-
-    gauss->w[0] = 1.0;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-    gauss->r[0][1] = -1.0/M_SQRT3;
-    gauss->r[0][2] = -1.0/M_SQRT3;
-
-    gauss->w[1] = 1.0;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-    gauss->r[1][1] = -1.0/M_SQRT3;
-    gauss->r[1][2] = -1.0/M_SQRT3;
-
-    gauss->w[2] = 2.0;
-    gauss->r[2][0] = 0;
-    gauss->r[2][1] = +1.0/M_SQRT3;
-    gauss->r[2][2] = -1.0/M_SQRT3;
-
-    gauss->w[3] = 1.0;
-    gauss->r[3][0] = -1.0/M_SQRT3;
-    gauss->r[3][1] = -1.0/M_SQRT3;
-    gauss->r[3][2] = +1.0/M_SQRT3;
-
-    gauss->w[4] = 1.0;
-    gauss->r[4][0] = +1.0/M_SQRT3;
-    gauss->r[4][1] = -1.0/M_SQRT3;
-    gauss->r[4][2] = +1.0/M_SQRT3;
-
-    gauss->w[5] = 2.0;
-    gauss->r[5][0] = 0;
-    gauss->r[5][1] = +1.0/M_SQRT3;
-    gauss->r[5][2] = +1.0/M_SQRT3;
+    mesh_init_shape_at_gauss(gauss, element_type);    
   
-    mesh_init_shape_at_gauss(gauss, element_type);
-*/   
-  
-  return WASORA_RUNTIME_OK;
+  return;
 }
-
 double mesh_six_node_prism_h(int j, double *vec_r) {
   double r = vec_r[0];
   double s = vec_r[1];

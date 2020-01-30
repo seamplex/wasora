@@ -2444,6 +2444,7 @@ extern double mesh_six_node_triang_dhdr(int, int, double *);
 
 // quad4.c
 extern int mesh_four_node_quadrangle_init(void);
+extern void mesh_quad_gauss4_init(element_type_t *);
 extern double mesh_four_node_quad_h(int, double *);
 extern double mesh_four_node_quad_dhdr(int, int, double *);
 extern int mesh_point_in_quadrangle(element_t *, const double *);
@@ -2456,6 +2457,7 @@ extern double mesh_eight_node_quad_dhdr(int , int , double *);
 
 // quad9.c
 extern int mesh_nine_node_quadrangle_init(void);
+extern void mesh_quad_gauss9_init(element_type_t *);
 extern double mesh_nine_node_quad_h(int , double *);
 extern double mesh_nine_node_quad_dhdr(int , int , double *);
 

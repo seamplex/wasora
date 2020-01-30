@@ -97,93 +97,9 @@ int mesh_eight_node_quadrangle_init(void) {
   wasora_mesh_add_node_parent(&element_type->node_parents[7], 3);
   wasora_mesh_add_node_parent(&element_type->node_parents[7], 0);
   wasora_mesh_compute_coords_from_parent(element_type, 7);
+
+  mesh_quad_gauss4_init(element_type);
   
-  // dos juegos de puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
-  
-/*  
-  // el primero es el default
-  // ---- cuatro puntos de Gauss ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 4);
-  
-    gauss->w[0] = 4 * 0.25;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-    gauss->r[0][1] = -1.0/M_SQRT3;
-
-    gauss->w[1] = 4 * 0.25;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-    gauss->r[1][1] = -1.0/M_SQRT3;
- 
-    gauss->w[2] = 4 * 0.25;
-    gauss->r[2][0] = +1.0/M_SQRT3;
-    gauss->r[2][1] = +1.0/M_SQRT3;
-
-    gauss->w[3] = 4 * 0.25;
-    gauss->r[3][0] = -1.0/M_SQRT3;
-    gauss->r[3][1] = +1.0/M_SQRT3;
-
-    mesh_init_shape_at_gauss(gauss, element_type);
-*/
-
-  a = 0.774596669241483;
-  w1 = 25.0/81.0;
-  w2 = 40.0/81.0;
-  w3 = 64.0/81.0;
-
-  
-  // ---- nueve puntos de Gauss ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 9);
-  
-    gauss->w[0] = w1;
-    gauss->r[0][0] = -a;
-    gauss->r[0][1] = -a;
-
-    gauss->w[1] = w1;
-    gauss->r[1][0] = +a;
-    gauss->r[1][1] = -a;
- 
-    gauss->w[2] = w1;
-    gauss->r[2][0] = +a;
-    gauss->r[2][1] = +a;
-
-    gauss->w[3] = w1;
-    gauss->r[3][0] = -a;
-    gauss->r[3][1] = +a;
-    
-    gauss->w[4] = w2;
-    gauss->r[4][0] = 0;
-    gauss->r[4][1] = -a;
-
-    gauss->w[5] = w2;
-    gauss->r[5][0] = +a;
-    gauss->r[5][1] = 0;
- 
-    gauss->w[6] = w2;
-    gauss->r[6][0] = 0;
-    gauss->r[6][1] = +a;
-
-    gauss->w[7] = w2;
-    gauss->r[7][0] = -a;
-    gauss->r[7][1] = 0;
-    
-    gauss->w[8] = w3;
-    gauss->r[8][0] = 0;
-    gauss->r[8][1] = 0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);
-  
-  // ---- un punto de Gauss  ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
-  
-    gauss->w[0] = 4 * 1.0;
-    gauss->r[0][0] = 0.0;
-    gauss->r[0][1] = 0.0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);  
-
   return WASORA_RUNTIME_OK;    
 }
 

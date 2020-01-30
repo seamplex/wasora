@@ -29,8 +29,6 @@
 int mesh_nine_node_quadrangle_init(void) {
   
   element_type_t *element_type;
-  gauss_t *gauss;
-  double a, w1, w2, w3;  
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE9];
@@ -104,40 +102,23 @@ int mesh_nine_node_quadrangle_init(void) {
   wasora_mesh_add_node_parent(&element_type->node_parents[8], 3);
   wasora_mesh_compute_coords_from_parent(element_type, 8);  
   
-  // dos juegos de puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
-  
-/*  
-  // el primero es el default
-  // ---- cuatro puntos de Gauss ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 4);
-  
-    gauss->w[0] = 4 * 0.25;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-    gauss->r[0][1] = -1.0/M_SQRT3;
+  mesh_quad_gauss9_init(element_type);
 
-    gauss->w[1] = 4 * 0.25;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-    gauss->r[1][1] = -1.0/M_SQRT3;
- 
-    gauss->w[2] = 4 * 0.25;
-    gauss->r[2][0] = +1.0/M_SQRT3;
-    gauss->r[2][1] = +1.0/M_SQRT3;
+  return WASORA_RUNTIME_OK;    
+}
 
-    gauss->w[3] = 4 * 0.25;
-    gauss->r[3][0] = -1.0/M_SQRT3;
-    gauss->r[3][1] = +1.0/M_SQRT3;
+void mesh_quad_gauss9_init(element_type_t *element_type) {
 
-    mesh_init_shape_at_gauss(gauss, element_type);
-*/
-
+  gauss_t *gauss;
+  double a, w1, w2, w3;  
 
   a = 0.774596669241483;
   w1 = 25.0/81.0;
   w2 = 40.0/81.0;
   w3 = 64.0/81.0;
-
+  
+  // dos juegos de puntos de gauss
+  element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // ---- nueve puntos de Gauss ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
@@ -189,10 +170,10 @@ int mesh_nine_node_quadrangle_init(void) {
     gauss->r[0][0] = 0.0;
     gauss->r[0][1] = 0.0;
 
-    mesh_init_shape_at_gauss(gauss, element_type);  
-
-  return WASORA_RUNTIME_OK;    
-}
+    mesh_init_shape_at_gauss(gauss, element_type);
+    
+  return;
+}        
 
 //Taken from https://www.code-aster.org/V2/doc/default/fr/man_r/r3/r3.01.01.pdf
 //The node ordering of aster and gmsh are equal (yei!).

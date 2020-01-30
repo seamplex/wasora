@@ -82,6 +82,15 @@ Quadrangle:
   element_type->node_coords[3][0] = -1;
   element_type->node_coords[3][1] = +1;
 
+  mesh_quad_gauss4_init(element_type);
+
+  return WASORA_RUNTIME_OK;    
+}
+
+void mesh_quad_gauss4_init(element_type_t *element_type) {
+
+  gauss_t *gauss;
+  
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   
@@ -117,9 +126,11 @@ Quadrangle:
     gauss->r[0][1] = 0.0;
 
     mesh_init_shape_at_gauss(gauss, element_type);  
-
-  return WASORA_RUNTIME_OK;    
+  
+  
+  return;
 }
+
 
 double mesh_four_node_quad_h(int j, double *vec_r) {
   double r = vec_r[0];

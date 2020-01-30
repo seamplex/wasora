@@ -31,7 +31,7 @@ int mesh_three_node_triangle_init(void) {
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE];
-  element_type->name = strdup("triangle");
+  element_type->name = strdup("triang3");
   element_type->id = ELEMENT_TYPE_TRIANGLE;
   element_type->dim = 2;
   element_type->order = 1;

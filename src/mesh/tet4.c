@@ -24,40 +24,6 @@
 #include <gsl/gsl_linalg.h>
 
 
-// --------------------------------------------------------------
-// tetrahedro isoparametrico de cuatro nodos
-// pag 366-365 de bathe (con diferente numeracion)
-// --------------------------------------------------------------
-/*
-double mesh_four_node_tetrahedron_h(int j, gsl_vector *gsl_r) {
-  double r;
-  double s;
-  double t;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
-  t = gsl_vector_get(gsl_r, 2);
-
-  switch (j) {
-    case 0:
-      return 1.0/8.0*(1-r)*(1-s)*(1-t);
-      break;
-    case 1:
-      return 1.0/8.0*(1+r)*(1-s)*(1-t);
-      break;
-    case 2:
-      return 1.0/4.0*(1+s)*(1-t);
-      break;
-    case 3:
-      return 1.0/2.0*(1+t);
-      break;
-  }
-
-  return 0;
-
-}
-*/
-
 // ---------------------------------------------------------------------
 // tetrahedro isoparametrico de cuatro nodos sobre el triangulo unitario
 // ---------------------------------------------------------------------
@@ -68,7 +34,7 @@ int mesh_four_node_tetrahedron_init(void) {
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON];
-  element_type->name = strdup("tetrahedron");
+  element_type->name = strdup("tet4");
   element_type->id = ELEMENT_TYPE_TETRAHEDRON;
   element_type->dim = 3;
   element_type->order = 1;
@@ -251,76 +217,6 @@ double mesh_four_node_tetrahedron_h(int j, double *vec_r) {
 
 }
 
-/*
-double mesh_four_node_tetrahedron_dhdr(int j, int m, gsl_vector *gsl_r) {
-  double r;
-  double s;
-  double t;
-
-  r = gsl_vector_get(gsl_r, 0);
-  s = gsl_vector_get(gsl_r, 1);
-  t = gsl_vector_get(gsl_r, 2);
-
-  switch (j) {
-    case 0:
-      switch(m) {
-        case 0:
-          return -1.0/8.0*(1-s)*(1-t);
-        break;
-        case 1:
-          return -1.0/8.0*(1-r)*(1-t);
-        break;
-        case 2:
-          return -1.0/8.0*(1-r)*(1-s);
-        break;
-      }
-    break;
-    case 1:
-      switch(m) {
-        case 0:
-          return +1.0/8.0*(1-s)*(1-t);
-        break;
-        case 1:
-          return -1.0/8.0*(1+r)*(1-t);
-        break;
-        case 2:
-          return -1.0/8.0*(1+r)*(1-s);
-        break;
-      }
-    break;
-    case 2:
-      switch(m) {
-        case 0:
-          return 0;
-        break;
-        case 1:
-          return +1.0/4.0*(1-t);
-        break;
-        case 2:
-          return -1.0/4.0*(1+s);
-        break;
-      }
-    break;
-    case 3:
-      switch(m) {
-        case 0:
-          return 0;
-        break;
-        case 1:
-          return 0;
-        break;
-        case 2:
-          return +1.0/2.0;
-        break;
-      }
-    break;
-  }
-
-  return 0;
-
-
-}
-*/
 
 double mesh_four_node_tetrahedron_dhdr(int j, int m, double *vec_r) {
   

@@ -34,7 +34,7 @@ int mesh_twentyseven_node_hexaedron_init(void) {
   int j;
 
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON27];
-  element_type->name = strdup("hexahedron27");
+  element_type->name = strdup("hex27");
   element_type->id = ELEMENT_TYPE_HEXAHEDRON27;
   element_type->dim = 3;
   element_type->order = 2;

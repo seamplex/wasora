@@ -35,7 +35,7 @@ int mesh_two_node_line_init(void) {
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE];
-  element_type->name = strdup("line");
+  element_type->name = strdup("line2");
   element_type->id = ELEMENT_TYPE_LINE;
   element_type->dim = 1;
   element_type->order = 1;

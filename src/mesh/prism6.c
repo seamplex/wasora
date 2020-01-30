@@ -35,7 +35,7 @@ int mesh_six_node_prism_init(void) {
   int j;
 
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_PRISM];
-  element_type->name = strdup("prism");
+  element_type->name = strdup("prism6");
   element_type->id = ELEMENT_TYPE_PRISM;
   element_type->dim = 3;
   element_type->order = 1;

@@ -33,7 +33,7 @@ int mesh_ten_node_tetrahedron_init(void) {
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON10];
-  element_type->name = strdup("tetrahedron10");
+  element_type->name = strdup("tet10");
   element_type->id = ELEMENT_TYPE_TETRAHEDRON10;
   element_type->dim = 3;
   element_type->order = 2;

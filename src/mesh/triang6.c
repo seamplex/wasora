@@ -30,7 +30,7 @@ int mesh_six_node_triangle_init(void) {
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE6];
-  element_type->name = strdup("triangle6");
+  element_type->name = strdup("triang6");
   element_type->id = ELEMENT_TYPE_TRIANGLE6;
   element_type->dim = 2;
   element_type->order = 2;

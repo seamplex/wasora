@@ -33,7 +33,7 @@ int mesh_eight_node_quadrangle_init(void) {
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE8];
-  element_type->name = strdup("quadrangle8");
+  element_type->name = strdup("quad8");
   element_type->id = ELEMENT_TYPE_QUADRANGLE8;
   element_type->dim = 2;
   element_type->order = 2;

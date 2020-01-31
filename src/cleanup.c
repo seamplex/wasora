@@ -19,10 +19,11 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 void wasora_polite_exit(int error) {
 

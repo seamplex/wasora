@@ -30,7 +30,9 @@
 
 #include <gsl/gsl_errno.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 int main(int argc, char **argv) {
 

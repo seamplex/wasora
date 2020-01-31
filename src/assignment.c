@@ -20,7 +20,9 @@
  *------------------- ------------  ----    --------  --     -       -         -
  */
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 // un assignment puede ser tan sencillo como una variable solita o algo
 // mas complejo como la asignacion de ciertos elementos de una matrix/vector

@@ -20,7 +20,9 @@
  *------------------- ------------  ----    --------  --     -       -         -
  */
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 // agrega el valor actual de una variable a la funcion historia
 int wasora_instruction_history(void *arg) {

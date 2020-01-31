@@ -26,7 +26,9 @@
 #include <libgen.h>
 
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 
 char *wasora_evaluate_string(char *format, int nargs, expr_t *arg) {

@@ -19,15 +19,14 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-
-
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_sf.h>
 #include <gsl/gsl_statistics.h>
 
-
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 ///fv+vecsize+name vecsize
 ///fv+vecsize+usage vecsize(b)

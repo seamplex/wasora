@@ -35,7 +35,9 @@
 #include <gsl/gsl_version.h>
 #include <gsl/gsl_heapsort.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 #include "builtin.h"
 
 typedef struct varlist_t varlist_t;

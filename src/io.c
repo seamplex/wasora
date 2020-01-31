@@ -26,7 +26,9 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 int wasora_instruction_sem(void *arg) {
   struct semaphore_t *semaphore = (struct semaphore_t *)arg;

@@ -26,7 +26,9 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 #include "interface.h"
 
 /* funciones de variables */

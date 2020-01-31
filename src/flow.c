@@ -20,7 +20,9 @@
  *------------------- ------------  ----    --------  --     -       -         -
  */
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 int wasora_instruction_if(void *arg) {
   conditional_block_t *conditional_block = (conditional_block_t *)arg;

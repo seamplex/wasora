@@ -27,7 +27,9 @@
 #include <gsl/gsl_multifit_nlin.h>
 #include <gsl/gsl_version.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 int wasora_fit_run(void) {
   
@@ -114,7 +116,7 @@ int wasora_fit_run(void) {
   wasora_call(wasora_standard_run());
   
   
-  if (wasora.fit.verbose) {
+  if (wasora.fit.verbose && wasora.rank == 0) {
     double chi = gsl_blas_dnrm2(s->f);
     double dof = wasora.fit.n - wasora.fit.p;
     printf("# chisq/dof = %g\n",  chi*chi / dof);

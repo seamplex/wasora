@@ -26,7 +26,9 @@
 #include <gsl/gsl_roots.h>
 #include <gsl/gsl_min.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 
 typedef struct {

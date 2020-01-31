@@ -29,7 +29,9 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 void *wasora_get_shared_pointer(char *name, size_t size) {
   void *pointer = NULL;

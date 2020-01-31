@@ -30,7 +30,9 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_blas.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 
 int wasora_min_run(void) {

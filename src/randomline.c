@@ -24,7 +24,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "version.h"
+#ifndef _WASORA_H_
+#include "wasora.h"
+#endif
+
 
 void wasora_print_random_line(FILE *file, int length)  {
 
@@ -84,5 +87,6 @@ void wasora_print_random_line(FILE *file, int length)  {
   
   free(l);
  
+  return;
   
 }

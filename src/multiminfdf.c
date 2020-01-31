@@ -24,7 +24,9 @@
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_blas.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 
 void wasora_min_multiminfdf(gsl_vector *x) {
@@ -51,7 +53,7 @@ void wasora_min_multiminfdf(gsl_vector *x) {
   gsl_multimin_fdfminimizer_set(fdf_s, &f, x, ss, tol);
   wasora.min.solver_status = fdf_s->x;
   
-  if (wasora.min.verbose) {
+  if (wasora.min.verbose && wasora.rank == 0) {
     wasora_multiminfdf_print_state(iter, fdf_s);
   }
   

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora common framework header
  *
- *  Copyright (C) 2009--2019 jeremy theler
+ *  Copyright (C) 2009--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -1096,6 +1096,8 @@ typedef struct {
   char *main_input_dirname;
   char *main_input_basename;
 
+  int rank;
+  int nprocs;
   parametric_t parametric;
   fit_t fit;
   min_t min;

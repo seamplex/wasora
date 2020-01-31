@@ -28,7 +28,9 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 #ifdef HAVE_READLINE
  #include <readline/readline.h>

@@ -29,7 +29,9 @@
 #include <readline/readline.h>
 #endif
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 #include "thirdparty/kdtree.h"
 
 
@@ -258,7 +260,7 @@ int wasora_init_before_parser(void) {
 ///va+realtime_scale+desc and execution will proceed as quick as possible with no delays.
   wasora_special_var(realtime_scale) = wasora_define_variable("realtime_scale");
 
-//   files 
+  // files 
   wasora.special_files.stdin_ = wasora_define_file("stdin", "stdin", 0, NULL, "r", 0);
   wasora.special_files.stdin_->pointer = stdin;
 

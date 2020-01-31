@@ -29,7 +29,9 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 
 int wasora_instruction_m4(void *arg) {

@@ -24,7 +24,10 @@
 #include <string.h>
 #include <dlfcn.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
+
 #include "version.h"
 
 #if HARDCODEDPLUGIN

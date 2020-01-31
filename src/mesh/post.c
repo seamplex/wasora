@@ -28,6 +28,11 @@ int wasora_instruction_mesh_post(void *arg) {
   mesh_post_t *mesh_post = (mesh_post_t *)arg;
   mesh_post_dist_t *mesh_post_dist;
 
+  // in parallel runs only print from first processor
+  if (wasora.rank != 0) {
+    return WASORA_RUNTIME_OK;
+  }
+  
   // hay que cerrar el file y volver a abrirlo
   if (mesh_post->file->pointer != NULL) {
     wasora_call(wasora_instruction_close_file(mesh_post->file));

@@ -19,7 +19,9 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-#include <wasora.h>
+#ifndef _WASORA_H_
+#include "wasora.h"
+#endif
 
 int wasora_instruction_alias(void *arg) {
   alias_t *alias = (alias_t *)arg;

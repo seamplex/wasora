@@ -25,7 +25,9 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 
 int wasora_parser_expression(expr_t *expr) {

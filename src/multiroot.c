@@ -23,8 +23,9 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_multiroots.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
-
+#endif
 
 
 int wasora_instruction_solve(void *arg) {

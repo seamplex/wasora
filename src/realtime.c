@@ -23,7 +23,10 @@
 #include <unistd.h>
 #include <sys/time.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
+
 
 /* inicializa la estructura t0 */
 void wasora_init_realtime(void) {

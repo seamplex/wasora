@@ -29,7 +29,9 @@
 
 #include <gsl/gsl_errno.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 void wasora_push_error_message(const char *fmt, ...) {
   

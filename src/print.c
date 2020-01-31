@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora text output routines
  *
- *  Copyright (C) 2009--2017 jeremy theler
+ *  Copyright (C) 2009--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -53,6 +53,9 @@ int wasora_instruction_print(void *arg) {
       have_to_print = 0;
     }
   }
+  
+  // in parallel runs only print from first processor
+  have_to_print &= (wasora.rank == 0);
 
   if (have_to_print == 0) {
     return WASORA_RUNTIME_OK;
@@ -174,6 +177,11 @@ int wasora_instruction_print_function(void *arg) {
   int j, k;
   int flag = 0;
   double *x, *x_min, *x_max, *x_step;
+
+  // in parallel runs only print from first processor
+  if (wasora.rank != 0) {
+    return WASORA_RUNTIME_OK;
+  }
   
   if (print_function->file->pointer == NULL) {
     wasora_call(wasora_instruction_open_file(print_function->file));
@@ -384,6 +392,11 @@ int wasora_instruction_print_vector(void *arg) {
 
   int j, k;
   int n_elems_per_line;
+  
+  // in parallel runs only print from first processor
+  if (wasora.rank != 0) {
+    return WASORA_RUNTIME_OK;
+  }
 
   if (print_vector->file->pointer == NULL) {
     wasora_call(wasora_instruction_open_file(print_vector->file));

@@ -19,10 +19,9 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-
-
+#ifndef _WASORA_H_
 #include "wasora.h"
-
+#endif
 
 int wasora_instruction_call(void *arg) {
   call_t *call = (call_t *)arg;

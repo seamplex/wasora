@@ -29,11 +29,18 @@
 #include <sundials/sundials_config.h>
 #endif
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 #include "version.h"
 
 void wasora_show_help(char *progname) {
   int i;
+  
+  // in parallel runs only print from first processor
+  if (wasora.rank != 0) {
+    return;
+  }
   
   printf("usage: %s [options] inputfile [replacement arguments]\n", progname);
   
@@ -64,6 +71,11 @@ void wasora_show_version(int version) {
   
   int i;
   char numbers[][8] = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+
+  // in parallel runs only print from first processor
+  if (wasora.rank != 0) {
+    return;
+  }
   
   if (wasora.i_plugin == 0) {
     
@@ -155,6 +167,11 @@ void wasora_show_version(int version) {
 
 void wasora_shortversion(void) {
 
+  // in parallel runs only print from first processor
+  if (wasora.rank != 0) {
+    return;
+  }
+  
 #ifdef WASORA_VCS_BRANCH
   printf("wasora %s%s %s\n", WASORA_VCS_VERSION,
                              (WASORA_VCS_CLEAN==0)?"":"+Δ",
@@ -170,6 +187,12 @@ void wasora_shortversion(void) {
 
 
 void wasora_copyright(void) {
+
+  // in parallel runs only print from first processor
+  if (wasora.rank != 0) {
+    return;
+  }
+
   /* It is important to separate the year from the rest of the message,
      as done here, to avoid having to retranslate the message when a new
      year comes around.  */  
@@ -180,6 +203,11 @@ There is NO WARRANTY, to the extent permitted by law.\n", 2009, 2020);
 }
 
 void wasora_longversion(void) {
+  
+  // in parallel runs only print from first processor
+  if (wasora.rank != 0) {
+    return;
+  }
   
   printf("Last commit date   : %s\n", WASORA_VCS_DATE);
   printf("Build date         : %s\n", COMPILATION_DATE);

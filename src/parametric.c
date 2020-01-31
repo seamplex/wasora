@@ -36,7 +36,9 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_qrng.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 int wasora_instruction_parametric(void *arg) {
   return WASORA_RUNTIME_OK;

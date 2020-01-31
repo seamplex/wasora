@@ -19,7 +19,6 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,7 +28,9 @@
 #include <gsl/gsl_sort_double.h>
 #include <gsl/gsl_sort_vector_double.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 #include "thirdparty/kdtree.h"
 
 // setea las variables que son argumento de una funcion al valor pedido en el vector x

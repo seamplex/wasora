@@ -22,7 +22,9 @@
 #include <ctype.h>
 #include <string.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 const char operators[]        = "&|=!<>+-*/^()";
 const char factorseparators[] = "&|=!<>+-*/^(), \t\n";

@@ -22,7 +22,10 @@
 
 #include <stdlib.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
+
 
 int wasora_instruction_shell(void *arg) {
   shell_t *shell = (shell_t *)arg;

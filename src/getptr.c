@@ -19,11 +19,11 @@
  *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
  *------------------- ------------  ----    --------  --     -       -         -
  */
-
-
 #include <string.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 extern const char factorseparators[];
 

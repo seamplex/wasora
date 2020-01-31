@@ -1,8 +1,31 @@
+/*------------ -------------- -------- --- ----- ---   --       -            -
+ *  wasora definition functions
+ *
+ *  Copyright (C) 2009--2020 jeremy theler
+ *
+ *  This file is part of wasora.
+ *
+ *  wasora is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  wasora is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with wasora.  If not, see <http://www.gnu.org/licenses/>.
+ *------------------- ------------  ----    --------  --     -       -         -
+ */
 #include <dlfcn.h>
 #include <ctype.h>
 #include <string.h>
 
+#ifndef _WASORA_H_
 #include "wasora.h"
+#endif
 
 // los traemos de algebra.c
 extern const char factorseparators[];

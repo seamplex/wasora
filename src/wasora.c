@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora main function
  *
- *  Copyright (C) 2009--2018 jeremy theler
+ *  Copyright (C) 2009--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
     { "help",     no_argument,       NULL, 'h'},
     { "version",  no_argument,       NULL, 'v'},
     { "info",     no_argument,       NULL, 'i'},
-    { "plugin",   required_argument, NULL, 'p'},
+    { "plugin",   required_argument, NULL, 'P'},
     { "no-debug", no_argument,       NULL, 'n'},
     { "debug",    no_argument,       NULL, 'd'},
     { "list",     no_argument,       NULL, 'l'},

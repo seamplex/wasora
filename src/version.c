@@ -45,12 +45,13 @@ void wasora_show_help(char *progname) {
   printf("usage: %s [options] inputfile [replacement arguments]\n", progname);
   
   printf("\n\
-  -p library            load wasora plugin named library\n\
+  -P library            load wasora plugin named library\n\
  --plugin library       before reading the input file\n\n\
   -d, --debug           start in debug mode\n\
       --no-debug        ignore standard input, avoid debug mode\n\
   -l, --list            list defined symbols and exit\n\
   -h, --help            display this help and exit\n\
+  -i, --info            display detailed code information and exit\n\
   -v, --version         display version information and exit\n\n\
  instructions are read from standard input if \"-\" is passed as inputfile\n");
 

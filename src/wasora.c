@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
   // que no se queje si una opcion no es valida para wasora,
   // puede ser valida para algun plugin o algo
   opterr = 0;
-  while ((optc = getopt_long_only(argc, argv, "hvip:dl", longopts, &option_index)) != -1) {
+  while ((optc = getopt_long_only(argc, argv, "hviP:dl", longopts, &option_index)) != -1) {
     switch (optc) {
       case 'h':
         show_help = 1;

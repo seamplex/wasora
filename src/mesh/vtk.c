@@ -322,7 +322,7 @@ int mesh_vtk_write_vector(mesh_post_t *mesh_post, function_t **function, centeri
     wasora_function_init(function[1]);
     wasora_function_init(function[2]);
     
-    fprintf(mesh_post->file->pointer, "VECTORS %s-%s-%s double\n", function[0]->name, function[1]->name, function[2]->name);
+    fprintf(mesh_post->file->pointer, "VECTORS %s_%s_%s double\n", function[0]->name, function[1]->name, function[2]->name);
       
     for (j = 0; j < mesh->n_nodes; j++) {
       if (function[0]->type == type_pointwise_mesh_node && function[0]->data_size == mesh_post->mesh->n_nodes) {

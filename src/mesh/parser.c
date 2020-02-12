@@ -422,22 +422,29 @@ int wasora_mesh_parse_line(char *line) {
       return WASORA_PARSER_OK;
 
 // --- MESH_INTEGRATE --------------------------------------------------------
-    } else if (strcasecmp(token, "MESH_INTEGRATE") == 0) {
 ///kw+MESH_INTEGRATE+usage MESH_INTEGRATE
+    } else if (strcasecmp(token, "MESH_INTEGRATE") == 0) {
+///kw+MESH_INTEGRATE+desc Performs a spatial integration of a function or expression over a mesh.
       
       mesh_integrate_t *mesh_integrate = calloc(1, sizeof(mesh_integrate_t));
       
       while ((token = wasora_get_next_token(NULL)) != NULL) {
-// TODO: integrand y que wasora vea si es una funcion o una expresion        
+///kw+MESH_INTEGRATE+detail The integran may be either a `FUNCTION` or an `EXPRESSION`.
+// TODO: integrand y que wasora vea si es una funcion o una expresion
 ///kw+MESH_INTEGRATE+usage { FUNCTION <function>
+///kw+MESH_INTEGRATE+detail In the first case, just the function name is expected (i.e. not its arguments).
         if (strcasecmp(token, "FUNCTION") == 0) {
           wasora_call(wasora_parser_function(&mesh_integrate->function));
 
 ///kw+MESH_INTEGRATE+usage | EXPRESSION <expr> }@
+///kw+MESH_INTEGRATE+detail In the second case, a full algebraic expression including the arguments is expected.
+///kw+MESH_INTEGRATE+detail If the expression is just `1` then the volume (or area or length) of the domain is computed.
         } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
           wasora_call(wasora_parser_expression(&mesh_integrate->expr));
+///kw+MESH_INTEGRATE+detail Note that arguments ought to be `x`, `y` and/or `z`.
           
 ///kw+MESH_INTEGRATE+usage [ MESH <mesh_identifier> ]
+///kw+MESH_INTEGRATE+detail If there are more than one mesh defined, an explicit one has to be given with `MESH`.
         } else if (strcasecmp(token, "MESH") == 0) {
           char *mesh_name;
           wasora_call(wasora_parser_string(&mesh_name));
@@ -448,6 +455,9 @@ int wasora_mesh_parse_line(char *line) {
           }
           free(mesh_name);        
 ///kw+MESH_INTEGRATE+usage [ OVER <physical_entity_name> ]
+///kw+MESH_INTEGRATE+detail By default the integration is performed over the highest-dimensional elements of the mesh.
+///kw+MESH_INTEGRATE+detail If the integration is to be carried out over just a physical entity, it has to be given in `OVER`.
+
         } else if (strcasecmp(token, "OVER") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
@@ -457,15 +467,21 @@ int wasora_mesh_parse_line(char *line) {
               return WASORA_PARSER_ERROR;
             }
           }
+///kw+MESH_INTEGRATE+detail Either `NODES` or `CELLS` define how the integration is to be performed.
 ///kw+MESH_INTEGRATE+usage [ NODES
+///kw+MESH_INTEGRATE+detail In the first case a the integration is performed using the Gauss points and weights associated to each element type.
+          
         } else if (strcasecmp(token, "NODES") == 0) {
             mesh_integrate->centering = centering_nodes;
 ///kw+MESH_INTEGRATE+usage | CELLS ]@
+///kw+MESH_INTEGRATE+detail In the second case, the integral is computed as the sum of the product of the function evaluated at the center of each cell (element) and the cell’s volume.
           } else if (strcasecmp(token, "CELLS") == 0) {
             mesh_integrate->centering = centering_cells;
             wasora_mesh.need_cells = 1;
           
 ///kw+MESH_INTEGRATE+usage RESULT <variable>@
+///kw+MESH_INTEGRATE+detail The scalar result of the integration is stored in the variable given by `RESULT`.
+///kw+MESH_INTEGRATE+detail If the variable does not exist, it is created.
         } else if (strcasecmp(token, "RESULT") == 0) {
           char *variable;
           wasora_call(wasora_parser_string(&variable));
@@ -483,20 +499,13 @@ int wasora_mesh_parse_line(char *line) {
         wasora_push_error_message("either EXPR of FUNCTION needed");
         return WASORA_PARSER_ERROR;
       }
-/*      
-      if (mesh_integrate->physical_entity == NULL) {
-        wasora_push_error_message("MESH_INTEGRATE needs a OVER physical_entity");
-        return WASORA_PARSER_ERROR;
-      }
-*/      
+      
       if (mesh_integrate->mesh == NULL) {
         if ((mesh_integrate->mesh = wasora_mesh.main_mesh) == NULL) {
           wasora_push_error_message("no MESH defined for MESH_INTEGRATE");
           return WASORA_PARSER_ERROR;
         }
       }
-         
-      
       
       LL_APPEND(wasora_mesh.integrates, mesh_integrate);
       wasora_define_instruction(wasora_instruction_mesh_integrate, mesh_integrate);

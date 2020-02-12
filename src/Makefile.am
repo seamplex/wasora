@@ -59,7 +59,8 @@ wasora_SOURCES = \
 ./mesh/neighbors.c \
 ./mesh/point.c \
 ./mesh/integrate.c \
-./mesh/prism.c \
+./mesh/prism6.c \
+./mesh/prism15.c \
 ./mesh/mesh.h \
 ./mesh/vtk.c \
 ./mesh/parser.c \

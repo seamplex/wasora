@@ -433,7 +433,7 @@ int wasora_mesh_parse_line(char *line) {
         if (strcasecmp(token, "FUNCTION") == 0) {
           wasora_call(wasora_parser_function(&mesh_integrate->function));
 
-///kw+MESH_INTEGRATE+usage | EXPRESSION <expr> }
+///kw+MESH_INTEGRATE+usage | EXPRESSION <expr> }@
         } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
           wasora_call(wasora_parser_expression(&mesh_integrate->expr));
           
@@ -457,30 +457,19 @@ int wasora_mesh_parse_line(char *line) {
               return WASORA_PARSER_ERROR;
             }
           }
+///kw+MESH_INTEGRATE+usage [ NODES
+        } else if (strcasecmp(token, "NODES") == 0) {
+            mesh_integrate->centering = centering_nodes;
+///kw+MESH_INTEGRATE+usage | CELLS ]@
+          } else if (strcasecmp(token, "CELLS") == 0) {
+            mesh_integrate->centering = centering_cells;
+            wasora_mesh.need_cells = 1;
           
-///kw+MESH_INTEGRATE+usage RESULT <variable>
+///kw+MESH_INTEGRATE+usage RESULT <variable>@
         } else if (strcasecmp(token, "RESULT") == 0) {
           char *variable;
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_integrate->result = wasora_get_or_define_variable_ptr(variable)) == NULL) {
-            return WASORA_PARSER_ERROR;
-          }
-          
-///kw+MESH_INTEGRATE+usage [ NODES
-        } else if (strcasecmp(token, "NODES") == 0) {
-            mesh_integrate->centering = centering_nodes;
-///kw+MESH_INTEGRATE+usage | CELLS ]
-          } else if (strcasecmp(token, "CELLS") == 0) {
-            mesh_integrate->centering = centering_cells;
-            wasora_mesh.need_cells = 1;
-
-///kw+MESH_INTEGRATE+usage [ GAUSS_POINTS <num_expr> ]
-        } else if (strcasecmp(token, "GAUSS_POINTS") == 0) {
-          double xi;
-          wasora_call(wasora_parser_expression_in_string(&xi));
-          mesh_integrate->gauss_points = (int)(xi);
-          if (mesh_integrate->gauss_points < 1 || mesh_integrate->gauss_points > 2) {
-            wasora_push_error_message("GAUSS_POINTS have to be either 1 or 2, not '%d'", mesh_integrate->gauss_points);
             return WASORA_PARSER_ERROR;
           }
             

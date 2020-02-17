@@ -89,7 +89,7 @@ fi
 
 define([WASORA_README_INSTALL],
 if test ! -z "`which pandoc`"; then
- pandoc README.md -t plain -o README
+ pandoc README.md  -t plain -o README
  pandoc INSTALL.md -t plain -o INSTALL
 else
  fmt -s README.md > README

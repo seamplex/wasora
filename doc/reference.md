@@ -1,10 +1,167 @@
-% Wasora v0.6.32-gdb184bd reference sheet
+% Wasora v0.6.96-g0d7ad0a reference sheet
+
+-   [Keywords](#keywords)
+    -   [.=](#section)
+    -   [=](#section-1)
+    -   [ABORT](#abort)
+    -   [ALIAS](#alias)
+    -   [CALL](#call)
+    -   [CLOSE](#close)
+    -   [CONST](#const)
+    -   [DEFAULT\_ARGUMENT\_VALUE](#default_argument_value)
+    -   [DIFFERENTIAL](#differential)
+    -   [DO\_NOT\_EVALUATE\_AT\_PARSE\_TIME](#do_not_evaluate_at_parse_time)
+    -   [FILE](#file)
+    -   [FIT](#fit)
+    -   [FUNCTION](#function)
+    -   [HISTORY](#history)
+    -   [IF](#if)
+    -   [IMPLICIT](#implicit)
+    -   [INCLUDE](#include)
+    -   [INITIAL\_CONDITIONS\_MODE](#initial_conditions_mode)
+    -   [LOAD\_PLUGIN](#load_plugin)
+    -   [LOAD\_ROUTINE](#load_routine)
+    -   [M4](#m4)
+    -   [MATRIX](#matrix)
+    -   [MINIMIZE](#minimize)
+    -   [PARAMETRIC](#parametric)
+    -   [PHASE\_SPACE](#phase_space)
+    -   [PRINT](#print)
+    -   [PRINT\_FUNCTION](#print_function)
+    -   [PRINT\_VECTOR](#print_vector)
+    -   [READ](#read)
+    -   [SEMAPHORE](#semaphore)
+    -   [SHELL](#shell)
+    -   [SOLVE](#solve)
+    -   [TIME\_PATH](#time_path)
+    -   [VAR](#var)
+    -   [VECTOR](#vector)
+    -   [VECTOR\_SORT](#vector_sort)
+    -   [WRITE](#write)
+-   [Mesh-related keywords](#mesh-related-keywords)
+    -   [MATERIAL](#material)
+    -   [MESH](#mesh)
+    -   [MESH\_FILL\_VECTOR](#mesh_fill_vector)
+    -   [MESH\_FIND\_MINMAX](#mesh_find_minmax)
+    -   [MESH\_INTEGRATE](#mesh_integrate)
+    -   [MESH\_MAIN](#mesh_main)
+    -   [MESH\_POST](#mesh_post)
+    -   [PHYSICAL\_ENTITY](#physical_entity)
+    -   [PHYSICAL\_PROPERTY](#physical_property)
+-   [Variables](#variables)
+    -   [done](#done)
+    -   [done\_outer](#done_outer)
+    -   [done\_static](#done_static)
+    -   [done\_transient](#done_transient)
+    -   [dt](#dt)
+    -   [end\_time](#end_time)
+    -   [i](#i)
+    -   [infinite](#infinite)
+    -   [in\_outer\_initial](#in_outer_initial)
+    -   [in\_static](#in_static)
+    -   [in\_transient](#in_transient)
+    -   [in\_transient\_first](#in_transient_first)
+    -   [in\_transient\_last](#in_transient_last)
+    -   [j](#j)
+    -   [max\_dt](#max_dt)
+    -   [min\_dt](#min_dt)
+    -   [ncores](#ncores)
+    -   [on\_gsl\_error](#on_gsl_error)
+    -   [on\_ida\_error](#on_ida_error)
+    -   [on\_nan](#on_nan)
+    -   [pi](#pi)
+    -   [pid](#pid)
+    -   [realtime\_scale](#realtime_scale)
+    -   [rel\_error](#rel_error)
+    -   [static\_steps](#static_steps)
+    -   [step\_outer](#step_outer)
+    -   [step\_static](#step_static)
+    -   [step\_transient](#step_transient)
+    -   [t](#t)
+    -   [zero](#zero)
+-   [Mesh-related variables](#mesh-related-variables)
+    -   [cells](#cells)
+    -   [elements](#elements)
+    -   [nodes](#nodes)
+-   [Functions](#functions)
+    -   [abs](#abs)
+    -   [acos](#acos)
+    -   [asin](#asin)
+    -   [atan](#atan)
+    -   [atan2](#atan2)
+    -   [ceil](#ceil)
+    -   [clock](#clock)
+    -   [cos](#cos)
+    -   [cosh](#cosh)
+    -   [d\_dt](#d_dt)
+    -   [deadband](#deadband)
+    -   [equal](#equal)
+    -   [exp](#exp)
+    -   [expint1](#expint1)
+    -   [expint2](#expint2)
+    -   [expint3](#expint3)
+    -   [expintn](#expintn)
+    -   [floor](#floor)
+    -   [heaviside](#heaviside)
+    -   [if](#if-1)
+    -   [integral\_dt](#integral_dt)
+    -   [integral\_euler\_dt](#integral_euler_dt)
+    -   [is\_even](#is_even)
+    -   [is\_in\_interval](#is_in_interval)
+    -   [is\_odd](#is_odd)
+    -   [j0](#j0)
+    -   [lag](#lag)
+    -   [lag\_bilinear](#lag_bilinear)
+    -   [lag\_euler](#lag_euler)
+    -   [last](#last)
+    -   [limit](#limit)
+    -   [limit\_dt](#limit_dt)
+    -   [log](#log)
+    -   [mark\_max](#mark_max)
+    -   [mark\_min](#mark_min)
+    -   [max](#max)
+    -   [min](#min)
+    -   [mod](#mod)
+    -   [not](#not)
+    -   [random](#random)
+    -   [random\_gauss](#random_gauss)
+    -   [round](#round)
+    -   [sawtooth\_wave](#sawtooth_wave)
+    -   [sgn](#sgn)
+    -   [sin](#sin)
+    -   [sinh](#sinh)
+    -   [sqrt](#sqrt)
+    -   [square\_wave](#square_wave)
+    -   [tan](#tan)
+    -   [tanh](#tanh)
+    -   [threshold\_max](#threshold_max)
+    -   [threshold\_min](#threshold_min)
+    -   [triangular\_wave](#triangular_wave)
+-   [Functionals](#functionals)
+    -   [derivative](#derivative)
+    -   [func\_min](#func_min)
+    -   [gauss\_kronrod](#gauss_kronrod)
+    -   [gauss\_legendre](#gauss_legendre)
+    -   [integral](#integral)
+    -   [prod](#prod)
+    -   [root](#root)
+    -   [sum](#sum)
+-   [Vector functions](#vector-functions)
+    -   [vecdot](#vecdot)
+    -   [vecmax](#vecmax)
+    -   [vecmaxindex](#vecmaxindex)
+    -   [vecmin](#vecmin)
+    -   [vecminindex](#vecminindex)
+    -   [vecnorm](#vecnorm)
+    -   [vecsize](#vecsize)
+    -   [vecsum](#vecsum)
+
 
 # Keywords
 
 ##  .=
 
-Add an equation to the DAE system to be solved in the phase space spanned by `PHASE_SPACE`.
+> Add an equation to the DAE system to be solved in the phase space spanned by `PHASE_SPACE`.
 
 ~~~wasora
 { 0[(i[,j]][<imin:imax[;jmin:jmax]>] | <expr1> } .= <expr2>
@@ -14,17 +171,20 @@ Add an equation to the DAE system to be solved in the phase space spanned by `PH
 
 ##  =
 
-Assign an expression to a variable, a vector or a matrix.
+> Assign an expression to a variable, a vector or a matrix.
 
 ~~~wasora
-<var>[ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr> <vector>(<expr_i>)[<expr_i_min, expr_i_max>] [ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr> <matrix>(<expr_i>,<expr_j>)[<expr_i_min, expr_i_max; expr_j_min, expr_j_max>] [ [<expr_tmin>, <expr_tmax>] | @<expr_t> ] = <expr>
+<var>[ [<expr_tmin>, <expr_tmax>] | 
+<expr_t> ] = <expr> <vector>(<expr_i>)[<expr_i_min, expr_i_max>] [ [<expr_tmin>, <expr_tmax>] | 
+<expr_t> ] = <expr> <matrix>(<expr_i>,<expr_j>)[<expr_i_min, expr_i_max; expr_j_min, expr_j_max>] [ [<expr_tmin>, <expr_tmax>] | 
+<expr_t> ] = <expr>
 ~~~
 
 
 
 ##  ABORT
 
-Catastrophically abort the execution and quit wasora.
+> Catastrophically abort the execution and quit wasora.
 
 ~~~wasora
 ABORT
@@ -39,7 +199,7 @@ clauses.
 
 ##  ALIAS
 
-Define a scalar alias of an already-defined indentifier.
+> Define a scalar alias of an already-defined indentifier.
 
 ~~~wasora
 ALIAS { <new_var_name> IS <existing_object> | <existing_object> AS <new_name> }
@@ -53,7 +213,7 @@ In the third case, to alias second element (2,3) of matrix `M` to the new name `
 
 ##  CALL
 
-Call a previously dynamically-loaded user-provided routine.
+> Call a previously dynamically-loaded user-provided routine.
 
 ~~~wasora
 CALL <name> [ expr_1 expr_2 ... expr_n ]
@@ -63,7 +223,7 @@ CALL <name> [ expr_1 expr_2 ... expr_n ]
 
 ##  CLOSE
 
-Explicitly close an already-`OPEN`ed file.
+> Explicitly close an already-`OPEN`ed file.
 
 ~~~wasora
 CLOSE
@@ -73,7 +233,7 @@ CLOSE
 
 ##  CONST
 
-Mark a scalar variable, vector or matrix as a constant.
+> Mark a scalar variable, vector or matrix as a constant.
 
 ~~~wasora
 CONST name_1 [ <name_2> ] ... [ <name_n> ]
@@ -83,7 +243,7 @@ CONST name_1 [ <name_2> ] ... [ <name_n> ]
 
 ##  DEFAULT_ARGUMENT_VALUE
 
-Give a default value for an optional commandline argument.
+> Give a default value for an optional commandline argument.
 
 ~~~wasora
 DEFAULT_ARGUMENT_VALUE <constant> <string>
@@ -99,7 +259,7 @@ optional.
 
 ##  DIFFERENTIAL
 
-Explicitly mark variables, vectors or matrices as “differential” to compute intial conditions of DAE systems.
+> Explicitly mark variables, vectors or matrices as “differential” to compute intial conditions of DAE systems.
 
 ~~~wasora
 DIFFERENTIAL { <var_1> <var_2> ... | <vector_1> <vector_2> ... | <matrix_1> <matrix_2> ... }
@@ -109,7 +269,7 @@ DIFFERENTIAL { <var_1> <var_2> ... | <vector_1> <vector_2> ... | <matrix_1> <mat
 
 ##  DO_NOT_EVALUATE_AT_PARSE_TIME
 
-Ask wasora not to evaluate assignments at parse time.
+> Ask wasora not to evaluate assignments at parse time.
 
 ~~~wasora
 DO_NOT_EVALUATE_AT_PARSE_TIME
@@ -119,7 +279,7 @@ DO_NOT_EVALUATE_AT_PARSE_TIME
 
 ##  FILE
 
-Define a file, either as input or as output, for further usage.
+> Define a file, either as input or as output, for further usage.
 
 ~~~wasora
 < FILE | OUTPUT_FILE | INPUT_FILE > <name> <printf_format> [ expr_1 expr_2 ... expr_n ] [ INPUT | OUTPUT | MODE <fopen_mode> ] [ OPEN | DO_NOT_OPEN ]
@@ -129,7 +289,7 @@ Define a file, either as input or as output, for further usage.
 
 ##  FIT
 
-Fit a function of one or more arguments to a set of data.
+> Fit a function of one or more arguments to a set of data.
 
 ~~~wasora
 FIT <function_to_be_fitted> TO <function_with_data> VIA <var_1> <var_2> ... <var_n> [ GRADIENT <expr_1> <expr_2> ... <expr_n> ] [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ] [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ] [ DELTAEPSREL <expr> ] [ DELTAEPSABS <expr> ] [ MAX_ITER <expr> ] [ VERBOSE ] [ RERUN | DO_NOT_RERUN ]
@@ -153,7 +313,7 @@ If the optional keyword `VERBOSE` is given, some data of the intermediate steps 
 
 ##  FUNCTION
 
-Define a function of one or more variables.
+> Define a function of one or more variables.
 
 ~~~wasora
 FUNCTION <name>(<var_1>[,var2,...,var_n]) { [ = <expr> | FILE_PATH <file_path> | ROUTINE <name> | | MESH <name> { DATA <new_vector_name> | VECTOR <existing_vector_name> } { NODES | CELLS } | [ VECTOR_DATA <vector_1> <vector_2> ... <vector_n> <vector_n+1> ] } [COLUMNS <expr_1> <expr_2> ... <expr_n> <expr_n+1> ] [ INTERPOLATION { linear | polynomial | spline | spline_periodic | akima | akima_periodic | steffen | nearest | shepard | shepard_kd | bilinear } ] [ INTERPOLATION_THRESHOLD <expr> ] [ SHEPARD_RADIUS <expr> ] [ SHEPARD_EXPONENT <expr> ] [ SIZES <expr_1> <expr_2> ... <expr_n> ] [ X_INCREASES_FIRST <expr> ] [ DATA <num_1> <num_2> ... <num_N> ]
@@ -210,7 +370,7 @@ Multiline continuation using brackets `{` and `}` can be used for a clean data o
 
 ##  HISTORY
 
-Record the time history of a variable as a function of time.
+> Record the time history of a variable as a function of time.
 
 ~~~wasora
 HISTORY <variable> <function>
@@ -220,7 +380,7 @@ HISTORY <variable> <function>
 
 ##  IF
 
-Begin a conditional block.
+> Begin a conditional block.
 
 ~~~wasora
 IF expr
@@ -234,7 +394,7 @@ ENDIF
 
 ##  IMPLICIT
 
-Define whether implicit declaration of variables is allowed or not.
+> Define whether implicit declaration of variables is allowed or not.
 
 ~~~wasora
 IMPLICIT { NONE | ALLOWED }
@@ -249,7 +409,7 @@ depends on the last `IMPLICIT` keyword given, which by default is `ALLOWED`.
 
 ##  INCLUDE
 
-Include another wasora input file.
+> Include another wasora input file.
 
 ~~~wasora
 INCLUDE <file_path> [ FROM <num_expr> ] [ TO <num_expr> ]
@@ -266,7 +426,7 @@ The optional `FROM` and `TO` keywords can be used to include only portions of a 
 
 ##  INITIAL_CONDITIONS_MODE
 
-Define how initial conditions of DAE problems are computed.
+> Define how initial conditions of DAE problems are computed.
 
 ~~~wasora
 INITIAL_CONDITIONS_MODE { AS_PROVIDED | FROM_VARIABLES | FROM_DERIVATIVES }
@@ -289,7 +449,7 @@ See the (SUNDIALS documentation)[https://computation.llnl.gov/casc/sundials/docu
 
 ##  LOAD_PLUGIN
 
-Load a wasora plug-in from a dynamic shared object.
+> Load a wasora plug-in from a dynamic shared object.
 
 ~~~wasora
 LOAD_PLUGIN { <file_path> | <plugin_name> }
@@ -311,7 +471,7 @@ the plugin should be loaded by just passing the name to `LOAD_PLUGIN`.
 
 ##  LOAD_ROUTINE
 
-Load one or more routines from a dynamic shared object.
+> Load one or more routines from a dynamic shared object.
 
 ~~~wasora
 LOAD_ROUTINE <file_path> <routine_1> [ <routine_2> ... <routine_n> ]
@@ -321,7 +481,7 @@ LOAD_ROUTINE <file_path> <routine_1> [ <routine_2> ... <routine_n> ]
 
 ##  M4
 
-Call the `m4` macro processor with definitions from wasora variables or expressions.
+> Call the `m4` macro processor with definitions from wasora variables or expressions.
 
 ~~~wasora
 M4 { INPUT_FILE <file_id> | FILE_PATH <file_path> } { OUTPUT_FILE <file_id> | OUTPUT_FILE_PATH <file_path> } [ EXPAND <name> ] ... } [ MACRO <name> [ <format> ] <definition> ] ... }
@@ -331,7 +491,7 @@ M4 { INPUT_FILE <file_id> | FILE_PATH <file_path> } { OUTPUT_FILE <file_id> | OU
 
 ##  MATRIX
 
-Define a matrix.
+> Define a matrix.
 
 ~~~wasora
 MATRIX <name> ROWS <expr> COLS <expr> [ DATA num_expr_1 num_expr_2 ... num_expr_n ]
@@ -341,7 +501,7 @@ MATRIX <name> ROWS <expr> COLS <expr> [ DATA num_expr_1 num_expr_2 ... num_expr_
 
 ##  MINIMIZE
 
-Find the combination of arguments that give a (relative) minimum of a function, i.e. run an optimization problem.
+> Find the combination of arguments that give a (relative) minimum of a function, i.e. run an optimization problem.
 
 ~~~wasora
 MINIMIZE <function> <function> [ METHOD { conjugate_fr | conjugate_pr | vector_bfgs2 | vector_bfgs | steepest_descent | nmsimplex2 | nmsimplex | nmsimplex2rand } [ GRADIENT <expr_1> <expr_2> ... <expr_n> ] [ GUESS <expr_1> <expr_2> ... <expr_n> ] [ MIN <expr_1> <expr_2> ... <expr_n> ] [ MAX <expr_1> <expr_2> ... <expr_n> ] [ STEP <expr_1> <expr_2> ... <expr_n> ] [ VERBOSE ] [ NORERUN ] [ MAX_ITER <expr> ] [ TOL <expr> ] [ GRADTOL <expr> ]
@@ -351,7 +511,7 @@ MINIMIZE <function> <function> [ METHOD { conjugate_fr | conjugate_pr | vector_b
 
 ##  PARAMETRIC
 
-Systematically sweep a zone of the parameter space, i.e. perform a parametric run.
+> Systematically sweep a zone of the parameter space, i.e. perform a parametric run.
 
 ~~~wasora
 PARAMETRIC <var_1> [ ... <var_n> ] [ TYPE { linear | logarithmic | random | gaussianrandom | sobol | niederreiter | halton | reversehalton } ] [ MIN <num_expr_1> ... <num_expr_n> ] [ MAX <num_expr_1> ... <num_expr_n> ] [ STEP <num_expr_1> ... <num_expr_n> ] [ NSTEPS <num_expr_1> ... <num_expr_n> ] [ OUTER_STEPS <num_expr> ] [ MAX_DAUGHTERS <num_expr> ] [ OFFSET <num_expr> ] [ ADIABATIC ]
@@ -361,7 +521,7 @@ PARAMETRIC <var_1> [ ... <var_n> ] [ TYPE { linear | logarithmic | random | gaus
 
 ##  PHASE_SPACE
 
-Define which variables, vectors and/or matrices belong to the phase space of the DAE system to be solved.
+> Define which variables, vectors and/or matrices belong to the phase space of the DAE system to be solved.
 
 ~~~wasora
 PHASE_SPACE { <vars> | <vectors> | <matrices> }
@@ -371,7 +531,7 @@ PHASE_SPACE { <vars> | <vectors> | <matrices> }
 
 ##  PRINT
 
-Print plain-text and/or formatted data to the standard output or into an output file.
+> Print plain-text and/or formatted data to the standard output or into an output file.
 
 ~~~wasora
 PRINT [ FILE <file_id> | FILE_PATH <file_path> ] [ NONEWLINE ] [ SEP <string> ] [ NOSEP ] [ HEADER ] [ SKIP_STEP <expr> ] [ SKIP_STATIC_STEP <expr> ] [ SKIP_TIME <expr> ] [ SKIP_HEADER_STEP <expr> ] [ <object_1> <object_2> ... <object_n> ] [ TEXT <string_1> ... TEXT <string_n> ]
@@ -403,7 +563,7 @@ to choose how to skip printing and may be useful for non-constant time-step prob
 
 ##  PRINT_FUNCTION
 
-Print one or more functions as a table of values of dependent and independent variables.
+> Print one or more functions as a table of values of dependent and independent variables.
 
 ~~~wasora
 PRINT_FUNCTION <function_1> [ { function_2 | expr_1 } ... { function_n | expr_n-1 } ] [ FILE <file_id> | FILE_PATH <file_path> ] [ HEADER ] [ MIN <expr_1> <expr_2> ... <expr_m> ] [ MAX <expr_1> <expr_2> ... <expr_m> ] [ STEP <expr_1> <expr_2> ... <expr_m> ] [ NSTEPs <expr_1> <expr_2> ... <expr_m> ] [ FORMAT <print_format> ] [ PHYSICAL_ENTITY <name> ]
@@ -413,7 +573,7 @@ PRINT_FUNCTION <function_1> [ { function_2 | expr_1 } ... { function_n | expr_n-
 
 ##  PRINT_VECTOR
 
-Print the elements of one or more vectors.
+> Print the elements of one or more vectors.
 
 ~~~wasora
 PRINT_VECTOR [ FILE <file_id> ] FILE_PATH <file_path> ] [ { VERTICAL | HORIZONTAL } ] [ ELEMS_PER_LINE <expr> ] [ FORMAT <print_format> ] <vector_1> [ vector_2 ... vector_n ]
@@ -423,7 +583,7 @@ PRINT_VECTOR [ FILE <file_id> ] FILE_PATH <file_path> ] [ { VERTICAL | HORIZONTA
 
 ##  READ
 
-Read data (variables, vectors o matrices) from files or shared-memory segments.
+> Read data (variables, vectors o matrices) from files or shared-memory segments.
 
 ~~~wasora
 [ READ | WRITE ] [ SHM <name> ] [ { ASCII_FILE_PATH | BINARY_FILE_PATH } <file_path> ] [ { ASCII_FILE | BINARY_FILE } <identifier> ] [ IGNORE_NULL ] [ object_1 object_2 ... object_n ]
@@ -433,7 +593,7 @@ Read data (variables, vectors o matrices) from files or shared-memory segments.
 
 ##  SEMAPHORE
 
-Perform either a wait or a post operation on a named shared semaphore.
+> Perform either a wait or a post operation on a named shared semaphore.
 
 ~~~wasora
 [ SEMAPHORE | SEM ] <name> { WAIT | POST }
@@ -443,7 +603,7 @@ Perform either a wait or a post operation on a named shared semaphore.
 
 ##  SHELL
 
-Execute a shell command.
+> Execute a shell command.
 
 ~~~wasora
 SHELL <print_format> [ expr_1 expr_2 ... expr_n ]
@@ -453,7 +613,7 @@ SHELL <print_format> [ expr_1 expr_2 ... expr_n ]
 
 ##  SOLVE
 
-Solve a non-linear system of\ $n$ equations with\ $n$ unknowns.
+> Solve a non-linear system of\ $n$ equations with\ $n$ unknowns.
 
 ~~~wasora
 SOLVE <n> UNKNOWNS <var_1> <var_2> ... <var_n> RESIDUALS <expr_1> <expr_2> ... <expr_n> ] GUESS <expr_1> <expr_2> ... <expr_n> ] [ METHOD { dnewton | hybrid | hybrids | broyden } ] [ EPSABS <expr> ] [ EPSREL <expr> ] [ MAX_ITER <expr> ] [ VERBOSE ]
@@ -463,7 +623,7 @@ SOLVE <n> UNKNOWNS <var_1> <var_2> ... <var_n> RESIDUALS <expr_1> <expr_2> ... <
 
 ##  TIME_PATH
 
-Force transient problems to pass through specific instants of time.
+> Force transient problems to pass through specific instants of time.
 
 ~~~wasora
 TIME_PATH <expr_1> [ <expr_2> [ ... <expr_n> ] ]
@@ -477,7 +637,7 @@ The list of expresssions should evaluate to a sorted list of values.
 
 ##  VAR
 
-Define one or more scalar variables.
+> Define one or more scalar variables.
 
 ~~~wasora
 VAR <name_1> [ <name_2> ] ... [ <name_n> ]
@@ -487,27 +647,28 @@ VAR <name_1> [ <name_2> ] ... [ <name_n> ]
 
 ##  VECTOR
 
-Define a vector.
+> Define a vector.
 
 ~~~wasora
-VECTOR <name> SIZE <expr> [ DATA <expr_1> <expr_2> ... <expr_n> | FUNCTION_DATA <function> ] <vector>
+VECTOR <name> SIZE <expr> [ DATA <expr_1> <expr_2> ... <expr_n> | FUNCTION_DATA <function> ]
 ~~~
 
 
 
 ##  VECTOR_SORT
 
-Sort the elements of a vector into ascending numerical order.
+> Sort the elements of a vector using a specific numerical order,
+potentially making the same rearrangement of another vector.
 
 ~~~wasora
-VECTOR_SORT
+VECTOR_SORT <vector> [ ASCENDING_ORDER | DESCENDING_ORDER ] [ <vector> ]
 ~~~
 
 
 
 ##  WRITE
 
-Write data (variables, vectors o matrices) to files or shared-memory segments.
+> Write data (variables, vectors o matrices) to files or shared-memory segments.
 See the `READ` keyword for usage details.
 
 
@@ -521,7 +682,7 @@ See the `READ` keyword for usage details.
 
 ##  MATERIAL
 
-
+> 
 ~~~wasora
 MATERIAL <name> [ MESH <name> ] [ PHYSICAL_ENTITY <name_1> [ PHYSICAL_ENTITY <name_2> [ ... ] ] ] [ <property_name_1> <expr_1> [ <property_name_2> <expr_2> [ ... ] ] ]
 ~~~
@@ -530,7 +691,7 @@ MATERIAL <name> [ MESH <name> ] [ PHYSICAL_ENTITY <name_1> [ PHYSICAL_ENTITY <na
 
 ##  MESH
 
-
+> 
 ~~~wasora
 MESH [ NAME <name> ] [ FILE <file_id> | FILE_PATH <file_path> ] [ STRUCTURED ] [ DIMENSIONS <num_expr> ] [ ORDERING { unknown | node } ] [ SCALE <expr> ] [ OFFSET <expr_x> <expr_y> <expr_z>] [ DEGREES <num_expr> ] [ NCELLS_X <expr> ] [ NCELLS_Y <expr> ] [ NCELLS_Z <expr> ] [ LENGTH_X <expr> ] [ LENGTH_Y <expr> ] [ LENGTH_Z <expr> ] [ DELTA_X <expr> ] [ DELTA_Y <expr> ] [ DELTA_Z <expr> ] ///kw+MESH+usage [ READ_FUNCTION <function_name> ] [...] [ READ_SCALAR <name_in_mesh> AS <function_name> ] [...]
 ~~~
@@ -539,34 +700,59 @@ MESH [ NAME <name> ] [ FILE <file_id> | FILE_PATH <file_path> ] [ STRUCTURED ] [
 
 ##  MESH_FILL_VECTOR
 
-
+> 
 ~~~wasora
 MESH_FILL_VECTOR [ MESH <name> ] [ NODES | CELLS ] VECTOR <vector> { FUNCTION <function> | EXPRESSION <expr> }
 ~~~
 
 
 
-##  MESH_FIND_MAX
+##  MESH_FIND_MINMAX
 
+> Finds absolute extrema of a function or expression within a mesh-based domain.
 
 ~~~wasora
-MESH_FIND_MAX { FUNCTION <function> | EXPRESSION <expr> } [ MESH <name> ] [ PHYSICAL_ENTITY <physical_entity_name> ] [ NODES | CELLS ] [ MAX <variable> ] [ I_MAX <variable> ] [ X_MAX <variable> ] [ Y_MAX <variable> ] [Z_MAX <variable> ]
+MESH_FIND_MINMAX { FUNCTION <function> | EXPRESSION <expr> }
+ [ MESH <name> ] [ NODES | CELLS ]
+ [ MIN <variable> ] [ I_MIN <variable> ] [ X_MIN <variable> ] [ Y_MIN <variable> ] [Z_MIN <variable> ]
+ [ MAX <variable> ] [ I_MAX <variable> ] [ X_MAX <variable> ] [ Y_MAX <variable> ] [Z_MAX <variable> ]
+
 ~~~
 
 
+Either a `FUNCTION` or an `EXPRESSION` should be given.
+In the first case, just the function name is expected (i.e. not its arguments).
 
 ##  MESH_INTEGRATE
 
+> Performs a spatial integration of a function or expression over a mesh.
 
 ~~~wasora
-MESH_INTEGRATE { FUNCTION <function> | EXPRESSION <expr> } [ MESH <mesh_identifier> ] [ OVER <physical_entity_name> ] RESULT <variable> [ NODES | CELLS ] [ GAUSS_POINTS <num_expr> ]
+MESH_INTEGRATE { FUNCTION <function> | EXPRESSION <expr> }
+ [ MESH <mesh_identifier> ] [ OVER <physical_entity_name> ] [ NODES | CELLS ]
+ RESULT <variable>
+
 ~~~
 
 
+The integrand may be either a `FUNCTION` or an `EXPRESSION`.
+In the first case, just the function name is expected (i.e. not its arguments).
+In the second case, a full algebraic expression including the arguments is expected.
+If the expression is just `1` then the volume (or area or length) of the domain is computed.
+Note that arguments ought to be `x`, `y` and/or `z`.
+If there are more than one mesh defined, an explicit one has to be given with `MESH`.
+By default the integration is performed over the highest-dimensional elements of the mesh.
+If the integration is to be carried out over just a physical entity, it has to be given in `OVER`.
+Either `NODES` or `CELLS` define how the integration is to be performed.
+In the first case a the integration is performed using the Gauss points and weights associated to each element type.
+In the second case, the integral is computed as the sum of the product of the function evaluated at the center of each cell (element) and the cell’s volume.
+The scalar result of the integration is stored in the variable given by `RESULT`.
+If the variable does not exist, it is created.
+In the second case, a full algebraic expression including the arguments is expected.
 
 ##  MESH_MAIN
 
-
+> 
 ~~~wasora
 MESH_MAIN [ <name> ]
 ~~~
@@ -575,7 +761,7 @@ MESH_MAIN [ <name> ]
 
 ##  MESH_POST
 
-
+> 
 ~~~wasora
 MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ NO_MESH ] [ FORMAT { gmsh | vtk } ] [ CELLS | ] NODES ] [ NO_PHYSICAL_NAMES ] [ VECTOR <function1_x> <function1_y> <function1_z> ] [...] [ <scalar_function_1> ] [ <scalar_function_2> ] ...
 ~~~
@@ -584,7 +770,7 @@ MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ N
 
 ##  PHYSICAL_ENTITY
 
-
+> 
 ~~~wasora
 PHYSICAL_ENTITY <name> [ DIMENSION <expr> ] [ MESH <name> ] [ MATERIAL <name> ] [ BC <bc_1> <bcg_2> ... ]
 ~~~
@@ -593,7 +779,7 @@ PHYSICAL_ENTITY <name> [ DIMENSION <expr> ] [ MESH <name> ] [ MATERIAL <name> ] 
 
 ##  PHYSICAL_PROPERTY
 
-
+> 
 ~~~wasora
 PHYSICAL_PROPERTY <name> [ <material_name1> <expr1> [ <material_name2> <expr2> ] ... ]
 ~~~
@@ -609,13 +795,13 @@ PHYSICAL_PROPERTY <name> [ <material_name1> <expr1> [ <material_name2> <expr2> ]
 
 ##  done
 
-Flag that indicates whether the overall calculation is over.
+> Flag that indicates whether the overall calculation is over.
 
 
 
 ##  done_outer
 
-Flag that indicates whether the parametric, optimization of fit calculation is over or not.
+> Flag that indicates whether the parametric, optimization of fit calculation is over or not.
 It is set to true (i.e. $\neq 0$) by wasora whenever the outer calculation is considered to be finished,
 which can be that the parametric calculation swept the desired parameter space or that the
 optimization algorithm reached the desired convergence criteria.
@@ -626,7 +812,7 @@ the transient calculation ends after finishing the step.
 
 ##  done_static
 
-Flag that indicates whether the static calculation is over or not.
+> Flag that indicates whether the static calculation is over or not.
 It is set to true (i.e. $\neq 0$) by wasora if `step_static` $\ge$ `static_steps`.
 If the user sets it to true, the current step is marked as the last static step and
 the static calculation ends after finishing the step.
@@ -635,7 +821,7 @@ the static calculation ends after finishing the step.
 
 ##  done_transient
 
-Flag that indicates whether the transient calculation is over or not.
+> Flag that indicates whether the transient calculation is over or not.
 It is set to true (i.e. $\neq 0$) by wasora if `t` $\ge$ `end_time`.
 If the user sets it to true, the current step is marked as the last transient step and
 the transient calculation ends after finishing the step.
@@ -644,7 +830,7 @@ the transient calculation ends after finishing the step.
 
 ##  dt
 
-Actual value of the time step for transient calculations. When solving DAE systems,
+> Actual value of the time step for transient calculations. When solving DAE systems,
 this variable is set by wasora. It can be written by the user for example by importing it from another
 transient code by means of shared-memory objects. Care should be taken when
 solving DAE systems and overwriting `t`. Default value is 1/16, which is
@@ -654,33 +840,33 @@ a power of two and roundoff errors are thus reduced.
 
 ##  end_time
 
-Final time of the transient calculation, to be set by the user. 
+> Final time of the transient calculation, to be set by the user. 
 The default value is zero, meaning no transient calculation.
 
 
 
 ##  i
 
-Dummy index, used mainly in vector and matrix row subindex expressions.
+> Dummy index, used mainly in vector and matrix row subindex expressions.
 
 
 
 ##  infinite
 
-A very big positive number, which can be used as `end_time = infinite` or
+> A very big positive number, which can be used as `end_time = infinite` or
 to define improper integrals with infinite limits. Default is $2^{50} \approx 1 \times 10^{15}$.
 
 
 
 ##  in_outer_initial
 
-Flag that indicates if the current step is the initial step of an optimization of fit run.
+> Flag that indicates if the current step is the initial step of an optimization of fit run.
 
 
 
 ##  in_static
 
-Flag that indicates if wasora is solving the iterative static calculation.
+> Flag that indicates if wasora is solving the iterative static calculation.
 Flag that indicates if wasora is in the first step of the iterative static calculation.
 Flag that indicates if wasora is in the last step of the iterative static calculation.
 
@@ -688,43 +874,43 @@ Flag that indicates if wasora is in the last step of the iterative static calcul
 
 ##  in_transient
 
-Flag that indicates if wasora is solving transient calculation.
+> Flag that indicates if wasora is solving transient calculation.
 
 
 
 ##  in_transient_first
 
-Flag that indicates if wasora is in the first step of the transient calculation.
+> Flag that indicates if wasora is in the first step of the transient calculation.
 
 
 
 ##  in_transient_last
 
-Flag that indicates if wasora is in the last step of the transient calculation.
+> Flag that indicates if wasora is in the last step of the transient calculation.
 
 
 
 ##  j
 
-Dummy index, used mainly in matrix column subindex expressions.
+> Dummy index, used mainly in matrix column subindex expressions.
 
 
 
 ##  max_dt
 
-Maximum bound for the time step that wasora should take when solving DAE systems.
+> Maximum bound for the time step that wasora should take when solving DAE systems.
 
 
 
 ##  min_dt
 
-Minimum bound for the time step that wasora should take when solving DAE systems.
+> Minimum bound for the time step that wasora should take when solving DAE systems.
 
 
 
 ##  ncores
 
-The number of online available cores, as returned by `sysconf(_SC_NPROCESSORS_ONLN)`.
+> The number of online available cores, as returned by `sysconf(_SC_NPROCESSORS_ONLN)`.
 This value can be used in the `MAX_DAUGHTERS` expression of the `PARAMETRIC` keyword
 (i.e `ncores/2`).
 
@@ -732,41 +918,41 @@ This value can be used in the `MAX_DAUGHTERS` expression of the `PARAMETRIC` key
 
 ##  on_gsl_error
 
-This should be set to a mask that indicates how to proceed if an error ir raised in any
+> This should be set to a mask that indicates how to proceed if an error ir raised in any
 routine of the GNU Scientific Library. 
 
 
 
 ##  on_ida_error
 
-This should be set to a mask that indicates how to proceed if an error ir raised in any
+> This should be set to a mask that indicates how to proceed if an error ir raised in any
 routine of the SUNDIALS IDA Library. 
 
 
 
 ##  on_nan
 
-This should be set to a mask that indicates how to proceed if Not-A-Number signal (such as a division by zero)
+> This should be set to a mask that indicates how to proceed if Not-A-Number signal (such as a division by zero)
 is generated when evaluating any expression within wasora.
 
 
 
 ##  pi
 
-A double-precision floating point representaion of the number $\pi$, equal to
+> A double-precision floating point representaion of the number $\pi$, equal to
 `math.h` 's `M_PI` constant.
 
 
 
 ##  pid
 
-The UNIX process id of wasora (or the plugin).
+> The UNIX process id of wasora (or the plugin).
 
 
 
 ##  realtime_scale
 
-If this variable is not zero, then the transient problem is run trying to syncrhonize the
+> If this variable is not zero, then the transient problem is run trying to syncrhonize the
 problem time with realtime, up to a scale given. For example, if the scale is set to one, then
 wasora will advance the problem time at the same pace that the real wall time advances. If set to
 two, wasora's time wil advance twice as fast as real time, and so on. If the calculation time is
@@ -777,7 +963,7 @@ and execution will proceed as quick as possible with no delays.
 
 ##  rel_error
 
-Maximum allowed relative error for the solution of DAE systems. Default value is
+> Maximum allowed relative error for the solution of DAE systems. Default value is
 is $1 \times 10^{-6}$. If a fine per-variable error control is needed, special vector
 `abs_error` should be used.
 
@@ -785,33 +971,33 @@ is $1 \times 10^{-6}$. If a fine per-variable error control is needed, special v
 
 ##  static_steps
 
-Number of steps that ought to be taken during the static calculation, to be set by the user. 
+> Number of steps that ought to be taken during the static calculation, to be set by the user. 
 The default value is one, meaning only one static step. 
 
 
 
 ##  step_outer
 
-Indicates the current step number of the iterative outer calculation (parametric, optimization or fit).
+> Indicates the current step number of the iterative outer calculation (parametric, optimization or fit).
 Indicates the current step number of the iterative inner calculation (optimization or fit).
 
 
 
 ##  step_static
 
-Indicates the current step number of the iterative static calculation.
+> Indicates the current step number of the iterative static calculation.
 
 
 
 ##  step_transient
 
-Indicates the current step number of the transient static calculation.
+> Indicates the current step number of the transient static calculation.
 
 
 
 ##  t
 
-Actual value of the time for transient calculations. This variable is set by
+> Actual value of the time for transient calculations. This variable is set by
 wasora, but can be written by the user for example by importing it from another
 transient code by means of shared-memory objects. Care should be taken when
 solving DAE systems and overwriting `t`.
@@ -820,7 +1006,7 @@ solving DAE systems and overwriting `t`.
 
 ##  zero
 
-A very small positive number, which is taken to avoid roundoff 
+> A very small positive number, which is taken to avoid roundoff 
 errors when comparing floating point numbers such as replacing $a \leq a_\text{max}$
 with $a < a_\text{max} +$ `zero`. Default is $(1/2)^{-50} \approx 9\times 10^{-16}$ .
 
@@ -835,21 +1021,21 @@ with $a < a_\text{max} +$ `zero`. Default is $(1/2)^{-50} \approx 9\times 10^{-1
 
 ##  cells
 
-Number of cells of the unstructured grid. This number is the actual
+> Number of cells of the unstructured grid. This number is the actual
 quantity of volumetric elements in which the domain was discretized.
 
 
 
 ##  elements
 
-Number of total elements of the unstructured grid. This number
+> Number of total elements of the unstructured grid. This number
 include those surface elements that belong to boundary physical entities.
 
 
 
 ##  nodes
 
-Number of nodes of the unstructured grid.
+> Number of nodes of the unstructured grid.
 
 
 
@@ -862,7 +1048,7 @@ Number of nodes of the unstructured grid.
 
 ##  abs
 
-Returns the absolute value of the argument $x$.
+> Returns the absolute value of the argument $x$.
 
 ~~~wasora
 y = abs(x)
@@ -872,7 +1058,7 @@ y = abs(x)
 
 ##  acos
 
-Computes arc in radians whose cosine is equal to the argument $x$.
+> Computes arc in radians whose cosine is equal to the argument $x$.
 A NaN error is raised if $|x|>1$.
 
 ~~~wasora
@@ -883,7 +1069,7 @@ y = acos(x)
 
 ##  asin
 
-Computes arc in radians whose sine is equal to the argument $x$.
+> Computes arc in radians whose sine is equal to the argument $x$.
 A NaN error is raised if $|x|>1$.
 
 ~~~wasora
@@ -894,7 +1080,7 @@ y = asin(x)
 
 ##  atan
 
-Computes, in radians, the arc tangent of the argument $x$.
+> Computes, in radians, the arc tangent of the argument $x$.
 
 ~~~wasora
 atan(x)
@@ -904,7 +1090,7 @@ atan(x)
 
 ##  atan2
 
-Computes, in radians, the arc tangent of quotient $y/x$, using the signs of the two arguments
+> Computes, in radians, the arc tangent of quotient $y/x$, using the signs of the two arguments
 to determine the quadrant of the result, which is in the range $[-\pi,\pi]$.
 
 ~~~wasora
@@ -915,7 +1101,7 @@ atan(y,x)
 
 ##  ceil
 
-Returns the smallest integral value not less than the argument $x$.
+> Returns the smallest integral value not less than the argument $x$.
 
 ~~~wasora
 ceil(x)
@@ -925,7 +1111,7 @@ ceil(x)
 
 ##  clock
 
-Returns the value of a certain clock in seconds measured from a certain (but specific)
+> Returns the value of a certain clock in seconds measured from a certain (but specific)
 milestone. The kind of clock and the initial milestone depends on the
 optional flag $f$. It defaults to zero, meaning wall time since the UNIX Epoch.
 The list and the meanings of the other available values for $f$ can be checked
@@ -939,7 +1125,7 @@ clock([f])
 
 ##  cos
 
-Computes the cosine of the argument $x$, where $x$ is in radians.
+> Computes the cosine of the argument $x$, where $x$ is in radians.
 A cosine wave can be generated by passing as the argument $x$
 a linear function of time such as $\omega t+\phi$, where $\omega$ controls the frequency of the wave
 and $\phi$ controls its phase.
@@ -952,7 +1138,7 @@ cos(x)
 
 ##  cosh
 
-Computes the hyperbolic cosine of the argument $x$, where $x$ is in radians.
+> Computes the hyperbolic cosine of the argument $x$, where $x$ is in radians.
 
 ~~~wasora
 cosh(x)
@@ -962,7 +1148,7 @@ cosh(x)
 
 ##  d_dt
 
-Computes the time derivative of the signal $x$ using the difference between the
+> Computes the time derivative of the signal $x$ using the difference between the
 value of the signal in the previous time step and the actual value divided by the
 time step. For $t=0$, the return value is zero.
 Unlike the functional `derivative`, this function works with expressions and not
@@ -978,7 +1164,7 @@ d_dt(x)
 
 ##  deadband
 
-Filters the first argument $x$ with a deadband centered at zero with an amplitude
+> Filters the first argument $x$ with a deadband centered at zero with an amplitude
 given by the second argument $a$.
 
 ~~~wasora
@@ -989,7 +1175,7 @@ deadband(x, a)
 
 ##  equal
 
-Checks if the two first expressions $a$ and $b$ are equal, up to the tolerance
+> Checks if the two first expressions $a$ and $b$ are equal, up to the tolerance
 given by the third optional argument $\epsilon$. If either $|a|>1$ or $|b|>1$,
 the arguments are compared using GSL's `gsl_fcmp`, otherwise the
 absolute value of their difference is compared against $\epsilon$. This function
@@ -1004,7 +1190,7 @@ equal(a, b, [eps])
 
 ##  exp
 
-Computes the exponential function the argument $x$, i.e. the base of the
+> Computes the exponential function the argument $x$, i.e. the base of the
 natural logarithms raised to the $x$-th power.
 
 ~~~wasora
@@ -1015,7 +1201,7 @@ exp(x)
 
 ##  expint1
 
-Computes the first exponential integral function of the argument $x$.
+> Computes the first exponential integral function of the argument $x$.
 If $x$ equals zero, a NaN error is issued.
 
 ~~~wasora
@@ -1026,7 +1212,7 @@ expint1(x)
 
 ##  expint2
 
-Computes the second exponential integral function of the argument $x$.
+> Computes the second exponential integral function of the argument $x$.
 
 ~~~wasora
 expint2(x)
@@ -1036,7 +1222,7 @@ expint2(x)
 
 ##  expint3
 
-Computes the third exponential integral function of the argument $x$.
+> Computes the third exponential integral function of the argument $x$.
 
 ~~~wasora
 expint3(x)
@@ -1046,7 +1232,7 @@ expint3(x)
 
 ##  expintn
 
-Computes the $n$-th exponential integral function of the argument $x$.
+> Computes the $n$-th exponential integral function of the argument $x$.
 If $n$ equals zero or one and $x$ zero, a NaN error is issued.
 
 ~~~wasora
@@ -1057,7 +1243,7 @@ expintn(n,x)
 
 ##  floor
 
-Returns the largest integral value not greater than the argument $x$.
+> Returns the largest integral value not greater than the argument $x$.
 
 ~~~wasora
 floor(x)
@@ -1067,7 +1253,7 @@ floor(x)
 
 ##  heaviside
 
-Computes the zero-centered Heaviside step function of the argument $x$.
+> Computes the zero-centered Heaviside step function of the argument $x$.
 If the optional second argument $\epsilon$ is provided, the discontinuous
 step at $x=0$ is replaced by a ramp starting at $x=0$ and finishing at $x=\epsilon$.
 
@@ -1079,7 +1265,7 @@ heaviside(x, [eps])
 
 ##  if
 
-Performs a conditional testing of the first argument $a$, and returns either the
+> Performs a conditional testing of the first argument $a$, and returns either the
 second optional argument $b$ if $a$ is different from zero or the third optional argument $c$
 if $a$ evaluates to zero. The comparison of the condition $a$ with zero is performed
 within the precision given by the optional fourth argument $\epsilon$.
@@ -1097,7 +1283,7 @@ if(a, [b], [c], [eps])
 
 ##  integral_dt
 
-Computes the time integral of the signal $x$ using the trapezoidal rule
+> Computes the time integral of the signal $x$ using the trapezoidal rule
 using the value of the signal in the previous time step and the current value.
 At $t = 0$ the integral is initialized to zero.
 Unlike the functional `integral`, this function works with expressions and not
@@ -1113,7 +1299,7 @@ integral_dt(x)
 
 ##  integral_euler_dt
 
-Idem as `integral_dt` but uses the backward Euler rule to update the
+> Idem as `integral_dt` but uses the backward Euler rule to update the
 integral value.
 This function is provided in case this particular way
 of approximating time integrals is needed.
@@ -1126,7 +1312,7 @@ integral_euler_dt(x)
 
 ##  is_even
 
-Returns one if the argument $x$ rounded to the nearest integer is even.
+> Returns one if the argument $x$ rounded to the nearest integer is even.
 
 ~~~wasora
 y = is_even(x)
@@ -1136,7 +1322,7 @@ y = is_even(x)
 
 ##  is_in_interval
 
-Returns true if the argument~$x$ is in the interval~$[a,b)$, i.e. including~$a$
+> Returns true if the argument~$x$ is in the interval~$[a,b)$, i.e. including~$a$
 but excluding~$b$.
 
 ~~~wasora
@@ -1147,7 +1333,7 @@ is_in_interval(x, a, b)
 
 ##  is_odd
 
-Returns one if the argument $x$ rounded to the nearest integer is odd.
+> Returns one if the argument $x$ rounded to the nearest integer is odd.
 
 ~~~wasora
 y = is_odd(x)
@@ -1157,7 +1343,7 @@ y = is_odd(x)
 
 ##  j0
 
-Computes the regular cylindrical Bessel function of zeroth order evaluated at the argument $x$.
+> Computes the regular cylindrical Bessel function of zeroth order evaluated at the argument $x$.
 
 ~~~wasora
 j0(x)
@@ -1167,7 +1353,7 @@ j0(x)
 
 ##  lag
 
-Filters the first argument $x(t)$ with a first-order lag of characteristic time $\tau$,
+> Filters the first argument $x(t)$ with a first-order lag of characteristic time $\tau$,
 i.e. this function applies the transfer function
 !bt
 \[ G(s) = \frac{1}{1 + s\tau} \]
@@ -1184,7 +1370,7 @@ lag(x, tau)
 
 ##  lag_bilinear
 
-Filters the first argument $x(t)$ with a first-order lag of characteristic time $\tau$,
+> Filters the first argument $x(t)$ with a first-order lag of characteristic time $\tau$,
 i.e. this function applies the transfer function
 !bt
 \[ G(s) = \frac{1}{1 + s\tau} \]
@@ -1199,7 +1385,7 @@ lag_bilinear(x, tau)
 
 ##  lag_euler
 
-Filters the first argument $x(t)$ with a first-order lag of characteristic time $\tau$,
+> Filters the first argument $x(t)$ with a first-order lag of characteristic time $\tau$,
 i.e. this function applies the transfer function
 !bt
 \[ G(s) = \frac{1}{1 + s\tau} \]
@@ -1214,7 +1400,7 @@ lag_euler(x, tau)
 
 ##  last
 
-Returns the value the signal $x$ had in the previous time step.
+> Returns the value the signal $x$ had in the previous time step.
 This function is equivalent to the $Z$-transform operator "delay" denoted by $z^{-1}\left[x\right]$.
 For $t=0$ the function returns the actual value of $x$.
 The optional flag $p$ should be set to one if the reference to `last`
@@ -1229,7 +1415,7 @@ last(x,[p])
 
 ##  limit
 
-Limits the first argument $x$ to the interval $[a,b]$. The second argument $a$ should
+> Limits the first argument $x$ to the interval $[a,b]$. The second argument $a$ should
 be less than the third argument $b$.
 
 ~~~wasora
@@ -1240,7 +1426,7 @@ limit(x, a, b)
 
 ##  limit_dt
 
-Limits the value of the first argument $x(t)$ so to that its time derivative
+> Limits the value of the first argument $x(t)$ so to that its time derivative
 is bounded to the interval $[a,b]$. The second argument $a$ should
 be less than the third argument $b$.
 
@@ -1252,7 +1438,7 @@ limit_dt(x, a, b)
 
 ##  log
 
-Computes the natural logarithm of the argument $x$. If $x$ is zero or negative,
+> Computes the natural logarithm of the argument $x$. If $x$ is zero or negative,
 a NaN error is issued.
 
 ~~~wasora
@@ -1263,7 +1449,7 @@ log(x)
 
 ##  mark_max
 
-Returns the integer index $i$ of the maximum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
+> Returns the integer index $i$ of the maximum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 
 ~~~wasora
 mark_max(x1, x2, [...], [x10])
@@ -1273,7 +1459,7 @@ mark_max(x1, x2, [...], [x10])
 
 ##  mark_min
 
-Returns the integer index $i$ of the minimum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
+> Returns the integer index $i$ of the minimum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 
 ~~~wasora
 mark_max(x1, x2, [...], [x10])
@@ -1283,7 +1469,7 @@ mark_max(x1, x2, [...], [x10])
 
 ##  max
 
-Returns the maximum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
+> Returns the maximum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 
 ~~~wasora
 max(x1, x2, [...], [x10])
@@ -1293,7 +1479,7 @@ max(x1, x2, [...], [x10])
 
 ##  min
 
-Returns the minimum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
+> Returns the minimum of the arguments $x_i$ provided. Currently only maximum of ten arguments can be provided.
 
 ~~~wasora
 min(x1, x2, [...], [x10])
@@ -1303,7 +1489,7 @@ min(x1, x2, [...], [x10])
 
 ##  mod
 
-Returns the remainder of the division between the first argument $a$ and the
+> Returns the remainder of the division between the first argument $a$ and the
 second $b$. Both arguments may be non-integral.
 
 ~~~wasora
@@ -1314,7 +1500,7 @@ mod(a, b)
 
 ##  not
 
-Returns one if the first argument $x$ is zero and zero otherwise.
+> Returns one if the first argument $x$ is zero and zero otherwise.
 The second optional argument $\epsilon$ gives the precision of the "zero"
 evaluation. If not given, default is $\epsilon = 10^{-16}$.
 
@@ -1326,7 +1512,7 @@ not(x, [eps])
 
 ##  random
 
-Returns a random real number uniformly distributed between the first
+> Returns a random real number uniformly distributed between the first
 real argument $x_1$ and the second one $x_2$.
 If the third integer argument $s$ is given, it is used as the seed and thus
 repetitive sequences can be obtained. If no seed is provided, the current time
@@ -1343,7 +1529,7 @@ random(x1, x2, [s])
 
 ##  random_gauss
 
-Returns a random real number with a Gaussian distribution with a mean
+> Returns a random real number with a Gaussian distribution with a mean
 equal to the first argument $x_1$ and a standard deviation equatl to the second one $x_2$.
 If the third integer argument $s$ is given, it is used as the seed and thus
 repetitive sequences can be obtained. If no seed is provided, the current time
@@ -1360,7 +1546,7 @@ random_gauss(x1, x2, [s])
 
 ##  round
 
-Rounds the argument $x$ to the nearest integer. Halfway cases are rounded away from zero.
+> Rounds the argument $x$ to the nearest integer. Halfway cases are rounded away from zero.
 
 ~~~wasora
 round(x)
@@ -1370,7 +1556,7 @@ round(x)
 
 ##  sawtooth_wave
 
-Computes a sawtooth wave betwen zero and one with a period equal to one.
+> Computes a sawtooth wave betwen zero and one with a period equal to one.
 As with the sine wave, a sawtooh wave can be generated by passing as the argument $x$
 a linear function of time such as $\omega t+\phi$, where $\omega$ controls the frequency of the wave
 and $\phi$ controls its phase.
@@ -1383,7 +1569,7 @@ sawtooth_wave(x)
 
 ##  sgn
 
-Returns minus one, zero or plus one depending on the sign of the first argument $x$.
+> Returns minus one, zero or plus one depending on the sign of the first argument $x$.
 The second optional argument $\epsilon$ gives the precision of the "zero"
 evaluation. If not given, default is $\epsilon = 10^{-16}$.
 
@@ -1395,7 +1581,7 @@ sgn(x, [eps])
 
 ##  sin
 
-Computes the sine of the argument $x$, where $x$ is in radians.
+> Computes the sine of the argument $x$, where $x$ is in radians.
 A sine wave can be generated by passing as the argument $x$
 a linear function of time such as $\omega t+\phi$, where $\omega$ controls the frequency of the wave
 and $\phi$ controls its phase.
@@ -1408,7 +1594,7 @@ sin(x)
 
 ##  sinh
 
-Computes the hyperbolic sine of the argument $x$, where $x$ is in radians.
+> Computes the hyperbolic sine of the argument $x$, where $x$ is in radians.
 
 ~~~wasora
 sinh(x)
@@ -1418,7 +1604,7 @@ sinh(x)
 
 ##  sqrt
 
-Computes the positive square root of the argument $x$. If $x$ is negative,
+> Computes the positive square root of the argument $x$. If $x$ is negative,
 a NaN error is issued.
 
 ~~~wasora
@@ -1429,7 +1615,7 @@ sqrt(x)
 
 ##  square_wave
 
-Computes a square function betwen zero and one with a period equal to one.
+> Computes a square function betwen zero and one with a period equal to one.
 The output is one for $0 < x < 1/2$ and goes to zero for $1/2 < x < 1$.
 As with the sine wave, a square wave can be generated by passing as the argument $x$
 a linear function of time such as $\omega t+\phi$, where $\omega$ controls the frequency of the wave
@@ -1443,7 +1629,7 @@ square_wave(x)
 
 ##  tan
 
-Computes the tangent of the argument $x$, where $x$ is in radians.
+> Computes the tangent of the argument $x$, where $x$ is in radians.
 
 ~~~wasora
 tan(x)
@@ -1453,7 +1639,7 @@ tan(x)
 
 ##  tanh
 
-Computes the hyperbolic tangent of the argument $x$, where $x$ is in radians.
+> Computes the hyperbolic tangent of the argument $x$, where $x$ is in radians.
 
 ~~~wasora
 tanh(x)
@@ -1463,7 +1649,7 @@ tanh(x)
 
 ##  threshold_max
 
-Returns one if the first argument $x$ is greater than the threshold given by
+> Returns one if the first argument $x$ is greater than the threshold given by
 the second argument $a$, and \textit{exactly} zero otherwise. If the optional
 third argument $b$ is provided, an hysteresis of width $b$ is needed in order
 to reset the function value. Default is no hysteresis, i.e. $b=0$.
@@ -1476,7 +1662,7 @@ threshold_max(x, a, [b])
 
 ##  threshold_min
 
-Returns one if the first argument $x$ is less than the threshold given by
+> Returns one if the first argument $x$ is less than the threshold given by
 the second argument $a$, and \textit{exactly} zero otherwise. If the optional
 third argument $b$ is provided, an hysteresis of width $b$ is needed in order
 to reset the function value. Default is no hysteresis, i.e. $b=0$.
@@ -1489,7 +1675,7 @@ threshold_min(x, a, [b])
 
 ##  triangular_wave
 
-Computes a triangular wave betwen zero and one with a period equal to one.
+> Computes a triangular wave betwen zero and one with a period equal to one.
 As with the sine wave, a triangular wave can be generated by passing as the argument $x$
 a linear function of time such as $\omega t+\phi$, where $\omega $ controls the frequency of the wave
 and $\phi$ controls its phase.
@@ -1509,7 +1695,7 @@ triangular_wave(x)
 
 ##  derivative
 
-Computes the derivative of the expression $f(x)$ 
+> Computes the derivative of the expression $f(x)$ 
 given in the first argument with respect to the variable $x$
 given in the second argument at the point $x=a$ given in
 the third argument using an adaptive scheme.
@@ -1531,7 +1717,7 @@ derivative(f(x), x, a, [h], [p])
 
 ##  func_min
 
-Finds the value of the variable $x$ given in the second argument
+> Finds the value of the variable $x$ given in the second argument
 which makes the expression $f(x)$ given in the first argument to
 take local a minimum in the in the range $[a,b]$ given by
 the third and fourth arguments. If there are many local minima,
@@ -1559,7 +1745,7 @@ y = func_min(f(x), x, a, b, [eps], [alg], [p])
 
 ##  gauss_kronrod
 
-Computes the integral of the expression $f(x)$
+> Computes the integral of the expression $f(x)$
 given in the first argument with respect to variable $x$
 given in the second argument over the interval $[a,b]$ given
 in the third and fourth arguments respectively using a
@@ -1585,7 +1771,7 @@ gauss_kronrod(f(x), x, a, b, [eps])
 
 ##  gauss_legendre
 
-Computes the integral of the expression $f(x)$
+> Computes the integral of the expression $f(x)$
 given in the first argument with respect to variable $x$
 given in the second argument over the interval $[a,b]$ given
 in the third and fourth arguments respectively using the
@@ -1606,7 +1792,7 @@ gauss_legendre(f(x), x, a, b, [n])
 
 ##  integral
 
-Computes the integral of the expression $f(x)$
+> Computes the integral of the expression $f(x)$
 given in the first argument with respect to variable $x$
 given in the second argument over the interval $[a,b]$ given
 in the third and fourth arguments respectively using an adaptive
@@ -1649,7 +1835,7 @@ integral(f(x), x, a, b, [eps], [k], [max_subdivisions])
 
 ##  prod
 
-Computes product of the $N=b-a$ expressions $f(i)$
+> Computes product of the $N=b-a$ expressions $f(i)$
 given in the first argument by varying the variable~$i$
 given in the second argument between~$a$
 given in the third argument and~$b$
@@ -1663,7 +1849,7 @@ prod(f(i), i, a, b)
 
 ##  root
 
-Computes the value of the variable $x$ given in the second argument
+> Computes the value of the variable $x$ given in the second argument
 which makes the expression $f(x)$ given in the first argument to
 be equal to zero by using a root bracketing algorithm.
 The root should be in the range $[a,b]$ given by the third and fourth arguments.
@@ -1693,7 +1879,7 @@ root(f(x), x, a, b, [eps], [alg], [p])
 
 ##  sum
 
-Computes sum of the $N=b-a$ expressions $f_i$
+> Computes sum of the $N=b-a$ expressions $f_i$
 given in the first argument by varying the variable $i$
 given in the second argument between $a$
 given in the third argument and $b$
@@ -1714,7 +1900,7 @@ sum(f_i, i, a, b)
 
 ##  vecdot
 
-Computes the dot product between vectors $\vec{a}$ and $\vec{b}$, which should
+> Computes the dot product between vectors $\vec{a}$ and $\vec{b}$, which should
 have the same size.
 
 ~~~wasora
@@ -1725,7 +1911,7 @@ vecdot(a,b)
 
 ##  vecmax
 
-Returns the biggest element of vector $\vec{b}$, taking into account its sign
+> Returns the biggest element of vector $\vec{b}$, taking into account its sign
 (i.e. $1 > -2$).
 
 ~~~wasora
@@ -1736,7 +1922,7 @@ vecmax(b)
 
 ##  vecmaxindex
 
-Returns the index of the biggest element of vector $\vec{b}$, taking into account its sign
+> Returns the index of the biggest element of vector $\vec{b}$, taking into account its sign
 (i.e. $2 > -1$).
 
 ~~~wasora
@@ -1747,7 +1933,7 @@ vecmaxindex(b)
 
 ##  vecmin
 
-Returns the smallest element of vector $\vec{b}$, taking into account its sign
+> Returns the smallest element of vector $\vec{b}$, taking into account its sign
 (i.e. $-2 < 1$).
 
 ~~~wasora
@@ -1758,7 +1944,7 @@ vecmin(b)
 
 ##  vecminindex
 
-Returns the index of the smallest element of vector $\vec{b}$, taking into account its sign
+> Returns the index of the smallest element of vector $\vec{b}$, taking into account its sign
 (i.e. $-2 < 1$).
 
 ~~~wasora
@@ -1769,7 +1955,7 @@ vecminindex(b)
 
 ##  vecnorm
 
-Computes euclidean norm of vector $\vec{b}$. Other norms can be computed explicitly
+> Computes euclidean norm of vector $\vec{b}$. Other norms can be computed explicitly
 using the `sum` functional, as illustrated in the example.
 
 ~~~wasora
@@ -1780,7 +1966,7 @@ vecnorm(b)
 
 ##  vecsize
 
-Returns the size of vector $\vec{b}$.
+> Returns the size of vector $\vec{b}$.
 
 ~~~wasora
 vecsize(b)
@@ -1790,7 +1976,7 @@ vecsize(b)
 
 ##  vecsum
 
-Computes the sum of all the components of vector $\vec{b}$.
+> Computes the sum of all the components of vector $\vec{b}$.
 
 ~~~wasora
 vecsum(b)

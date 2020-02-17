@@ -429,8 +429,8 @@ int wasora_mesh_parse_line(char *line) {
       mesh_integrate_t *mesh_integrate = calloc(1, sizeof(mesh_integrate_t));
       
       while ((token = wasora_get_next_token(NULL)) != NULL) {
-///kw+MESH_INTEGRATE+detail The integran may be either a `FUNCTION` or an `EXPRESSION`.
 // TODO: integrand y que wasora vea si es una funcion o una expresion
+///kw+MESH_INTEGRATE+detail The integrand may be either a `FUNCTION` or an `EXPRESSION`.
 ///kw+MESH_INTEGRATE+usage { FUNCTION <function>
 ///kw+MESH_INTEGRATE+detail In the first case, just the function name is expected (i.e. not its arguments).
         if (strcasecmp(token, "FUNCTION") == 0) {
@@ -575,18 +575,21 @@ int wasora_mesh_parse_line(char *line) {
       
 // --- MESH_FIND_MINMAX ------------------------------------------------------
     } else if (strcasecmp(token, "MESH_FIND_MINMAX") == 0) {
-
       
 ///kw+MESH_FIND_MINMAX+usage MESH_FIND_MINMAX
+///kw+MESH_FIND_MINMAX+desc Finds absolute extrema of a function or expression within a mesh-based domain.
       mesh_find_minmax_t *mesh_find_minmax = calloc(1, sizeof(mesh_find_minmax_t));
       char *variable;
       
       while ((token = wasora_get_next_token(NULL)) != NULL) {
+///kw+MESH_FIND_MINMAX+detail Either a `FUNCTION` or an `EXPRESSION` should be given.
+///kw+MESH_FIND_MINMAX+detail In the first case, just the function name is expected (i.e. not its arguments).
 ///kw+MESH_FIND_MINMAX+usage { FUNCTION <function>
         if (strcasecmp(token, "FUNCTION") == 0) {
           wasora_call(wasora_parser_function(&mesh_find_minmax->function));
 
-///kw+MESH_FIND_MINMAX+usage | EXPRESSION <expr> }
+///kw+MESH_FIND_MINMAX+usage | EXPRESSION <expr> }@
+///kw+MESH_INTEGRATE+detail In the second case, a full algebraic expression including the arguments is expected.
         } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
           wasora_call(wasora_parser_expression(&mesh_find_minmax->expr));
         
@@ -601,7 +604,8 @@ int wasora_mesh_parse_line(char *line) {
           }
           free(mesh_name);
 
-///kw+MESH_FIND_MINMAX+usage [ PHYSICAL_ENTITY <physical_entity_name> ]
+//kw+MESH_FIND_MINMAX+usage [ PHYSICAL_ENTITY <physical_entity_name> ]
+/*          
         } else if (strcasecmp(token, "PHYSICAL_ENTITY") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
@@ -612,8 +616,16 @@ int wasora_mesh_parse_line(char *line) {
             }
           }
           free(name);
+*/
+///kw+MESH_FIND_MINMAX+usage [ NODES
+        } else if (strcasecmp(token, "NODES") == 0) {
+          mesh_find_minmax->centering = centering_nodes;
+///kw+MESH_FIND_MINMAX+usage | CELLS ]@
+        } else if (strcasecmp(token, "CELLS") == 0) {
+          mesh_find_minmax->centering = centering_cells;
+
           
-///kw+MESH_FIND_MINMAX+usage [ MIN <MIN> ]
+///kw+MESH_FIND_MINMAX+usage [ MIN <variable> ]
         } else if (strcasecmp(token, "MIN") == 0) {
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_find_minmax->min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
@@ -641,7 +653,7 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MESH_FIND_MINMAX+usage [Z_MIN <variable> ]
+///kw+MESH_FIND_MINMAX+usage [Z_MIN <variable> ]@
         } else if (strcasecmp(token, "Z_MIN") == 0) {
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_find_minmax->z_min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
@@ -676,19 +688,12 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MESH_FIND_MINMAX+usage [Z_MAX <variable> ]
+///kw+MESH_FIND_MINMAX+usage [Z_MAX <variable> ]@
         } else if (strcasecmp(token, "Z_MAX") == 0) {
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_find_minmax->z_max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
-
-///kw+MESH_FIND_MINMAX+usage [ NODES
-        } else if (strcasecmp(token, "NODES") == 0) {
-          mesh_find_minmax->centering = centering_nodes;
-///kw+MESH_FIND_MINMAX+usage | CELLS ]
-        } else if (strcasecmp(token, "CELLS") == 0) {
-          mesh_find_minmax->centering = centering_cells;
 
         } else {
           wasora_push_error_message("unknown keyword '%s'", token);

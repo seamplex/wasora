@@ -1,6 +1,8 @@
 changequote([!,!])dnl
 % Wasora esyscmd([!git describe | sed 's/-/./' | tr -d '\n'!]) reference sheet
 
+include(reference-toc.md)
+
 # Keywords
 
 esyscmd([!./reference.sh parser kw!])

@@ -111,6 +111,17 @@ int wasora_instruction_mesh(void *arg) {
     }
   }
   
+  wasora_call(wasora_vector_init(wasora_mesh.vars.bbox_min));
+  wasora_call(wasora_vector_init(wasora_mesh.vars.bbox_max));
+  
+  gsl_vector_set(wasora_mesh.vars.bbox_min->value, 0, x_min[0]);
+  gsl_vector_set(wasora_mesh.vars.bbox_min->value, 1, x_min[1]);
+  gsl_vector_set(wasora_mesh.vars.bbox_min->value, 2, x_min[2]);
+  gsl_vector_set(wasora_mesh.vars.bbox_max->value, 0, x_max[0]);
+  gsl_vector_set(wasora_mesh.vars.bbox_max->value, 1, x_max[1]);
+  gsl_vector_set(wasora_mesh.vars.bbox_max->value, 2, x_max[2]);
+  
+  
   // alocamos los arrays de los elementos que pertenecen a cada entidad fisica
   // (un array es mas eficiente que una linked list)
   // TODO: por que no tenemoms un element_list?

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related max-finding routines
  *
- *  Copyright (C) 2016 jeremy theler
+ *  Copyright (C) 2016--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -50,7 +50,8 @@ int wasora_instruction_mesh_find_minmax(void *arg) {
     if (mesh_find_minmax->centering == centering_cells) {
       if (function->type == type_pointwise_mesh_cell && function->mesh == mesh) {
         for (i = 0; i < function->data_size; i++) {
-          if ((y = function->data_value[i]) > max) {
+          y = function->data_value[i];
+          if (y > max) {
             // TODO: SPOT!
             max = y;
             i_max = i;
@@ -58,7 +59,7 @@ int wasora_instruction_mesh_find_minmax(void *arg) {
             y_max = (function->n_arguments > 1)?function->data_argument[1][i] : 0;
             z_max = (function->n_arguments > 2)?function->data_argument[2][i] : 0;
           }
-          if ((y = function->data_value[i]) < min) {
+          if (y < min) {
             // TODO: SPOT!
             min = y;
             i_min = i;
@@ -69,14 +70,15 @@ int wasora_instruction_mesh_find_minmax(void *arg) {
         }
       } else {
         for (i = 0; i < mesh->n_cells; i++) {
-          if ((y = wasora_evaluate_function(function, mesh->cell[i].x)) > max) {
+          y = wasora_evaluate_function(function, mesh->cell[i].x);
+          if (y > max) {
             max = y;
             i_max = i;
             x_max = mesh->cell[i].x[0];
             y_max = (mesh->bulk_dimensions > 1)?mesh->cell[i].x[1] : 0;
             z_max = (function->n_arguments > 2)?mesh->cell[i].x[2] : 0;
           }
-          if ((y = wasora_evaluate_function(function, mesh->cell[i].x)) < min) {
+          if (y < min) {
             min = y;
             i_min = i;
             x_min = mesh->cell[i].x[0];
@@ -88,14 +90,15 @@ int wasora_instruction_mesh_find_minmax(void *arg) {
     } else {
       if (function->type == type_pointwise_mesh_node && function->mesh == mesh) {
         for (i = 0; i < function->data_size; i++) {
-          if ((y = function->data_value[i]) > max) {
+          y = function->data_value[i];
+          if (y > max) {
             max = y;
             i_max = i;
             x_max = function->data_argument[0][i];
             y_max = (function->n_arguments > 1)?function->data_argument[1][i] : 0;
             z_max = (function->n_arguments > 2)?function->data_argument[2][i] : 0;
           }
-          if ((y = function->data_value[i]) < min) {
+          if (y < min) {
             min = y;
             i_min = i;
             x_min = function->data_argument[0][i];
@@ -105,14 +108,15 @@ int wasora_instruction_mesh_find_minmax(void *arg) {
         }
       } else {
         for (i = 0; i < mesh->n_nodes; i++) {
-          if ((y = wasora_evaluate_function(function, mesh->node[i].x)) > max) {
+          y = wasora_evaluate_function(function, mesh->node[i].x);
+          if (y > max) {
             max = y;
             i_max = i;
             x_max = mesh->node[i].x[0];
             y_max = (mesh->bulk_dimensions > 1)?mesh->node[i].x[1] : 0;
             z_max = (mesh->bulk_dimensions > 2)?mesh->node[i].x[2] : 0;
           }
-          if ((y = wasora_evaluate_function(function, mesh->node[i].x)) < min) {
+          if (y < min) {
             min = y;
             i_min = i;
             x_min = mesh->node[i].x[0];
@@ -128,14 +132,15 @@ int wasora_instruction_mesh_find_minmax(void *arg) {
         wasora_var(wasora_mesh.vars.x) = mesh->cell[i].x[0];
         wasora_var(wasora_mesh.vars.y) = mesh->cell[i].x[1];
         wasora_var(wasora_mesh.vars.z) = mesh->cell[i].x[2];
-        if ((y = wasora_evaluate_expression(expr)) > max) {
+        y = wasora_evaluate_expression(expr);
+        if (y > max) {
           max = y;
           i_max = i;
           x_max = mesh->cell[i].x[0];
           y_max = (mesh->bulk_dimensions > 1)?mesh->cell[i].x[1] : 0;
           z_max = (mesh->bulk_dimensions > 2)?mesh->cell[i].x[2] : 0;
         }
-        if ((y = wasora_evaluate_expression(expr)) < min) {
+        if (y < min) {
           min = y;
           i_min = i;
           x_min = mesh->cell[i].x[0];
@@ -148,14 +153,15 @@ int wasora_instruction_mesh_find_minmax(void *arg) {
         wasora_var(wasora_mesh.vars.x) = mesh->node[i].x[0];
         wasora_var(wasora_mesh.vars.y) = mesh->node[i].x[1];
         wasora_var(wasora_mesh.vars.z) = mesh->node[i].x[2];
-        if ((y = wasora_evaluate_expression(expr)) > max) {
+        y = wasora_evaluate_expression(expr);
+        if (y > max) {
           max = y;
           i_max = i;
           x_max = mesh->node[i].x[0];
           y_max = (mesh->bulk_dimensions > 1) ? mesh->node[i].x[1] : 0;
           z_max = (mesh->bulk_dimensions > 2) ? mesh->node[i].x[2] : 0;
         }
-        if ((y = wasora_evaluate_expression(expr)) < min) {
+        if (y < min) {
           min = y;
           i_min = i;
           x_min = mesh->node[i].x[0];

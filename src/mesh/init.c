@@ -84,14 +84,20 @@ int wasora_mesh_init_before_parser(void) {
 ///va+elements+name elements
 ///va+elements+desc Number of total elements of the unstructured grid. This number
 ///va+elements+desc include those surface elements that belong to boundary physical entities.
-  
   wasora_mesh.vars.elements = wasora_define_variable("elements");
 
 ///va+cells+name cells
 ///va+cells+desc Number of cells of the unstructured grid. This number is the actual
 ///va+cells+desc quantity of volumetric elements in which the domain was discretized.
-  
   wasora_mesh.vars.cells = wasora_define_variable("cells");
+
+///va+bbox_min+name bbox_min
+///va+bbox_min+desc Minimum values of the mesh’s bounding box (vector of size 3)
+  wasora_mesh.vars.bbox_min = wasora_define_vector("bbox_min", 3, NULL, NULL);
+
+///va+bbox_min+name bbox_min
+///va+bbox_min+desc Maximum values of the mesh’s bounding box (vector of size 3)
+  wasora_mesh.vars.bbox_max = wasora_define_vector("bbox_max", 3, NULL, NULL);
   
 //va+eps+name eps
 //va+eps+desc Small value. Default is $10^{-6}$.

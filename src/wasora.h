@@ -1863,6 +1863,9 @@ struct {
     var_t *nodes;
     var_t *cells;
     var_t *elements;
+    
+    vector_t *bbox_min;
+    vector_t *bbox_max;
   } vars;
 
   // esto deberia ir en cada malla porque va a tener informacion sobre los puntos de gauss

@@ -124,10 +124,13 @@ int wasora_instruction_mesh(void *arg) {
   
   // alocamos los arrays de los elementos que pertenecen a cada entidad fisica
   // (un array es mas eficiente que una linked list)
-  // TODO: por que no tenemoms un element_list?
   for (physical_entity = mesh->physical_entities; physical_entity != NULL; physical_entity = physical_entity->hh.next) {
     if (physical_entity->n_elements != 0) {
       physical_entity->element = malloc(physical_entity->n_elements * sizeof(int));
+    }
+    // miramos cual es el tag mas grande de las entities porque nos puede servir para alocar arrays temporales
+    if (physical_entity->tag > mesh->physical_tag_max) {
+      mesh->physical_tag_max = physical_entity->tag;
     }
   }
   

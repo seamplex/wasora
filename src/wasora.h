@@ -2120,12 +2120,13 @@ struct mesh_t {
   int degrees_of_freedom;        // grados de libertad por incognita
   int order;                     // mayor orden de algun elemento
 
-  physical_entity_t *physical_entities;         // hash table
-  physical_entity_t *physical_entities_by_tag[4];       // 4 hash tables por tag
+  physical_entity_t *physical_entities;              // hash table
+  physical_entity_t *physical_entities_by_tag[4];    // 4 hash tables por tag
+  int physical_tag_max;          // el mayor tag de las entities
   
   // cantidad de entidades geometricas
   int points, curves, surfaces, volumes;
-  geometrical_entity_t *geometrical_entities[4]; // 4 hash tables
+  geometrical_entity_t *geometrical_entities[4];     // 4 hash tables
 
   enum  {
     ordering_node_based,

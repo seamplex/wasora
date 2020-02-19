@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related vector-filling routines
  *
- *  Copyright (C) 2015--2016 jeremy theler
+ *  Copyright (C) 2015--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -35,6 +35,10 @@ int wasora_instruction_mesh_fill_vector(void *arg) {
   
   if (!vector->initialized) {
     wasora_call(wasora_vector_init(mesh_fill_vector->vector));
+  }
+  
+  if (mesh_fill_vector->centering == centering_default) {
+    mesh_fill_vector->centering = centering_nodes;
   }
   
   if        (mesh_fill_vector->centering == centering_cells && mesh->n_cells != vector->size) {

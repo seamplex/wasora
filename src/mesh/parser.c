@@ -32,6 +32,7 @@ int wasora_mesh_parse_line(char *line) {
 
 // ---- MESH ----------------------------------------------------
 ///kw+MESH+usage MESH
+///kw+MESH+desc Reads an unstructured mesh from an external file in MSH, VTK or FRD format.
     if (strcasecmp(token, "MESH") == 0) {
 
       mesh_t *mesh;
@@ -52,10 +53,22 @@ int wasora_mesh_parse_line(char *line) {
       while ((token = wasora_get_next_token(NULL)) != NULL) {
         
 ///kw+MESH+usage [ NAME <name> ]
+///kw+MESH+detail If there will be only one mesh in the input file, the `NAME` is optional. 
+///kw+MESH+detail Yet it might be needed in cases where there are many meshes and one needs to refer to a particular mesh,        
+///kw+MESH+detail such as in `MESH_POST` or `MESH_INTEGRATE`.
+///kw+MESH+detail When solving PDEs (such as in Fino or milonga), the first mesh is the problem mesh.
         if (strcasecmp(token, "NAME") == 0) {
           wasora_call(wasora_parser_string(&name));
           
-///kw+MESH+usage [ FILE <file_id> |
+///kw+MESH+detail Either a file identifier (defined previously with a `FILE` keyword) or a file path should be given.
+///kw+MESH+detail The format is read from the extension, which should be either
+///kw+MESH+detail @
+///kw+MESH+detail  * `.msh` [Gmsh ASCII format](http:\/\/gmsh.info/doc/texinfo/gmsh.html#MSH-file-format), versions 2.2, 4.0 or 4.1
+///kw+MESH+detail  * `.vtk` [ASCII legacy VTK](https:\/\/lorensen.github.io/VTKExamples/site/VTKFileFormats/)
+///kw+MESH+detail  * `.frd` [CalculiX’s FRD ASCII output](https:\/\/web.mit.edu/calculix_v2.7/CalculiX/cgx_2.7/doc/cgx/node4.html))
+///kw+MESH+detail @
+///kw+MESH+detail Note than only MSH is suitable for defining PDE domains, as it is the only one that provides information about physical groups.
+///kw+MESH+usage { FILE <file_id> |
         } else if (strcasecmp(token, "FILE") == 0) {
           wasora_call(wasora_parser_file(&file));
           if (file->mode == NULL) {
@@ -63,16 +76,20 @@ int wasora_mesh_parse_line(char *line) {
           }
           structured = 0;
           
-///kw+MESH+usage FILE_PATH <file_path> ]
+///kw+MESH+usage FILE_PATH <file_path> }
         } else if (strcasecmp(token, "FILE_PATH") == 0) {
           wasora_call(wasora_parser_file_path(&file, "r"));
           structured = 0;
           
-///kw+MESH+usage [ STRUCTURED ]
+//kw+MESH+usage [ STRUCTURED ]
         } else if (strcasecmp(token, "STRUCTURED") == 0) {
           structured = 1;
           
-///kw+MESH+usage [ DIMENSIONS <num_expr> ]
+///kw+MESH+detail The spatial dimensions should be given with `DIMENSION`. If material properties are uniform and
+///kw+MESH+detail given with variables, the dimensions are not needed and will be read from the file.
+///kw+MESH+detail But if spatial functions are needed (either for properties or read from the mesh file), an
+///kw+MESH+detail explicit value for the mesh dimensions is needed.
+///kw+MESH+usage [ DIMENSIONS <num_expr> ]@
         } else if (strcasecmp(token, "DIMENSIONS") == 0) {
           wasora_call(wasora_parser_expression_in_string(&xi));
           dimensions = (int)(xi);
@@ -81,92 +98,77 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MESH+usage [ ORDERING { unknown | node } ]
+//kw+MESH+usage [ ORDERING { unknown | node } ]
         } else if (strcasecmp(token, "ORDERING") == 0) {
           char *keywords[] = {"node", "unknown", ""};
           int values[] = {ordering_node_based, ordering_unknown_based, 0};
           wasora_call(wasora_parser_keywords_ints(keywords, values, &ordering));
           
+///kw+MESH+detail If either `SCALE` or `OFFSET` are given, the node position if first shifted and then scaled by the provided amounts.
 ///kw+MESH+usage [ SCALE <expr> ]
         } else if (strcasecmp(token, "SCALE") == 0) {
           wasora_call(wasora_parser_expression(scale_factor));
 
-///kw+MESH+usage [ OFFSET <expr_x> <expr_y> <expr_z>]
+///kw+MESH+usage [ OFFSET <expr_x> <expr_y> <expr_z> ]@
         } else if (strcasecmp(token, "OFFSET") == 0) {
           wasora_call(wasora_parser_expression(&offset[0]));
           wasora_call(wasora_parser_expression(&offset[1]));
           wasora_call(wasora_parser_expression(&offset[2]));
           
-///kw+MESH+usage [ DEGREES <num_expr> ]
+//kw+MESH+usage [ DEGREES <num_expr> ]
+/*          
         } else if (strcasecmp(token, "DEGREES") == 0) {
           wasora_call(wasora_parser_expression_in_string(&xi));
           degrees = (int)(xi);
-
-///kw+MESH+usage [ NCELLS_X <expr> ]
+*/
+//kw+MESH+usage [ NCELLS_X <expr> ]
         } else if (strcasecmp(token, "NCELLS_X") == 0) {
           wasora_call(wasora_parser_expression(&ncells[0]));
           structured = 1;
 
-///kw+MESH+usage [ NCELLS_Y <expr> ]
+//kw+MESH+usage [ NCELLS_Y <expr> ]
         } else if (strcasecmp(token, "NCELLS_Y") == 0) {
           wasora_call(wasora_parser_expression(&ncells[1]));
           structured = 1;
 
-///kw+MESH+usage [ NCELLS_Z <expr> ]
+//kw+MESH+usage [ NCELLS_Z <expr> ]
         } else if (strcasecmp(token, "NCELLS_Z") == 0) {
           wasora_call(wasora_parser_expression(&ncells[2]));
           structured = 1;
           
-///kw+MESH+usage [ LENGTH_X <expr> ]
+//kw+MESH+usage [ LENGTH_X <expr> ]
         } else if (strcasecmp(token, "LENGTH_X") == 0) {
           wasora_call(wasora_parser_expression(&lengths[0]));
           structured = 1;
 
-///kw+MESH+usage [ LENGTH_Y <expr> ]
+//kw+MESH+usage [ LENGTH_Y <expr> ]
         } else if (strcasecmp(token, "LENGTH_Y") == 0) {
           wasora_call(wasora_parser_expression(&lengths[1]));
           structured = 1;
 
-///kw+MESH+usage [ LENGTH_Z <expr> ]
+//kw+MESH+usage [ LENGTH_Z <expr> ]
         } else if (strcasecmp(token, "LENGTH_Z") == 0) {
           wasora_call(wasora_parser_expression(&lengths[2]));
           structured = 1;
 
-///kw+MESH+usage [ DELTA_X <expr> ]
+//kw+MESH+usage [ DELTA_X <expr> ]
         } else if (strcasecmp(token, "DELTA_X") == 0) {
           wasora_call(wasora_parser_expression(&deltas[0]));
           structured = 1;
 
-///kw+MESH+usage [ DELTA_Y <expr> ]
+//kw+MESH+usage [ DELTA_Y <expr> ]
         } else if (strcasecmp(token, "DELTA_Y") == 0) {
           wasora_call(wasora_parser_expression(&deltas[1]));
           structured = 1;
 
-///kw+MESH+usage [ DELTA_Z <expr> ]
+//kw+MESH+usage [ DELTA_Z <expr> ]
         } else if (strcasecmp(token, "DELTA_Z") == 0) {
           wasora_call(wasora_parser_expression(&deltas[2]));
           structured = 1;
 
- ///kw+MESH+usage [ READ_FUNCTION <function_name> ] [...]
-        } else if (strcasecmp(token, "READ_FUNCTION") == 0 ) {
-          // TODO: que funcione con cell-centered
-          char *function_name;
-          node_data_t *node_data;
-
-          if (dimensions == 0) {
-            wasora_push_error_message("MESH READ_FUNCTION needs DIMENSIONS to be set", token);
-            return WASORA_PARSER_ERROR;
-          }
-          
-          wasora_call(wasora_parser_string(&function_name));
-          
-          node_data = calloc(1, sizeof(node_data_t));
-          node_data->name_in_mesh = strdup(function_name);
-          node_data->function = wasora_define_function(function_name, dimensions);
-          LL_APPEND(node_datas, node_data);
-          free(function_name);
-          
-///kw+MESH+usage [ READ_SCALAR <name_in_mesh> AS <function_name> ] [...]
+///kw+MESH+detail For each `READ_SCALAR` keyword, a point-wise defined function of space named `<function_name>` is
+///kw+MESH+detail defined and filled with the scalar data named `<name_in_mesh>`  contained in the mesh file.
+///kw+MESH+usage [ READ_SCALAR <name_in_mesh> AS <function_name> ] [...]@
         } else if (strcasecmp(token, "READ_DATA") == 0 || strcasecmp(token, "READ_SCALAR") == 0) {
           char *name_in_mesh;
           char *function_name;
@@ -193,6 +195,27 @@ int wasora_mesh_parse_line(char *line) {
           free(name_in_mesh);
           free(function_name);
 
+
+///kw+MESH+detail The `READ_FUNCTION` keyword is a shortcut when the scalar name and the to-be-defined function are the same.
+///kw+MESH+usage [ READ_FUNCTION <function_name> ] [...]
+        } else if (strcasecmp(token, "READ_FUNCTION") == 0 ) {
+          // TODO: que funcione con cell-centered
+          char *function_name;
+          node_data_t *node_data;
+
+          if (dimensions == 0) {
+            wasora_push_error_message("MESH READ_FUNCTION needs DIMENSIONS to be set", token);
+            return WASORA_PARSER_ERROR;
+          }
+          
+          wasora_call(wasora_parser_string(&function_name));
+          
+          node_data = calloc(1, sizeof(node_data_t));
+          node_data->name_in_mesh = strdup(function_name);
+          node_data->function = wasora_define_function(function_name, dimensions);
+          LL_APPEND(node_datas, node_data);
+          free(function_name);
+          
         } else {
           wasora_push_error_message("unknown keyword '%s'", token);
           return WASORA_PARSER_ERROR;
@@ -512,13 +535,31 @@ int wasora_mesh_parse_line(char *line) {
       return WASORA_PARSER_OK;
 
 // --- MESH_FILL_VECTOR ------------------------------------------------------
-    } else if (strcasecmp(token, "MESH_FILL_VECTOR") == 0) {
 ///kw+MESH_FILL_VECTOR+usage MESH_FILL_VECTOR
+///kw+MESH_FILL_VECTOR+desc Fills the elements of a vector with data evaluated at the nodes or the cells of a mesh.
+    } else if (strcasecmp(token, "MESH_FILL_VECTOR") == 0) {
       mesh_fill_vector_t *mesh_fill_vector = calloc(1, sizeof(mesh_fill_vector_t));
       
       while ((token = wasora_get_next_token(NULL)) != NULL) {
+///kw+MESH_FILL_VECTOR+usage VECTOR <vector>
+///kw+MESH_FILL_VECTOR+detail The vector to be filled needs to be already defined and to have the appropriate size,
+///kw+MESH_FILL_VECTOR+detail either the number of nodes or cells of the mesh depending on `NODES` or `CELLS` (default is nodes).        
+        if (strcasecmp(token, "VECTOR") == 0) {
+          wasora_call(wasora_parser_vector(&mesh_fill_vector->vector));
+
+///kw+MESH_FILL_VECTOR+detail The elements of the vectors will be either the `FUNCTION` or the `EXPRESSION` of $x$, $y$ and $z$
+///kw+MESH_FILL_VECTOR+detail evaluated at the nodes or cells of the provided mesh.
+///kw+MESH_FILL_VECTOR+usage { FUNCTION <function>
+        } else if (strcasecmp(token, "FUNCTION") == 0) {
+          wasora_call(wasora_parser_function(&mesh_fill_vector->function));
+
+///kw+MESH_FILL_VECTOR+usage | EXPRESSION <expr> } @
+        } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
+          wasora_call(wasora_parser_expression(&mesh_fill_vector->expr));
+        
 ///kw+MESH_FILL_VECTOR+usage [ MESH <name> ]
-        if (strcasecmp(token, "MESH") == 0) {
+///kw+MESH_FILL_VECTOR+detail If there is more than one mesh, the name has to be given.
+        } else if (strcasecmp(token, "MESH") == 0) {
           char *mesh_name;
           wasora_call(wasora_parser_string(&mesh_name));
           if ((mesh_fill_vector->mesh = wasora_get_mesh_ptr(mesh_name)) == NULL) {
@@ -536,17 +577,6 @@ int wasora_mesh_parse_line(char *line) {
             mesh_fill_vector->centering = centering_cells;
             wasora_mesh.need_cells = 1;
 
-///kw+MESH_FILL_VECTOR+usage VECTOR <vector>
-        } else if (strcasecmp(token, "VECTOR") == 0) {
-          wasora_call(wasora_parser_vector(&mesh_fill_vector->vector));
-
-///kw+MESH_FILL_VECTOR+usage { FUNCTION <function>
-        } else if (strcasecmp(token, "FUNCTION") == 0) {
-          wasora_call(wasora_parser_function(&mesh_fill_vector->function));
-
-///kw+MESH_FILL_VECTOR+usage | EXPRESSION <expr> }
-        } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
-          wasora_call(wasora_parser_expression(&mesh_fill_vector->expr));
           
         } else {
           wasora_push_error_message("unknown keyword '%s'", token);

@@ -1,4 +1,4 @@
-% Wasora v0.6.96-g0d7ad0a reference sheet
+% Wasora v0.6.100-g79e9f25 reference sheet
 
 -   [Keywords](#keywords)
     -   [.=](#section)
@@ -80,6 +80,7 @@
     -   [t](#t)
     -   [zero](#zero)
 -   [Mesh-related variables](#mesh-related-variables)
+    -   [bbox\_min](#bbox_min)
     -   [cells](#cells)
     -   [elements](#elements)
     -   [nodes](#nodes)
@@ -691,21 +692,52 @@ MATERIAL <name> [ MESH <name> ] [ PHYSICAL_ENTITY <name_1> [ PHYSICAL_ENTITY <na
 
 ##  MESH
 
-> 
+> Reads an unstructured mesh from an external file in MSH, VTK or FRD format.
+
 ~~~wasora
-MESH [ NAME <name> ] [ FILE <file_id> | FILE_PATH <file_path> ] [ STRUCTURED ] [ DIMENSIONS <num_expr> ] [ ORDERING { unknown | node } ] [ SCALE <expr> ] [ OFFSET <expr_x> <expr_y> <expr_z>] [ DEGREES <num_expr> ] [ NCELLS_X <expr> ] [ NCELLS_Y <expr> ] [ NCELLS_Z <expr> ] [ LENGTH_X <expr> ] [ LENGTH_Y <expr> ] [ LENGTH_Z <expr> ] [ DELTA_X <expr> ] [ DELTA_Y <expr> ] [ DELTA_Z <expr> ] ///kw+MESH+usage [ READ_FUNCTION <function_name> ] [...] [ READ_SCALAR <name_in_mesh> AS <function_name> ] [...]
+MESH [ NAME <name> ] { FILE <file_id> | FILE_PATH <file_path> } [ DIMENSIONS <num_expr> ]
+ [ SCALE <expr> ] [ OFFSET <expr_x> <expr_y> <expr_z> ]
+ [ READ_SCALAR <name_in_mesh> AS <function_name> ] [...]
+ [ READ_FUNCTION <function_name> ] [...]
 ~~~
 
 
+If there will be only one mesh in the input file, the `NAME` is optional.
+Yet it might be needed in cases where there are many meshes and one needs to refer to a particular mesh,
+such as in `MESH_POST` or `MESH_INTEGRATE`.
+When solving PDEs (such as in Fino or milonga), the first mesh is the problem mesh.
+Either a file identifier (defined previously with a `FILE` keyword) or a file path should be given.
+The format is read from the extension, which should be either
+
+ * `.msh` [Gmsh ASCII format](http:\//gmsh.info/doc/texinfo/gmsh.html#MSH-file-format), versions 2.2, 4.0 or 4.1
+ * `.vtk` [ASCII legacy VTK](https:\//lorensen.github.io/VTKExamples/site/VTKFileFormats/)
+ * `.frd` [CalculiX’s FRD ASCII output](https:\//web.mit.edu/calculix_v2.7/CalculiX/cgx_2.7/doc/cgx/node4.html))
+
+Note than only MSH is suitable for defining PDE domains, as it is the only one that provides information about physical groups.
+The spatial dimensions should be given with `DIMENSION`. If material properties are uniform and
+given with variables, the dimensions are not needed and will be read from the file.
+But if spatial functions are needed (either for properties or read from the mesh file), an
+explicit value for the mesh dimensions is needed.
+If either `SCALE` or `OFFSET` are given, the node position if first shifted and then scaled by the provided amounts.
+For each `READ_SCALAR` keyword, a point-wise defined function of space named `<function_name>` is
+defined and filled with the scalar data named `<name_in_mesh>` contained in the mesh file.
+The `READ_FUNCTION` keyword is a shortcut when the scalar name and the to-be-defined function are the same.
 
 ##  MESH_FILL_VECTOR
 
-> 
+> Fills the elements of a vector with data evaluated at the nodes or the cells of a mesh.
+
 ~~~wasora
-MESH_FILL_VECTOR [ MESH <name> ] [ NODES | CELLS ] VECTOR <vector> { FUNCTION <function> | EXPRESSION <expr> }
+MESH_FILL_VECTOR VECTOR <vector> { FUNCTION <function> | EXPRESSION <expr> } 
+ [ MESH <name> ] [ NODES | CELLS ]
 ~~~
 
 
+The vector to be filled needs to be already defined and to have the appropriate size,
+either the number of nodes or cells of the mesh depending on `NODES` or `CELLS` (default is nodes).
+The elements of the vectors will be either the `FUNCTION` or the `EXPRESSION` of $x$, $y$ and $z$
+evaluated at the nodes or cells of the provided mesh.
+If there is more than one mesh, the name has to be given.
 
 ##  MESH_FIND_MINMAX
 
@@ -1018,6 +1050,13 @@ with $a < a_\text{max} +$ `zero`. Default is $(1/2)^{-50} \approx 9\times 10^{-1
 --------------
 
 # Mesh-related variables
+
+##  bbox_min
+
+> Minimum values of the mesh’s bounding box (vector of size 3)
+Maximum values of the mesh’s bounding box (vector of size 3)
+
+
 
 ##  cells
 

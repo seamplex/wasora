@@ -78,6 +78,7 @@
     -   [t](#t)
     -   [zero](#zero)
 -   [Mesh-related variables](#mesh-related-variables)
+    -   [bbox\_min](#bbox_min)
     -   [cells](#cells)
     -   [elements](#elements)
     -   [nodes](#nodes)

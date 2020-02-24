@@ -111,7 +111,8 @@ void wasora_show_version(int version) {
         if (wasora.plugin[0].copyright_string != NULL) {
           printf("%s\n\n", wasora.plugin[0].copyright_string);
         }
-        wasora_print_random_line(stdout, 72);
+//        wasora_print_random_line(stdout, 72);
+        printf("\n");
         wasora_shortversion();
         printf("\n");
         wasora_copyright();
@@ -120,7 +121,8 @@ void wasora_show_version(int version) {
         if (wasora.plugin[0].longversion_string != NULL) {
           printf("%s\n\n", wasora.plugin[0].longversion_string);
         }
-        wasora_print_random_line(stdout, 72);
+//        wasora_print_random_line(stdout, 72);
+        printf("\n");
         wasora_shortversion();
         printf("\n");
         wasora_longversion();
@@ -142,7 +144,8 @@ void wasora_show_version(int version) {
   
     for (i = 0; i < wasora.i_plugin; i++) {
       if (wasora.i_plugin != 1) {
-        wasora_print_random_line(stdout, 72);
+        printf("\n");
+//        wasora_print_random_line(stdout, 72);
         printf("plugin #%d: ", i+1);
       }
       printf("%s %s\n", wasora.plugin[i].name_string, wasora.plugin[i].version_string);

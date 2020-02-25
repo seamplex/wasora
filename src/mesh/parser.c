@@ -477,9 +477,9 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
           free(mesh_name);        
-///kw+MESH_INTEGRATE+usage [ OVER <physical_entity_name> ]
+///kw+MESH_INTEGRATE+usage [ OVER <physical_group> ]
 ///kw+MESH_INTEGRATE+detail By default the integration is performed over the highest-dimensional elements of the mesh.
-///kw+MESH_INTEGRATE+detail If the integration is to be carried out over just a physical entity, it has to be given in `OVER`.
+///kw+MESH_INTEGRATE+detail If the integration is to be carried out over just a physical group, it has to be given in `OVER`.
 
         } else if (strcasecmp(token, "OVER") == 0) {
           char *name;
@@ -634,9 +634,9 @@ int wasora_mesh_parse_line(char *line) {
           }
           free(mesh_name);
 
-//kw+MESH_FIND_MINMAX+usage [ PHYSICAL_ENTITY <physical_entity_name> ]
+//kw+MESH_FIND_MINMAX+usage [ PHYSICAL_GROUP <physical_group_name> ]
 /*          
-        } else if (strcasecmp(token, "PHYSICAL_ENTITY") == 0) {
+        } else if (strcasecmp(token, "PHYSICAL_GROUP") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
           if ((mesh_find_minmax->physical_entity = wasora_get_physical_entity_ptr(name, mesh_find_minmax->mesh)) == NULL) {
@@ -750,10 +750,11 @@ int wasora_mesh_parse_line(char *line) {
       wasora_define_instruction(wasora_instruction_mesh_find_minmax, mesh_find_minmax);
       return WASORA_PARSER_OK;      
 
-// ---- PHYSICAL_ENTITY ----------------------------------------------------
-    } else if (strcasecmp(token, "PHYSICAL_ENTITY") == 0) {
+// ---- PHYSICAL_GROUP ----------------------------------------------------
+    } else if ((strcasecmp(token, "PHYSICAL_GROUP") == 0) || (strcasecmp(token, "PHYSICAL_ENTITY") == 0)) {
 
-///kw+PHYSICAL_ENTITY+usage PHYSICAL_ENTITY
+///kw+PHYSICAL_GROUP+usage PHYSICAL_GROUP
+///kw+PHYSICAL_GROUP+desc Defines a physical group of elements within a mesh file.
       char *name = NULL;
       double xi = 0;
       mesh_t *mesh = NULL;
@@ -764,7 +765,9 @@ int wasora_mesh_parse_line(char *line) {
       expr_t *pos = NULL;
       physical_entity_t *physical_entity = NULL;
 
-///kw+PHYSICAL_ENTITY+usage <name>
+///kw+PHYSICAL_GROUP+usage <name>
+///kw+PHYSICAL_GROUP+detail A name is mandatory for each physical group defined within the input file.
+///kw+PHYSICAL_GROUP+detail If there is no physical group with the provided name in the mesh, this instruction makes no effect.
       wasora_call(wasora_parser_string(&name));
       // backwards compatibility: antes pediamos "NAME"
       if (strcasecmp(name, "NAME") == 0) {
@@ -773,15 +776,10 @@ int wasora_mesh_parse_line(char *line) {
       }
       
       while ((token = wasora_get_next_token(NULL)) != NULL) {          
-///kw+PHYSICAL_ENTITY+usage [ DIMENSION <expr> ]
-        if (strcasecmp(token, "DIMENSION") == 0 || strcasecmp(token, "DIM") == 0) {
-          if (wasora_parser_expression_in_string(&xi) != WASORA_PARSER_OK) {
-            return WASORA_PARSER_ERROR;
-          }
-          dimension = (int)(xi);          
-
-///kw+PHYSICAL_ENTITY+usage [ MESH <name> ]
-        } else if (strcasecmp(token, "MESH") == 0) {
+///kw+PHYSICAL_GROUP+usage [ MESH <name> ]
+///kw+PHYSICAL_GROUP+detail If there are many meshes, an explicit mesh can be given with `MESH`.
+///kw+PHYSICAL_GROUP+detail Otherwise, the physical group is defined on the main mesh.
+        if (strcasecmp(token, "MESH") == 0) {
           char *mesh_name;
           wasora_call(wasora_parser_string(&mesh_name));
           if ((mesh = wasora_get_mesh_ptr(mesh_name)) == NULL) {
@@ -791,7 +789,20 @@ int wasora_mesh_parse_line(char *line) {
           }
           free(mesh_name);
 
-///kw+PHYSICAL_ENTITY+usage [ MATERIAL <name> ]
+///kw+PHYSICAL_GROUP+usage [ DIMENSION <expr> ]@
+///kw+PHYSICAL_GROUP+detail An explicit dimension of the physical group can be provided with `DIMENSION`.
+        } else if (strcasecmp(token, "DIMENSION") == 0 || strcasecmp(token, "DIM") == 0) {
+          if (wasora_parser_expression_in_string(&xi) != WASORA_PARSER_OK) {
+            return WASORA_PARSER_ERROR;
+          }
+          dimension = (int)(xi);          
+          
+///kw+PHYSICAL_GROUP+usage [ MATERIAL <name> ]@
+///kw+PHYSICAL_GROUP+detail For volumetric elements, physical groups can be linked to materials using `MATERIAL`.
+///kw+PHYSICAL_GROUP+detail Note that if a material is created with the same name as a physical group in the mesh,
+///kw+PHYSICAL_GROUP+detail they will be linked automatically. The `MATERIAL` keyword in `PHYSICAL_GROUP` is used
+///kw+PHYSICAL_GROUP+detail to link a physical group in a mesh file and a material in the wasora input file with
+///kw+PHYSICAL_GROUP+detail different names.
         } else if (strcasecmp(token, "MATERIAL") == 0) {
           char *material_name;
           wasora_call(wasora_parser_string(&material_name));
@@ -803,7 +814,7 @@ int wasora_mesh_parse_line(char *line) {
           free(material_name);
   
 // esto no lo documento para no encourage
-//kw+PHYSICAL_ENTITY+usage [ X_MIN <expr> ] [ X_MAX <expr> ] [ Y_MIN <expr> ] [ Y_MAX <expr> ] [ Z_MIN <expr> ] [ Z_MAX <expr> ]
+//kw+PHYSICAL_GROUP+usage [ X_MIN <expr> ] [ X_MAX <expr> ] [ Y_MIN <expr> ] [ Y_MAX <expr> ] [ Z_MIN <expr> ] [ Z_MAX <expr> ]
         } else if (strcasecmp(token+1, "_MIN") == 0 || strcasecmp(token+1, "_MAX") == 0) {
 
           int ndim = 0;
@@ -840,9 +851,11 @@ int wasora_mesh_parse_line(char *line) {
             dimension = (ndim+1);
           }
           
-///kw+PHYSICAL_ENTITY+usage [ BC <bc_1> <bcg_2> ... ]
-        } else if (strcasecmp(token, "BOUNDARY") == 0 || strcasecmp(token, "BC") == 0) {
-
+///kw+PHYSICAL_GROUP+usage [ BC <bc_1> <bc_2> ... ]@
+        } else if (strcasecmp(token, "BC") == 0 || strcasecmp(token, "BOUNDARY_CONDITION") == 0) {
+///kw+PHYSICAL_GROUP+detail For non-volumetric elements, boundary conditions can be assigned by using the `BC` keyword.
+///kw+PHYSICAL_GROUP+detail This should be the last keyword of the line, and any token afterwards is treated          
+///kw+PHYSICAL_GROUP+detail specially by the underlying solver (i.e. Fino or milonga).
           // los argumentos como una linked list de strings
           while ((token = wasora_get_next_token(NULL)) != NULL) {
             bc = calloc(1, sizeof(bc_t));
@@ -857,12 +870,12 @@ int wasora_mesh_parse_line(char *line) {
       }
 
       if (mesh == NULL && (mesh = wasora_mesh.main_mesh) == NULL) {
-        wasora_push_error_message("unknown mesh for physical entity '%s'", name);
+        wasora_push_error_message("unknown mesh for physical group '%s'", name);
         return WASORA_PARSER_ERROR;
       }
       
       if (name == NULL) {
-        wasora_push_error_message("NAME is mandatory for PHYSICAL_ENTITY");
+        wasora_push_error_message("NAME is mandatory for PHYSICAL_GROUP");
         return WASORA_PARSER_ERROR;
       }
       if ((physical_entity = wasora_get_physical_entity_ptr(name, mesh)) == NULL) {
@@ -924,8 +937,8 @@ int wasora_mesh_parse_line(char *line) {
           }
           free(name);
           
-///kw+MATERIAL+usage [ PHYSICAL_ENTITY <name_1>  [ PHYSICAL_ENTITY <name_2> [ ... ] ] ]
-        } else if (strcasecmp(token, "PHYSICAL_ENTITY") == 0) {
+///kw+MATERIAL+usage [ PHYSICAL_GROUP <name_1>  [ PHYSICAL_GROUP <name_2> [ ... ] ] ]
+        } else if (strcasecmp(token, "PHYSICAL_GROUP") == 0) {
           wasora_call(wasora_parser_string(&name));  
 
           if ((physical_entity = wasora_get_physical_entity_ptr(name, material->mesh)) == NULL) {

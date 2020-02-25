@@ -2,22 +2,27 @@
 
 src=$1
 tag=$2
+dir=$3
 
 if [ -z "${tag}" ]; then
-  echo "usage: $0 src tag";
+  echo "usage: $0 src tag [dir]";
   exit
 fi
 
+if [ -z "${dir}" ]; then
+  dir=../src
+fi  
+
 # traemos los defines de wasora.h para poder documentar los defaults en los detales
-if [ -e ../src/wasora.h ]; then
-  grep '#define' ../src/wasora.h > defs.h
-elif [ -e ../../src/wasora.h ]; then
-  grep '#define' ../../src/wasora.h > defs.h
+if [ -e ${dir}/wasora.h ]; then
+  grep '#define' ${dir}/wasora.h > defs.h
+elif [ -e ../${dir}/wasora.h ]; then
+  grep '#define' ../${dir}/wasora.h > defs.h
 else
   touch defs.h
 fi
 
-kws=`grep "///${tag}+" ../src/${src}.c | awk '{print $1}' | awk -F+ '{print $2}' | sort | uniq` 
+kws=`grep "///${tag}+" ${dir}/${src}.c | awk '{print $1}' | awk -F+ '{print $2}' | sort | uniq` 
 
 for kw in ${kws}; do
 
@@ -27,20 +32,20 @@ for kw in ${kws}; do
   echo "##  ${kw}"
   echo
   echo -n '> '
-  grep "///${tag}+${kw}+desc" ../src/${src}.c | cut -d" " -f2-
+  grep "///${tag}+${kw}+desc" ${dir}/${src}.c | cut -d" " -f2-
   echo  
 
   # usage
-  usage=`grep "///${tag}+${kw}+usage" ../src/${src}.c | cut -d" " -f2-`
+  usage=`grep "///${tag}+${kw}+usage" ${dir}/${src}.c | cut -d" " -f2-`
   if [ -n "${usage}" ]; then
     echo "~~~wasora"
-    grep "///${tag}+${kw}+usage" ../src/${src}.c | cut -d" " -f2- | xargs | tr @ \\n | sed s/\ \&nbsp\;\ /\\n/g
+    grep "///${tag}+${kw}+usage" ${dir}/${src}.c | cut -d" " -f2- | xargs | tr @ \\n | sed s/\ \&nbsp\;\ /\\n/g
     echo "~~~"
     echo
   fi
 
   # math+figure
-  math=`cat ../src/${src}.c | grep "///${tag}+${kw}+math"  | cut -d" " -f2-`
+  math=`cat ${dir}/${src}.c | grep "///${tag}+${kw}+math"  | cut -d" " -f2-`
 #   if [ -n "$math" ]; then
   if [ ! -z "" ]; then
 
@@ -50,7 +55,7 @@ for kw in ${kws}; do
     echo "\$\$"
     echo
 
-    range=`cat ../src/${src}.c | grep "///${tag}+${kw}+plotx"  | cut -d" " -f2-`
+    range=`cat ${dir}/${src}.c | grep "///${tag}+${kw}+plotx"  | cut -d" " -f2-`
     if [ -n "$range" ]; then
      if [[ !( -e figures/${kw}.png ) ]]; then
       cd figures
@@ -121,11 +126,11 @@ EOF
   # el cut saca los tags especiales, el gcc permite usar los defines para documentar los defaults,
   # el primer sed transforma una arroba seguida de un newline en un newline
   # el segundo se es para poder poner links como https:/\/ (sin la barra del medio gcc piensa que es un comentario)
-  grep "///${tag}+${kw}+detail" ../src/${src}.c | cut -d" " -f2- | gcc -E -P -include defs.h - | sed 's/@$//' | sed 's_/\\/_//_'
+  grep "///${tag}+${kw}+detail" ${dir}/${src}.c | cut -d" " -f2- | gcc -E -P -include defs.h - | sed 's/@$//' | sed 's_/\\/_//_'
   echo  
 
   # examples
-#   exs=`grep ///${tag}+${kw}+example ../src/${src}.c | cut -d" " -f2-` 
+#   exs=`grep ///${tag}+${kw}+example ${dir}/${src}.c | cut -d" " -f2-` 
   exs=""
   n=0
   for ex in $exs; do

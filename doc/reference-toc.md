@@ -44,7 +44,7 @@
     -   [MESH\_INTEGRATE](#mesh_integrate)
     -   [MESH\_MAIN](#mesh_main)
     -   [MESH\_POST](#mesh_post)
-    -   [PHYSICAL\_ENTITY](#physical_entity)
+    -   [PHYSICAL\_GROUP](#physical_group)
     -   [PHYSICAL\_PROPERTY](#physical_property)
 -   [Variables](#variables)
     -   [done](#done)

@@ -2,42 +2,24 @@
 <language name="wasora" version="0.2" kateversion="3.7.4" section="Scientific" extensions="*.was;*.mil;*.fin" author="jeremy theler" license="GPL">
   <highlighting>
     <list name="prim_keywords">
-      <item>AA</item>
       <item>ABORT</item>
-      <item>ACCELERATED</item>
       <item>ADIABATIC</item>
       <item>ALGORITHM</item>
       <item>ALIAS</item>
-      <item>ALLOW_HIGHDPI</item>
-      <item>ALPHA</item>
-      <item>ANGLE_DEG</item>
-      <item>ANGLE_RAD</item>
-      <item>ARRAY</item>
       <item>AS</item>
       <item>ASCENDING_ORDER</item>
       <item>ASCII_FILE</item>
       <item>ASCII_FILE_PATH</item>
-      <item>AXISYMMETRIC</item>
       <item>BC</item>
-      <item>BESSSUGO_DRAW</item>
-      <item>BESSSUGO_DUMP</item>
       <item>BINARY_FILE</item>
       <item>BINARY_FILE_PATH</item>
-      <item>BORDERLESS</item>
-      <item>BOUNDARY</item>
-      <item>BOX</item>
+      <item>BOUNDARY_CONDITION</item>
       <item>CALL</item>
-      <item>CANVAS</item>
-      <item>CAPTION</item>
       <item>CELLS</item>
-      <item>CIRCLE</item>
       <item>CLOSE</item>
-      <item>COLOR</item>
       <item>COLS</item>
       <item>COLUMNS</item>
       <item>CONST</item>
-      <item>COORDINATES</item>
-      <item>COORDS</item>
       <item>DATA</item>
       <item>DEFAULT_ARGUMENT_VALUE</item>
       <item>DEGREES</item>
@@ -54,100 +36,53 @@
       <item>DO_NOT_EVALUATE_AT_PARSE_TIME</item>
       <item>DO_NOT_OPEN</item>
       <item>DO_NOT_RERUN</item>
-      <item>DO_NOT_SET_BLOCK_SIZE</item>
       <item>ELEMS_PER_LINE</item>
       <item>ELSE</item>
-      <item>EMPTY</item>
       <item>ENDIF</item>
-      <item>END_POINT</item>
       <item>EPSABS</item>
       <item>EPSREL</item>
-      <item>EPS_TYPE</item>
       <item>EXPAND</item>
       <item>EXPR</item>
       <item>EXPRESSION</item>
       <item>FILE</item>
       <item>FILE_PATH</item>
-      <item>FILLED</item>
-      <item>FINO_DEBUG</item>
-      <item>FINO_LINEARIZE</item>
-      <item>FINO_PROBLEM</item>
-      <item>FINO_REACTION</item>
-      <item>FINO_SOLVER</item>
-      <item>FINO_STEP</item>
       <item>FIT</item>
-      <item>FLUX_POST</item>
       <item>FORMAT</item>
-      <item>FORMULATION</item>
       <item>FROM</item>
-      <item>FULLSCREEN</item>
-      <item>FULLSCREEN_DESKTOP</item>
       <item>FUNCTION</item>
       <item>FUNCTION_DATA</item>
       <item>GRADIENT</item>
-      <item>GRADIENT_ELEMENT_WEIGHT</item>
-      <item>GRADIENT_HIGHER</item>
-      <item>GRADIENT_QUALITY_THRESHOLD</item>
-      <item>GROUPS</item>
       <item>GUESS</item>
-      <item>HARDWARE</item>
       <item>HEADER</item>
-      <item>HEIGHT</item>
-      <item>HIDDEN</item>
       <item>HISTORY</item>
       <item>HORIZONTAL</item>
       <item>IF</item>
       <item>IGNORE_NULL</item>
-      <item>IMAGE</item>
       <item>I_MAX</item>
       <item>I_MIN</item>
       <item>IMPLICIT</item>
-      <item>IMPLICIT_BC</item>
       <item>INCLUDE</item>
-      <item>INCLUDE_INPUT</item>
       <item>INDEX_MAX</item>
       <item>INDEX_MIN</item>
       <item>INITIAL_CONDITIONS_MODE</item>
       <item>INPUT</item>
       <item>INPUT_FILE</item>
       <item>INPUT_FILE_PATH</item>
-      <item>INPUT_GRABBED</item>
       <item>INTERPOLATION</item>
       <item>INTERPOLATION_THRESHOLD</item>
       <item>IS</item>
-      <item>JUST_BUILD</item>
-      <item>JUST_SOLVE</item>
-      <item>KSP_TYPE</item>
-      <item>LEFT</item>
       <item>LENGTH_X</item>
       <item>LENGTH_Y</item>
       <item>LENGTH_Z</item>
-      <item>LINE</item>
-      <item>LINEAR</item>
       <item>LOAD_PLUGIN</item>
       <item>LOAD_ROUTINE</item>
-      <item>M</item>
       <item>M4</item>
       <item>MACRO</item>
       <item>MATERIAL</item>
-      <item>MATRICES_ASCII</item>
-      <item>MATRICES_ASCII_STRUCTURE</item>
-      <item>MATRICES_PETSC_ASCII</item>
-      <item>MATRICES_PETSC_BINARY</item>
-      <item>MATRICES_PETSC_COMPRESSED_BINARY</item>
-      <item>MATRICES_PETSC_DENSE</item>
-      <item>MATRICES_PETSC_OCTAVE</item>
-      <item>MATRICES_SIZE</item>
-      <item>MATRICES_SNG</item>
-      <item>MATRICES_SNG_STRUCT</item>
-      <item>MATRICES_STRIDE</item>
-      <item>MATRICES_X</item>
-      <item>MATRICES_X_SIZE</item>
       <item>MATRIX</item>
       <item>MAX</item>
       <item>MAX_DAUGHTERS</item>
       <item>MAX_ITER</item>
-      <item>MB</item>
       <item>MESH</item>
       <item>MESH_FILL_VECTOR</item>
       <item>MESH_FIND_MINMAX</item>
@@ -155,33 +90,22 @@
       <item>MESH_MAIN</item>
       <item>MESH_POST</item>
       <item>METHOD</item>
-      <item>MILONGA_DEBUG</item>
-      <item>MILONGA_PROBLEM</item>
-      <item>MILONGA_SOLVER</item>
-      <item>MILONGA_STEP</item>
       <item>MIN</item>
       <item>MINIMIZE</item>
-      <item>MINIMIZED</item>
       <item>MODE</item>
       <item>NAME</item>
       <item>NCELLS_X</item>
       <item>NCELLS_Y</item>
       <item>NCELLS_Z</item>
-      <item>N_EIGEN</item>
-      <item>N_MODES</item>
-      <item>NO_AA</item>
       <item>NODES</item>
       <item>NO_MESH</item>
       <item>NOMESH</item>
       <item>NONEWLINE</item>
-      <item>NON_LINEAR</item>
       <item>NO_PHYSICAL_NAMES</item>
-      <item>NO_RELOAD</item>
       <item>NORERUN</item>
       <item>NOSEP</item>
       <item>NSTEPS</item>
       <item>OFFSET</item>
-      <item>OPAQUE</item>
       <item>OPEN</item>
       <item>OPTIMIZE</item>
       <item>ORDERING</item>
@@ -191,47 +115,29 @@
       <item>OUTPUT_FILE_PATH</item>
       <item>OVER</item>
       <item>PARAMETRIC</item>
-      <item>PC_TYPE</item>
-      <item>PEAK</item>
-      <item>PERSISTENT</item>
       <item>PHASE_SPACE</item>
       <item>PHYSICAL_ENTITY</item>
+      <item>PHYSICAL_GROUP</item>
       <item>PHYSICAL_PROPERTY</item>
-      <item>PLANE_STRAIN</item>
-      <item>PLANE_STRESS</item>
-      <item>POINT</item>
-      <item>PRESENTVSYNC</item>
       <item>PRINT</item>
       <item>PRINT_FUNCTION</item>
       <item>PRINT_VECTOR</item>
-      <item>PROGRESS_ASCII</item>
-      <item>R</item>
-      <item>RAD</item>
-      <item>RADIUS</item>
       <item>RANGE_MAX</item>
       <item>RANGE_MIN</item>
       <item>READ</item>
       <item>READ_DATA</item>
       <item>READ_FUNCTION</item>
       <item>READ_SCALAR</item>
-      <item>RECTANGLE</item>
-      <item>RELOAD</item>
       <item>RERUN</item>
       <item>RESIDUALS</item>
       <item>RESULT</item>
-      <item>ROUGH</item>
       <item>ROUTINE</item>
       <item>ROWS</item>
       <item>SCALE</item>
-      <item>SCHEME</item>
-      <item>SEGMENT</item>
       <item>SEM</item>
       <item>SEMAPHORE</item>
       <item>SEP</item>
       <item>SEPARATOR</item>
-      <item>SET_BLOCK_SIZE</item>
-      <item>SET_NEAR_NULL_SPACE</item>
-      <item>SET_NEAR_NULLSPACE</item>
       <item>SHELL</item>
       <item>SHEPARD_EXPONENT</item>
       <item>SHEPARD_RADIUS</item>
@@ -240,32 +146,15 @@
       <item>SIMAN_EFUNC</item>
       <item>SIZE</item>
       <item>SIZES</item>
-      <item>SMOOTH</item>
-      <item>SNES_TYPE</item>
-      <item>SOFTWARE</item>
       <item>SOLVE</item>
-      <item>SPECTRUM</item>
-      <item>ST_ANTI_SHIFT</item>
-      <item>START_POINT</item>
       <item>STEP</item>
-      <item>STRETCH</item>
       <item>STRING</item>
-      <item>STROKE</item>
-      <item>STROKE_WIDTH</item>
       <item>STRUCTURED</item>
-      <item>ST_SHIFT</item>
-      <item>ST_TYPE</item>
-      <item>SUBSPACE_DIM</item>
-      <item>SYMMETRY_AXIS</item>
       <item>TEXT</item>
       <item>TIME_PATH</item>
       <item>TO</item>
-      <item>TOP</item>
-      <item>TOTAL</item>
-      <item>TRANSPARENT</item>
       <item>TYPE</item>
       <item>UNKNOWNS</item>
-      <item>UNPERSISTENT</item>
       <item>VAR</item>
       <item>VECTOR</item>
       <item>VECTOR_DATA</item>
@@ -274,22 +163,10 @@
       <item>VERBOSE</item>
       <item>VERTICAL</item>
       <item>VIA</item>
-      <item>VOLHOM</item>
-      <item>WIDTH</item>
-      <item>WINDOW</item>
       <item>WRITE</item>
-      <item>X</item>
-      <item>X1</item>
-      <item>X2</item>
-      <item>XCENTER</item>
       <item>X_INCREASES_FIRST</item>
       <item>X_MAX</item>
       <item>X_MIN</item>
-      <item>XS</item>
-      <item>Y</item>
-      <item>Y1</item>
-      <item>Y2</item>
-      <item>YCENTER</item>
       <item>Y_MAX</item>
       <item>Y_MIN</item>
       <item>Z_MAX</item>

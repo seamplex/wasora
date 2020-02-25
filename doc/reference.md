@@ -1,4 +1,4 @@
-% Wasora v0.6.100-g79e9f25 reference sheet
+% Wasora v0.6.105-gad9ff95 reference sheet
 
 -   [Keywords](#keywords)
     -   [.=](#section)
@@ -46,7 +46,7 @@
     -   [MESH\_INTEGRATE](#mesh_integrate)
     -   [MESH\_MAIN](#mesh_main)
     -   [MESH\_POST](#mesh_post)
-    -   [PHYSICAL\_ENTITY](#physical_entity)
+    -   [PHYSICAL\_GROUP](#physical_group)
     -   [PHYSICAL\_PROPERTY](#physical_property)
 -   [Variables](#variables)
     -   [done](#done)
@@ -685,7 +685,7 @@ See the `READ` keyword for usage details.
 
 > 
 ~~~wasora
-MATERIAL <name> [ MESH <name> ] [ PHYSICAL_ENTITY <name_1> [ PHYSICAL_ENTITY <name_2> [ ... ] ] ] [ <property_name_1> <expr_1> [ <property_name_2> <expr_2> [ ... ] ] ]
+MATERIAL <name> [ MESH <name> ] [ PHYSICAL_GROUP <name_1> [ PHYSICAL_GROUP <name_2> [ ... ] ] ] [ <property_name_1> <expr_1> [ <property_name_2> <expr_2> [ ... ] ] ]
 ~~~
 
 
@@ -761,7 +761,7 @@ In the first case, just the function name is expected (i.e. not its arguments).
 
 ~~~wasora
 MESH_INTEGRATE { FUNCTION <function> | EXPRESSION <expr> }
- [ MESH <mesh_identifier> ] [ OVER <physical_entity_name> ] [ NODES | CELLS ]
+ [ MESH <mesh_identifier> ] [ OVER <physical_group> ] [ NODES | CELLS ]
  RESULT <variable>
 
 ~~~
@@ -774,7 +774,7 @@ If the expression is just `1` then the volume (or area or length) of the domain 
 Note that arguments ought to be `x`, `y` and/or `z`.
 If there are more than one mesh defined, an explicit one has to be given with `MESH`.
 By default the integration is performed over the highest-dimensional elements of the mesh.
-If the integration is to be carried out over just a physical entity, it has to be given in `OVER`.
+If the integration is to be carried out over just a physical group, it has to be given in `OVER`.
 Either `NODES` or `CELLS` define how the integration is to be performed.
 In the first case a the integration is performed using the Gauss points and weights associated to each element type.
 In the second case, the integral is computed as the sum of the product of the function evaluated at the center of each cell (element) and the cell’s volume.
@@ -800,14 +800,31 @@ MESH_POST [ MESH <mesh_identifier> ] { FILE <name> | FILE_PATH <file_path> } [ N
 
 
 
-##  PHYSICAL_ENTITY
+##  PHYSICAL_GROUP
 
-> 
+> Defines a physical group of elements within a mesh file.
+
 ~~~wasora
-PHYSICAL_ENTITY <name> [ DIMENSION <expr> ] [ MESH <name> ] [ MATERIAL <name> ] [ BC <bc_1> <bcg_2> ... ]
+PHYSICAL_GROUP <name> [ MESH <name> ] [ DIMENSION <expr> ]
+ [ MATERIAL <name> ]
+ [ BC <bc_1> <bc_2> ... ]
+
 ~~~
 
 
+A name is mandatory for each physical group defined within the input file.
+If there is no physical group with the provided name in the mesh, this instruction makes no effect.
+If there are many meshes, an explicit mesh can be given with `MESH`.
+Otherwise, the physical group is defined on the main mesh.
+An explicit dimension of the physical group can be provided with `DIMENSION`.
+For volumetric elements, physical groups can be linked to materials using `MATERIAL`.
+Note that if a material is created with the same name as a physical group in the mesh,
+they will be linked automatically. The `MATERIAL` keyword in `PHYSICAL_GROUP` is used
+to link a physical group in a mesh file and a material in the wasora input file with
+different names.
+For non-volumetric elements, boundary conditions can be assigned by using the `BC` keyword.
+This should be the last keyword of the line, and any token afterwards is treated
+specially by the underlying solver (i.e. Fino or milonga).
 
 ##  PHYSICAL_PROPERTY
 

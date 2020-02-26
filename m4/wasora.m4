@@ -20,22 +20,22 @@ AC_DEFUN([WASORA_CHECK_BASIC_HEADERS],[
 
 AC_DEFUN([WASORA_OPT_FLAGS_C],[
 # default is optimized without debugging symbols
-AS_IF([test "$CFLAGS" = "-g -O2"], [CFLAGS="-O2"])
+AS_IF([test "$CFLAGS" = "-g -O2"], [CFLAGS="-O3"])
 ])
 
 AC_DEFUN([WASORA_OPT_FLAGS_F],[
 # default is optimized without debugging symbols
-AS_IF([test "$FCFLAGS" = "-g -O2"], [FCFLAGS="-O2"])
+AS_IF([test "$FCFLAGS" = "-g -O2"], [FCFLAGS="-O3"])
 ])
 
 AC_DEFUN([WASORA_OPT_FLAGS_F77],[
 # default is optimized without debugging symbols
-AS_IF([test "$FFLAGS" = "-g -O2"], [FFLAGS="-O2"])
+AS_IF([test "$FFLAGS" = "-g -O2"], [FFLAGS="-O3"])
 ])
 
 AC_DEFUN([WASORA_OPT_FLAGS_CXX],[
 # default is optimized without debugging symbols
-AS_IF([test "$CXXFLAGS" = "-g -O2"], [CXXFLAGS="-O2"])
+AS_IF([test "$CXXFLAGS" = "-g -O2"], [CXXFLAGS="-O3"])
 ])
 
 

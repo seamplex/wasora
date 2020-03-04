@@ -126,6 +126,10 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
   fprintf(file, "DATASET UNSTRUCTURED_GRID\n");
   fprintf(file, "POINTS %d double\n", mesh->n_nodes);
   for (j = 0; j < mesh->n_nodes; j++) { 
+    if (mesh->node[j].tag != j+1) {
+      wasora_push_error_message("VTK output needs sorted nodes");
+      return WASORA_RUNTIME_ERROR;
+    }
     fprintf(file, "%g %g %g\n", mesh->node[j].x[0], mesh->node[j].x[1], mesh->node[j].x[2]);
   }
   fprintf(file, "\n");

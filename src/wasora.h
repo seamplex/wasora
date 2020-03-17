@@ -1883,17 +1883,18 @@ struct {
 
 // nodos
 struct node_t {
-  int tag;               // numero asignado por gmsh
-  int index_mesh;        // indice dentro del array de nodos
+  int tag;                  // numero asignado por gmsh
+  int index_mesh;           // indice dentro del array de nodos
 
-  double x[3];           // coordenadas espaciales del nodo
-  int *index_dof;        // indice del vector incognita para cada uno de los grados de libertad
+  double x[3];              // coordenadas espaciales del nodo
+  int *index_dof;           // indice del vector incognita para cada uno de los grados de libertad
   
-  double *phi;           // funciones solucion en el nodo
-  gsl_matrix *dphidx;    // derivada del dof m con respecto a la coordenada g
-                         // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
-  double *f;             // funciones arbitrarias (sigmas y taus)
-
+  double *phi;              // funciones solucion en el nodo
+  gsl_matrix *dphidx;       // derivada del dof m con respecto a la coordenada g
+                            // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
+  gsl_matrix *delta_dphidx; // lo mismo pero para las incertezas de las derivadas
+  double *f;                // funciones arbitrarias (sigmas y taus)
+  
   element_list_item_t *associated_elements;
 };
 

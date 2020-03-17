@@ -996,7 +996,7 @@ int mesh_gmsh_write_scalar(mesh_post_t *mesh_post, function_t *function, centeri
 
 int mesh_gmsh_write_vector(mesh_post_t *mesh_post, function_t **function, centering_t centering) {
 
-  int i;
+  int i, j;
   mesh_t *mesh;
   
   if (mesh_post->mesh != NULL) {
@@ -1046,12 +1046,27 @@ int mesh_gmsh_write_vector(mesh_post_t *mesh_post, function_t **function, center
     // numero de datos
     fprintf(mesh_post->file->pointer, "%d\n", mesh->n_nodes);              
   
-    for (i = 0; i < mesh->n_nodes; i++) {
-      fprintf(mesh_post->file->pointer, "%d %g %g %g\n", mesh->node[i].tag,
-                                                         wasora_evaluate_function(function[0], mesh->node[i].x),
-                                                         wasora_evaluate_function(function[1], mesh->node[i].x),
-                                                         wasora_evaluate_function(function[2], mesh->node[i].x));
+    for (j = 0; j < mesh->n_nodes; j++) {
+      fprintf(mesh_post->file->pointer, "%d ", mesh->node[j].tag);
+      
+      if (function[0]->type == type_pointwise_mesh_node && function[0]->data_size == mesh_post->mesh->n_nodes) {
+        fprintf(mesh_post->file->pointer, "%g ", function[0]->data_value[j]);
+      } else {
+        fprintf(mesh_post->file->pointer, "%g ", wasora_evaluate_function(function[0], mesh->node[j].x));
       }
+
+      if (function[1]->type == type_pointwise_mesh_node && function[1]->data_size == mesh_post->mesh->n_nodes) {
+        fprintf(mesh_post->file->pointer, "%g ", function[1]->data_value[j]);
+      } else {
+        fprintf(mesh_post->file->pointer, "%g ", wasora_evaluate_function(function[1], mesh->node[j].x));
+      }
+
+      if (function[2]->type == type_pointwise_mesh_node && function[2]->data_size == mesh_post->mesh->n_nodes) {
+        fprintf(mesh_post->file->pointer, "%g\n", function[2]->data_value[j]);
+      } else {
+        fprintf(mesh_post->file->pointer, "%g\n", wasora_evaluate_function(function[2], mesh->node[j].x));
+      }
+    }
     fprintf(mesh_post->file->pointer, "$EndNodeData\n");
   }
  

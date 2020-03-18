@@ -130,7 +130,7 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
       wasora_push_error_message("VTK output needs sorted nodes");
       return WASORA_RUNTIME_ERROR;
     }
-    fprintf(file, "%g %g %g\n", mesh->node[j].x[0], mesh->node[j].x[1], mesh->node[j].x[2]);
+    fprintf(file, "%.8g %.8g %.8g\n", mesh->node[j].x[0], mesh->node[j].x[1], mesh->node[j].x[2]);
   }
   fprintf(file, "\n");
 

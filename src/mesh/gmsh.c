@@ -685,12 +685,22 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
       char *string_tag = NULL;
       
       // string-tags
-      fscanf(mesh->file->pointer, "%d", &n_string_tags);
+      if (fscanf(mesh->file->pointer, "%d", &n_string_tags) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
       if (n_string_tags != 1) {
         continue;
       }
-      fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer); // el \n
-      fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer);
+      // el \n
+      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
       string_tag = strtok(buffer, "\"");
       
       LL_FOREACH(mesh->node_datas, node_data) {
@@ -705,20 +715,38 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
       }
       
       // real-tags
-      fscanf(mesh->file->pointer, "%d", &n_real_tags);
+      if (fscanf(mesh->file->pointer, "%d", &n_real_tags) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
       if (n_real_tags != 1) {
         continue;
       }
-      fscanf(mesh->file->pointer, "%lf", &time);
+      if (fscanf(mesh->file->pointer, "%lf", &time) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
       
       // integer-tags
-      fscanf(mesh->file->pointer, "%d", &n_integer_tags);
+      if (fscanf(mesh->file->pointer, "%d", &n_integer_tags) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
       if (n_integer_tags != 3) {
         continue;
       }
-      fscanf(mesh->file->pointer, "%d", &timestep);
-      fscanf(mesh->file->pointer, "%d", &dofs);
-      fscanf(mesh->file->pointer, "%d", &nodes);
+      if (fscanf(mesh->file->pointer, "%d", &timestep) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (fscanf(mesh->file->pointer, "%d", &dofs) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (fscanf(mesh->file->pointer, "%d", &nodes) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
       
       if (dofs != 1 || nodes != mesh->n_nodes) {
         continue;
@@ -732,7 +760,10 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
       function->data_value = calloc(nodes, sizeof(double));
       
       for (j = 0; j < nodes; j++) {
-        fscanf(mesh->file->pointer, "%d %lf", &id, &value);
+        if (fscanf(mesh->file->pointer, "%d %lf", &id, &value) == 0) {
+          wasora_push_error_message("error reading file");
+          return WASORA_RUNTIME_ERROR;
+        }
         function->data_value[id-1] = value;
       }
 

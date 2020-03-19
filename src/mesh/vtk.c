@@ -432,7 +432,10 @@ int mesh_vtk_readmesh(mesh_t *mesh) {
   
   mesh->node = calloc(mesh->n_nodes, sizeof(node_t));
   for (j = 0; j < mesh->n_nodes; j++) {
-    fscanf(mesh->file->pointer, "%lf %lf %lf", &mesh->node[j].x[0], &mesh->node[j].x[1], &mesh->node[j].x[2]);
+    if (fscanf(mesh->file->pointer, "%lf %lf %lf", &mesh->node[j].x[0], &mesh->node[j].x[1], &mesh->node[j].x[2]) == 0) {
+      wasora_push_error_message("error reading file");
+      return WASORA_RUNTIME_ERROR;
+    }
     mesh->node[j].index_mesh = j;
     mesh->node[j].tag = j+1;
   }

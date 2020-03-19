@@ -121,7 +121,10 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
   // -----------------------------  
   if (already_exists == 0 && wasora_check_name(name) == WASORA_PARSER_OK) {
     // volumen (o area o longitud)
-    asprintf(&dummy_aux, "%s_vol", physical_entity->name);
+    if (asprintf(&dummy_aux, "%s_vol", physical_entity->name) == -1) {
+      wasora_push_error_message("memory allocation error");
+      return NULL;
+    }
     // volvemos a chequear por si acaso hay duplicados en mallas 
     if (wasora_check_name(dummy_aux) == WASORA_PARSER_OK) {
       if ((physical_entity->var_vol = wasora_define_variable(dummy_aux)) == NULL) {
@@ -133,7 +136,10 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
     free(dummy_aux);
 
     // centro de gravedad
-    asprintf(&dummy_aux, "%s_cog", physical_entity->name);
+    if (asprintf(&dummy_aux, "%s_cog", physical_entity->name) == -1) {
+      wasora_push_error_message("memory allocation error");
+      return NULL;
+    }
     if (wasora_check_name(dummy_aux) == WASORA_PARSER_OK) {
       if ((physical_entity->vector_cog = wasora_define_vector(dummy_aux, 3, NULL, NULL)) == NULL) {
         return NULL;

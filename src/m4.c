@@ -69,7 +69,10 @@ int wasora_instruction_m4(void *arg) {
   LL_FOREACH(m4->macros, macro) {  
     if (macro->print_token.text != NULL) {
       
-      asprintf(&args_for_m4[i++], "-D%s=%s", macro->name, macro->print_token.text);
+      if (asprintf(&args_for_m4[i++], "-D%s=%s", macro->name, macro->print_token.text) == -1) {
+        wasora_push_error_message("memory allocation error");
+        return WASORA_RUNTIME_ERROR;
+      }
       
     } else {
       // TODO: ver como hacer esto de una
@@ -78,7 +81,10 @@ int wasora_instruction_m4(void *arg) {
         return WASORA_RUNTIME_ERROR;
       }
       
-      asprintf(&args_for_m4[i++], templ, macro->name, wasora_evaluate_expression(&macro->print_token.expression));
+      if (asprintf(&args_for_m4[i++], templ, macro->name, wasora_evaluate_expression(&macro->print_token.expression)) == -1) {
+        wasora_push_error_message("memory allocation error");
+        return WASORA_RUNTIME_ERROR;
+      }
     }
   }
 

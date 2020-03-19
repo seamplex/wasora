@@ -508,7 +508,10 @@ int mesh_frd_readmesh(mesh_t *mesh) {
       }
         
       for (j = 0; j < numnod; j++) {
-        fscanf(mesh->file->pointer, "%d %d", &minusone, &node);
+        if (fscanf(mesh->file->pointer, "%d %d", &minusone, &node)) {
+          wasora_push_error_message("error reading file");
+          return WASORA_RUNTIME_ERROR;
+        }
         if (minusone != -1) {
           wasora_push_error_message("expected -1 '%s'", buffer);
           return WASORA_RUNTIME_ERROR;
@@ -520,7 +523,10 @@ int mesh_frd_readmesh(mesh_t *mesh) {
           
         for (i = 0; i < ncomps; i++) {
           // no entran mas de 6 por vez, hay que leer un -2 si hay mas
-          fscanf(mesh->file->pointer, "%lf", &scalar);
+          if (fscanf(mesh->file->pointer, "%lf", &scalar) == 0) {
+            wasora_push_error_message("error reading file");
+            return WASORA_RUNTIME_ERROR;
+          }
           if (function[i] != NULL) {
             function[i]->data_value[node-1] = scalar;
           }

@@ -281,7 +281,10 @@ int wasora_io_read_ascii_file(io_t *io, double *data, int offset) {
       return WASORA_RUNTIME_ERROR;
     }
     if ((gotit = fscanf(io->filepointer, "%lf", data)) == 0) {
-      fscanf(io->filepointer, "%*s");
+      if (fscanf(io->filepointer, "%*s") == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
     }
   } while(gotit == 0);
 

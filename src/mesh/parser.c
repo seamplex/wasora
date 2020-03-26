@@ -222,10 +222,11 @@ int wasora_mesh_parse_line(char *line) {
         }
       }
 
+///kw+MESH+detail If no `NAME` is given, the first mesh to be defined is called `first`.
       // si no tenemos nombre 
       if (name == NULL) {
         if (wasora_mesh.meshes == NULL) {
-          // y es la primera malla, la llamamos main
+          // y es la primera malla, la llamamos first
           name = strdup("first");
         } else {
           // y es otra malla, nos quejamos

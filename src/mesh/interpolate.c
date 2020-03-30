@@ -150,9 +150,24 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   
   // calculamos el valor de y
   y = 0;
-  for (j = 0; j < chosen_element->type->nodes; j++) {
-    y += chosen_element->type->h(j, gsl_vector_ptr(r,0)) * f->data_value[chosen_element->node[j]->index_mesh];    
-  }
+  if (f->spatial_derivative_of == NULL) {
+    for (j = 0; j < chosen_element->type->nodes; j++) {
+      y += chosen_element->type->h(j, gsl_vector_ptr(r,0)) * f->data_value[chosen_element->node[j]->index_mesh];    
+    }
+  } else {
+    
+    gsl_matrix *dhdx = gsl_matrix_alloc(chosen_element->type->nodes, chosen_element->type->dim);
+    
+    mesh_compute_dhdx(chosen_element, gsl_vector_ptr(r,0), NULL, dhdx);
+      
+    for (j = 0; j < chosen_element->type->nodes; j++) {
+      y += gsl_matrix_get(dhdx, j, f->spatial_derivative_with_respect_to)
+            * f->spatial_derivative_of->data_value[chosen_element->node[j]->index_mesh];
+    }
+    
+    gsl_matrix_free(dhdx);
+    
+  }  
   
   gsl_vector_free(r);
   

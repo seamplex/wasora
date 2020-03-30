@@ -404,6 +404,11 @@ struct function_t {
   double **data_argument;
   int data_argument_alloced;
   double *data_value;
+  
+  // esto es por si esto es una derivada y queremos interpolar con las funciones de forma
+  // ojo! hay que poner en data la funcion original y no las derivadas
+  function_t *spatial_derivative_of;
+  int spatial_derivative_with_respect_to;
 
   // ayudita por si la malla es regular
   int rectangular_mesh;

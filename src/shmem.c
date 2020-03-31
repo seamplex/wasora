@@ -74,7 +74,9 @@ void *wasora_get_shared_pointer(char *name, size_t size) {
 void wasora_free_shared_pointer(void *pointer, char *name, size_t size) {
   wasora_remove_lock(name, 0);
   munmap(pointer, size);
+#if !defined(LD_STATIC)
   shm_unlink(name);
+#endif
 }
 
 

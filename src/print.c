@@ -334,6 +334,10 @@ int wasora_instruction_print_function(void *arg) {
             
             if (print_token->function == print_function->first_function || print_token->function->data_size == print_function->first_function->data_size) {
               // la primera funcion tiene los puntos posta asi que no hay que interpolar
+              if (print_token->function->data_value == NULL) {
+                wasora_push_error_message("function '%s' does not have data", print_token->function->name);
+                return WASORA_RUNTIME_ERROR;
+              }
               fprintf(print_function->file->pointer, print_function->format, print_token->function->data_value[j]);
             } else {
               fprintf(print_function->file->pointer, print_function->format, wasora_evaluate_function(print_token->function, x));

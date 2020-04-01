@@ -45,7 +45,13 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   mesh_t *m = f->mesh;  
 
   gsl_vector *r = NULL;    // vector con r y s (lo que queremos encontrar)
-
+  
+  if (f->data_value == NULL) {
+    wasora_push_error_message("function '%s' does not have data", f->name);
+    wasora_runtime_error();
+  }
+  
+  
   if (m->kd_nodes != NULL) {
 
     // TODO: ver si esto es lo mejor (probablemente no)

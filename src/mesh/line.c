@@ -139,5 +139,9 @@ int mesh_point_in_line(element_t *element, const double *x) {
 
 
 double mesh_line_vol(element_t *element) {
-  return fabs(element->node[1]->x[0] - element->node[0]->x[0]);
+  
+  if (element->volume == 0) {
+    element->volume = fabs(element->node[1]->x[0] - element->node[0]->x[0]);
+  }  
+  return element->volume;
 }

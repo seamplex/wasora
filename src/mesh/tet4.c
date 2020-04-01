@@ -332,9 +332,9 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
 
 double mesh_tetrahedron_vol(element_t *element) {
 
-  double a[3], b[3], c[3];
-  
   if (element->volume == 0) {
+    double a[3], b[3], c[3];
+    
     mesh_subtract(element->node[0]->x, element->node[1]->x, a);
     mesh_subtract(element->node[0]->x, element->node[2]->x, b);
     mesh_subtract(element->node[0]->x, element->node[3]->x, c);

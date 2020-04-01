@@ -508,7 +508,7 @@ int mesh_frd_readmesh(mesh_t *mesh) {
       }
         
       for (j = 0; j < numnod; j++) {
-        if (fscanf(mesh->file->pointer, "%d %d", &minusone, &node)) {
+        if (fscanf(mesh->file->pointer, "%d %d", &minusone, &node) != 2) {
           wasora_push_error_message("error reading file");
           return WASORA_RUNTIME_ERROR;
         }

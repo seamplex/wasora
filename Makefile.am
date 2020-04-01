@@ -4,9 +4,8 @@ dist_doc_DATA = README \
                 doc/wasora.texi \
                 doc/wasora.xml
 
-EXTRA_DIST = locateruntest.sh \
-             src/version.sh \
-             doc
+EXTRA_DIST = examples doc locateruntest.sh \
+             src/version.sh
 
 # TESTS = examples/test-fibonacci.sh \
 #         examples/test-pi.sh \

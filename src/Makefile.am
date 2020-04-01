@@ -61,7 +61,6 @@ wasora_SOURCES = \
 ./mesh/integrate.c \
 ./mesh/prism6.c \
 ./mesh/prism15.c \
-./mesh/mesh.h \
 ./mesh/vtk.c \
 ./mesh/parser.c \
 ./mesh/init.c \
@@ -92,6 +91,6 @@ wasora_SOURCES = \
 ./define.c \
 ./wasora.c
 
-version.$(OBJEXT): version.h
-version.h: Makefile
-	./version.sh
+# version.$(OBJEXT): version.h
+# version.h: Makefile
+# 	./version.sh

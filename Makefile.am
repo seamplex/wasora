@@ -26,7 +26,7 @@ TESTS = tests/fibonacci.sh \
 
 all-local:
 	cp -r src/wasora$(EXEEXT) .
-	rm -f src/version.$(OBJEXT) src/version.h src/version.lo src/.lib/version.$(OBJEXT)
+# 	rm -f src/version.$(OBJEXT) src/version.h src/version.lo src/.lib/version.$(OBJEXT)
 	@echo
 	@echo Happy engineering hacking with wasora!
 	@echo

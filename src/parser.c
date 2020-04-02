@@ -1806,7 +1806,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 ///kw+PRINT+usage [ NONEWLINE ]
         } else if (strcasecmp(token, "NONEWLINE") == 0) {
-///kw+PRINT+detail If the `NONEWLINE` keyword is not provided, default is to write a newline '\n' character after all the objects are processed.
+///kw+PRINT+detail If the `NONEWLINE` keyword is not provided, default is to write a newline `\n` character after all the objects are processed.
           print->nonewline = 1;
 
 ///kw+PRINT+usage [ SEP <string> ]

@@ -3160,8 +3160,8 @@ if (strcasecmp(token, "FROM") == 0) {
       
       // --- DAE -----------------------------------------------------
     } else if (token[0] == '0' || strstr(wasora.line, ".=") != NULL) {
-///kw+.=+desc Add an equation to the DAE system to be solved in the phase space spanned by `PHASE_SPACE`.
-///kw+.=+usage { 0[(i[,j]][<imin:imax[;jmin:jmax]>] | <expr1> } .= <expr2>
+///kw+_.=+desc Add an equation to the DAE system to be solved in the phase space spanned by `PHASE_SPACE`.
+///kw+_.=+usage { 0[(i[,j]][<imin:imax[;jmin:jmax]>] | <expr1> } .= <expr2>
       char *equation;
       char *dummy;
       char *bracket;

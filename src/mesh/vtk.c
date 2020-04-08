@@ -127,8 +127,16 @@ int mesh_vtk_write_unstructured_mesh(mesh_t *mesh, FILE *file) {
   fprintf(file, "POINTS %d double\n", mesh->n_nodes);
   for (j = 0; j < mesh->n_nodes; j++) { 
     if (mesh->node[j].tag != j+1) {
-      wasora_push_error_message("VTK output needs sorted nodes");
-      return WASORA_RUNTIME_ERROR;
+      
+      int on_error = (int)(wasora_value(wasora_special_var(on_gsl_error)));
+      if (!(on_error & ON_ERROR_NO_REPORT)) {
+        wasora_push_error_message("VTK output needs sorted nodes");
+      }
+      if (!(on_error & ON_ERROR_NO_QUIT)) {
+        return WASORA_RUNTIME_OK;
+      } else {
+        return WASORA_RUNTIME_ERROR;
+      }  
     }
     fprintf(file, "%.8g %.8g %.8g\n", mesh->node[j].x[0], mesh->node[j].x[1], mesh->node[j].x[2]);
   }

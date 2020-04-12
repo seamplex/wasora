@@ -2014,7 +2014,8 @@ struct bc_t {
   int type_math;
   int type_phys;  
   int dof;   // este puede tener valores altos que quieran decir cosas (i.e. dof=213 es Mx)
-  
+
+  expr_t condition;  // si no es null la BC solo se aplica si esto es != 0
   expr_t *expr;
   physical_entity_t *slave;  
   

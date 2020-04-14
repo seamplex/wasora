@@ -88,6 +88,7 @@ Quadrangle:
 
 void mesh_quad_gauss4_init(element_type_t *element_type) {
 
+  double r[3];
   gauss_t *gauss;
   
   // dos juegos de puntos de gauss
@@ -115,6 +116,38 @@ void mesh_quad_gauss4_init(element_type_t *element_type) {
     gauss->r[3][1] = +1.0/M_SQRT3;
 
     mesh_init_shape_at_gauss(gauss, element_type);
+    
+    // matriz de extrapolacion
+    gauss->extrap = gsl_matrix_alloc(gauss->V, gauss->V);
+    
+    r[0] = -M_SQRT3;
+    r[1] = -M_SQRT3;
+    gsl_matrix_set(gauss->extrap, 0, 0, mesh_quad4_h(0, r));
+    gsl_matrix_set(gauss->extrap, 0, 1, mesh_quad4_h(1, r));
+    gsl_matrix_set(gauss->extrap, 0, 2, mesh_quad4_h(2, r));
+    gsl_matrix_set(gauss->extrap, 0, 3, mesh_quad4_h(3, r));
+
+    r[0] = +M_SQRT3;
+    r[1] = -M_SQRT3;
+    gsl_matrix_set(gauss->extrap, 1, 0, mesh_quad4_h(0, r));
+    gsl_matrix_set(gauss->extrap, 1, 1, mesh_quad4_h(1, r));
+    gsl_matrix_set(gauss->extrap, 1, 2, mesh_quad4_h(2, r));
+    gsl_matrix_set(gauss->extrap, 1, 3, mesh_quad4_h(3, r));
+
+    r[0] = +M_SQRT3;
+    r[1] = +M_SQRT3;
+    gsl_matrix_set(gauss->extrap, 2, 0, mesh_quad4_h(0, r));
+    gsl_matrix_set(gauss->extrap, 2, 1, mesh_quad4_h(1, r));
+    gsl_matrix_set(gauss->extrap, 2, 2, mesh_quad4_h(2, r));
+    gsl_matrix_set(gauss->extrap, 2, 3, mesh_quad4_h(3, r));
+
+    r[0] = -M_SQRT3;
+    r[1] = +M_SQRT3;
+    gsl_matrix_set(gauss->extrap, 3, 0, mesh_quad4_h(0, r));
+    gsl_matrix_set(gauss->extrap, 3, 1, mesh_quad4_h(1, r));
+    gsl_matrix_set(gauss->extrap, 3, 2, mesh_quad4_h(2, r));
+    gsl_matrix_set(gauss->extrap, 3, 3, mesh_quad4_h(3, r));    
+    
     
   // ---- un punto de Gauss  ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];

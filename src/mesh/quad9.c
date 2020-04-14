@@ -108,9 +108,10 @@ int mesh_quad9_init(void) {
 }
 
 void mesh_quad_gauss9_init(element_type_t *element_type) {
-
-  gauss_t *gauss;
+  double r[3];
   double a, w1, w2, w3;  
+  int v;
+  gauss_t *gauss;
 
   a = 0.774596669241483;
   w1 = 25.0/81.0;
@@ -162,6 +163,63 @@ void mesh_quad_gauss9_init(element_type_t *element_type) {
 
     mesh_init_shape_at_gauss(gauss, element_type);
     
+    // matriz de extrapolacion
+    gauss->extrap = gsl_matrix_alloc(gauss->V, gauss->V);
+    
+    r[0] = -1/a;
+    r[1] = -1/a;
+    for (v = 0; v < gauss->V; v++) {
+      gsl_matrix_set(gauss->extrap, 0, v, mesh_quad9_h(v, r));
+    }  
+
+    r[0] = +1/a;
+    r[1] = -1/a;
+    for (v = 0; v < gauss->V; v++) {
+      gsl_matrix_set(gauss->extrap, 1, v, mesh_quad9_h(v, r));
+    }  
+    
+    r[0] = +1/a;
+    r[1] = +1/a;
+    for (v = 0; v < gauss->V; v++) {
+      gsl_matrix_set(gauss->extrap, 2, v, mesh_quad9_h(v, r));
+    }  
+
+    r[0] = -1/a;
+    r[1] = +1/a;
+    for (v = 0; v < gauss->V; v++) {
+      gsl_matrix_set(gauss->extrap, 3, v, mesh_quad9_h(v, r));
+    }
+
+    r[0] = 0;
+    r[1] = -1/a;
+    for (v = 0; v < gauss->V; v++) {
+      gsl_matrix_set(gauss->extrap, 4, v, mesh_quad9_h(v, r));
+    }
+
+    r[0] = +1/a;
+    r[1] = 0;
+    for (v = 0; v < gauss->V; v++) {
+      gsl_matrix_set(gauss->extrap, 5, v, mesh_quad9_h(v, r));
+    }
+
+    r[0] = 0;
+    r[1] = +1/a;
+    for (v = 0; v < gauss->V; v++) {
+      gsl_matrix_set(gauss->extrap, 6, v, mesh_quad9_h(v, r));
+    }
+
+    r[0] = -1/a;
+    r[1] = 0;
+    for (v = 0; v < gauss->V; v++) {
+      gsl_matrix_set(gauss->extrap, 7, v, mesh_quad9_h(v, r));
+    }
+    
+    r[0] = 0;
+    r[1] = 0;
+    for (v = 0; v < gauss->V; v++) {
+      gsl_matrix_set(gauss->extrap, 8, v, mesh_quad9_h(v, r));
+    }
+
   // ---- un punto de Gauss  ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
     mesh_alloc_gauss(gauss, element_type, 1);

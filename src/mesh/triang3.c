@@ -27,7 +27,6 @@
 int mesh_triang3_init(void) {
 
   element_type_t *element_type;
-  gauss_t *gauss;
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE3];
@@ -75,20 +74,22 @@ v
   element_type->first_order_nodes++;
   element_type->node_coords[2][0] = 0;  
   element_type->node_coords[2][1] = 1;
-  
-  // tres juegos de puntos de gauss
-  element_type->gauss = calloc(3, sizeof(gauss_t));
-  
-  // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
-  
-    gauss->w[0] = 0.5 * 1.0;
-    gauss->r[0][0] = 1.0/3.0;
-    gauss->r[0][1] = 1.0/3.0;
 
-    mesh_init_shape_at_gauss(gauss, element_type);  
-    
+  mesh_triang_gauss3_init(element_type);
+  
+  return WASORA_RUNTIME_OK;    
+}
+  
+  
+void mesh_triang_gauss3_init(element_type_t *element_type) {
+  
+  double r[3];
+  int j;
+  gauss_t *gauss;
+  
+  // do juegos de puntos de gauss
+  element_type->gauss = calloc(2, sizeof(gauss_t));
+  
   // ---- tres puntos de Gauss sobre el elemento unitario ----  
     gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
     mesh_alloc_gauss(gauss, element_type, 3);
@@ -107,7 +108,39 @@ v
 
     mesh_init_shape_at_gauss(gauss, element_type);
     
-  return WASORA_RUNTIME_OK;
+    // matriz de extrapolacion
+    gauss->extrap = gsl_matrix_alloc(gauss->V, gauss->V);
+    
+    r[0] = -1.0/3.0;
+    r[1] = -1.0/3.0;
+    for (j = 0; j < gauss->V; j++) {
+      gsl_matrix_set(gauss->extrap, 0, j, mesh_triang3_h(j, r));
+    }  
+
+    r[0] = +5.0/3.0;
+    r[1] = -1.0/3.0;
+    for (j = 0; j < gauss->V; j++) {
+      gsl_matrix_set(gauss->extrap, 1, j, mesh_triang3_h(j, r));
+    }  
+
+    r[0] = -1.0/3.0;
+    r[1] = +5.0/3.0;
+    for (j = 0; j < gauss->V; j++) {
+      gsl_matrix_set(gauss->extrap, 2, j, mesh_triang3_h(j, r));
+    }  
+    
+
+  // ---- un punto de Gauss sobre el elemento unitario ----  
+    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
+    mesh_alloc_gauss(gauss, element_type, 1);
+  
+    gauss->w[0] = 0.5 * 1.0;
+    gauss->r[0][0] = 1.0/3.0;
+    gauss->r[0][1] = 1.0/3.0;
+
+    mesh_init_shape_at_gauss(gauss, element_type);  
+
+  return;
 }
 
 double mesh_triang3_h(int j, double *vec_r) {

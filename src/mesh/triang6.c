@@ -26,7 +26,6 @@
 int mesh_triang6_init(void) {
 
   element_type_t *element_type;
-  gauss_t *gauss;
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TRIANGLE6];
@@ -84,39 +83,9 @@ Triangle6:
   wasora_mesh_add_node_parent(&element_type->node_parents[5], 0);
   wasora_mesh_compute_coords_from_parent(element_type, 5); 
   
+  mesh_triang_gauss3_init(element_type);
   
-  // dos juegos de puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
-  
-  // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
-  
-    gauss->w[0] = 0.5 * 1.0;
-    gauss->r[0][0] = 1.0/3.0;
-    gauss->r[0][1] = 1.0/3.0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);  
-    
-  // ---- tres puntos de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 3);
-  
-    gauss->w[0] = 1.0/2.0 * 1.0/3.0;
-    gauss->r[0][0] = 1.0/6.0;
-    gauss->r[0][1] = 1.0/6.0;
-  
-    gauss->w[1] = 1.0/2.0 * 1.0/3.0;
-    gauss->r[1][0] = 2.0/3.0;
-    gauss->r[1][1] = 1.0/6.0;
-  
-    gauss->w[2] = 1.0/2.0 * 1.0/3.0;
-    gauss->r[2][0] = 1.0/6.0;
-    gauss->r[2][1] = 2.0/3.0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);
-  
-  return WASORA_RUNTIME_OK;
+  return WASORA_RUNTIME_OK;    
 }
 
 double mesh_triang6_h(int j, double *vec_r) {

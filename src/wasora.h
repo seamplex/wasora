@@ -2445,6 +2445,7 @@ extern double mesh_line3_dhdr(int, int, double *);
 
 // triang3.c
 extern int mesh_triang3_init(void);
+extern void mesh_triang_gauss3_init(element_type_t *);
 extern double mesh_triang3_h(int, double *);
 extern double mesh_triang3_dhdr(int, int, double *);
 extern int mesh_point_in_triangle(element_t *, const double *);

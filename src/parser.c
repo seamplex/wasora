@@ -287,6 +287,7 @@ int wasora_parse_input_file(char *filepath, int from, int to) {
       line = strdup(wasora.line);
       if ((n = wasora_parse_line(line)) == WASORA_PARSER_ERROR) {
         wasora_push_error_message("%s: %d:", filepath, line_num);
+        free(line);
         return WASORA_PARSER_ERROR;
       } else if (n == WASORA_PARSER_UNHANDLED) {
         understood = 0;

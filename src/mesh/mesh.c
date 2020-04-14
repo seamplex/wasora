@@ -501,6 +501,9 @@ int mesh_free(mesh_t *mesh) {
       if (mesh->node[j].dphidx != NULL) {
         gsl_matrix_free(mesh->node[j].dphidx);
       }
+      if (mesh->node[j].delta_dphidx != NULL) {
+        gsl_matrix_free(mesh->node[j].delta_dphidx);
+      }
       if (mesh->node[j].f != NULL) {
         free(mesh->node[j].f);
       }

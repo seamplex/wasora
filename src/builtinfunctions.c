@@ -105,10 +105,22 @@ double builtin_last(factor_t *expr) {
     expr->aux[0] = x[0];
     expr->aux[1] = x[0];
     expr->aux[2] = 0;
-  } else if ((int)round(expr->aux[2]) != (int)(wasora_value(wasora_special_var(step_transient)))) {
-    expr->aux[0] = expr->aux[1];
-    expr->aux[1] = x[0];
-    expr->aux[2] = (int)(wasora_value(wasora_special_var(step_transient)));
+  } else {
+    
+    if ((int)wasora_value(wasora_special_var(in_static))) {
+      if ((int)round(expr->aux[2]) != (int)(wasora_value(wasora_special_var(step_static)))) {
+        expr->aux[0] = expr->aux[1];
+        expr->aux[1] = x[0];
+        expr->aux[2] = (int)(wasora_value(wasora_special_var(step_static)));
+      }
+      
+    } else {
+      if ((int)round(expr->aux[2]) != (int)(wasora_value(wasora_special_var(step_transient)))) {
+        expr->aux[0] = expr->aux[1];
+        expr->aux[1] = x[0];
+        expr->aux[2] = (int)(wasora_value(wasora_special_var(step_transient)));
+      }
+    }
   }
 
   // esto es un maneje para poder hacer x = last(x), TODO: buscar una solucion mas elegante

@@ -683,13 +683,13 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MESH_FIND_MINMAX+usage [Z_MIN <variable> ]@
+///kw+MESH_FIND_MINMAX+usage [Z_MIN <variable> ]
         } else if (strcasecmp(token, "Z_MIN") == 0) {
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_find_minmax->z_min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
-///kw+MESH_FIND_MINMAX+usage [ I_MIN <variable> ]
+///kw+MESH_FIND_MINMAX+usage [ I_MIN <variable> ]@
 ///kw+MESH_FIND_MINMAX+detail If given, the index of the minimum (maximum) value (i.e. the node or cell number) is stored in the variable provided by the `I_MIN` (`I_MAX`) keyword.
             
         } else if (strcasecmp(token, "I_MIN") == 0 || strcasecmp(token, "INDEX_MIN") == 0) {
@@ -702,13 +702,6 @@ int wasora_mesh_parse_line(char *line) {
         } else if (strcasecmp(token, "MAX") == 0) {
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_find_minmax->max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
-            return WASORA_PARSER_ERROR;
-          }
-
-///kw+MESH_FIND_MINMAX+usage [ I_MAX <variable> ]
-        } else if (strcasecmp(token, "I_MAX") == 0 || strcasecmp(token, "INDEX_MAX") == 0) {
-          wasora_call(wasora_parser_string(&variable));
-          if ((mesh_find_minmax->i_max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
 
@@ -726,10 +719,17 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MESH_FIND_MINMAX+usage [Z_MAX <variable> ]@
+///kw+MESH_FIND_MINMAX+usage [Z_MAX <variable> ]
         } else if (strcasecmp(token, "Z_MAX") == 0) {
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_find_minmax->z_max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
+          
+///kw+MESH_FIND_MINMAX+usage [ I_MAX <variable> ]@
+        } else if (strcasecmp(token, "I_MAX") == 0 || strcasecmp(token, "INDEX_MAX") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->i_max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
 

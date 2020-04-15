@@ -113,7 +113,8 @@ int wasora_instruction_mesh_integrate(void *arg) {
             mesh_compute_integration_weight_at_gauss(element, v);
             mesh_compute_x_at_gauss(element, v);
             mesh_update_coord_vars(element->x[v]);
-            if (element->type->dim == 2) {
+            // si el elemento es de linea o de superficie calculamos la normal para tenerla en nx, ny y nz
+            if (element->type->dim == 1 || element->type->dim == 2) {
               wasora_call(mesh_compute_normal(element));
             }  
             integral += element->w[v] * wasora_evaluate_expression(expr);

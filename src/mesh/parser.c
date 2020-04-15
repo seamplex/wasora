@@ -623,7 +623,7 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_INTEGRATE+detail In the second case, a full algebraic expression including the arguments is expected.
         } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
           wasora_call(wasora_parser_expression(&mesh_find_minmax->expr));
-        
+
 ///kw+MESH_FIND_MINMAX+usage [ MESH <name> ]
         } else if (strcasecmp(token, "MESH") == 0) {
           char *mesh_name;
@@ -635,9 +635,8 @@ int wasora_mesh_parse_line(char *line) {
           }
           free(mesh_name);
 
-//kw+MESH_FIND_MINMAX+usage [ PHYSICAL_GROUP <physical_group_name> ]
-/*          
-        } else if (strcasecmp(token, "PHYSICAL_GROUP") == 0) {
+///kw+MESH_FIND_MINMAX+usage [ OVER <physical_group_name> ]
+        } else if (strcasecmp(token, "OVER") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
           if ((mesh_find_minmax->physical_entity = wasora_get_physical_entity_ptr(name, mesh_find_minmax->mesh)) == NULL) {
@@ -647,7 +646,7 @@ int wasora_mesh_parse_line(char *line) {
             }
           }
           free(name);
-*/
+
 ///kw+MESH_FIND_MINMAX+usage [ NODES
         } else if (strcasecmp(token, "NODES") == 0) {
           mesh_find_minmax->centering = centering_nodes;

@@ -620,11 +620,12 @@ int wasora_mesh_parse_line(char *line) {
           wasora_call(wasora_parser_function(&mesh_find_minmax->function));
 
 ///kw+MESH_FIND_MINMAX+usage | EXPRESSION <expr> }@
-///kw+MESH_INTEGRATE+detail In the second case, a full algebraic expression including the arguments is expected.
+///kw+MESH_FIND_MINMAX+detail In the second case, a full algebraic expression including the arguments is expected.
         } else if (strcasecmp(token, "EXPRESSION") == 0 || strcasecmp(token, "EXPR") == 0) {
           wasora_call(wasora_parser_expression(&mesh_find_minmax->expr));
 
 ///kw+MESH_FIND_MINMAX+usage [ MESH <name> ]
+///kw+MESH_FIND_MINMAX+detail If no explicit mesh is provided, the main mesh is used to search for the extrema.
         } else if (strcasecmp(token, "MESH") == 0) {
           char *mesh_name;
           wasora_call(wasora_parser_string(&mesh_name));
@@ -636,6 +637,7 @@ int wasora_mesh_parse_line(char *line) {
           free(mesh_name);
 
 ///kw+MESH_FIND_MINMAX+usage [ OVER <physical_group_name> ]
+///kw+MESH_FIND_MINMAX+detail If the `OVER` keyword is given, the search is performed only on the provided physical group.
         } else if (strcasecmp(token, "OVER") == 0) {
           char *name;
           wasora_call(wasora_parser_string(&name));
@@ -653,21 +655,19 @@ int wasora_mesh_parse_line(char *line) {
 ///kw+MESH_FIND_MINMAX+usage | CELLS ]@
         } else if (strcasecmp(token, "CELLS") == 0) {
           mesh_find_minmax->centering = centering_cells;
+///kw+MESH_FIND_MINMAX+detail Depending on the problem type, it might be needed to switch from `NODES` to `CELLS`
+///kw+MESH_FIND_MINMAX+detail but this is usually not needed.          
 
           
 ///kw+MESH_FIND_MINMAX+usage [ MIN <variable> ]
+///kw+MESH_FIND_MINMAX+detail If given, the minimum (maximum) value is stored in the variable provided by the `MIN` (`MAX`) keyword.
         } else if (strcasecmp(token, "MIN") == 0) {
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_find_minmax->min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MESH_FIND_MINMAX+usage [ I_MIN <variable> ]
-        } else if (strcasecmp(token, "I_MIN") == 0 || strcasecmp(token, "INDEX_MIN") == 0) {
-          wasora_call(wasora_parser_string(&variable));
-          if ((mesh_find_minmax->i_min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
-            return WASORA_PARSER_ERROR;
-          }
+///kw+MESH_FIND_MINMAX+detail If given, the $x$ (or $y$ or $z$) coordinate of the minimum (maximum) value is stored in the variable provided by the `X_MIN` (or `Y_MIN` or `Z_MIN) (`X_MAX`, `Y_MAX`, `Z_MAX`) keyword.
 
 ///kw+MESH_FIND_MINMAX+usage [ X_MIN <variable> ]
         } else if (strcasecmp(token, "X_MIN") == 0) {
@@ -687,6 +687,14 @@ int wasora_mesh_parse_line(char *line) {
         } else if (strcasecmp(token, "Z_MIN") == 0) {
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_find_minmax->z_min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
+///kw+MESH_FIND_MINMAX+usage [ I_MIN <variable> ]
+///kw+MESH_FIND_MINMAX+detail If given, the index of the minimum (maximum) value (i.e. the node or cell number) is stored in the variable provided by the `I_MIN` (`I_MAX`) keyword.
+            
+        } else if (strcasecmp(token, "I_MIN") == 0 || strcasecmp(token, "INDEX_MIN") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->i_min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
           

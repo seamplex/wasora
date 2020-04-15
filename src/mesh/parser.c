@@ -683,7 +683,7 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MESH_FIND_MINMAX+usage [Z_MIN <variable> ]
+///kw+MESH_FIND_MINMAX+usage [ Z_MIN <variable> ]
         } else if (strcasecmp(token, "Z_MIN") == 0) {
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_find_minmax->z_min = wasora_get_or_define_variable_ptr(variable)) == NULL) {
@@ -719,7 +719,7 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MESH_FIND_MINMAX+usage [Z_MAX <variable> ]
+///kw+MESH_FIND_MINMAX+usage [ Z_MAX <variable> ]
         } else if (strcasecmp(token, "Z_MAX") == 0) {
           wasora_call(wasora_parser_string(&variable));
           if ((mesh_find_minmax->z_max = wasora_get_or_define_variable_ptr(variable)) == NULL) {

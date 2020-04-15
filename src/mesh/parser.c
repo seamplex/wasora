@@ -667,6 +667,13 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
 
+///kw+MESH_FIND_MINMAX+usage [ MAX <variable> ]@
+        } else if (strcasecmp(token, "MAX") == 0) {
+          wasora_call(wasora_parser_string(&variable));
+          if ((mesh_find_minmax->max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
+            return WASORA_PARSER_ERROR;
+          }
+          
 ///kw+MESH_FIND_MINMAX+detail If given, the $x$ (or $y$ or $z$) coordinate of the minimum (maximum) value is stored in the variable provided by the `X_MIN` (or `Y_MIN` or `Z_MIN`) (`X_MAX`, `Y_MAX`, `Z_MAX`) keyword.
 
 ///kw+MESH_FIND_MINMAX+usage [ X_MIN <variable> ]
@@ -698,13 +705,6 @@ int wasora_mesh_parse_line(char *line) {
             return WASORA_PARSER_ERROR;
           }
           
-///kw+MESH_FIND_MINMAX+usage [ MAX <variable> ]
-        } else if (strcasecmp(token, "MAX") == 0) {
-          wasora_call(wasora_parser_string(&variable));
-          if ((mesh_find_minmax->max = wasora_get_or_define_variable_ptr(variable)) == NULL) {
-            return WASORA_PARSER_ERROR;
-          }
-
 ///kw+MESH_FIND_MINMAX+usage [ X_MAX <variable> ]
         } else if (strcasecmp(token, "X_MAX") == 0) {
           wasora_call(wasora_parser_string(&variable));

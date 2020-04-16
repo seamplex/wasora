@@ -87,7 +87,7 @@ double builtin_clock(factor_t *expr) {
 ///fn+last+usage last(x,[p])
 ///fn+last+math z^{-1}\left[ x \right] = x(t-\Delta t)
 ///fn+last+desc Returns the value the signal $x$ had in the previous time step.
-///fn+last+desc This function is equivalent to the $Z$-transform operator "delay" denoted by $z^{-1}\left[x\right]$.
+///fn+last+desc This function is equivalent to the $Z$-transform operator "delay" denoted by $z^{-1}\left[ x\right]$.
 ///fn+last+desc For $t=0$ the function returns the actual value of $x$.
 ///fn+last+desc The optional flag $p$ should be set to one if the reference to `last`
 ///fn+last+desc is done in an assignment over a variable that already appears insi
@@ -776,7 +776,7 @@ double builtin_deadband(factor_t *expr) {
 ///fn+lag+desc $[t-\Delta t,t]$ and using the analytical solution of the differential equation for that case
 ///fn+lag+desc at $t = \Delta t$ with the initial condition $y(0) = y(t-\Delta t)$.
 ///fn+lag+usage lag(x, tau)
-///fn+lag+math x(t) - \Big[x(t) - y(t-\Delta t) \Big] \cdot \exp\left(-\frac{\Delta t}{\tau}\right)
+///fn+lag+math x(t) - \Big[ x(t) - y(t-\Delta t) \Big] \cdot \exp\left(-\frac{\Delta t}{\tau}\right)
 double builtin_lag(factor_t *expr) {
 
   double y;

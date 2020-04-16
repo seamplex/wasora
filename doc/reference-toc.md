@@ -1,6 +1,6 @@
 -   [Keywords](#keywords)
-    -   [.=](#section)
-    -   [=](#section-1)
+    -   [=](#section)
+    -   [\_.=](#section-1)
     -   [ABORT](#abort)
     -   [ALIAS](#alias)
     -   [CALL](#call)

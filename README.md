@@ -155,18 +155,13 @@ There exist some command line options---that may be consulted using the `--help`
 
 ```
 $ wasora --version
-wasora v0.5.252-gbf723b9
+wasora v0.7
 wasora’s an advanced suite for optimization & reactor analysis
 
- last commit on Tue Sep 18 06:40:31 2018 -0300
- compiled on 2018-09-18 18:41:15 by gtheler@hera ( )
- with gcc (Debian 8.2.0-6) 8.2.0 using -O2 and linked against
-  GNU Scientific Library version 2.5
-
- wasora is copyright (C) 2009-2018 jeremy theler
- licensed under GNU GPL version 3 or later.
- wasora is free software: you are free to change and redistribute it.
- There is NO WARRANTY, to the extent permitted by law.
+wasora is copyright (C) 2009-2020 jeremy theler
+an is licensed under GNU GPL version 3 or later.
+wasora is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
 $ 
 ```
 

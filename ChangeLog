@@ -1,1 +1,12 @@
+0.7 (April 16, 2020): improved stresses, basic paralellization and some documentation
+
+ * extrpolation matrix to go from values at Gauss points to nodes
+ * instruction M4 as fork+exec
+ * renamed MESH_FIND_MAX to MESH_FIND_MINMAX
+ * caching of shape functions and derivatives
+ * VTK & FRD readers
+ * VECTOR_SORT keyword
+ * new Real Book
+ * support for SUNDIALS 3.x
+
 0.6 (March 11, 2019): reasonably usable version

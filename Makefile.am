@@ -1,7 +1,7 @@
 SUBDIRS = src doc
 # DIST_SUBDIRS = src doc
 
-ACLOCAL_AMFLAGS = -I wasora/m4
+ACLOCAL_AMFLAGS = -I m4
 dist_doc_DATA = AUTHORS ChangeLog README TODO \
                 doc/wasora.texi doc/wasora.info doc/logo.svg doc/wasora.xml doc/reference.md
 

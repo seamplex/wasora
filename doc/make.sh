@@ -20,7 +20,7 @@ m4 header.m4 reference-manual.m4 > reference-manual.md
 
 
 # manpage
-# m4 header.m4 wasora.1.md | pandoc -s -t man -o wasora.1
+m4 header.m4 wasora.1.md | pandoc -s -t man -o wasora.1
 
 
 # manual

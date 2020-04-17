@@ -33,8 +33,7 @@ Texts.  A copy of the license is included in the section entitled
 @end ifnottex
 @titlepage
 @title Wasora
-@subtitle wasora's an advanced suite for optimization & reactor
-analysis, v0.7
+@subtitle advanced suite for optimization & reactor analysis, v0.7
 @author Jeremy Theler
 April 16th, 2020
 @page
@@ -62,11 +61,11 @@ April 16th, 2020
 @anchor{#overview}
 @uref{https://www.seamplex.com/wasora,Wasora} is a (relatively)
 high-level tool to perform mathematical computations. It also provides a
-framework which other @ref{#plugins,particular computational codes} can
-use. It is a free computational tool designed to aid a cognizant
-expert---i.e.@ you, whether an engineer, scientist, technician, geek,
-etc.---to analyze complex systems by solving mathematical problems by
-means of a high-level plain-text input file containing
+framework which other particular computational codes can use. It is a
+free computational tool designed to aid a cognizant expert---i.e.@ you,
+whether an engineer, scientist, technician, geek, etc.---to analyze
+complex systems by solving mathematical problems by means of a
+high-level plain-text input file containing
 
 @itemize
 @item
@@ -216,6 +215,61 @@ can be used as a command-line calculator:
 $ wasora calc.was 1+1
 2
 $
+@end verbatim
+@end smallformat
+
+The @code{wasora} executable supports the following options: @code{-d}
+or @code{--debug}
+
+: Start in debug mode
+
+@table @asis
+@item @code{--node-debug}
+
+Ignore standard input, avoid debug mode
+
+@item @code{-l} or @code{--list}
+
+List defined symbols and exit
+
+@item @code{-h} or @code{--help}
+
+Display this help and exit
+
+@item @code{-i} or @code{--info}
+
+Display detailed code information and exit
+
+@item @code{-v} or @code{--version}
+
+Display version information and exit
+
+@end table
+
+Input file instructions are read from standard input if a dash @code{-}
+is passed as @code{input-file}.
+
+Wasora accepts @emph{optional extra arguments} which are then verbatimly
+replaced in the input file as @code{$1}, @code{$2}, and so on. So for
+example if an input file has a line like this
+
+@smallformat
+@verbatim
+PRINT "$1 squared is" ($1)^2
+@end verbatim
+@end smallformat
+
+Then two different meshes called @code{one.msh} and @code{two.msh} can
+successively be used in two runs with the same input file by calling
+Fino as
+
+@smallformat
+@verbatim
+$ wasora input.was 2
+2 squared is    4
+$ wasora input.was 3
+3 squared is    9
+$ 
 @end verbatim
 @end smallformat
 
@@ -1160,11 +1214,10 @@ although the English variation /wɒ'soʊɹɑ/ and even the German version
 @node Logo and graphics
 @section Logo and graphics
 @anchor{#logo-and-graphics}
-The official wasora logotype is shown in
-figure@ @ref{#fig:logoa,[fig:logoa]}. The original is a vector image in
-SVG format that can be found in the @code{doc} subdirectory of the
-wasora repository@ @ref{#fig:logob,[fig:logob]}. Usage in the form of
-other vector formats (e.g. PDF or EPS) is allowed. Conversion to
+The official wasora logotype is shown in figure@ . The original is a
+vector image in SVG format that can be found in the @code{doc}
+subdirectory of the wasora repository@ . Usage in the form of other
+vector formats (e.g. PDF or EPS) is allowed. Conversion to
 lossless-compressed bitmap formats (e.g.@ PNG or TIFF) is discouraged
 but may be needed if the media format does not support vector graphics
 (note that HTML does support plain SVG). Conversion to compressed bitmap
@@ -1182,13 +1235,12 @@ non-linear equations and chaos theory. The year was 1993, I was ten
 years old and the movie was Jurassic Park. Dr.@ Ian Malcolm (the
 character played by Jeff Goldblum) explained sensitivity to initial
 conditions in a memorable scene, which is worth to watch again and again
-(figure@ @ref{#fig:jurassicpark,[fig:jurassicpark]}). Since then, the
-fact that tiny variations may lead to unexpected results has always
-fascinated me. During high school I attended a very interesting course
-on fractals and chaos that made me think further about complexity and
-its mathematical description. Nevertheless, not until college was I able
-to really model and solve the differential equations that give rise to
-chaotic behavior.
+(figure@ ). Since then, the fact that tiny variations may lead to
+unexpected results has always fascinated me. During high school I
+attended a very interesting course on fractals and chaos that made me
+think further about complexity and its mathematical description.
+Nevertheless, not until college was I able to really model and solve the
+differential equations that give rise to chaotic behavior.
 
 @float
 @image{jurassicpark,,,Figure fig:jurassicpark: Dr.@ Ian Malcolm (Jeff
@@ -1254,7 +1306,7 @@ The equation represented by what seemed to me as a complex topology
 problem was as simple as@ [@@stability-nucengdes]
 
 @math{
-\frac{d\phi}{dt} = \frac{\rho - \beta}{\Lambda} + \sum_{i=1}^{I} \lambda_i \cdot c_i
+d\phi/dt = (\rho - \beta)/\Lambda + \sum_{i=1}^{I} \lambda_i \cdot c_i
 }
 
 My first reaction was to ask why someone would prefer such a cumbersome

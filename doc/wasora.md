@@ -1,6 +1,6 @@
 ---
 title: Wasora
-subtitle: wasora’s an advanced suite for optimization & reactor analysis
+subtitle: advanced suite for optimization & reactor analysis
 desc: a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing algebraic expressions, data for function interpolation, differential equations, and output instructions among other facilities.
 author: Jeremy Theler
 date: April 16th, 2020
@@ -13,7 +13,7 @@ lang: en-US
 # Overview
 
 
-[Wasora](https://www.seamplex.com/wasora) is a (relatively) high-level tool to perform mathematical computations. It also provides a framework which other [particular computational codes](#plugins) can use. It is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing
+[Wasora](https://www.seamplex.com/wasora) is a (relatively) high-level tool to perform mathematical computations. It also provides a framework which other particular computational codes can use. It is a free computational tool designed to aid a cognizant expert---i.e. you, whether an engineer, scientist, technician, geek, etc.---to analyze complex systems by solving mathematical problems by means of a high-level plain-text input file containing
 
  * algebraic expressions,
  * data for function interpolation,
@@ -110,8 +110,8 @@ $ wasora calc.was 1+1
 $
 ```
 
-dnl The `wasora` executable supports the following options:
-dnl include(help.md)
+The `wasora` executable supports the following options:
+include(help.md)
 
 
 
@@ -964,11 +964,9 @@ although the English variation /wɒ'soʊɹɑ/ and even the German version
 ## Logo and graphics
 
 The official wasora logotype is shown in
-figure [\[fig:logoa\]](#fig:logoa){reference-type="ref"
-reference="fig:logoa"}. The original is a vector image in SVG format
+figure . The original is a vector image in SVG format
 that can be found in the `doc` subdirectory of the wasora
-repository [\[fig:logob\]](#fig:logob){reference-type="ref"
-reference="fig:logob"}. Usage in the form of other vector formats (e.g.
+repository . Usage in the form of other vector formats (e.g.
 PDF or EPS) is allowed. Conversion to lossless-compressed bitmap formats
 (e.g. PNG or TIFF) is discouraged but may be needed if the media format
 does not support vector graphics (note that HTML does support plain
@@ -986,8 +984,7 @@ non-linear equations and chaos theory. The year was 1993, I was ten
 years old and the movie was Jurassic Park. Dr. Ian Malcolm (the
 character played by Jeff Goldblum) explained sensitivity to initial
 conditions in a memorable scene, which is worth to watch again and again
-(figure [\[fig:jurassicpark\]](#fig:jurassicpark){reference-type="ref"
-reference="fig:jurassicpark"}). Since then, the fact that tiny
+(figure ). Since then, the fact that tiny
 variations may lead to unexpected results has always fascinated me.
 During high school I attended a very interesting course on fractals and
 chaos that made me think further about complexity and its mathematical

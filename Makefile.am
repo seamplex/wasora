@@ -1,11 +1,16 @@
-ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = src
-dist_doc_DATA = README \
-                doc/wasora.texi \
-                doc/wasora.xml
+SUBDIRS = src doc
+# DIST_SUBDIRS = src doc
+
+ACLOCAL_AMFLAGS = -I wasora/m4
+dist_doc_DATA = AUTHORS ChangeLog README TODO \
+                doc/wasora.texi doc/wasora.info doc/logo.svg doc/wasora.xml doc/reference.md
+
+dist_man_MANS = doc/wasora.1
 
 EXTRA_DIST = examples doc locateruntest.sh \
              src/version.sh
+
+
 
 # TESTS = examples/test-fibonacci.sh \
 #         examples/test-pi.sh \

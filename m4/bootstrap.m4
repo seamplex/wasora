@@ -20,7 +20,7 @@ fi
 define([WASORA_VERSION_VCS],
 # wasora major version is equal to the latest tag
 if test ${vcs} = "git"; then
- version=`git describe | sed 's/-/./'`
+ version=`git describe --tags | sed 's/-/./'`
  echo "[[define]](wasoraversion, ${version})[[dnl]]" > version.m4
 
  branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
@@ -41,7 +41,7 @@ fi
 define([PLUGIN_VERSION_VCS],
 # plugin version
 if test "${vcs}" = "git"; then
- version=`git describe | sed 's/-/./'`
+ version=`git describe --tags | sed 's/-/./'`
 
  branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
  commitdate=`git log -1 --pretty=format:"%ad"`

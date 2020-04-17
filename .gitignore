@@ -76,4 +76,3 @@ src/version.h
 *.tar.gz
 nbproject
 wasora
-wasora.*

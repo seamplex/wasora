@@ -68,14 +68,14 @@ AC_ARG_ENABLE([download-gsl],
   [download_gsl=no])
 
 AS_IF([test "x$ac_cv_header_gsl_gsl_vector_h" != "xyes" -o "x$ac_cv_lib_gslcblas_cblas_dgemm" != "xyes" -o "x$ac_cv_lib_gsl_gsl_blas_dgemm" != "xyes"],
- gsldist=gsl-1.16
+ gsldist=gsl-2.6
  gslmirror=http://ftpmirror.gnu.org/gsl/${gsldist}.tar.gz
 
  AS_IF([test ! -e ${gsldist}.tar.gz],[
    AS_IF([test "x$download_gsl" = "xyes"],[
      AS_IF([test "x`which wget`" != "x"],[
        AC_MSG_NOTICE([downloading ${gslmirror}])
-       wget -c http://ftpmirror.gnu.org/gsl/${gsldist}.tar.gz
+       wget -c ${gslmirror}
      ],[
        AC_MSG_ERROR([file ${gsldist}.tar.gz not found and wget not installed])
      ])
@@ -98,7 +98,7 @@ AS_IF([test "x$ac_cv_header_gsl_gsl_vector_h" != "xyes" -o "x$ac_cv_lib_gslcblas
    ],[
     AC_MSG_NOTICE([using already-compiled GSL library ${gsldist}/.libs/libgsl.a])
    ])
-   gsl_version="1.16 (embedded)"
+   gsl_version="2.6 (embedded)"
    AC_DEFINE([HAVE_GLFIXED_TABLE], [1])
    WASORALIBS="$WASORALIBS ../${gsldist}/.libs/libgsl.a ../${gsldist}/cblas/.libs/libgslcblas.a"
    STANDALONELIBS="$STANDALONELIBS ../../${gsldist}/.libs/libgsl.a ../../${gsldist}/cblas/.libs/libgslcblas.a"

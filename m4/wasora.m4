@@ -101,7 +101,7 @@ AS_IF([test "x$ac_cv_header_gsl_gsl_vector_h" != "xyes" -o "x$ac_cv_lib_gslcblas
    gsl_version="2.6 (embedded)"
    AC_DEFINE([HAVE_GLFIXED_TABLE], [1])
    WASORALIBS="$WASORALIBS ../${gsldist}/.libs/libgsl.a ../${gsldist}/cblas/.libs/libgslcblas.a"
-   STANDALONELIBS="$STANDALONELIBS ../../${gsldist}/.libs/libgsl.a ../../${gsldist}/cblas/.libs/libgslcblas.a"
+   STANDALONELIBS="$STANDALONELIBS ../${gsldist}/.libs/libgsl.a ../${gsldist}/cblas/.libs/libgslcblas.a"
    AC_SUBST([WASORALIBS], [${WASORALIBS}])
    AC_SUBST([STANDALONELIBS], [${STANDALONELIBS}])
    CFLAGS="$CFLAGS -I ../${gsldist} -I ../../${gsldist}"

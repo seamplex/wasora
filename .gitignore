@@ -72,7 +72,12 @@ src/mesh/*.la
 src/version-vcs.h
 src/version-conf.h
 src/version.h
+src/wasora
+src/wasora.exe
 
+wasora
+wasora.exe
+
+gsl-*
 *.tar.gz
 nbproject
-wasora

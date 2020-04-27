@@ -591,7 +591,7 @@ struct semaphore_t {
   
   sem_t *pointer;
   enum {
-    semaphore_wait, semaphore_post
+    wasora_sem_wait, wasora_sem_post
   } operation;
   
   struct semaphore_t *next;

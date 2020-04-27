@@ -1625,7 +1625,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
 ///kw+SEMAPHORE+usage { WAIT | POST }
       char *keywords[] = {"WAIT", "POST", ""};
-      int values[] = {semaphore_wait, semaphore_post, 0};
+      int values[] = {wasora_sem_wait, wasora_sem_post, 0};
       wasora_call(wasora_parser_keywords_ints(keywords, values, (int *)&semaphore->operation));
 
       if (wasora_define_instruction(wasora_instruction_sem, semaphore) == NULL) {

@@ -42,9 +42,9 @@ int wasora_instruction_sem(void *arg) {
   }  
   
 
-  if (semaphore->operation == semaphore_wait) {
+  if (semaphore->operation == wasora_sem_wait) {
     sem_wait(semaphore->pointer);
-  } else if (semaphore->operation == semaphore_post) {
+  } else if (semaphore->operation == wasora_sem_post) {
     sem_post(semaphore->pointer);
   }
   

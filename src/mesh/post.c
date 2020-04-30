@@ -33,11 +33,17 @@ int wasora_instruction_mesh_post(void *arg) {
     return WASORA_RUNTIME_OK;
   }
   
-  // hay que cerrar el file y volver a abrirlo
-  if (mesh_post->file->pointer != NULL) {
-    wasora_call(wasora_instruction_close_file(mesh_post->file));
-  }
-  wasora_call(wasora_instruction_open_file(mesh_post->file));
+  if (wasora_special_var(end_time) == 0) {
+    // hay que cerrar el file y volver a abrirlo
+    if (mesh_post->file->pointer != NULL) {
+      wasora_call(wasora_instruction_close_file(mesh_post->file));
+    }
+    wasora_call(wasora_instruction_open_file(mesh_post->file));  
+  } else {
+    if (mesh_post->file->pointer == NULL) {
+      wasora_call(wasora_instruction_open_file(mesh_post->file));  
+    }
+  }  
 
 
   // si primero llamo a gmsh write header no puedo chequear si el archivo

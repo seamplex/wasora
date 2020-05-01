@@ -1276,6 +1276,7 @@ if (strcasecmp(token, "FROM") == 0) {
           }
 
           function->data_argument = calloc(nargs, sizeof(double *));
+          function->data_argument_alloced = 1;
           for (i = 0; i < nargs; i++) {
             function->data_argument[i] = calloc(function->data_size, sizeof(double));
           }

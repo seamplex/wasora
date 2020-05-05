@@ -298,19 +298,27 @@ Define a file, either as input or as output, for further usage.
 .SS FIT
 .RS
 .PP
-Fit a function of one or more arguments to a set of data.
+Fit a function of one or more arguments to a set of pointwise-defined
+data.
 .RE
 .IP
 .nf
 \f[C]
-FIT <function_to_be_fitted> TO <function_with_data> VIA <var_1> <var_2> ... <var_n> [ GRADIENT <expr_1> <expr_2> ... <expr_n> ] [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ] [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ] [ DELTAEPSREL <expr> ] [ DELTAEPSABS <expr> ] [ MAX_ITER <expr> ] [ VERBOSE ] [ RERUN | DO_NOT_RERUN ]
+FIT <function_to_be_fitted> TO <function_with_data>
+ VIA <var_1> <var_2> ... <var_n>
+ [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]
+ [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ]
+ [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ]
+ [ DELTAEPSREL <expr> ] [ DELTAEPSABS <expr> ] [ MAX_ITER <expr> ]
+ [ VERBOSE ] [ RERUN | DO_NOT_RERUN ]
 \f[R]
 .fi
 .PP
-The function with the data has to be point-wise defined.
-The function to be fitted hast to be parametrized with at least one of
+The function with the data has to be point-wise defined (i.e.\ a
+\f[C]FUNCTION\f[R] read from a file with inline \f[C]DATA\f[R]).
+The function to be fitted has to be parametrized with at least one of
 the variables provided after the \f[C]VIA\f[R] keyword.
-Only the names of the functions have to be given.
+Only the names of the functions have to be given, not the arguments.
 Both functions have to have the same number of arguments.
 The initial guess of the solution is given by the initial value of the
 variables listed in the \f[C]VIA\f[R] keyword.
@@ -322,8 +330,8 @@ finite differences.
 A range over which the residuals are to be minimized can be given with
 \f[C]RANGE_MIN\f[R] and \f[C]RANGE_MAX\f[R].
 For multidimensional fits, the range is an hypercube.
-If no range is given, all the definition points of the function witht
-the data are used for the fit.
+If no range is given, all the definition points of the function with the
+data are used for the fit.
 Convergence can be controlled by given the relative and absolute
 tolreances with \f[C]DELTAEPSREL\f[R] (default 1e-4) and
 \f[C]DELTAEPSABS\f[R] (default 1e-6), and with the maximum number of

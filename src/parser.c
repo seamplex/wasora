@@ -2599,10 +2599,12 @@ if (strcasecmp(token, "FROM") == 0) {
     // ----- FIT  -----------------------------------------------------------------
     } else if ((strcasecmp(token, "FIT") == 0)) {
 
-///kw+FIT+desc Fit a function of one or more arguments to a set of data.
-///kw+FIT+detail The function with the data has to be point-wise defined.
-///kw+FIT+detail The function to be fitted hast to be parametrized with at least one of the variables provided after the `VIA` keyword.
-///kw+FIT+detail Only the names of the functions have to be given.
+///kw+FIT+desc Fit a function of one or more arguments to a set of pointwise-defined data.
+///kw+FIT+detail The function with the data has to be point-wise defined
+///kw+FIT+detail (i.e. a `FUNCTION` read from a file with inline `DATA`).
+///kw+FIT+detail The function to be fitted has to be parametrized with at least one of
+///kw+FIT+detail the variables provided after the `VIA` keyword.
+///kw+FIT+detail Only the names of the functions have to be given, not the arguments.
 ///kw+FIT+detail Both functions have to have the same number of arguments.
       
 ///kw+FIT+usage FIT
@@ -2672,12 +2674,13 @@ if (strcasecmp(token, "FROM") == 0) {
         return WASORA_PARSER_ERROR;
       }
 
-///kw+FIT+usage <var_1> <var_2> ... <var_n>
+///kw+FIT+usage <var_1> <var_2> ... <var_n>@
       while ((token = wasora_get_next_token(NULL)) != NULL) {
 
         // TODO: convergencia por gradiente, incertezas, covarianza, incrementos para gradiente automatico
-///kw+FIT+usage [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]
-///kw+FIT+detail Analytical expressions for the gradient of the function to be fitted with respect to the parameters to be fitted can be optionally given with the `GRADIENT` keyword.
+///kw+FIT+usage [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]@
+///kw+FIT+detail Analytical expressions for the gradient of the function to be fitted with respect
+///kw+FIT+detail to the parameters to be fitted can be optionally given with the `GRADIENT` keyword.
 ///kw+FIT+detail If none is provided, the gradient will be computed numerically using finite differences.
         if (strcasecmp(token, "GRADIENT") == 0) {
  
@@ -2696,10 +2699,11 @@ if (strcasecmp(token, "FROM") == 0) {
             wasora_call(wasora_parse_expression(token, &wasora.fit.gradient[i]));
           }
 
-///kw+FIT+usage [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ]
+///kw+FIT+usage [ RANGE_MIN <expr_1> <expr_2> ... <expr_j> ]@
 ///kw+FIT+detail A range over which the residuals are to be minimized can be given with `RANGE_MIN` and `RANGE_MAX`.
+///kw+FIT+detail The expressions give the range of the arguments of the functions, not of the parameters.
 ///kw+FIT+detail For multidimensional fits, the range is an hypercube.
-///kw+FIT+detail If no range is given, all the definition points of the function witht the data are used for the fit.
+///kw+FIT+detail If no range is given, all the definition points of the function with the data are used for the fit.
         } else if (strcasecmp(token, "RANGE_MIN") == 0) {
 
           if (wasora.fit.data->n_arguments == 0) {
@@ -2709,7 +2713,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
           wasora_call(wasora_parser_expressions(&wasora.fit.range.min, wasora.fit.data->n_arguments));
 
-///kw+FIT+usage [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ]
+///kw+FIT+usage [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ]@
         } else if (strcasecmp(token, "RANGE_MAX") == 0) {
 
           if (wasora.fit.data->n_arguments == 0) {
@@ -2720,8 +2724,8 @@ if (strcasecmp(token, "FROM") == 0) {
           wasora_call(wasora_parser_expressions(&wasora.fit.range.max, wasora.fit.data->n_arguments));
           
 ///kw+FIT+usage [ DELTAEPSREL <expr> ]
-///kw+FIT+detail Convergence can be controlled by given the relative and absolute tolreances with
-///kw+FIT+detail `DELTAEPSREL` (default DEFAULT_NLIN_FIT_EPSREL) and `DELTAEPSABS` (default DEFAULT_NLIN_FIT_EPSABS),
+///kw+FIT+detail Convergence can be controlled by giving the relative and absolute tolreances with
+///kw+FIT+detail `DELTAEPSREL` (default `DEFAULT_NLIN_FIT_EPSREL`) and `DELTAEPSABS` (default `DEFAULT_NLIN_FIT_EPSABS`),
 ///kw+FIT+detail and with the maximum number of iterations `MAX_ITER` (default DEFAULT_NLIN_FIT_MAX_ITER).
           
         } else if (strcasecmp(token, "DELTAEPSREL") == 0) {
@@ -2733,7 +2737,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
           wasora_call(wasora_parser_expression(&wasora.fit.deltaepsabs));
 
-///kw+FIT+usage [ MAX_ITER <expr> ]
+///kw+FIT+usage [ MAX_ITER <expr> ]@
         } else if (strcasecmp(token, "MAX_ITER") == 0) {
 
           double xi;
@@ -2750,7 +2754,7 @@ if (strcasecmp(token, "FROM") == 0) {
 
           wasora.fit.verbose = 1;
 
-///kw+FIT+usage [ RERUN | DO_NOT_RERUN ]
+///kw+FIT+usage [ RERUN | DO_NOT_RERUN ]@
         } else if (strcasecmp(token, "DO_NOT_RERUN") == 0 || strcasecmp(token, "NORERUN") == 0) {
 
           wasora.fit.norerun = 1;

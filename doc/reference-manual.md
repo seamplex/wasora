@@ -130,23 +130,33 @@ DO_NOT_EVALUATE_AT_PARSE_TIME
 
 ###  FIT
 
-> Fit a function of one or more arguments to a set of data.
+> Fit a function of one or more arguments to a set of pointwise-defined data.
 
 ~~~wasora
-FIT <function_to_be_fitted> TO <function_with_data> VIA <var_1> <var_2> ... <var_n> [ GRADIENT <expr_1> <expr_2> ... <expr_n> ] [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ] [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ] [ DELTAEPSREL <expr> ] [ DELTAEPSABS <expr> ] [ MAX_ITER <expr> ] [ VERBOSE ] [ RERUN | DO_NOT_RERUN ]
+FIT <function_to_be_fitted> TO <function_with_data>
+ VIA <var_1> <var_2> ... <var_n>
+ [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]
+ [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ]
+ [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ]
+ [ DELTAEPSREL <expr> ] [ DELTAEPSABS <expr> ] [ MAX_ITER <expr> ]
+ [ VERBOSE ] [ RERUN | DO_NOT_RERUN ]
+
 ~~~
 
 
-The function with the data has to be point-wise defined.
-The function to be fitted hast to be parametrized with at least one of the variables provided after the `VIA` keyword.
-Only the names of the functions have to be given.
+The function with the data has to be point-wise defined
+(i.e. a `FUNCTION` read from a file with inline `DATA`).
+The function to be fitted has to be parametrized with at least one of
+the variables provided after the `VIA` keyword.
+Only the names of the functions have to be given, not the arguments.
 Both functions have to have the same number of arguments.
 The initial guess of the solution is given by the initial value of the variables listed in the `VIA` keyword.
-Analytical expressions for the gradient of the function to be fitted with respect to the parameters to be fitted can be optionally given with the `GRADIENT` keyword.
+Analytical expressions for the gradient of the function to be fitted with respect
+to the parameters to be fitted can be optionally given with the `GRADIENT` keyword.
 If none is provided, the gradient will be computed numerically using finite differences.
 A range over which the residuals are to be minimized can be given with `RANGE_MIN` and `RANGE_MAX`.
 For multidimensional fits, the range is an hypercube.
-If no range is given, all the definition points of the function witht the data are used for the fit.
+If no range is given, all the definition points of the function with the data are used for the fit.
 Convergence can be controlled by given the relative and absolute tolreances with
 `DELTAEPSREL` (default 1e-4) and `DELTAEPSABS` (default 1e-6),
 and with the maximum number of iterations `MAX_ITER` (default 100).
@@ -649,23 +659,33 @@ DO_NOT_EVALUATE_AT_PARSE_TIME
 
 ###  FIT
 
-> Fit a function of one or more arguments to a set of data.
+> Fit a function of one or more arguments to a set of pointwise-defined data.
 
 ~~~wasora
-FIT <function_to_be_fitted> TO <function_with_data> VIA <var_1> <var_2> ... <var_n> [ GRADIENT <expr_1> <expr_2> ... <expr_n> ] [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ] [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ] [ DELTAEPSREL <expr> ] [ DELTAEPSABS <expr> ] [ MAX_ITER <expr> ] [ VERBOSE ] [ RERUN | DO_NOT_RERUN ]
+FIT <function_to_be_fitted> TO <function_with_data>
+ VIA <var_1> <var_2> ... <var_n>
+ [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]
+ [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ]
+ [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ]
+ [ DELTAEPSREL <expr> ] [ DELTAEPSABS <expr> ] [ MAX_ITER <expr> ]
+ [ VERBOSE ] [ RERUN | DO_NOT_RERUN ]
+
 ~~~
 
 
-The function with the data has to be point-wise defined.
-The function to be fitted hast to be parametrized with at least one of the variables provided after the `VIA` keyword.
-Only the names of the functions have to be given.
+The function with the data has to be point-wise defined
+(i.e. a `FUNCTION` read from a file with inline `DATA`).
+The function to be fitted has to be parametrized with at least one of
+the variables provided after the `VIA` keyword.
+Only the names of the functions have to be given, not the arguments.
 Both functions have to have the same number of arguments.
 The initial guess of the solution is given by the initial value of the variables listed in the `VIA` keyword.
-Analytical expressions for the gradient of the function to be fitted with respect to the parameters to be fitted can be optionally given with the `GRADIENT` keyword.
+Analytical expressions for the gradient of the function to be fitted with respect
+to the parameters to be fitted can be optionally given with the `GRADIENT` keyword.
 If none is provided, the gradient will be computed numerically using finite differences.
 A range over which the residuals are to be minimized can be given with `RANGE_MIN` and `RANGE_MAX`.
 For multidimensional fits, the range is an hypercube.
-If no range is given, all the definition points of the function witht the data are used for the fit.
+If no range is given, all the definition points of the function with the data are used for the fit.
 Convergence can be controlled by given the relative and absolute tolreances with
 `DELTAEPSREL` (default 1e-4) and `DELTAEPSABS` (default 1e-6),
 and with the maximum number of iterations `MAX_ITER` (default 100).

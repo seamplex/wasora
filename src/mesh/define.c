@@ -84,12 +84,12 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
   int already_exists = 0;
   
   if (name == NULL) {
-    wasora_push_error_message("mandatory name needed for physical entity");
+    wasora_push_error_message("mandatory name needed for physical group");
     return NULL;
   }
   if ((mesh = new_mesh) == NULL) {
     if ((mesh = wasora_mesh.main_mesh) == NULL) {
-      wasora_push_error_message("no mesh for defining physical entity '%s'", name);
+      wasora_push_error_message("no mesh for defining physical group '%s'", name);
       return NULL;  
     }
   }
@@ -112,7 +112,7 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
   }
  */
   if (physical_entity->dimension != 0 && dimension != 0 && physical_entity->dimension != dimension) {
-    wasora_push_error_message("physical entity '%s' has been previously defined as dimension '%d' and now dimension '%d' is required", name, physical_entity->dimension, dimension);
+    wasora_push_error_message("physical group '%s' has been previously defined as dimension '%d' and now dimension '%d' is required", name, physical_entity->dimension, dimension);
     return NULL;
   } else if (physical_entity->dimension == 0 && dimension != 0) {
     physical_entity->dimension = dimension;

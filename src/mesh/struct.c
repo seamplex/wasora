@@ -229,6 +229,9 @@ int mesh_create_structured(mesh_t *mesh) {
         mesh->node[i_node].tag = i_node+1;
         mesh->node[i_node].index_mesh = i_node;
         mesh->node[i_node].x[0] = mesh->nodes_x[i];
+        if (mesh->degrees_of_freedom != 0) {
+          mesh->node[i_node].phi = calloc(mesh->degrees_of_freedom, sizeof(double));
+        }
         i_node++;
       }
     break;
@@ -249,6 +252,9 @@ int mesh_create_structured(mesh_t *mesh) {
           mesh->node[i_node].index_mesh = i_node;
           mesh->node[i_node].x[0] = mesh->nodes_x[i];
           mesh->node[i_node].x[1] = mesh->nodes_y[j];
+          if (mesh->degrees_of_freedom != 0) {
+            mesh->node[i_node].phi = calloc(mesh->degrees_of_freedom, sizeof(double));
+          }
           i_node++;
         }
       }
@@ -272,6 +278,9 @@ int mesh_create_structured(mesh_t *mesh) {
             mesh->node[i_node].x[0] = mesh->nodes_x[i];
             mesh->node[i_node].x[1] = mesh->nodes_y[j];
             mesh->node[i_node].x[2] = mesh->nodes_z[k];
+            if (mesh->degrees_of_freedom != 0) {
+              mesh->node[i_node].phi = calloc(mesh->degrees_of_freedom, sizeof(double));
+            }
             i_node++;
           }
         }
@@ -367,7 +376,7 @@ int mesh_create_structured(mesh_t *mesh) {
     }
  */
     // si tiene material se la asignamos a los elementos
-    if (physical_entity->material != NULL) {      
+//    if (physical_entity->material != NULL) {      
       if (physical_entity->dimension == 0) {
         physical_entity->dimension = mesh->bulk_dimensions; 
       }
@@ -442,7 +451,7 @@ int mesh_create_structured(mesh_t *mesh) {
           }
         break;
       }
-    }
+//    }
   }
   
 

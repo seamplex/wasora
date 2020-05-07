@@ -132,7 +132,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           return WASORA_RUNTIME_ERROR;
         }
         if (dimension < 0 || dimension > 4) {
-          wasora_push_error_message("invalid dimension %d for physical entity %d in mesh file '%s'", dimension, tag, mesh->file->path);
+          wasora_push_error_message("invalid dimension %d for physical group %d in mesh file '%s'", dimension, tag, mesh->file->path);
           return WASORA_RUNTIME_ERROR;
         }
         
@@ -163,7 +163,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             physical_entity->tag = tag;
           } else if (physical_entity->tag != tag) {
             // o que tenga la correcta
-            wasora_push_error_message("physical entity '%s' has tag %d in input and %d in mesh '%s'", name, physical_entity->tag, tag, mesh->name);
+            wasora_push_error_message("physical group '%s' has tag %d in input and %d in mesh '%s'", name, physical_entity->tag, tag, mesh->name);
             return WASORA_PARSER_ERROR;
           }
           // y la dimension correcta
@@ -172,7 +172,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             physical_entity->dimension = dimension;
           } else if (physical_entity->dimension != dimension) {
             // si no coincide nos quejamos
-            wasora_push_error_message("physical entity '%s' has dimension %d in input and %d in mesh '%s'", name, physical_entity->dimension, dimension, mesh->name);
+            wasora_push_error_message("physical group '%s' has dimension %d in input and %d in mesh '%s'", name, physical_entity->dimension, dimension, mesh->name);
             return WASORA_PARSER_ERROR;
           }
           
@@ -182,9 +182,9 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         // resolver el apuntador desde cada elemento "mas o menos" facil
         HASH_ADD(hh_tag[dimension], mesh->physical_entities_by_tag[dimension], tag, sizeof(int), physical_entity);
 
-        // si la physical entity no tiene material, buscamos uno que se llame igual
+        // si la physical group no tiene material, buscamos uno que se llame igual
         if (physical_entity->material == NULL) {
-          // si es NULL es porque la physical entity es una BC o algo,
+          // si es NULL es porque la physical group es una BC o algo,
           // pero eso no nos molesta, las BCs las vemos despues
           HASH_FIND_STR(wasora_mesh.materials, name, physical_entity->material);
         }

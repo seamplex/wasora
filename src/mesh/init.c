@@ -83,7 +83,7 @@ int wasora_mesh_init_before_parser(void) {
 
 ///va+elements+name elements
 ///va+elements+desc Number of total elements of the unstructured grid. This number
-///va+elements+desc include those surface elements that belong to boundary physical entities.
+///va+elements+desc include those surface elements that belong to boundary physical groups.
   wasora_mesh.vars.elements = wasora_define_variable("elements");
 
 ///va+cells+name cells

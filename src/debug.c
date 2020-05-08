@@ -157,7 +157,8 @@ void wasora_debug(void) {
   int i, j;
   int new_on_gsl_error, old_on_gsl_error;  
   
-  if (wasora.mode == mode_ignore_debug) {
+  // get back if we are instructed to ignore debug or we are ran in parallel
+  if (wasora.mode == mode_ignore_debug || wasora.nprocs > 1) {
     return;
   }
   

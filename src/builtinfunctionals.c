@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora builtin functionals
  *
- *  Copyright (C) 2009--2013 jeremy theler
+ *  Copyright (C) 2009--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -29,6 +29,14 @@
 #ifndef _WASORA_H_
 #include "wasora.h"
 #endif
+
+// from gsl/roots/root.h
+#define SAFE_FUNC_CALL(f, x, yp) \
+do { \
+  *yp = GSL_FN_EVAL(f,x); \
+  if (!gsl_finite(*yp)) \
+    GSL_ERROR("function value is not finite", GSL_EBADFUNC); \
+} while (0)
 
 
 typedef struct {
@@ -429,6 +437,8 @@ double builtin_root(factor_t *a, var_t *var_x) {
   int gsl_status;
   double x, x_old;
   double x_lower, x_upper;
+  double f_lower, f_upper;
+  double tmp;
   double epsrel;
 
   gsl_root_fsolver *s;
@@ -444,6 +454,14 @@ double builtin_root(factor_t *a, var_t *var_x) {
 
   x_lower = wasora_evaluate_expression(&a->arg[2]);
   x_upper = wasora_evaluate_expression(&a->arg[3]);
+  // si estan al reves los damos vuelta para evitar GSL_EINVAL
+  if (x_lower > x_upper) {
+    // manual de la CZ1000 de 1981
+    tmp = x_lower;
+    x_lower = x_upper;
+    x_upper = tmp;
+  }
+  
   // arrancamos desde la mitad
   x = 0.5*(x_lower + x_upper);
 
@@ -475,14 +493,41 @@ double builtin_root(factor_t *a, var_t *var_x) {
 
   function_to_solve.function = wasora_gsl_function;
   function_to_solve.params = (void *)(&function_arguments);
-  
 
+  // apagamos el handler para mirar el do not straddle y=0 nosotros
+  gsl_set_error_handler_off();
+
+  // miramos nosotros si el rango atrapa una raiz o no
+  SAFE_FUNC_CALL (&function_to_solve, x_lower, &f_lower);
+  SAFE_FUNC_CALL (&function_to_solve, x_upper, &f_upper);  
+  
+  if ((f_lower < 0.0 && f_upper < 0.0) || (f_lower > 0.0 && f_upper > 0.0)) {
+    wasora_value(var_x) = x_old;
+    if (nocomplain) {
+      return 0;
+    } else {
+      
+      int on_gsl_error = (int)(wasora_value(wasora_special_var(on_gsl_error)));
+
+      if (!(on_gsl_error & ON_ERROR_NO_REPORT)) {
+        wasora_push_error_message("range does not contain a root, f(%g) = %g and f(%g) = %g", x_lower, f_lower, x_upper, f_upper);
+        wasora_pop_errors();
+      }
+
+      if (!(on_gsl_error & ON_ERROR_NO_QUIT)) {
+        wasora_polite_exit(WASORA_RUNTIME_ERROR);
+      }
+    }
+  }
+
+  gsl_root_fsolver_set(s, &function_to_solve, x_lower, x_upper);
+  
+  // volvemos al poner el handler para lo que sigue
+  gsl_set_error_handler(wasora_gsl_handler);
+  
   // si no tenemos que ser quejosos entonces sacamos temporalmente
   // el handler de errores de la GSL
   if (nocomplain) {
-    gsl_set_error_handler_off();
-    gsl_root_fsolver_set(s, &function_to_solve, x_lower, x_upper);
-    gsl_set_error_handler(wasora_gsl_handler);
   } else {
     gsl_root_fsolver_set(s, &function_to_solve, x_lower, x_upper);
   }

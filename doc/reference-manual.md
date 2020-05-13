@@ -133,10 +133,9 @@ DO_NOT_EVALUATE_AT_PARSE_TIME
 > Fit a function of one or more arguments to a set of pointwise-defined data.
 
 ~~~wasora
-FIT <function_to_be_fitted> TO <function_with_data>
- VIA <var_1> <var_2> ... <var_n>
+FIT <function_to_be_fitted> TO <function_with_data> VIA <var_1> <var_2> ... <var_n>
  [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]
- [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ]
+ [ RANGE_MIN <expr_1> <expr_2> ... <expr_j> ]
  [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ]
  [ DELTAEPSREL <expr> ] [ DELTAEPSABS <expr> ] [ MAX_ITER <expr> ]
  [ VERBOSE ] [ RERUN | DO_NOT_RERUN ]
@@ -155,12 +154,18 @@ Analytical expressions for the gradient of the function to be fitted with respec
 to the parameters to be fitted can be optionally given with the `GRADIENT` keyword.
 If none is provided, the gradient will be computed numerically using finite differences.
 A range over which the residuals are to be minimized can be given with `RANGE_MIN` and `RANGE_MAX`.
+The expressions give the range of the arguments of the functions, not of the parameters.
 For multidimensional fits, the range is an hypercube.
 If no range is given, all the definition points of the function with the data are used for the fit.
-Convergence can be controlled by given the relative and absolute tolreances with
-`DELTAEPSREL` (default 1e-4) and `DELTAEPSABS` (default 1e-6),
+Convergence can be controlled by giving the relative and absolute tolreances with
+`DELTAEPSREL` (default `1e-4`) and `DELTAEPSABS` (default `1e-6`),
 and with the maximum number of iterations `MAX_ITER` (default 100).
 If the optional keyword `VERBOSE` is given, some data of the intermediate steps is written in the standard output.
+The combination of arguments that minimize the function are computed and stored in the variables.
+So if `f(x,y)` is to be minimized, after a `MINIMIZE f` both `x` and `y` would have the appropriate values.
+The details of the method used can be found in [GSL’s documentation](https:\//www.gnu.org/software/gsl/doc/html/multimin.html).
+Some of them use derivatives and some of them do not.
+Default method is `gsl_multimin_fminimizer_nmsimplex2`, which does not need derivatives.
 
 ###  FUNCTION
 
@@ -352,10 +357,19 @@ MATRIX <name> ROWS <expr> COLS <expr> [ DATA num_expr_1 num_expr_2 ... num_expr_
 
 ###  MINIMIZE
 
-> Find the combination of arguments that give a (relative) minimum of a function, i.e. run an optimization problem.
+> Find the combination of arguments that give a (relative) minimum of a function.
 
 ~~~wasora
-MINIMIZE <function> <function> [ METHOD { conjugate_fr | conjugate_pr | vector_bfgs2 | vector_bfgs | steepest_descent | nmsimplex2 | nmsimplex | nmsimplex2rand } [ GRADIENT <expr_1> <expr_2> ... <expr_n> ] [ GUESS <expr_1> <expr_2> ... <expr_n> ] [ MIN <expr_1> <expr_2> ... <expr_n> ] [ MAX <expr_1> <expr_2> ... <expr_n> ] [ STEP <expr_1> <expr_2> ... <expr_n> ] [ VERBOSE ] [ NORERUN ] [ MAX_ITER <expr> ] [ TOL <expr> ] [ GRADTOL <expr> ]
+MINIMIZE <function>
+ [ METHOD { nmsimplex2 | nmsimplex | nmsimplex2rand | conjugate_fr | conjugate_pr | vector_bfgs2 | vector_bfgs | steepest_descent}
+ [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]
+ [ GUESS <expr_1> <expr_2> ... <expr_n> ]
+ [ MIN <expr_1> <expr_2> ... <expr_n> ]
+ [ MAX <expr_1> <expr_2> ... <expr_n> ]
+ [ STEP <expr_1> <expr_2> ... <expr_n> ]
+ [ MAX_ITER <expr> ] [ TOL <expr> ] [ GRADTOL <expr> ]
+ [ VERBOSE ] [ NORERUN ]
+
 ~~~
 
 
@@ -662,10 +676,9 @@ DO_NOT_EVALUATE_AT_PARSE_TIME
 > Fit a function of one or more arguments to a set of pointwise-defined data.
 
 ~~~wasora
-FIT <function_to_be_fitted> TO <function_with_data>
- VIA <var_1> <var_2> ... <var_n>
+FIT <function_to_be_fitted> TO <function_with_data> VIA <var_1> <var_2> ... <var_n>
  [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]
- [ RANGE_MIN <expr_1> <expr_2> ... <expr_n> ]
+ [ RANGE_MIN <expr_1> <expr_2> ... <expr_j> ]
  [ RANGE_MAX <expr_1> <expr_2> ... <expr_n> ]
  [ DELTAEPSREL <expr> ] [ DELTAEPSABS <expr> ] [ MAX_ITER <expr> ]
  [ VERBOSE ] [ RERUN | DO_NOT_RERUN ]
@@ -684,12 +697,18 @@ Analytical expressions for the gradient of the function to be fitted with respec
 to the parameters to be fitted can be optionally given with the `GRADIENT` keyword.
 If none is provided, the gradient will be computed numerically using finite differences.
 A range over which the residuals are to be minimized can be given with `RANGE_MIN` and `RANGE_MAX`.
+The expressions give the range of the arguments of the functions, not of the parameters.
 For multidimensional fits, the range is an hypercube.
 If no range is given, all the definition points of the function with the data are used for the fit.
-Convergence can be controlled by given the relative and absolute tolreances with
-`DELTAEPSREL` (default 1e-4) and `DELTAEPSABS` (default 1e-6),
+Convergence can be controlled by giving the relative and absolute tolreances with
+`DELTAEPSREL` (default `1e-4`) and `DELTAEPSABS` (default `1e-6`),
 and with the maximum number of iterations `MAX_ITER` (default 100).
 If the optional keyword `VERBOSE` is given, some data of the intermediate steps is written in the standard output.
+The combination of arguments that minimize the function are computed and stored in the variables.
+So if `f(x,y)` is to be minimized, after a `MINIMIZE f` both `x` and `y` would have the appropriate values.
+The details of the method used can be found in [GSL’s documentation](https:\//www.gnu.org/software/gsl/doc/html/multimin.html).
+Some of them use derivatives and some of them do not.
+Default method is `gsl_multimin_fminimizer_nmsimplex2`, which does not need derivatives.
 
 ###  FUNCTION
 
@@ -881,10 +900,19 @@ MATRIX <name> ROWS <expr> COLS <expr> [ DATA num_expr_1 num_expr_2 ... num_expr_
 
 ###  MINIMIZE
 
-> Find the combination of arguments that give a (relative) minimum of a function, i.e. run an optimization problem.
+> Find the combination of arguments that give a (relative) minimum of a function.
 
 ~~~wasora
-MINIMIZE <function> <function> [ METHOD { conjugate_fr | conjugate_pr | vector_bfgs2 | vector_bfgs | steepest_descent | nmsimplex2 | nmsimplex | nmsimplex2rand } [ GRADIENT <expr_1> <expr_2> ... <expr_n> ] [ GUESS <expr_1> <expr_2> ... <expr_n> ] [ MIN <expr_1> <expr_2> ... <expr_n> ] [ MAX <expr_1> <expr_2> ... <expr_n> ] [ STEP <expr_1> <expr_2> ... <expr_n> ] [ VERBOSE ] [ NORERUN ] [ MAX_ITER <expr> ] [ TOL <expr> ] [ GRADTOL <expr> ]
+MINIMIZE <function>
+ [ METHOD { nmsimplex2 | nmsimplex | nmsimplex2rand | conjugate_fr | conjugate_pr | vector_bfgs2 | vector_bfgs | steepest_descent}
+ [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]
+ [ GUESS <expr_1> <expr_2> ... <expr_n> ]
+ [ MIN <expr_1> <expr_2> ... <expr_n> ]
+ [ MAX <expr_1> <expr_2> ... <expr_n> ]
+ [ STEP <expr_1> <expr_2> ... <expr_n> ]
+ [ MAX_ITER <expr> ] [ TOL <expr> ] [ GRADTOL <expr> ]
+ [ VERBOSE ] [ NORERUN ]
+
 ~~~
 
 
@@ -1301,7 +1329,7 @@ quantity of volumetric elements in which the domain was discretized.
 ###  elements
 
 > Number of total elements of the unstructured grid. This number
-include those surface elements that belong to boundary physical entities.
+include those surface elements that belong to boundary physical groups.
 
 
 

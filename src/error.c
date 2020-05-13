@@ -114,7 +114,7 @@ void wasora_gsl_handler (const char *reason, const char *file_ptr, int line, int
   }
 
   if (!(on_gsl_error & ON_ERROR_NO_QUIT)) {
-    wasora_runtime_error();
+    wasora_polite_exit(WASORA_RUNTIME_ERROR);
   }
 
   return;

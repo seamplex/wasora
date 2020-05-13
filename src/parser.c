@@ -2811,14 +2811,16 @@ if (strcasecmp(token, "FROM") == 0) {
       return WASORA_PARSER_OK;
 
     // ----- MINIMIZE  -----------------------------------------------------------------
-///kw+MINIMIZE+usage MINIMIZE <function>
-///kw+MINIMIZE+desc Find the combination of arguments that give a (relative) minimum of a function, i.e. run an optimization problem.
+///kw+MINIMIZE+usage MINIMIZE
+///kw+MINIMIZE+desc Find the combination of arguments that give a (relative) minimum of a function.
     } else if (strcasecmp(token, "MINIMIZE") == 0 || strcasecmp(token, "OPTIMIZE") == 0) {
 
       // ponemos esto en true porque normalmente no queremos que imprima todo el chorizo
       wasora.min_mode = 1;
 
-///kw+MINIMIZE+usage <function>
+///kw+MINIMIZE+usage <function>@
+///kw+FIT+detail The combination of arguments that minimize the function are computed and stored in the variables.
+///kw+FIT+detail So if `f(x,y)` is to be minimized, after a `MINIMIZE f` both `x` and `y` would have the appropriate values.
       if ((token = wasora_get_next_token(NULL)) == NULL) {
         wasora_push_error_message("expected a function");
         return WASORA_PARSER_ERROR;
@@ -2852,12 +2854,24 @@ if (strcasecmp(token, "FROM") == 0) {
         
       while ((token = wasora_get_next_token(NULL)) != NULL) {
 ///kw+MINIMIZE+usage [ METHOD {
+///kw+FIT+detail The details of the method used can be found in [GSL’s documentation](https:\/\/www.gnu.org/software/gsl/doc/html/multimin.html).
+///kw+FIT+detail Some of them use derivatives and some of them do not.
+///kw+FIT+detail Default method is `DEFAULT_MINIMIZER_METHOD`, which does not need derivatives.
         if (strcasecmp(token, "METHOD") == 0 || strcasecmp(token, "ALGORITHM") == 0) {
           if ((token = wasora_get_next_token(NULL)) == NULL) {
             wasora_push_error_message("expected algorithm name");
             return WASORA_PARSER_ERROR;
           }
 
+///kw+MINIMIZE+usage nmsimplex2 |
+          } else if (strcasecmp(token, "nmsimplex2") == 0) {
+            wasora.min.f_type = gsl_multimin_fminimizer_nmsimplex2;
+///kw+MINIMIZE+usage nmsimplex |
+          } else if (strcasecmp(token, "nmsimplex") == 0) {
+            wasora.min.f_type = gsl_multimin_fminimizer_nmsimplex;
+///kw+MINIMIZE+usage nmsimplex2rand |
+          } else if (strcasecmp(token, "nmsimplex2rand") == 0) {
+            wasora.min.f_type = gsl_multimin_fminimizer_nmsimplex2rand;
 ///kw+MINIMIZE+usage conjugate_fr |
           if (strcasecmp(token, "conjugate_fr") == 0) {
             wasora.min.fdf_type = gsl_multimin_fdfminimizer_conjugate_fr;
@@ -2870,18 +2884,9 @@ if (strcasecmp(token, "FROM") == 0) {
 ///kw+MINIMIZE+usage vector_bfgs |
           } else if (strcasecmp(token, "vector_bfgs") == 0) {
             wasora.min.fdf_type = gsl_multimin_fdfminimizer_vector_bfgs;
-///kw+MINIMIZE+usage steepest_descent |
+///kw+MINIMIZE+usage steepest_descent}@
           } else if (strcasecmp(token, "steepest_descent") == 0) {
             wasora.min.fdf_type = gsl_multimin_fdfminimizer_steepest_descent;
-///kw+MINIMIZE+usage nmsimplex2 |
-          } else if (strcasecmp(token, "nmsimplex2") == 0) {
-            wasora.min.f_type = gsl_multimin_fminimizer_nmsimplex2;
-///kw+MINIMIZE+usage nmsimplex |
-          } else if (strcasecmp(token, "nmsimplex") == 0) {
-            wasora.min.f_type = gsl_multimin_fminimizer_nmsimplex;
-///kw+MINIMIZE+usage nmsimplex2rand }
-          } else if (strcasecmp(token, "nmsimplex2rand") == 0) {
-            wasora.min.f_type = gsl_multimin_fminimizer_nmsimplex2rand;
 /*
           } else if (strcasecmp(token, "genetic") == 0) {
             wasora.min.genetic = 1;
@@ -2893,7 +2898,7 @@ if (strcasecmp(token, "FROM") == 0) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MINIMIZE+usage [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]
+///kw+MINIMIZE+usage [ GRADIENT <expr_1> <expr_2> ... <expr_n> ]@
         } else if (strcasecmp(token, "GRADIENT") == 0) {
 
           wasora.min.gradient = malloc(wasora.min.n * sizeof(expr_t));
@@ -2906,7 +2911,7 @@ if (strcasecmp(token, "FROM") == 0) {
             wasora_call(wasora_parse_expression(token, &wasora.min.gradient[i]));
           }
 
-///kw+MINIMIZE+usage [ GUESS <expr_1> <expr_2> ... <expr_n> ]
+///kw+MINIMIZE+usage [ GUESS <expr_1> <expr_2> ... <expr_n> ]@
         } else if (strcasecmp(token, "GUESS") == 0) {
 
           wasora.min.guess = malloc(wasora.min.n * sizeof(expr_t));
@@ -2919,7 +2924,7 @@ if (strcasecmp(token, "FROM") == 0) {
             wasora_call(wasora_parse_expression(token, &wasora.min.guess[i]));
           }
 
-///kw+MINIMIZE+usage [ MIN <expr_1> <expr_2> ... <expr_n> ]
+///kw+MINIMIZE+usage [ MIN <expr_1> <expr_2> ... <expr_n> ]@
         } else if (strcasecmp(token, "MIN") == 0) {
 
           if (wasora.min.n == 0) {
@@ -2931,7 +2936,7 @@ if (strcasecmp(token, "FROM") == 0) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MINIMIZE+usage [ MAX <expr_1> <expr_2> ... <expr_n> ]
+///kw+MINIMIZE+usage [ MAX <expr_1> <expr_2> ... <expr_n> ]@
         } else if (strcasecmp(token, "MAX") == 0) {
 
           if (wasora.min.n == 0) {
@@ -2943,7 +2948,7 @@ if (strcasecmp(token, "FROM") == 0) {
             return WASORA_PARSER_ERROR;
           }
 
-///kw+MINIMIZE+usage [ STEP <expr_1> <expr_2> ... <expr_n> ]
+///kw+MINIMIZE+usage [ STEP <expr_1> <expr_2> ... <expr_n> ]@
         } else if (strcasecmp(token, "STEP") == 0) {
 
           if (wasora.min.n == 0) {
@@ -2961,11 +2966,9 @@ if (strcasecmp(token, "FROM") == 0) {
           if (wasora_parser_expressions(&wasora.min.range.step, wasora.min.n_steps) != WASORA_PARSER_OK) {
             return WASORA_PARSER_ERROR;
           }
-///kw+MINIMIZE+usage [ VERBOSE ]
         } else if (strcasecmp(token, "VERBOSE") == 0) {
           wasora.min.verbose = 1;
 
-///kw+MINIMIZE+usage [ NORERUN ]
         } else if (strcasecmp(token, "NORERUN") == 0) {
           wasora.min.norerun = 1;
 
@@ -2973,7 +2976,9 @@ if (strcasecmp(token, "FROM") == 0) {
 
 ///kw+MINIMIZE+usage [ MAX_ITER <expr> ]
 ///kw+MINIMIZE+usage [ TOL <expr> ]
-///kw+MINIMIZE+usage [ GRADTOL <expr> ]
+///kw+MINIMIZE+usage [ GRADTOL <expr> ]@
+///kw+MINIMIZE+usage [ VERBOSE ]
+///kw+MINIMIZE+usage [ NORERUN ]@
           // en una sola linea para el generador del lexer de pygments
           char *keywords[] = {"MAX_ITER", "TOL", "GRADTOL", ""};
           //, "POPULATION", "GA_STEPS"};

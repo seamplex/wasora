@@ -45,9 +45,12 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   int blocks, geometrical, tag, dimension, parametric, num;
   int first, second; // this are buffers because 4.0 and 4.1 swapped tag,dim to dim,tag
   int type, physical;
-  int ntags, tag_min, tag_max;
-  int node;
+  int node, node_index;
   int cell_id;
+  int ntags;
+  int tag_min = 0;
+  int tag_max = 0;
+  int sparse = 0; // assume the nodes are not sparse
 
 
   if (mesh->file->pointer == NULL) {
@@ -319,12 +322,14 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             return WASORA_RUNTIME_ERROR;
           }
           
-          // en msh2 los tags son indices
+          // en msh2 si no es sparse, los tags son indices pero si es sparse es otro cantar
           if (j+1 != tag) {
-            wasora_push_error_message("nodes in file '%s' are sparse", mesh->file->path);
-            return WASORA_RUNTIME_ERROR;
+            sparse = 1;
           }
-          mesh->node[j].tag = tag;
+          
+          if ((mesh->node[j].tag = tag) > tag_max) {
+            tag_max = mesh->node[j].tag;
+          }
           mesh->node[j].index_mesh = j;
           
           // si nos dieron degrees of freedom entonces tenemos que allocar
@@ -334,12 +339,22 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           }
         }
         
+        // terminamos de leer los nodos, si los nodos son sparse tenemos que hacer el tag2index
+        if (sparse) {
+          tag2index = malloc((tag_max+1) * sizeof(int));
+          for (k = 0; k <= tag_max; k++) {
+            tag2index[k] = -1;
+          }
+          for (i = 0; i < mesh->n_nodes; i++) {
+            tag2index[mesh->node[i].tag] = i;
+          }
+        }
+
+        
       } else if (version_maj == 4) {
         // la cantidad de bloques y de nodos
         if (version_min == 0) {
           // en 4.0 no tenemos min y max
-          tag_min = 0;
-          tag_max = 0;
           if (fscanf(mesh->file->pointer, "%d %d", &blocks, &mesh->n_nodes) < 2) {
             wasora_push_error_message("error reading node blocks");
             return WASORA_RUNTIME_ERROR;
@@ -550,12 +565,16 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             if (fscanf(mesh->file->pointer, "%d", &node) < 1) {
               return WASORA_RUNTIME_ERROR;
             }
-            if (node < 1 || node > mesh->n_nodes) {
+            if (sparse == 0 && (node < 1 || node > mesh->n_nodes)) {
               wasora_push_error_message("node %d in element %d does not exist", node, tag);
               return WASORA_RUNTIME_ERROR;
             }
-            // en msh2 todo manzana
-            mesh->element[i].node[j] = &mesh->node[node-1];
+
+            if ((node_index = (sparse==0)?node-1:tag2index[node]) < 0) {
+              wasora_push_error_message("node %d in element %d does not exist", node, tag);
+              return WASORA_RUNTIME_ERROR;
+            }
+            mesh->element[i].node[j] = &mesh->node[node_index];
             mesh_add_element_to_list(&mesh->element[i].node[j]->associated_elements, &mesh->element[i]);
           }
         }
@@ -764,7 +783,11 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           wasora_push_error_message("error reading file");
           return WASORA_RUNTIME_ERROR;
         }
-        function->data_value[id-1] = value;
+        if ((node_index = (sparse==0)?node-1:tag2index[node]) < 0) {
+          wasora_push_error_message("node %d in element %d does not exist", node, tag);
+          return WASORA_RUNTIME_ERROR;
+        }
+        function->data_value[node_index] = value;
       }
 
       // el newline
@@ -876,7 +899,9 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   fclose(mesh->file->pointer);
   mesh->file->pointer = NULL;
   
-  free(tag2index);
+  if (tag2index != NULL) {
+    free(tag2index);
+  }  
   // limpiar hashes
   
   return WASORA_RUNTIME_OK;

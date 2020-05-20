@@ -151,20 +151,24 @@ int mesh_frd_readmesh(mesh_t *mesh) {
   char buffer[BUFFER_SIZE];
   char tmp[BUFFER_SIZE];
   double offset[3];
+  
   double scale_factor;
   double scalar;
   
-  int i, j, j_gmsh;
-  int tag;
+  int i, j, j_gmsh, k;
+  int tag, tag_max;
   int type;
   int tags[2];
-  int node;
+  int node, node_index;
   int spatial_dimensions;
   int bulk_dimensions;
   int order;
   
   int numnod, ictype, numstp, format, ncomps, irtype, menu;
   int minusone, minustwo, minusthree, minusfour, minusfive;
+  
+  int sparse = 0; // assume the nodes are not sparse
+  int *tag2index = NULL;
   
   if (mesh->file->pointer == NULL) {
     wasora_call(wasora_instruction_open_file(mesh->file));
@@ -227,11 +231,15 @@ int mesh_frd_readmesh(mesh_t *mesh) {
         if (fscanf(mesh->file->pointer, "%d", &tag) == 0) {
           return WASORA_RUNTIME_ERROR;
         }
+        
         if (i+1 != tag) {
-          wasora_push_error_message("nodes in file '%s' are sparse", mesh->file->path);
-          return WASORA_RUNTIME_ERROR;
+          sparse = 1;
         }
-        mesh->node[i].tag = tag;
+        
+        if ((mesh->node[i].tag = tag) > tag_max) {
+          tag_max = mesh->node[i].tag;
+        }
+        
         mesh->node[i].index_mesh = i;
 
         for (j = 0; j < 3; j++) {
@@ -263,6 +271,18 @@ int mesh_frd_readmesh(mesh_t *mesh) {
         wasora_push_error_message("expected minus three as line starter", buffer);
         return WASORA_RUNTIME_ERROR;
       }
+      
+      // terminamos de leer los nodos, si los nodos son sparse tenemos que hacer el tag2index
+      if (sparse) {
+        tag2index = malloc((tag_max+1) * sizeof(int));
+        for (k = 0; k <= tag_max; k++) {
+          tag2index[k] = -1;
+        }
+        for (i = 0; i < mesh->n_nodes; i++) {
+          tag2index[mesh->node[i].tag] = i;
+        }
+      }
+
 
     // ------------------------------------------------------      
     } else if (strncmp("    3C", buffer, 6) == 0) {
@@ -277,7 +297,7 @@ int mesh_frd_readmesh(mesh_t *mesh) {
         return WASORA_RUNTIME_ERROR;
       }
       if (format > 1) {
-        wasora_push_error_message("format %d not supported'", format);
+        wasora_push_error_message("element format %d not supported'", format);
         return WASORA_RUNTIME_ERROR;
       }
 
@@ -369,7 +389,7 @@ int mesh_frd_readmesh(mesh_t *mesh) {
             if (fscanf(mesh->file->pointer, "%d", &node) == 0) {
               return WASORA_RUNTIME_ERROR;
             }
-            if (node > mesh->n_nodes) {
+            if (sparse == 0 && node > mesh->n_nodes) {
               wasora_push_error_message("node %d in element %d does not exist", node, tag);
               return WASORA_RUNTIME_ERROR;
             }
@@ -390,8 +410,13 @@ int mesh_frd_readmesh(mesh_t *mesh) {
             j_gmsh = j;
           }
           
-          mesh->element[i].node[j_gmsh] = &mesh->node[node-1];
+          if ((node_index = (sparse==0)?node-1:tag2index[node]) < 0) {
+            wasora_push_error_message("node %d in element %d does not exist", node, tag);
+            return WASORA_RUNTIME_ERROR;
+          }
+          mesh->element[i].node[j_gmsh] = &mesh->node[node_index];
           mesh_add_element_to_list(&mesh->element[i].node[j_gmsh]->associated_elements, &mesh->element[i]);
+            
           
 /*          
           if (mesh->element[id].physical_entity != NULL && mesh->element[id].physical_entity->material != NULL) {
@@ -516,7 +541,7 @@ int mesh_frd_readmesh(mesh_t *mesh) {
           wasora_push_error_message("expected -1 '%s'", buffer);
           return WASORA_RUNTIME_ERROR;
         }
-        if (node < 1 || node > mesh->n_nodes) {
+        if (sparse == 0 && (node < 1 || node > mesh->n_nodes)) {
           wasora_push_error_message("invalid node number '%d'", node);
           return WASORA_RUNTIME_ERROR;
         }
@@ -528,7 +553,11 @@ int mesh_frd_readmesh(mesh_t *mesh) {
             return WASORA_RUNTIME_ERROR;
           }
           if (function[i] != NULL) {
-            function[i]->data_value[node-1] = scalar;
+            if ((node_index = (sparse==0)?node-1:tag2index[node]) < 0) {
+              wasora_push_error_message("node %d in element %d does not exist", node, tag);
+              return WASORA_RUNTIME_ERROR;
+            }
+            function[i]->data_value[node_index] = scalar;
           }
         }
       }
@@ -549,6 +578,11 @@ int mesh_frd_readmesh(mesh_t *mesh) {
 
   fclose(mesh->file->pointer);
   mesh->file->pointer = NULL;
+
+  if (tag2index != NULL) {
+    free(tag2index);
+  }  
+
   
   // verificamos que la malla tenga la dimension esperada
   if (mesh->bulk_dimensions == 0) {

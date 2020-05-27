@@ -692,14 +692,19 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
     } else if (strncmp("$ElementData", buffer, 12) == 0) {
       
       // TODO!
-      
+
     // ------------------------------------------------------      
-    } else if (strncmp("$ElementNodeData", buffer, 16) == 0 || strncmp("$NodeData", buffer, 9) == 0) {
+    } else if (strncmp("$ElementNodeData", buffer, 16) == 0) {
+      
+      // TODO!
+
+    // ------------------------------------------------------      
+    } else if (strncmp("$NodeData", buffer, 9) == 0) {
       
       node_data_t *node_data;
       function_t *function = NULL;
       double time, value;
-      int j, id, timestep, dofs, nodes;
+      int j, timestep, dofs, nodes;
       int n_string_tags, n_real_tags, n_integer_tags;
       char *string_tag = NULL;
       
@@ -779,7 +784,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
       function->data_value = calloc(nodes, sizeof(double));
       
       for (j = 0; j < nodes; j++) {
-        if (fscanf(mesh->file->pointer, "%d %lf", &id, &value) == 0) {
+        if (fscanf(mesh->file->pointer, "%d %lf", &node, &value) == 0) {
           wasora_push_error_message("error reading file");
           return WASORA_RUNTIME_ERROR;
         }

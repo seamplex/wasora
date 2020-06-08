@@ -174,6 +174,9 @@ extern const char factorseparators[];
 #define INFTY         (1125899906842624.0)                    // 2^50
 #define ZERO          (8.881784197001252323389053344727e-16)  // (1/2)^-50
 
+#define DEFAULT_MESH_FAILED_INTERPOLATION_FACTOR   2
+
+
 /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  *  global structures
  * -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
@@ -1871,6 +1874,8 @@ struct {
     
     vector_t *bbox_min;
     vector_t *bbox_max;
+    
+    var_t *mesh_failed_interpolation_factor;
   } vars;
 
   // esto deberia ir en cada malla porque va a tener informacion sobre los puntos de gauss

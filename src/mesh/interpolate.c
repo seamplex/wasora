@@ -44,7 +44,7 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   double x_nearest[3] = {0, 0, 0};
   mesh_t *m = f->mesh;  
 
-  gsl_vector *r = NULL;    // vector con r y s (lo que queremos encontrar)
+  gsl_vector *r = NULL;    // vector with the local coordinates within the element
   
   if (f->data_value == NULL) {
     return 0;
@@ -53,7 +53,6 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   
   if (m->kd_nodes != NULL) {
 
-    // TODO: ver si esto es lo mejor (probablemente no)
     res_item = kd_nearest(m->kd_nodes, x);
     nearest_node = (node_t *)(kd_res_item(res_item, x_nearest));
     kd_res_free(res_item);    
@@ -85,25 +84,51 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
     }
 
     
-    // si no encontramos ninguno entonces capaz que la malla este deformada, probamos con otros nodos
-    if (chosen_element == NULL) {
-      struct kdres *presults;
-      // pedimos los que estén en un radio de una vez y media veces el anterior
-      presults = kd_nearest_range(m->kd_nodes, x, 1.5*sqrt(dist2));
+    // if we do not find any then the mesh might be deformed or the point might be outside the domain
+    // so we see if we can find another one
+    if (chosen_element == NULL && wasora_var(wasora_mesh.vars.mesh_failed_interpolation_factor) > 0) {
+      
+      // this is a hash of elements we already saw so we do not need to check for them many times
+      struct cached_element {
+        int id;
+        UT_hash_handle hh;
+      };
+      
+      struct cached_element *cache = NULL;
+      struct cached_element *tmp = NULL;
+      struct cached_element *cached_element = NULL;
+
+      // we ask for the nodes which are within a radius mesh_failed_interpolation_factor times the last one
+      struct kdres *presults = kd_nearest_range(m->kd_nodes, x, wasora_var(wasora_mesh.vars.mesh_failed_interpolation_factor)*sqrt(dist2));
+      
       while(chosen_element == NULL && kd_res_end(presults) == 0) {
         nearest_node = (node_t *)(kd_res_item(presults, x_nearest));
         LL_FOREACH(nearest_node->associated_elements, associated_element) {
-          if (associated_element->element->type->dim == m->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
-            chosen_element = associated_element->element;
-            break;
-          }
+          
+          cached_element = NULL;
+          HASH_FIND_INT(cache, &associated_element->element->tag, cached_element);
+          if (cached_element == NULL) {
+            struct cached_element *cached_element = malloc(sizeof(struct cached_element));
+            cached_element->id = associated_element->element->tag;
+            HASH_ADD_INT(cache, id, cached_element);
+          
+            if (associated_element->element->type->dim == m->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
+              chosen_element = associated_element->element;
+              break;
+            }
+          }  
         }
         kd_res_next(presults);
       }
       kd_res_free(presults);
+
+      HASH_ITER(hh, cache, cached_element, tmp) {
+        HASH_DEL(cache, cached_element);
+        free(cached_element);
+      }  
     }
     
-    // fallback: si asi y todo no lo encontramos, le ponemos el nearest
+    // fallback: if we still did not find it, choose the nearest node
     if (chosen_element == NULL && nearest_node != NULL) {
       return f->data_value[nearest_node->index_mesh];
     }

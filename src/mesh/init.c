@@ -104,8 +104,17 @@ int wasora_mesh_init_before_parser(void) {
   wasora_mesh.vars.eps = wasora_define_variable("eps");
   wasora_var(wasora_mesh.vars.eps) = 1e-6;
 
-// inicializamos la informacion estatica de los elementos
-// faltaria los puntos de gauss y la evalaucion en los mismos
+  
+//va+mesh_failed_interpolation_factor+name mesh_failed_interpolation_factor
+//va+mesh_failed_interpolation_factor+desc When interpolating a mesh-defined function, the interpolation point\ $\vec{x}$ seems to fall outside
+//va+mesh_failed_interpolation_factor+desc an element using the $k$-dimensional tree (most efficient), and more robust brute-force approach is taken
+//va+mesh_failed_interpolation_factor+desc less eficient using a radius of size `mesh_failed_interpolation_factor` times the distance between $\vec{x}$
+//va+mesh_failed_interpolation_factor+desc and the nearest node to \vec{x$} is performed.
+//va+mesh_failed_interpolation_factor+desc If this factor is zero or negative, then the value at the nearest node to $x$ is returned. Default is DEFAULT_MESH_FAILED_INTERPOLATION_FACTOR.
+  wasora_mesh.vars.mesh_failed_interpolation_factor = wasora_define_variable("mesh_failed_interpolation_factor");
+  wasora_var(wasora_mesh.vars.mesh_failed_interpolation_factor) = DEFAULT_MESH_FAILED_INTERPOLATION_FACTOR;
+  
+// initialize the static data of the elements
   wasora_call(wasora_mesh_element_types_init());
   
   wasora_mesh.initialized = 1;

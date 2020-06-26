@@ -262,7 +262,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           }
         }
         
-        // los puntos no tienen bounding
+        // points do not have bounding entities
         if (dimension != 0) {
           if (fscanf(mesh->file->pointer, "%d", &geometrical_entity->num_bounding) < 1) {
             return WASORA_RUNTIME_ERROR;
@@ -270,6 +270,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           if (geometrical_entity->num_bounding != 0) {
             geometrical_entity->bounding = calloc(geometrical_entity->num_bounding, sizeof(int));
             for (j = 0; j < geometrical_entity->num_bounding; j++) {
+              // some entities can be negative because the tag is multiplied by the orientation
               if (fscanf(mesh->file->pointer, "%d", &geometrical_entity->bounding[j]) == 0) {
                 return WASORA_RUNTIME_ERROR;
               }

@@ -339,12 +339,11 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v) {
   r = element->type->gauss->r[v];
 
   if (element->type->dim == 0) {
-    // un puntito
-    //gsl_matrix_set(dxdr, 0, 0, 1.0);
+    // a point does not have any derivative, if we are here then just keep silence
     ;
   } else if (element->type->dim == 1 && (element->node[0]->x[1] != 0 || element->node[1]->x[1] != 0 ||
                                          element->node[0]->x[2] != 0 || element->node[1]->x[2] != 0)) {
-    
+    // if we are a line but not aligned with the x axis we have to compute the axial coordinate l
     double dx, dy, dz, l;
     
     dx = element->node[1]->x[0] - element->node[0]->x[0];
@@ -358,9 +357,9 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v) {
                                                                             element->node[j]->x[2] * dz/l));
     }
     
-    // los cuadrangulos son triangulos dobles asi  que con mirar un triangulo ya esta
   } else if (element->type->dim == 2 && (element->node[0]->x[2] != 0 || element->node[1]->x[2] != 0 || element->node[2]->x[2])) {
-
+    // if we are a triangle or a quadrangle (quadrangles are double-triangles so they are alike)
+    // but we do not live on the x-y plane we have to do some tricks
     double n[3];
     double xy[3];
     double a[3];
@@ -401,7 +400,7 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v) {
 */    
 
     if (fabs(s) < wasora_var(wasora_mesh.vars.eps)) {
-      // too late, pero la transformacion es una traslacion
+      // too late, but the transformation is a translation
       R[0][0] = 1;
       R[0][1] = 0;
       R[0][2] = 0;
@@ -434,14 +433,15 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v) {
     }
     
   } else {
-    // la transformacion mantiene el plano original
-    // i.e. los segmentos estan en la recta x
-    //      las superficies estan en el plano xy    
+    // we can do a full traditional computation
+    // i.e. lines are in the x axis
+    //      surfaces are on the xy plane
+    //      volumes are always volumes!
   
     for (m = 0; m < element->type->dim; m++) {
       for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
         for (j = 0; j < element->type->nodes; j++) {
-          // TODO: producto matrix-vector
+          // TODO: matrix-vector product
           gsl_matrix_add_to_element(dxdr, m, m_prime, gsl_matrix_get(element->type->gauss->dhdr[v], j, m_prime) * element->node[j]->x[m]);
         }
       }

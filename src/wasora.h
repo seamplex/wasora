@@ -2015,14 +2015,14 @@ struct elementary_entity_t {
 struct bc_t {
   char *string;
   
-  // estos son ints y no enums porque desde wasora no sabemos que va a haber
+  // these are ints and not enums because from wasora we cannot know what they are going to be
   int type_math;
   int type_phys;  
-  int dof;   // este puede tener valores altos que quieran decir cosas (i.e. dof=213 es Mx)
+  int dof;   // this can have high values with meanings (i.e. dof=213 can be Mx)
 
-  expr_t condition;  // si no es null la BC solo se aplica si esto es != 0
+  expr_t condition;  // if it is not null the BC only applies if it is != 0
   expr_t *expr;
-  physical_entity_t *slave;  
+  physical_entity_t *slave;  // TODO: change to non-racist name
   
   bc_t *next;
 };

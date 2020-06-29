@@ -20,10 +20,6 @@
  *------------------- ------------  ----    --------  --     -       -         -
  */
 
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_multimin.h>
-#include <gsl/gsl_blas.h>
-
 #ifndef _WASORA_H_
 #include "wasora.h"
 #endif

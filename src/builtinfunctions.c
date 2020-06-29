@@ -27,10 +27,6 @@
 #endif
 #include <time.h>
 
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
-#include <gsl/gsl_sf.h>
-
 #ifndef _WASORA_H_
 #include "wasora.h"
 #endif

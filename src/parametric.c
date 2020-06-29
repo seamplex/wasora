@@ -30,12 +30,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_sf.h>
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
-#include <gsl/gsl_qrng.h>
-
 #ifndef _WASORA_H_
 #include "wasora.h"
 #endif

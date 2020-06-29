@@ -21,10 +21,6 @@
  */
 #include <wasora.h>
 
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_matrix.h>
-
 
 // evalua el jacobiano de las r con respecto a las x invirtiendo el jacobiano directo
 void mesh_inverse(gsl_matrix *direct, gsl_matrix *inverse) {

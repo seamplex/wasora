@@ -20,12 +20,6 @@
  *------------------- ------------  ----    --------  --     -       -         -
  */
 
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_integration.h>
-#include <gsl/gsl_deriv.h>
-#include <gsl/gsl_roots.h>
-#include <gsl/gsl_min.h>
-
 #ifndef _WASORA_H_
 #include "wasora.h"
 #endif

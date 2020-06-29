@@ -21,8 +21,6 @@
  */
 #include <wasora.h>
 
-#include <gsl/gsl_linalg.h>
-
 
 // ---------------------------------------------------------------------
 // tetrahedro isoparametrico de cuatro nodos sobre el triangulo unitario

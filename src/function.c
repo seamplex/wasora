@@ -23,11 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <gsl/gsl_spline.h>
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_sort_double.h>
-#include <gsl/gsl_sort_vector_double.h>
-
 #ifndef _WASORA_H_
 #include "wasora.h"
 #endif

@@ -21,10 +21,6 @@
  */
 #include <wasora.h>
 
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_matrix.h>
-
 double mesh_integral_over_element(function_t *function, element_t *element, expr_t *weight) {
 
   double integral = 0;

@@ -22,7 +22,6 @@
 #include <wasora.h>
 
 #include <math.h>
-#include <gsl/gsl_linalg.h>
 
 
 // --------------------------------------------------------------

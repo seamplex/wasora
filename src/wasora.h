@@ -30,16 +30,35 @@
 #include "thirdparty/uthash.h"
 #include "thirdparty/utlist.h"
 
+#define HAVE_INLINE
+#define GSL_RANGE_CHECK_OFF
 
+// we need all the includes here so they all follow te inline directive above
+#include <gsl/gsl_blas.h>
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_deriv.h>
+#include <gsl/gsl_heapsort.h>
+#include <gsl/gsl_integration.h>
+#include <gsl/gsl_interp.h>
+#include <gsl/gsl_linalg.h>
 #include <gsl/gsl_math.h>
-#include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
-
-#include <gsl/gsl_spline.h>
+#include <gsl/gsl_min.h>
 #include <gsl/gsl_multifit_nlin.h>
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_multiroots.h>
+#include <gsl/gsl_qrng.h>
+#include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include <gsl/gsl_roots.h>
+#include <gsl/gsl_spline.h>
+#include <gsl/gsl_sf.h>
+#include <gsl/gsl_statistics.h>
+#include <gsl/gsl_sort_double.h>
+#include <gsl/gsl_sort_vector_double.h>
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_version.h>
+
 
 
 

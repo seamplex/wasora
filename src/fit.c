@@ -22,11 +22,6 @@
 
 #include <stdio.h>
 
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_blas.h>
-#include <gsl/gsl_multifit_nlin.h>
-#include <gsl/gsl_version.h>
-
 #ifndef _WASORA_H_
 #include "wasora.h"
 #endif

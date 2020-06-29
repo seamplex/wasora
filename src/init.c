@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <gsl/gsl_math.h>
 
 #ifdef HAVE_READLINE
 #include <readline/readline.h>

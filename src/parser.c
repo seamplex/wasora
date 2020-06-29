@@ -30,11 +30,6 @@
 #include <unistd.h>
 #include <dlfcn.h>
 
-#include <gsl/gsl_sf.h>
-#include <gsl/gsl_interp.h>
-#include <gsl/gsl_version.h>
-#include <gsl/gsl_heapsort.h>
-
 #ifndef _WASORA_H_
 #include "wasora.h"
 #endif

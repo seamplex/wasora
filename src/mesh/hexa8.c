@@ -176,6 +176,7 @@ void mesh_hexa_gauss8_init(element_type_t *element_type) {
     gauss->w[0] = 8 * 1.0;
     gauss->r[0][0] = 0;
     gauss->r[0][1] = 0;
+    gauss->r[0][2] = 0;
 
     mesh_init_shape_at_gauss(gauss, element_type);  
   

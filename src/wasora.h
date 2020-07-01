@@ -2457,6 +2457,7 @@ extern double mesh_point_vol(element_t *);
 
 // line.c
 extern int mesh_line2_init(void);
+extern void mesh_line_gauss2_init(element_type_t *);
 extern double mesh_line2_h(int, double *);
 extern double mesh_line2_dhdr(int, int, double *);
 extern int mesh_point_in_line(element_t *, const double *);

@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related line3 element routines
  *
- *  Copyright (C) 2017--2018 jeremy theler
+ *  Copyright (C) 2017--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -31,7 +31,6 @@
 int mesh_line3_init(void) {
 
   element_type_t *element_type;
-  gauss_t *gauss;
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE3];
@@ -69,31 +68,7 @@ Line3:
   wasora_mesh_add_node_parent(&element_type->node_parents[2], 1);
   wasora_mesh_compute_coords_from_parent(element_type, 2);
 
-  // dos juegos de puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
-  
-  // el primero es constante
-  // ---- un punto de Gauss ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
-  
-    gauss->w[0] = 2 * 1.0;
-    gauss->r[0][0] = 0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
-  // ---- dos puntos de Gauss ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 2);
-  
-    gauss->w[0] = 2 * 0.5;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-
-    gauss->w[1] = 2 * 0.5;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
+  mesh_line_gauss2_init(element_type);    
   
   return WASORA_RUNTIME_OK;
 }

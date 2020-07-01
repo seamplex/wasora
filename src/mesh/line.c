@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related line element routines
  *
- *  Copyright (C) 2014--2018 jeremy theler
+ *  Copyright (C) 2014--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -31,7 +31,6 @@
 int mesh_line2_init(void) {
 
   element_type_t *element_type;
-  gauss_t *gauss;
   int j;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE2];
@@ -66,34 +65,44 @@ Line:
   element_type->first_order_nodes++;
   element_type->node_coords[1][0] = 1;
   
+  mesh_line_gauss2_init(element_type);
+  
+  return WASORA_RUNTIME_OK;
+}
+
+void mesh_line_gauss2_init(element_type_t *element_type) {
+  gauss_t *gauss;
+  
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   
-  // el primero es constante
-  // ---- un punto de Gauss ----  
+  // el primero es el default
+    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
+    mesh_alloc_gauss(gauss, element_type, 2);
+
+    gauss->w[0] = 2 * 0.5;
+    gauss->r[0][0] = -1.0/M_SQRT3;
+
+    gauss->w[1] = 2 * 0.5;
+    gauss->r[1][0] = +1.0/M_SQRT3;
+    
+    mesh_init_shape_at_gauss(gauss, element_type);
+    
+  // ---- un punto de Gauss  ----  
     gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
     mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 2 * 1.0;
     gauss->r[0][0] = 0;
 
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
-  // ---- dos puntos de Gauss ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
-    mesh_alloc_gauss(gauss, element_type, 2);
+    mesh_init_shape_at_gauss(gauss, element_type);  
   
-    gauss->w[0] = 2 * 0.5;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-
-    gauss->w[1] = 2 * 0.5;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
   
-  return WASORA_RUNTIME_OK;
+  return;
+  
+
 }
+
 
 double mesh_line2_h(int k, double *vec_r) {
   double r = vec_r[0];

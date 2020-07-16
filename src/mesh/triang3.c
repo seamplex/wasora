@@ -91,7 +91,7 @@ void mesh_triang_gauss3_init(element_type_t *element_type) {
   element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // ---- tres puntos de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
+    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
     mesh_alloc_gauss(gauss, element_type, 3);
   
     gauss->w[0] = 1.0/2.0 * 1.0/3.0;
@@ -131,7 +131,7 @@ void mesh_triang_gauss3_init(element_type_t *element_type) {
     
 
   // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
+    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
     mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 0.5 * 1.0;

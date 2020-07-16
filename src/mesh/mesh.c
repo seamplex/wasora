@@ -234,14 +234,14 @@ int wasora_instruction_mesh(void *arg) {
       vol = cog[0] = cog[1] = cog[2] = 0;
       for (i = 0; i < physical_entity->n_elements; i++) {
         element = &mesh->element[physical_entity->element[i]];
-        for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
-          mesh_compute_integration_weight_at_gauss(element, v);
+        for (v = 0; v < element->type->gauss[mesh->integration].V; v++) {
+          mesh_compute_integration_weight_at_gauss(element, v, mesh->integration);
 
           for (j = 0; j < element->type->nodes; j++) {
-            vol += element->w[v] * element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j];
-            cog[0] += element->w[v] * element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j] * element->node[j]->x[0];
-            cog[1] += element->w[v] * element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j] * element->node[j]->x[1];
-            cog[2] += element->w[v] * element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j] * element->node[j]->x[2];
+            vol += element->w[v] * element->type->gauss[mesh->integration].h[v][j];
+            cog[0] += element->w[v] * element->type->gauss[mesh->integration].h[v][j] * element->node[j]->x[0];
+            cog[1] += element->w[v] * element->type->gauss[mesh->integration].h[v][j] * element->node[j]->x[1];
+            cog[2] += element->w[v] * element->type->gauss[mesh->integration].h[v][j] * element->node[j]->x[2];
           }
         }
       }
@@ -424,7 +424,7 @@ int mesh_free(mesh_t *mesh) {
       }
       
       if (mesh->element[i].type != NULL && mesh->element[i].type->gauss != NULL) {
-        for (v = 0; v < mesh->element[i].type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
+        for (v = 0; v < mesh->element[i].type->gauss[GAUSS_POINTS_FULL].V; v++) {
 
           if (mesh->element[i].x != NULL) {
             free(mesh->element[i].x[v]);

@@ -45,6 +45,7 @@ int wasora_mesh_parse_line(char *line) {
       expr_t *scale_factor = calloc(1, sizeof(expr_t));
       expr_t *offset = calloc(3, sizeof(expr_t));
       int ordering = 0;
+      int integration = 0;
       int dimensions = 0;
       int degrees = 0;
       int structured = 0;
@@ -101,7 +102,7 @@ int wasora_mesh_parse_line(char *line) {
 //kw+MESH+usage [ ORDERING { unknown | node } ]
         } else if (strcasecmp(token, "ORDERING") == 0) {
           char *keywords[] = {"node", "unknown", ""};
-          int values[] = {ordering_node_based, ordering_unknown_based, 0};
+          int values[] = {ordering_node_major, ordering_dof_major, 0};
           wasora_call(wasora_parser_keywords_ints(keywords, values, &ordering));
           
 ///kw+MESH+detail If either `SCALE` or `OFFSET` are given, the node position if first shifted and then scaled by the provided amounts.
@@ -114,13 +115,13 @@ int wasora_mesh_parse_line(char *line) {
           wasora_call(wasora_parser_expression(&offset[0]));
           wasora_call(wasora_parser_expression(&offset[1]));
           wasora_call(wasora_parser_expression(&offset[2]));
+
+///kw+MESH+usage [ INTEGRATION { full | reduced } ]
+        } else if (strcasecmp(token, "INTEGRATION") == 0) {
+          char *keywords[] = {"full", "reduced", ""};
+          int values[] = {integration_full, integration_reduced, 0};
+          wasora_call(wasora_parser_keywords_ints(keywords, values, &integration));
           
-//kw+MESH+usage [ DEGREES <num_expr> ]
-/*          
-        } else if (strcasecmp(token, "DEGREES") == 0) {
-          wasora_call(wasora_parser_expression_in_string(&xi));
-          degrees = (int)(xi);
-*/
 //kw+MESH+usage [ NCELLS_X <expr> ]
         } else if (strcasecmp(token, "NCELLS_X") == 0) {
           wasora_call(wasora_parser_expression(&ncells[0]));
@@ -240,7 +241,7 @@ int wasora_mesh_parse_line(char *line) {
         return WASORA_PARSER_ERROR;
       }
       
-      if ((mesh = wasora_define_mesh(name, file, dimensions, dimensions, degrees, ordering, structured, scale_factor, offset, ncells, lengths, deltas)) == NULL) {
+      if ((mesh = wasora_define_mesh(name, file, dimensions, dimensions, degrees, integration, structured, scale_factor, offset, ncells, lengths, deltas)) == NULL) {
         return WASORA_PARSER_ERROR;
       }
       

@@ -29,18 +29,18 @@ double mesh_integral_over_element(function_t *function, element_t *element, expr
   int v;
   int j;
   
-  for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
-    mesh_compute_integration_weight_at_gauss(element, v);
+  for (v = 0; v < element->type->gauss[GAUSS_POINTS_FULL].V; v++) {
+    mesh_compute_integration_weight_at_gauss(element, v, GAUSS_POINTS_FULL);
 
     xi = 0;
     for (j = 0; j < element->type->nodes; j++) {
-      xi += element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j] * function->data_value[element->node[j]->index_mesh];
+      xi += element->type->gauss[GAUSS_POINTS_FULL].h[v][j] * function->data_value[element->node[j]->index_mesh];
     }
 
     if (weight == NULL) {
       integral += element->w[v] * xi;
     } else {
-    	mesh_compute_x_at_gauss(element, v);
+    	mesh_compute_x_at_gauss(element, v, GAUSS_POINTS_FULL);
       mesh_update_coord_vars(element->x[v]);
       integral += wasora_evaluate_expression(weight) * element->w[v] * xi;
     }

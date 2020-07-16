@@ -22,7 +22,7 @@
 #define _GNU_SOURCE
 #include <wasora.h>
 
-mesh_t *wasora_define_mesh(char *name, file_t *file, int bulk_dimensions, int spatial_dimensions, int degrees, int ordering, int structured, expr_t *scale_factor, expr_t *offsets, expr_t *ncells, expr_t *lengths, expr_t *deltas) {
+mesh_t *wasora_define_mesh(char *name, file_t *file, int bulk_dimensions, int spatial_dimensions, int degrees, int integration, int structured, expr_t *scale_factor, expr_t *offsets, expr_t *ncells, expr_t *lengths, expr_t *deltas) {
 
   mesh_t *mesh;
   char default_name[] = "mesh";
@@ -42,7 +42,8 @@ mesh_t *wasora_define_mesh(char *name, file_t *file, int bulk_dimensions, int sp
   mesh->bulk_dimensions = bulk_dimensions;
   mesh->spatial_dimensions = spatial_dimensions;
   mesh->degrees_of_freedom = degrees;
-  mesh->ordering = ordering;
+//  mesh->ordering = ordering;
+  mesh->integration = integration;
   mesh->structured = structured;
 
   mesh->scale_factor = scale_factor;

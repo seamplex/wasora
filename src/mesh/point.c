@@ -48,7 +48,7 @@ int mesh_one_node_point_init(void) {
   element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // el primero es el default
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
+    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
     mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 1.0;
@@ -60,15 +60,7 @@ int mesh_one_node_point_init(void) {
     
     
   // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
-    mesh_alloc_gauss(gauss, element_type, 1);
-  
-    gauss->w[0] = 1.0;
-    gauss->r[0][0] = 0.0;
-    gauss->r[0][0] = 0.0;
-    gauss->r[0][0] = 0.0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);
+    element_type->gauss[GAUSS_POINTS_REDUCED] = element_type->gauss[GAUSS_POINTS_FULL];
 
   
   return WASORA_RUNTIME_OK;

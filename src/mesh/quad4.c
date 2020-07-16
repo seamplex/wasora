@@ -96,7 +96,7 @@ void mesh_quad_gauss4_init(element_type_t *element_type) {
   
   // el primero es el default
   // ---- cuatro puntos de Gauss ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
+    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
     mesh_alloc_gauss(gauss, element_type, 4);
   
     gauss->w[0] = 4 * 0.25;
@@ -150,7 +150,7 @@ void mesh_quad_gauss4_init(element_type_t *element_type) {
     
     
   // ---- un punto de Gauss  ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
+    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
     mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 4 * 1.0;

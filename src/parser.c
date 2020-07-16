@@ -304,13 +304,7 @@ int wasora_parse_input_file(char *filepath, int from, int to) {
             wasora.line[32] = '.';
             wasora.line[33] = '\0';
           }
-/*          
-#ifndef WASORA_MESH
-          if (strcasestr(wasora.line, "MESH") != NULL) {
-            wasora_push_error_message("remember wasora needs to be configured with --enable-mesh to use MESH functionality", filepath, line_num);
-          }
-#endif
-*/
+          
           wasora_push_error_message("unknown syntax '%s'", wasora.line);
           wasora_push_error_message("%s: %d:", filepath, line_num);
           return WASORA_PARSER_ERROR;

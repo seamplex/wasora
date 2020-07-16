@@ -1823,8 +1823,8 @@ typedef enum {
 #define ELEMENT_TYPE_PRISM15        18
 #define NUMBER_ELEMENT_TYPE         19
 
-#define GAUSS_POINTS_CANONICAL    0
-#define GAUSS_POINTS_SINGLE       1
+#define GAUSS_POINTS_FULL      0
+#define GAUSS_POINTS_REDUCED   1
 
 struct material_t {
   char *name;
@@ -2160,14 +2160,19 @@ struct mesh_t {
   geometrical_entity_t *geometrical_entities[4];     // 4 hash tables
 
   enum  {
-    ordering_node_based,
-    ordering_unknown_based,
+    ordering_node_major,
+    ordering_dof_major,
   } ordering;
   
   enum {
       data_type_element,
       data_type_node,
   } data_type;
+  
+  enum {
+    integration_full,
+    integration_reduced
+  } integration;
   
   int structured;                // flag que indica si la tenemos que fabricar nosotros
   
@@ -2416,13 +2421,13 @@ extern double mesh_determinant(gsl_matrix *);
 extern void mesh_compute_dxdr(element_t *, double *, gsl_matrix *);
 extern void mesh_compute_dhdx(element_t *, double *, gsl_matrix *, gsl_matrix *);
 
-extern void mesh_compute_dhdx_at_gauss(element_t *, int);
-extern void mesh_compute_drdx_at_gauss(element_t *, int);
-extern void mesh_compute_dxdr_at_gauss(element_t *, int);
-extern void mesh_compute_integration_weight_at_gauss(element_t *, int);
-extern void mesh_compute_H_at_gauss(element_t *, int, int);
-extern void mesh_compute_B_at_gauss(element_t *, int, int);
-extern void mesh_compute_x_at_gauss(element_t *, int);
+extern void mesh_compute_dhdx_at_gauss(element_t *, int, int);
+extern void mesh_compute_drdx_at_gauss(element_t *, int, int);
+extern void mesh_compute_dxdr_at_gauss(element_t *, int, int);
+extern void mesh_compute_integration_weight_at_gauss(element_t *, int, int);
+extern void mesh_compute_H_at_gauss(element_t *, int, int, int);
+extern void mesh_compute_B_at_gauss(element_t *, int, int, int);
+extern void mesh_compute_x_at_gauss(element_t *, int, int);
 
 
 extern int mesh_compute_B(mesh_t *, element_t *);

@@ -315,7 +315,7 @@ int mesh_node_indexes(mesh_t *mesh, int dofs) {
   mesh->degrees_of_freedom = dofs;
 
   switch (mesh->ordering) {
-    case ordering_node_based:
+    case ordering_node_major:
       for (j = 0; j < mesh->n_nodes; j++) {
         mesh->node[j].index_dof = malloc(mesh->degrees_of_freedom*sizeof(int));
         for (g = 0; g < mesh->degrees_of_freedom; g++) {
@@ -324,7 +324,7 @@ int mesh_node_indexes(mesh_t *mesh, int dofs) {
       }  
     break;    
     
-    case ordering_unknown_based:
+    case ordering_dof_major:
       for (j = 0; j < mesh->n_nodes; j++) {
         mesh->node[j].index_dof = malloc(mesh->degrees_of_freedom*sizeof(int));
         for (g = 0; g < mesh->degrees_of_freedom; g++) {

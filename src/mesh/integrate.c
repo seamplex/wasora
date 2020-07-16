@@ -61,12 +61,12 @@ int wasora_instruction_mesh_integrate(void *arg) {
         for (i = 0; i < mesh->n_elements; i++) {
           element = &mesh->element[i];
           if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || element->physical_entity == physical_entity) {
-            for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
-              mesh_compute_integration_weight_at_gauss(element, v);
+            for (v = 0; v < element->type->gauss[mesh->integration].V; v++) {
+              mesh_compute_integration_weight_at_gauss(element, v, mesh->integration);
 
               xi = 0;
               for (j = 0; j < element->type->nodes; j++) {
-                xi += element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j] * function->data_value[element->node[j]->tag - 1];
+                xi += element->type->gauss[GAUSS_POINTS_FULL].h[v][j] * function->data_value[element->node[j]->tag - 1];
               }
 
               integral += element->w[v] * xi;
@@ -78,14 +78,14 @@ int wasora_instruction_mesh_integrate(void *arg) {
         for (i = 0; i < mesh->n_elements; i++) {
           element = &mesh->element[i];
           if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || element->physical_entity == physical_entity) {
-            for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
-              mesh_compute_integration_weight_at_gauss(element, v);
-              mesh_compute_x_at_gauss(element, v);
+            for (v = 0; v < element->type->gauss[mesh->integration].V; v++) {
+              mesh_compute_integration_weight_at_gauss(element, v, mesh->integration);
+              mesh_compute_x_at_gauss(element, v, mesh->integration);
               mesh_update_coord_vars(element->x[v]);
 
               xi = 0;
               for (j = 0; j < element->type->nodes; j++) {
-                xi += element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j] * wasora_evaluate_function(mesh_integrate->function, element->node[j]->x);
+                xi += element->type->gauss[GAUSS_POINTS_FULL].h[v][j] * wasora_evaluate_function(mesh_integrate->function, element->node[j]->x);
               }
 
               integral += element->w[v] * xi;
@@ -109,12 +109,12 @@ int wasora_instruction_mesh_integrate(void *arg) {
       for (i = 0; i < mesh->n_elements; i++) {
         element = &mesh->element[i];
         if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || element->physical_entity == physical_entity) {
-          for (v = 0; v < element->type->gauss[GAUSS_POINTS_CANONICAL].V; v++) {
-            mesh_compute_integration_weight_at_gauss(element, v);
-            mesh_compute_x_at_gauss(element, v);
+          for (v = 0; v < element->type->gauss[mesh->integration].V; v++) {
+            mesh_compute_integration_weight_at_gauss(element, v, mesh->integration);
+            mesh_compute_x_at_gauss(element, v, mesh->integration);
             mesh_update_coord_vars(element->x[v]);
             // si el elemento es de linea o de superficie calculamos la normal para tenerla en nx, ny y nz
-            if (element->type->dim == 1 || element->type->dim == 2) {
+            if (mesh->bulk_dimensions - element->type->dim == 1) {
               wasora_call(mesh_compute_normal(element));
             }  
             integral += element->w[v] * wasora_evaluate_expression(expr);

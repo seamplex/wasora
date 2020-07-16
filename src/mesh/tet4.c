@@ -109,7 +109,7 @@ void mesh_tet_gauss4_init(element_type_t *element_type) {
   
   // el primero es el default
   // ---- cuatro puntos de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
+    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
     mesh_alloc_gauss(gauss, element_type, 4);
     
     a = (5.0-sqrt(5))/20.0;
@@ -178,7 +178,7 @@ void mesh_tet_gauss4_init(element_type_t *element_type) {
     
     
   // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
+    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
     mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 1.0/6.0 * 1.0;

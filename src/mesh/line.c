@@ -77,7 +77,7 @@ void mesh_line_gauss2_init(element_type_t *element_type) {
   element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // el primero es el default
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
+    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
     mesh_alloc_gauss(gauss, element_type, 2);
 
     gauss->w[0] = 2 * 0.5;
@@ -89,7 +89,7 @@ void mesh_line_gauss2_init(element_type_t *element_type) {
     mesh_init_shape_at_gauss(gauss, element_type);
     
   // ---- un punto de Gauss  ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
+    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
     mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 2 * 1.0;

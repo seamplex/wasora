@@ -219,7 +219,7 @@ void mesh_hexa_gauss27_init(element_type_t *element_type) {
   
   // el primero es el default
   // ---- tres puntos de Gauss en cada direccion ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_CANONICAL];
+    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
     mesh_alloc_gauss(gauss, element_type, 27);
 
 //Reference https://www.code-aster.org/V2/doc/v11/en/man_r/r3/r3.01.01.pdf
@@ -367,7 +367,7 @@ void mesh_hexa_gauss27_init(element_type_t *element_type) {
     mesh_init_shape_at_gauss(gauss, element_type);
     
   // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_SINGLE];
+    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
     mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 8 * 1.0;

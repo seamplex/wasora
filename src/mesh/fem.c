@@ -180,7 +180,7 @@ void mesh_compute_dhdx(element_t *element, double *r, gsl_matrix *drdx_ref, gsl_
 
 
 // calcula los gradientes de las h con respecto a las x evaluadas en r
-void mesh_compute_dhdx_at_gauss(element_t *element, int v) {
+void mesh_compute_dhdx_at_gauss(element_t *element, int v, int integration) {
 
   int m, m_prime;
   int j;
@@ -188,7 +188,7 @@ void mesh_compute_dhdx_at_gauss(element_t *element, int v) {
   
   
   if (element->dhdx == NULL) {
-    element->dhdx = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(gsl_matrix *));
+    element->dhdx = calloc(element->type->gauss[integration].V, sizeof(gsl_matrix *));
   }
   if (element->dhdx[v] == NULL) {
     element->dhdx[v] = gsl_matrix_calloc(element->type->nodes, element->type->dim);
@@ -197,7 +197,7 @@ void mesh_compute_dhdx_at_gauss(element_t *element, int v) {
   }
   
   if (element->drdx == NULL || element->drdx[v] == NULL) {
-    mesh_compute_drdx_at_gauss(element, v);
+    mesh_compute_drdx_at_gauss(element, v, integration);
   }
 
   dhdx = element->dhdx[v];
@@ -228,10 +228,10 @@ void mesh_compute_h(element_t *element, double *r, double *h) {
 }
 
 
-void mesh_compute_drdx_at_gauss(element_t *element, int v) {
+void mesh_compute_drdx_at_gauss(element_t *element, int v, int integration) {
   
   if (element->drdx == NULL) {
-    element->drdx = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(gsl_matrix *));
+    element->drdx = calloc(element->type->gauss[integration].V, sizeof(gsl_matrix *));
   }
   if (element->drdx[v] == NULL) {
     element->drdx[v] = gsl_matrix_calloc(element->type->dim, element->type->dim);
@@ -240,7 +240,7 @@ void mesh_compute_drdx_at_gauss(element_t *element, int v) {
   }
   
   if (element->dxdr == NULL || element->dxdr[v] == NULL) {
-    mesh_compute_dxdr_at_gauss(element, v);
+    mesh_compute_dxdr_at_gauss(element, v, integration);
   }
   
   
@@ -297,24 +297,24 @@ double mesh_integration_weight(mesh_t *mesh, element_t *element, int v) {
 }
 
 
-void mesh_compute_integration_weight_at_gauss(element_t *element, int v) {
+void mesh_compute_integration_weight_at_gauss(element_t *element, int v, int integration) {
   
   if (element->w == NULL) {
-    element->w = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(double));
+    element->w = calloc(element->type->gauss[integration].V, sizeof(double));
   }
   
   if (element->dxdr == NULL || element->dxdr[v] == NULL) {
-    mesh_compute_dxdr_at_gauss(element, v);
+    mesh_compute_dxdr_at_gauss(element, v, integration);
   }
   
-  element->w[v] = element->type->gauss[GAUSS_POINTS_CANONICAL].w[v] * fabs(mesh_determinant(element->dxdr[v]));
+  element->w[v] = element->type->gauss[integration].w[v] * fabs(mesh_determinant(element->dxdr[v]));
 
   return;
 }
 
 
 
-void mesh_compute_dxdr_at_gauss(element_t *element, int v) {
+void mesh_compute_dxdr_at_gauss(element_t *element, int v, int integration) {
 
   int m, m_prime;
   int j;
@@ -323,7 +323,7 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v) {
   
   
   if (element->dxdr == NULL) {
-    element->dxdr = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(gsl_matrix *));
+    element->dxdr = calloc(element->type->gauss[integration].V, sizeof(gsl_matrix *));
   }
   if (element->dxdr[v] == NULL) {
     element->dxdr[v] = gsl_matrix_calloc(element->type->dim, element->type->dim);
@@ -449,12 +449,12 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v) {
 }
 
 
-void mesh_compute_x_at_gauss(element_t *element, int v) {
+void mesh_compute_x_at_gauss(element_t *element, int v, int integration) {
 
   int j, m;
   
   if (element->x == NULL) {
-    element->x = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(double *));
+    element->x = calloc(element->type->gauss[integration].V, sizeof(double *));
   }
   if (element->x[v] == NULL) {
     element->x[v] = calloc(3, sizeof(double));
@@ -526,12 +526,12 @@ int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
 }
 
 
-void mesh_compute_H_at_gauss(element_t *element, int v, int dofs) {
+void mesh_compute_H_at_gauss(element_t *element, int v, int dofs, int integration) {
   int j;
   int d;
 
   if (element->H == NULL) {
-    element->H = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(gsl_matrix *));
+    element->H = calloc(element->type->gauss[integration].V, sizeof(gsl_matrix *));
   }
   if (element->H[v] == NULL) {
     element->H[v] = gsl_matrix_calloc(dofs, dofs*element->type->nodes);
@@ -541,7 +541,7 @@ void mesh_compute_H_at_gauss(element_t *element, int v, int dofs) {
   
   for (d = 0; d < dofs; d++) {
     for (j = 0; j < element->type->nodes; j++) {
-      gsl_matrix_set(element->H[v], d, dofs*j+d, element->type->gauss[GAUSS_POINTS_CANONICAL].h[v][j]);
+      gsl_matrix_set(element->H[v], d, dofs*j+d, element->type->gauss[integration].h[v][j]);
     }
   }
 
@@ -550,12 +550,12 @@ void mesh_compute_H_at_gauss(element_t *element, int v, int dofs) {
 }
 
 
-void mesh_compute_B_at_gauss(element_t *element, int v, int dofs) {
+void mesh_compute_B_at_gauss(element_t *element, int v, int dofs, int integration) {
 
   int m, d, j;  
   
   if (element->B == NULL) {
-    element->B = calloc(element->type->gauss[GAUSS_POINTS_CANONICAL].V, sizeof(gsl_matrix *));
+    element->B = calloc(element->type->gauss[integration].V, sizeof(gsl_matrix *));
   }
   if (element->B[v] == NULL) {
     element->B[v] = gsl_matrix_calloc(dofs*element->type->dim, dofs*element->type->nodes);
@@ -564,7 +564,7 @@ void mesh_compute_B_at_gauss(element_t *element, int v, int dofs) {
   }
   
   if (element->dhdx == NULL || element->dhdx[v] == NULL) {
-    mesh_compute_dhdx_at_gauss(element, v);
+    mesh_compute_dhdx_at_gauss(element, v, integration);
   }
   
   

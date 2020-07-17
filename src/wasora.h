@@ -2053,18 +2053,28 @@ struct element_t {
   
   double quality;
   double volume;
-  double weight;
-  double *w;                  // pesos de integracion en gauss
-  double **x;                 // coordenadas naturales de los puntos de gauss
+  double weight;              // this weight is used to average the contribution of this element to nodal gradients
+  double *w;                  // weights of the gauss points
+  double **x;                 // coordinates fo the gauss points 
   
-  int *l;                     // lista de indices de los DOFs de los nodos
-  
-  // en los puntos de gauss
-  gsl_matrix **H;
-  gsl_matrix **B;
+  // these matrices are evalauted at the gauss points
+  gsl_matrix **dhdx;
   gsl_matrix **dxdr;
   gsl_matrix **drdx;
-  gsl_matrix **dhdx;
+  gsl_matrix **H;
+  gsl_matrix **B;
+  
+  // these are the number of gauss points currently being used
+  // if this number changes, everything needs to be re-computed
+  // for instance sub-integration might be used for building matrices
+  // but the canonical set of gauss points might be needed to recover stresses  
+  // we need one size for each of the seven objects above because we need
+  // to change them individually otherwise the first wins and the others loose
+  int V_w, V_x, V_H, V_B, V_dxdr, V_drdx, V_dhdx;    
+
+  
+  int *l;  // node-major-orderer vector with the global indexes of the DOFs in the element
+
   
   // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
   gsl_matrix **dphidx_gauss;  // derivadas de los dofs en los puntos de gauss canonicos

@@ -265,8 +265,8 @@ int wasora_instruction_mesh(void *arg) {
       }
     }
   }
-  
-  // armamos un kd-tree de nodos y miramos cual es la mayor cantidad de vecinos que tiene un nodo
+
+  // create a k-dimensional tree and try to figure out what the maximum number of neighbours each node has
   if (mesh->kd_nodes == NULL) {
     mesh->kd_nodes = kd_create(mesh->spatial_dimensions);
     for (j = 0; j < mesh->n_nodes; j++) {
@@ -424,27 +424,27 @@ int mesh_free(mesh_t *mesh) {
       }
       
       if (mesh->element[i].type != NULL && mesh->element[i].type->gauss != NULL) {
-        for (v = 0; v < mesh->element[i].type->gauss[GAUSS_POINTS_FULL].V; v++) {
+        for (v = 0; v < mesh->element[i].type->gauss[mesh->integration].V; v++) {
 
-          if (mesh->element[i].x != NULL) {
+          if (mesh->element[i].x != NULL && mesh->element[i].x[v] != NULL) {
             free(mesh->element[i].x[v]);
           }
-          if (mesh->element[i].H != NULL) {
+          if (mesh->element[i].H != NULL && mesh->element[i].H[v] != NULL) {
             gsl_matrix_free(mesh->element[i].H[v]);
           }  
-          if (mesh->element[i].B != NULL) {
+          if (mesh->element[i].B != NULL && mesh->element[i].B[v] != NULL) {
             gsl_matrix_free(mesh->element[i].B[v]);
           }  
-          if (mesh->element[i].dxdr != NULL) {
+          if (mesh->element[i].dxdr != NULL && mesh->element[i].dxdr[v] != NULL) {
             gsl_matrix_free(mesh->element[i].dxdr[v]);
           }
-          if (mesh->element[i].drdx != NULL) {
+          if (mesh->element[i].drdx != NULL && mesh->element[i].drdx[v] != NULL) {
             gsl_matrix_free(mesh->element[i].drdx[v]);
           }  
-          if (mesh->element[i].dhdx != NULL) {
+          if (mesh->element[i].dhdx != NULL && mesh->element[i].dhdx[v] != NULL) {
             gsl_matrix_free(mesh->element[i].dhdx[v]);
           }  
-          if (mesh->element[i].dphidx_gauss != NULL) {
+          if (mesh->element[i].dphidx_gauss != NULL && mesh->element[i].dphidx_gauss[v] != NULL) {
             gsl_matrix_free(mesh->element[i].dphidx_gauss[v]);
           }  
         }

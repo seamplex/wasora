@@ -179,37 +179,53 @@ void mesh_compute_dhdx(element_t *element, double *r, gsl_matrix *drdx_ref, gsl_
 }
 
 
-// calcula los gradientes de las h con respecto a las x evaluadas en r
+// compute the gradient of the shape functions with respect to x evalauted at gauss point v of scheme integration
 void mesh_compute_dhdx_at_gauss(element_t *element, int v, int integration) {
 
-  int m, m_prime;
-  int j;
+  int m, m_prime;    // dimensions
+  int j;             // nodes
+  int V_changed = 0;
   gsl_matrix *dhdx;
   
   
-  if (element->dhdx == NULL) {
-    element->dhdx = calloc(element->type->gauss[integration].V, sizeof(gsl_matrix *));
+  if (element->dhdx == NULL || element->V_dhdx != element->type->gauss[integration].V) {
+    int v_prime;
+    for (v_prime = 0; v_prime < element->V_dhdx; v_prime++) {
+      gsl_matrix_free(element->dhdx[v_prime]);
+    }
+    free(element->dhdx);
+
+    element->V_dhdx = element->type->gauss[integration].V;
+    element->dhdx = calloc(element->V_dhdx, sizeof(gsl_matrix *));
+    V_changed = 1;
   }
+  
   if (element->dhdx[v] == NULL) {
     element->dhdx[v] = gsl_matrix_calloc(element->type->nodes, element->type->dim);
   } else {
     return;
   }
   
-  if (element->drdx == NULL || element->drdx[v] == NULL) {
+  if (element->drdx == NULL || element->drdx[v] == NULL || V_changed) {
     mesh_compute_drdx_at_gauss(element, v, integration);
   }
 
   dhdx = element->dhdx[v];
   
+  // TODO: matrix-matrix multiplication with blas?
   for (j = 0; j < element->type->nodes; j++) {
     for (m = 0; m < element->type->dim; m++) {
       for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
-        // TODO: matrix-matrix?
-      	gsl_matrix_add_to_element(dhdx, j, m, gsl_matrix_get(element->type->gauss->dhdr[v], j, m_prime) * gsl_matrix_get(element->drdx[v], m_prime, m));
+      	gsl_matrix_add_to_element(dhdx, j, m, gsl_matrix_get(element->type->gauss[integration].dhdr[v], j, m_prime) * gsl_matrix_get(element->drdx[v], m_prime, m));
       }
     }
   }
+  
+#ifdef FEM_DUMP  
+  printf("dhdx(%d,%d) = \n", element->index, v);
+  gsl_matrix_fprintf(stdout, element->dhdx[v], "%g");  
+#endif
+  
 
   return;
 
@@ -230,8 +246,18 @@ void mesh_compute_h(element_t *element, double *r, double *h) {
 
 void mesh_compute_drdx_at_gauss(element_t *element, int v, int integration) {
   
-  if (element->drdx == NULL) {
-    element->drdx = calloc(element->type->gauss[integration].V, sizeof(gsl_matrix *));
+  int V_changed = 0;
+  
+  if (element->drdx == NULL || element->V_drdx != element->type->gauss[integration].V) {
+    int v_prime;
+    for (v_prime = 0; v_prime < element->V_drdx; v_prime++) {
+      gsl_matrix_free(element->drdx[v_prime]);
+    }
+    free(element->drdx);
+
+    element->V_drdx = element->type->gauss[integration].V;
+    element->drdx = calloc(element->V_drdx, sizeof(gsl_matrix *));
+    V_changed = 1;
   }
   if (element->drdx[v] == NULL) {
     element->drdx[v] = gsl_matrix_calloc(element->type->dim, element->type->dim);
@@ -239,12 +265,16 @@ void mesh_compute_drdx_at_gauss(element_t *element, int v, int integration) {
     return;
   }
   
-  if (element->dxdr == NULL || element->dxdr[v] == NULL) {
+  if (element->dxdr == NULL || element->dxdr[v] == NULL || V_changed) {
     mesh_compute_dxdr_at_gauss(element, v, integration);
   }
   
-  
   mesh_inverse(element->dxdr[v], element->drdx[v]);
+
+#ifdef FEM_DUMP  
+  printf("drdx(%d,%d) = \n", element->index, v);
+  gsl_matrix_fprintf(stdout, element->drdx[v], "%g");  
+#endif
   
   return;
   
@@ -308,6 +338,9 @@ void mesh_compute_integration_weight_at_gauss(element_t *element, int v, int int
   }
   
   element->w[v] = element->type->gauss[integration].w[v] * fabs(mesh_determinant(element->dxdr[v]));
+#ifdef FEM_DUMP  
+  printf("w(%d,%d) = %g\n", element->index, v, element->w[v]);
+#endif
 
   return;
 }
@@ -318,13 +351,22 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v, int integration) {
 
   int m, m_prime;
   int j;
+//  int V_changed = 0;
   double *r;
   gsl_matrix *dxdr;
   
-  
-  if (element->dxdr == NULL) {
-    element->dxdr = calloc(element->type->gauss[integration].V, sizeof(gsl_matrix *));
+  if (element->dxdr == NULL || element->V_dxdr != element->type->gauss[integration].V) {
+    int v_prime;
+    for (v_prime = 0; v_prime < element->V_dxdr; v_prime++) {
+      gsl_matrix_free(element->dxdr[v_prime]);
+    }
+    free(element->dxdr);
+
+    element->V_dxdr = element->type->gauss[integration].V;
+    element->dxdr = calloc(element->V_dxdr, sizeof(gsl_matrix *));
+//    V_changed = 1;
   }
+  
   if (element->dxdr[v] == NULL) {
     element->dxdr[v] = gsl_matrix_calloc(element->type->dim, element->type->dim);
   } else {
@@ -332,7 +374,7 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v, int integration) {
   }
 
   dxdr = element->dxdr[v];
-  r = element->type->gauss->r[v];
+  r = element->type->gauss[integration].r[v];
 
   if (element->type->dim == 0) {
     // a point does not have any derivative, if we are here then just keep silence
@@ -445,6 +487,11 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v, int integration) {
     
   } 
 
+#ifdef FEM_DUMP  
+  printf("dxdr(%d,%d) = \n", element->index, v);
+  gsl_matrix_fprintf(stdout, element->dxdr[v], "%g");  
+#endif
+  
   return;
 }
 
@@ -464,11 +511,15 @@ void mesh_compute_x_at_gauss(element_t *element, int v, int integration) {
   
   for (j = 0; j < element->type->nodes; j++) {
     for (m = 0; m < 3; m++) {
-      element->x[v][m] += element->type->gauss->h[v][j] * element->node[j]->x[m];
+      element->x[v][m] += element->type->gauss[integration].h[v][j] * element->node[j]->x[m];
     }
   }
   
-  
+#ifdef FEM_DUMP  
+  printf("x(%d,%d) = %g %g %g\n", element->index, v, element->x[v][0], element->x[v][1], element->x[v][2]);
+#endif
+
+  return;  
 }
 
 int mesh_compute_r(element_t *element, gsl_vector *x, gsl_vector *r) {
@@ -544,6 +595,14 @@ void mesh_compute_H_at_gauss(element_t *element, int v, int dofs, int integratio
       gsl_matrix_set(element->H[v], d, dofs*j+d, element->type->gauss[integration].h[v][j]);
     }
   }
+  
+#ifdef FEM_DUMP  
+  printf("H(%d,%d) = \n", element->index, v);
+  gsl_matrix_fprintf(stdout, element->H[v], "%g");  
+#endif
+  
+  
+
 
   return;
   
@@ -588,25 +647,26 @@ void mesh_compute_l(mesh_t *mesh, element_t *element) {
     return;
   }
   
-  // armamos el vector l que indica como ensamblar
+  // the vector l contains the global indexes of each DOF in the element
+  // note that this vector is always node major independently of the global orderin
   for (j = 0; j < element->type->nodes; j++) {
     for (d = 0; d < mesh->degrees_of_freedom; d++) {
       element->l[mesh->degrees_of_freedom*j + d] = element->node[j]->index_dof[d];
-    }
+    }  
   }
   
   return;
   
 }
 
-int mesh_update_coord_vars(double *x) {
+inline int mesh_update_coord_vars(double *x) {
   wasora_var(wasora_mesh.vars.x) = x[0];
   wasora_var(wasora_mesh.vars.y) = x[1];
   wasora_var(wasora_mesh.vars.z) = x[2];    
   return WASORA_RUNTIME_OK;
 }
 
-int mesh_compute_normal(element_t *element) {
+inline int mesh_compute_normal(element_t *element) {
   double n[3];
 
   wasora_call(mesh_compute_outward_normal(element, n));

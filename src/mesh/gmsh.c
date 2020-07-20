@@ -32,7 +32,6 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
 
   char buffer[BUFFER_SIZE];
   int *tags = NULL;
-  int *tag2index = NULL;
 
   char *dummy = NULL;
   char *name = NULL;
@@ -50,8 +49,6 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
   int ntags;
   int tag_min = 0;
   int tag_max = 0;
-  int sparse = 0; // assume the nodes are not sparse
-
 
   if (mesh->file->pointer == NULL) {
     wasora_call(wasora_instruction_open_file(mesh->file));
@@ -325,7 +322,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           
           // en msh2 si no es sparse, los tags son indices pero si es sparse es otro cantar
           if (j+1 != tag) {
-            sparse = 1;
+            mesh->sparse = 1;
           }
           
           if ((mesh->node[j].tag = tag) > tag_max) {
@@ -341,13 +338,13 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         }
         
         // terminamos de leer los nodos, si los nodos son sparse tenemos que hacer el tag2index
-        if (sparse) {
-          tag2index = malloc((tag_max+1) * sizeof(int));
+        if (mesh->sparse) {
+          mesh->tag2index = malloc((tag_max+1) * sizeof(int));
           for (k = 0; k <= tag_max; k++) {
-            tag2index[k] = -1;
+            mesh->tag2index[k] = -1;
           }
           for (i = 0; i < mesh->n_nodes; i++) {
-            tag2index[mesh->node[i].tag] = i;
+            mesh->tag2index[mesh->node[i].tag] = i;
           }
         }
 
@@ -376,9 +373,9 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         if (tag_max != 0) {
           // podemos hacer este mapeo en una sola pasada porque tenemos tag_max
           // TODO: offsetear con tag_min?            
-          tag2index = malloc((tag_max+1) * sizeof(int));
+          mesh->tag2index = malloc((tag_max+1) * sizeof(int));
           for (k = 0; k <= tag_max; k++) {
-            tag2index[k] = -1;
+            mesh->tag2index[k] = -1;
           }
         }
         
@@ -448,7 +445,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
               
               // en msh4 los tags son los indices de la malla global
               mesh->node[i].index_mesh = i;
-              tag2index[mesh->node[i].tag] = i;
+              mesh->tag2index[mesh->node[i].tag] = i;
               
               // si nos dieron degrees of freedom entonces tenemos que allocar
               // lugar para la solucion phi de alguna PDE
@@ -464,12 +461,12 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         
         if (version_min == 0) {
           // tengo que hacer un loop extra en nodos porque no tuve el tamaño posta
-          tag2index = malloc((tag_max+1) * sizeof(int));
+          mesh->tag2index = malloc((tag_max+1) * sizeof(int));
           for (k = 0; k <= tag_max; k++) {
-            tag2index[k] = -1;
+            mesh->tag2index[k] = -1;
           }
           for (i = 0; i < mesh->n_nodes; i++) {
-            tag2index[mesh->node[i].tag] = i;
+            mesh->tag2index[mesh->node[i].tag] = i;
           }
         }
         
@@ -566,12 +563,12 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
             if (fscanf(mesh->file->pointer, "%d", &node) < 1) {
               return WASORA_RUNTIME_ERROR;
             }
-            if (sparse == 0 && (node < 1 || node > mesh->n_nodes)) {
+            if (mesh->sparse == 0 && (node < 1 || node > mesh->n_nodes)) {
               wasora_push_error_message("node %d in element %d does not exist", node, tag);
               return WASORA_RUNTIME_ERROR;
             }
 
-            if ((node_index = (sparse==0)?node-1:tag2index[node]) < 0) {
+            if ((node_index = (mesh->sparse==0)?node-1:mesh->tag2index[node]) < 0) {
               wasora_push_error_message("node %d in element %d does not exist", node, tag);
               return WASORA_RUNTIME_ERROR;
             }
@@ -662,7 +659,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
                 return WASORA_RUNTIME_ERROR;
               }
               // ojo al piojo en msh4, hay que usar el maneje del tag2index
-              if ((mesh->element[i].node[j] = &mesh->node[tag2index[node]]) == 0) {
+              if ((mesh->element[i].node[j] = &mesh->node[mesh->tag2index[node]]) == 0) {
                 wasora_push_error_message("node %d in element %d does not exist", node, tag);
                 return WASORA_RUNTIME_ERROR;
               }
@@ -731,6 +728,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
       LL_FOREACH(mesh->node_datas, node_data) {
         if (strcmp(string_tag, node_data->name_in_mesh) == 0) {
           function = node_data->function;
+          function->name_in_mesh = strdup(node_data->name_in_mesh);
         }
       }
       
@@ -750,6 +748,10 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
       if (fscanf(mesh->file->pointer, "%lf", &time) == 0) {
         wasora_push_error_message("error reading file");
         return WASORA_RUNTIME_ERROR;
+      }
+      // we read only data for t = 0
+      if (time != 0) {
+        continue;
       }
       
       // integer-tags
@@ -777,11 +779,14 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         continue;
       }
       
-      // si llegamos hasta aca, tenemos una funcion
+      // if we made it this far, we have a function!
       function->type = type_pointwise_mesh_node;
       function->mesh = mesh;
       function->data_argument = mesh->nodes_argument;
       function->data_size = nodes;
+      if (function->data_value != NULL) {
+        free(function->data_value);
+      }
       function->data_value = calloc(nodes, sizeof(double));
       
       for (j = 0; j < nodes; j++) {
@@ -789,7 +794,7 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
           wasora_push_error_message("error reading file");
           return WASORA_RUNTIME_ERROR;
         }
-        if ((node_index = (sparse==0)?node-1:tag2index[node]) < 0) {
+        if ((node_index = (mesh->sparse==0)?node-1:mesh->tag2index[node]) < 0) {
           wasora_push_error_message("node %d in element %d does not exist", node, tag);
           return WASORA_RUNTIME_ERROR;
         }
@@ -807,8 +812,8 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
         wasora_push_error_message("corrupted mesh file '%s'", mesh->file->path);
         return -3;
       } 
-      if (strncmp("$EndElementNodeData", buffer, 19) != 0 && strncmp("$EndNodeData", buffer, 12) != 0) {
-        wasora_push_error_message("$EndElementNodeData not found in mesh file '%s'", mesh->file->path);
+      if (strncmp("$EndNodeData", buffer, 12) != 0 && strncmp("$EndElementData", buffer, 15) != 0) {
+        wasora_push_error_message("$EndNodeData not found in mesh file '%s'", mesh->file->path);
         return -2;
       }
 
@@ -902,12 +907,10 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
     }
   }
 
+  // close the mesh file
   fclose(mesh->file->pointer);
   mesh->file->pointer = NULL;
   
-  if (tag2index != NULL) {
-    free(tag2index);
-  }  
   // limpiar hashes
   
   return WASORA_RUNTIME_OK;
@@ -1001,26 +1004,26 @@ int mesh_gmsh_write_scalar(mesh_post_t *mesh_post, function_t *function, centeri
     fprintf(mesh_post->file->pointer, "$NodeData\n");
   }
 
-  // un tag de string  
+  // one string tag
   fprintf(mesh_post->file->pointer, "1\n");
-  // nombre de la vista
+  // the name of the vew
   fprintf(mesh_post->file->pointer, "\"%s\"\n", function->name);
-  // la otra (opcional) es el esquema de interpolacion
+  // the other one (optional) is the interpolation scheme
   
-  // un tag real (el unico)  
+  // one real tag (only one)
   fprintf(mesh_post->file->pointer, "1\n");                          
-  // tiempo
-  fprintf(mesh_post->file->pointer, "%g\n", (wasora_var(wasora_special_var(end_time)) != 0) ? wasora_value(wasora_special_var(time)) : wasora_value(wasora_special_var(step_static)));
+  // time
+  fprintf(mesh_post->file->pointer, "%g\n", wasora_value(wasora_special_var(time)));
 
-  // tres tags enteros
+  // thre integer tags
   fprintf(mesh_post->file->pointer, "3\n");
   // timestep
   fprintf(mesh_post->file->pointer, "%d\n", (int)((wasora_var(wasora_special_var(end_time)) != 0) ? wasora_var(wasora_special_var(step_transient)) : wasora_value(wasora_special_var(step_static))));
-  // cantidad de datos por punto: uno (escalar)
+  // number of data per node: uno (scalar)
   fprintf(mesh_post->file->pointer, "%d\n", 1);
 
   if (centering == centering_cells) {
-    // numero de datos
+    // number of data
     fprintf(mesh_post->file->pointer, "%d\n", mesh->n_cells);
 
     if (function->type == type_pointwise_mesh_cell && function->mesh == mesh) {
@@ -1033,8 +1036,10 @@ int mesh_gmsh_write_scalar(mesh_post_t *mesh_post, function_t *function, centeri
       }
     }
     fprintf(mesh_post->file->pointer, "$EndElementData\n");
+    
   } else  {
-    // numero de datos
+    
+    // number of data
     fprintf(mesh_post->file->pointer, "%d\n", mesh->n_nodes);              
   
     if (function->type == type_pointwise_mesh_node && function->mesh == mesh) {
@@ -1137,4 +1142,148 @@ int mesh_gmsh_write_vector(mesh_post_t *mesh_post, function_t **function, center
 
   return WASORA_RUNTIME_OK;
 
+}
+
+
+// read the next available time step and interpolate
+int mesh_gmsh_update_function(function_t *function, double t, double dt) {
+ 
+  char buffer[BUFFER_SIZE];
+  double time, alpha;
+  mesh_t *mesh = function->mesh;
+  double *new_data = NULL; 
+  int j, node, node_index;
+  int done = 0;
+
+  if (mesh->file->pointer == NULL) {
+    wasora_call(wasora_instruction_open_file(mesh->file));
+//  } else {
+//    rewind(mesh->file->pointer);
+  }
+
+   while (done == 0 && fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) != NULL) {
+
+    if (strncmp("\n", buffer, 1) == 0) {
+      ;
+    
+    // ------------------------------------------------------  
+    } else if (strncmp("$NodeData", buffer, 9) == 0) {
+      
+      double value;
+      int j, timestep, dofs, nodes;
+      int n_string_tags, n_real_tags, n_integer_tags;
+      char *string_tag = NULL;
+      
+      // string-tags
+      if (fscanf(mesh->file->pointer, "%d", &n_string_tags) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (n_string_tags != 1) {
+        continue;
+      }
+      // el \n
+      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      string_tag = strtok(buffer, "\"");
+      
+      if (strcmp(string_tag, function->name_in_mesh) != 0) {
+        continue;
+      }
+      
+      // real-tags
+      if (fscanf(mesh->file->pointer, "%d", &n_real_tags) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (n_real_tags != 1) {
+        continue;
+      }
+      if (fscanf(mesh->file->pointer, "%lf", &time) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      // read only data for the next time
+      if (time < t-1e-5) {
+        continue;
+      }
+      
+      // integer-tags
+      if (fscanf(mesh->file->pointer, "%d", &n_integer_tags) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (n_integer_tags != 3) {
+        continue;
+      }
+      if (fscanf(mesh->file->pointer, "%d", &timestep) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (fscanf(mesh->file->pointer, "%d", &dofs) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (fscanf(mesh->file->pointer, "%d", &nodes) == 0) {
+        wasora_push_error_message("error reading file");
+        return WASORA_RUNTIME_ERROR;
+      }
+      
+      if (dofs != 1) {
+        wasora_push_error_message("expected only one DOF");
+        return WASORA_RUNTIME_ERROR;
+      }
+      if (nodes != mesh->n_nodes) {
+        wasora_push_error_message("expected %d nodes, not %d", mesh->n_nodes, nodes);
+        return WASORA_RUNTIME_ERROR;
+      }
+      
+      new_data = calloc(nodes, sizeof(double));
+      
+      for (j = 0; j < nodes; j++) {
+        if (fscanf(mesh->file->pointer, "%d %lf", &node, &value) == 0) {
+          wasora_push_error_message("error reading file");
+          return WASORA_RUNTIME_ERROR;
+        }
+        if ((node_index = (mesh->sparse==0)?node-1:mesh->tag2index[node]) < 0) {
+          wasora_push_error_message("node %d does not exist", node);
+          return WASORA_RUNTIME_ERROR;
+        }
+        new_data[node_index] = value;
+      }
+      
+      // done!
+      done = 1;
+
+      // el newline
+      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
+        wasora_push_error_message("corrupted mesh file '%s'", mesh->file->path);
+        return -3;
+      } 
+
+      // la linea $ElementNodeData
+      if (fgets(buffer, BUFFER_SIZE-1, mesh->file->pointer) == NULL) {
+        wasora_push_error_message("corrupted mesh file '%s'", mesh->file->path);
+        return -3;
+      } 
+      if (strncmp("$EndNodeData", buffer, 12) != 0) {
+        wasora_push_error_message("$EndElementNodeData not found in mesh file '%s'", mesh->file->path);
+        return -2;
+      }
+    }  
+  }
+  
+  alpha = (t-function->mesh_time)/(time-function->mesh_time);
+  for (j = 0; j < function->data_size; j++) {
+    function->data_value[j] += alpha * (new_data[j] - function->data_value[j]);
+  }
+ 
+  return WASORA_RUNTIME_OK;
+  
 }

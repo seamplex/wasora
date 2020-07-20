@@ -34,7 +34,7 @@ int wasora_instruction_mesh_post(void *arg) {
   }
   
   if (wasora_special_var(end_time) == 0) {
-    // hay que cerrar el file y volver a abrirlo
+    // close the file and open it again
     if (mesh_post->file->pointer != NULL) {
       wasora_call(wasora_instruction_close_file(mesh_post->file));
     }
@@ -46,14 +46,12 @@ int wasora_instruction_mesh_post(void *arg) {
   }  
 
 
-  // si primero llamo a gmsh write header no puedo chequear si el archivo
-  // es nuevito o no
   if (ftell(mesh_post->file->pointer) == 0) {
     wasora_call(mesh_post->write_header(mesh_post->file->pointer));
     if (mesh_post->no_mesh == 0) {
       wasora_call(mesh_post->write_mesh(mesh_post->mesh, mesh_post->no_physical_names, mesh_post->file->pointer));
     }
-    mesh_post->point_init = 0;      // TODO: generalizar el nombre
+    mesh_post->point_init = 0;
   }
 
   LL_FOREACH(mesh_post->mesh_post_dists, mesh_post_dist) {

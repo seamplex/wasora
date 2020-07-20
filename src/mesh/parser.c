@@ -49,6 +49,7 @@ int wasora_mesh_parse_line(char *line) {
       int dimensions = 0;
       int degrees = 0;
       int structured = 0;
+      int re_read = 0;
       node_data_t *node_datas = NULL;
 
       while ((token = wasora_get_next_token(NULL)) != NULL) {
@@ -121,6 +122,10 @@ int wasora_mesh_parse_line(char *line) {
           char *keywords[] = {"full", "reduced", ""};
           int values[] = {integration_full, integration_reduced, 0};
           wasora_call(wasora_parser_keywords_ints(keywords, values, &integration));
+
+///kw+MESH+usage [ RE_READ ]
+        } else if (strcasecmp(token, "RE_READ") == 0) {
+          re_read = 1;
           
 //kw+MESH+usage [ NCELLS_X <expr> ]
         } else if (strcasecmp(token, "NCELLS_X") == 0) {
@@ -249,6 +254,10 @@ int wasora_mesh_parse_line(char *line) {
         mesh->node_datas = node_datas;
       }
       
+      if (re_read != 0) {
+        mesh->re_read = 1;
+      }
+      
       if (mesh->format == mesh_format_fromextension && mesh->file != NULL) {
         char *ext = strrchr(mesh->file->format, '.');
         
@@ -257,7 +266,9 @@ int wasora_mesh_parse_line(char *line) {
           return WASORA_PARSER_ERROR;
         }
         
-               if (strncasecmp(ext, ".msh", 4) == 0) {
+               if (strncasecmp(ext, ".msh", 4) == 0 ||
+                   strncasecmp(ext, ".msh2", 5) == 0 ||
+                   strncasecmp(ext, ".msh4", 5) == 0) {
           mesh->format = mesh_format_gmsh;
         } else if (strcasecmp(ext, ".vtk") == 0) {
           mesh->format = mesh_format_vtk;

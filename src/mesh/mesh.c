@@ -44,9 +44,15 @@ int wasora_instruction_mesh(void *arg) {
   double x_min[3];
   double x_max[3];
 
-  // TODO: ver como hacer para refrescar la malla tiempo a tiempo
   if (mesh->initialized) {
-    return WASORA_RUNTIME_OK;
+    if (mesh->re_read == 0) {
+      // we are not supposed to read the mesh all over again
+      return WASORA_RUNTIME_OK;
+    } else {
+      // we have to re-read the mesh, but we already have one
+      // so we get rid of the current one
+      mesh_free(mesh);
+    }
   }
   
   if (mesh->structured) {
@@ -202,7 +208,7 @@ int wasora_instruction_mesh(void *arg) {
   // vemos si nos quedo alguna funcion sin leer
   LL_FOREACH(mesh->node_datas, node_data) {
     if (node_data->function->mesh == NULL) {
-      wasora_push_error_message("cannot find function '%s' in mesh '%s'", node_data->name_in_mesh, mesh->name);
+      wasora_push_error_message("cannot find data fot function '%s' for t=0 in mesh '%s'", node_data->name_in_mesh, mesh->name);
       return WASORA_RUNTIME_ERROR;
     }
     
@@ -369,7 +375,6 @@ element_t *mesh_find_element(mesh_t *mesh, const double *x) {
 int mesh_free(mesh_t *mesh) {
 
   physical_entity_t *physical_entity;
-//  physical_entity_t *physical_entity_tmp;
   element_list_item_t *element_item, *element_tmp;
   int i, j, d, v;
   

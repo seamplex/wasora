@@ -120,17 +120,21 @@ physical_entity_t *wasora_define_physical_entity(char *name, mesh_t *new_mesh, i
   }
   
   // -----------------------------  
-  if (already_exists == 0 && wasora_check_name(name) == WASORA_PARSER_OK) {
-    // volumen (o area o longitud)
-    if (asprintf(&dummy_aux, "%s_vol", physical_entity->name) == -1) {
-      wasora_push_error_message("memory allocation error");
-      return NULL;
-    }
-    // volvemos a chequear por si acaso hay duplicados en mallas 
-    if (wasora_check_name(dummy_aux) == WASORA_PARSER_OK) {
-      if ((physical_entity->var_vol = wasora_define_variable(dummy_aux)) == NULL) {
+  if (already_exists == 0) {
+    if (wasora_check_name(name) == WASORA_PARSER_OK) {
+      // volumen (o area o longitud)
+      if (asprintf(&dummy_aux, "%s_vol", physical_entity->name) == -1) {
+        wasora_push_error_message("memory allocation error");
         return NULL;
       }
+      // volvemos a chequear por si acaso hay duplicados en mallas 
+      if (wasora_check_name(dummy_aux) == WASORA_PARSER_OK) {
+        if ((physical_entity->var_vol = wasora_define_variable(dummy_aux)) == NULL) {
+          return NULL;
+        }
+      } else {
+        wasora_pop_error_message();
+      }  
     } else {
       wasora_pop_error_message();
     }

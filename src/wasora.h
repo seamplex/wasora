@@ -33,7 +33,7 @@
 #define HAVE_INLINE
 #define GSL_RANGE_CHECK_OFF
 
-// we need all the includes here so they all follow te inline directive above
+// we need all the includes here so they all follow the inline directive above
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_deriv.h>
@@ -371,26 +371,23 @@ struct vector_sort_t {
 };
   
   
-// -- funcion ------------ -----        ----           --     -
-/* funcion de una o mas variables
- * (puede estar definida en forma algebraica o por puntos dados en el input,
- * en un archivo de texto, o en vectores, o ser el resultado de una rutina
- * del usuario) */
+// -- function ------------ -----        ----           --     -
 struct function_t {
   char *name;
+  char *name_in_mesh;
   int initialized;
   
-  // puede ser:
-  //   - algebraica
-  //   - definida por puntos
-  //       + dados en el input
-  //       + dados en un archivo
-  //       + dados en vectores
-  //       + en una malla
-  //          * una propiedad continua por materiales
-  //          * definida por nodos
-  //          * definida por celdas
-  //  - evaluada en una rutina de usuario
+  // might be:
+  //   - algebraic
+  //   - pointwise-defined
+  //       + given in the input
+  //       + given in a file
+  //       + given in wasora vectors
+  //       + in a mesh
+  //          * as another function defined over materials (physical groups)
+  //          * data at nodes
+  //          * data at cells
+  //  - comptued in a user-provided routine
   //
   enum  {
     type_undefined,
@@ -478,6 +475,7 @@ struct function_t {
 
   // malla no-estructurada sobre la que esta definida la funcion
   mesh_t *mesh;
+  double mesh_time;
   
   // apuntador a un arbol k-dimensional para nearest neighbors 
   void *kd;
@@ -2165,10 +2163,14 @@ struct mesh_t {
   physical_entity_t *physical_entities_by_tag[4];    // 4 hash tables por tag
   int physical_tag_max;          // el mayor tag de las entities
   
-  // cantidad de entidades geometricas
+  // number of geometric entities of each dimension
   int points, curves, surfaces, volumes;
-  geometrical_entity_t *geometrical_entities[4];     // 4 hash tables
+  geometrical_entity_t *geometrical_entities[4];     // 4 hash tables, one for each dimension
 
+  int sparse;         // flag that indicates if the nodes are sparse
+  int *tag2index;     // array to map tags to indexes
+  
+  
   enum  {
     ordering_node_major,
     ordering_dof_major,
@@ -2184,7 +2186,9 @@ struct mesh_t {
     integration_reduced
   } integration;
   
-  int structured;                // flag que indica si la tenemos que fabricar nosotros
+  int re_read;
+  
+  int structured;                 // flag que indica si la tenemos que fabricar nosotros
   
   expr_t *scale_factor;           // factor de escala al leer la posicion de los nodos
   expr_t *offset_x;               // offset en nodos
@@ -2389,6 +2393,7 @@ extern int mesh_gmsh_write_header(FILE *);
 extern int mesh_gmsh_write_mesh(mesh_t *, int, FILE *);
 extern int mesh_gmsh_write_scalar(mesh_post_t *, function_t *, centering_t);
 extern int mesh_gmsh_write_vector(mesh_post_t *, function_t **, centering_t);
+extern int mesh_gmsh_update_function(function_t *, double, double);
 
 // frd.c
 extern int mesh_frd_readmesh(mesh_t *);

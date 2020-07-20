@@ -351,10 +351,18 @@ double wasora_evaluate_function(function_t *function, const double *x) {
   int index;
   double y = 0;
   
+  // check if we need to initialize
   if (!function->initialized) {
     if (wasora_function_init(function) != WASORA_RUNTIME_OK) {
       wasora_runtime_error();
     }
+  }
+  
+  // if the function is mesh, check if the time is the correct one
+  if (function->mesh != NULL && function->mesh->format == mesh_format_gmsh
+      && function->mesh_time < wasora_var_value(wasora_special_var(t))-0.001*wasora_var_value(wasora_special_var(dt))) {
+    wasora_call(mesh_gmsh_update_function(function, wasora_var_value(wasora_special_var(t)), wasora_var_value(wasora_special_var(dt))));
+    function->mesh_time = wasora_var_value(wasora_special_var(t));
   }
     
 

@@ -94,11 +94,10 @@ void mesh_quad_gauss4_init(element_type_t *element_type) {
   // dos juegos de puntos de gauss
   element_type->gauss = calloc(2, sizeof(gauss_t));
   
-  // el primero es el default
-  // ---- cuatro puntos de Gauss ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
+  // ---- full integration: four Gauss points ----  
+    gauss = &element_type->gauss[integration_full];
     mesh_alloc_gauss(gauss, element_type, 4);
-  
+
     gauss->w[0] = 4 * 0.25;
     gauss->r[0][0] = -1.0/M_SQRT3;
     gauss->r[0][1] = -1.0/M_SQRT3;
@@ -117,7 +116,7 @@ void mesh_quad_gauss4_init(element_type_t *element_type) {
 
     mesh_init_shape_at_gauss(gauss, element_type);
     
-    // matriz de extrapolacion
+    // extrapolation matrix
     gauss->extrap = gsl_matrix_alloc(gauss->V, gauss->V);
     
     r[0] = -M_SQRT3;
@@ -149,8 +148,8 @@ void mesh_quad_gauss4_init(element_type_t *element_type) {
     gsl_matrix_set(gauss->extrap, 3, 3, mesh_quad4_h(3, r));    
     
     
-  // ---- un punto de Gauss  ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
+  // ---- reduced integration: one Gauss point  ----  
+    gauss = &element_type->gauss[integration_reduced];
     mesh_alloc_gauss(gauss, element_type, 1);
   
     gauss->w[0] = 4 * 1.0;
@@ -286,8 +285,8 @@ int mesh_point_in_quadrangle(element_t *element, const double *x) {
 double mesh_quad_vol(element_t *element) {
 
   if (element->volume == 0) {
-    element->volume = 0.5*(fabs(mesh_subtract_cross_2d(element->node[0]->x, element->node[1]->x, element->node[2]->x)) +
-                           fabs(mesh_subtract_cross_2d(element->node[2]->x, element->node[3]->x, element->node[0]->x)) );
+    element->volume = 0.5*((element->node[2]->x[0]-element->node[0]->x[0])*(element->node[3]->x[1]-element->node[1]->x[1])
+                          +(element->node[1]->x[0]-element->node[3]->x[0])*(element->node[2]->x[1]-element->node[0]->x[1]));
   }  
   
   return element->volume;

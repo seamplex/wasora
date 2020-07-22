@@ -337,7 +337,9 @@ void mesh_compute_integration_weight_at_gauss(element_t *element, int v, int int
     mesh_compute_dxdr_at_gauss(element, v, integration);
   }
   
-  element->w[v] = element->type->gauss[integration].w[v] * fabs(mesh_determinant(element->dxdr[v]));
+  if (element->w[v] == 0) {
+    element->w[v] = element->type->gauss[integration].w[v] * fabs(mesh_determinant(element->dxdr[v]));
+  }  
 #ifdef FEM_DUMP  
   printf("w(%d,%d) = %g\n", element->index, v, element->w[v]);
 #endif
@@ -475,12 +477,11 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v, int integration) {
     // i.e. lines are in the x axis
     //      surfaces are on the xy plane
     //      volumes are always volumes!
-  
     for (m = 0; m < element->type->dim; m++) {
       for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
         for (j = 0; j < element->type->nodes; j++) {
           // TODO: matrix-vector product
-          gsl_matrix_add_to_element(dxdr, m, m_prime, gsl_matrix_get(element->type->gauss->dhdr[v], j, m_prime) * element->node[j]->x[m]);
+          gsl_matrix_add_to_element(dxdr, m, m_prime, gsl_matrix_get(element->type->gauss[integration].dhdr[v], j, m_prime) * element->node[j]->x[m]);
         }
       }
     }

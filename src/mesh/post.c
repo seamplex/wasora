@@ -69,6 +69,12 @@ int wasora_instruction_mesh_post(void *arg) {
     }
     // TODO: tensores
   }
+  
+  // as vtk does not support multiple time steps, it is better to close the file now
+  if (mesh_post->format == post_format_vtk) {
+    wasora_call(wasora_instruction_close_file(mesh_post->file));
+  }
+  // for .msh we leave that to the user, to user CLOSE or whatever explicitly
 
   return WASORA_RUNTIME_OK;
 }

@@ -1279,9 +1279,12 @@ int mesh_gmsh_update_function(function_t *function, double t, double dt) {
     }  
   }
   
-  alpha = (t-function->mesh_time)/(time-function->mesh_time);
-  for (j = 0; j < function->data_size; j++) {
-    function->data_value[j] += alpha * (new_data[j] - function->data_value[j]);
+  if (new_data != NULL) {
+    if (alpha = (t-function->mesh_time)/(time-function->mesh_time) < 1) {
+      for (j = 0; j < function->data_size; j++) {
+        function->data_value[j] += alpha * (new_data[j] - function->data_value[j]);
+      }
+    }  
   }
  
   return WASORA_RUNTIME_OK;

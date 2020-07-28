@@ -1,5 +1,5 @@
 # computing pi in eight different ways
-VECTOR piapprox SIZE 8
+VECTOR piapprox SIZE 9
 VAR x y
 
 # the double-precision internal representation of pi (M_PI)
@@ -25,6 +25,9 @@ piapprox(7) = 4*sum((-1)^(i+1)/(2*i-1), i, 1, 1e5)
 
 # the abraham sharp sum (twenty-one terms)
 piapprox(8) = sum(2*(-1)^i * 3^(1/2-i)/(2*i+1), i, 0, 20)
+
+# this integral is equal to 22/7-pi
+piapprox(9) = 22/7-integral((x^4*(1-x)^4)/(1+x^2), x, 0, 1)
 
 
 PRINT_VECTOR FORMAT "% .20f" piapprox piapprox(i)-pi

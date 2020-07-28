@@ -123,7 +123,7 @@ int wasora_mesh_parse_line(char *line) {
           int values[] = {integration_full, integration_reduced, 0};
           wasora_call(wasora_parser_keywords_ints(keywords, values, &integration));
 
-///kw+MESH+usage [ RE_READ ]
+///kw+MESH+usage [ RE_READ ]@
         } else if (strcasecmp(token, "RE_READ") == 0) {
           re_read = 1;
           

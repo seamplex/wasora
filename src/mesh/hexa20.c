@@ -46,7 +46,7 @@ int mesh_hexa20_init(void) {
   element_type->point_in_element = mesh_point_in_hexahedron;
   element_type->element_volume = mesh_hexahedron_vol;
 
-  // coordenadas de los nodos
+  // node coordinates
 /*
   Hexahedron20:     
 

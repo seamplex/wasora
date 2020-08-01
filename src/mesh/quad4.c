@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related quadrangle element routines
  *
- *  Copyright (C) 2014--2018 jeremy theler
+ *  Copyright (C) 2014--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -23,13 +23,14 @@
 
 #include <math.h>
 
-// --------------------------------------------------------------
-// cuadrangulo de cuatro nodos
-// --------------------------------------------------------------
+// --------------------
+// four-node quadrangle
+// --------------------
 int mesh_quad4_init(void) {
   
+  double r[2];
   element_type_t *element_type;
-  int j;
+  int j, v;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE4];
   element_type->name = strdup("quad4");
@@ -44,10 +45,8 @@ int mesh_quad4_init(void) {
   element_type->point_in_element = mesh_point_in_quadrangle;
   element_type->element_volume = mesh_quad_vol;
 
-  // coordenadas de los nodos
+  // node coordinates
 /*
-Quadrangle:         
-
       v
       ^
       |
@@ -81,83 +80,72 @@ Quadrangle:
   element_type->node_coords[3][0] = -1;
   element_type->node_coords[3][1] = +1;
 
-  mesh_quad_gauss4_init(element_type);
+  // gauss points and extrapolation matrices
+  element_type->gauss = calloc(2, sizeof(gauss_t));
+  
+  // full integration: 2x2
+  mesh_gauss_init_quad4(element_type, &element_type->gauss[integration_full]);
+  element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 4);
+
+  // reduced integration: 1x1
+  mesh_gauss_init_quad1(element_type, &element_type->gauss[integration_reduced]);
+  element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 1);
+  
+  // the two extrapolation matrices
+  for (j = 0; j < element_type->nodes; j++) {
+    r[0] = M_SQRT3 * element_type->node_coords[j][0];
+    r[1] = M_SQRT3 * element_type->node_coords[j][1];
+
+    // full    
+    for (v = 0; v < 4; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad4_h(v, r));
+    }
+    
+    // reduced
+    gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, 0, 1.0);
+  }
 
   return WASORA_RUNTIME_OK;    
 }
 
-void mesh_quad_gauss4_init(element_type_t *element_type) {
+void mesh_gauss_init_quad4(element_type_t *element_type, gauss_t *gauss) {
 
-  double r[3];
-  gauss_t *gauss;
-  
-  // dos juegos de puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
-  
-  // ---- full integration: four Gauss points ----  
-    gauss = &element_type->gauss[integration_full];
-    mesh_alloc_gauss(gauss, element_type, 4);
+  // ---- four Gauss points ----  
+  mesh_alloc_gauss(gauss, element_type, 4);
 
-    gauss->w[0] = 4 * 0.25;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-    gauss->r[0][1] = -1.0/M_SQRT3;
+  gauss->w[0] = 4 * 0.25;
+  gauss->r[0][0] = -1.0/M_SQRT3;
+  gauss->r[0][1] = -1.0/M_SQRT3;
 
-    gauss->w[1] = 4 * 0.25;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-    gauss->r[1][1] = -1.0/M_SQRT3;
+  gauss->w[1] = 4 * 0.25;
+  gauss->r[1][0] = +1.0/M_SQRT3;
+  gauss->r[1][1] = -1.0/M_SQRT3;
  
-    gauss->w[2] = 4 * 0.25;
-    gauss->r[2][0] = +1.0/M_SQRT3;
-    gauss->r[2][1] = +1.0/M_SQRT3;
+  gauss->w[2] = 4 * 0.25;
+  gauss->r[2][0] = +1.0/M_SQRT3;
+  gauss->r[2][1] = +1.0/M_SQRT3;
 
-    gauss->w[3] = 4 * 0.25;
-    gauss->r[3][0] = -1.0/M_SQRT3;
-    gauss->r[3][1] = +1.0/M_SQRT3;
+  gauss->w[3] = 4 * 0.25;
+  gauss->r[3][0] = -1.0/M_SQRT3;
+  gauss->r[3][1] = +1.0/M_SQRT3;
 
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
-    // extrapolation matrix
-    gauss->extrap = gsl_matrix_alloc(gauss->V, gauss->V);
-    
-    r[0] = -M_SQRT3;
-    r[1] = -M_SQRT3;
-    gsl_matrix_set(gauss->extrap, 0, 0, mesh_quad4_h(0, r));
-    gsl_matrix_set(gauss->extrap, 0, 1, mesh_quad4_h(1, r));
-    gsl_matrix_set(gauss->extrap, 0, 2, mesh_quad4_h(2, r));
-    gsl_matrix_set(gauss->extrap, 0, 3, mesh_quad4_h(3, r));
-
-    r[0] = +M_SQRT3;
-    r[1] = -M_SQRT3;
-    gsl_matrix_set(gauss->extrap, 1, 0, mesh_quad4_h(0, r));
-    gsl_matrix_set(gauss->extrap, 1, 1, mesh_quad4_h(1, r));
-    gsl_matrix_set(gauss->extrap, 1, 2, mesh_quad4_h(2, r));
-    gsl_matrix_set(gauss->extrap, 1, 3, mesh_quad4_h(3, r));
-
-    r[0] = +M_SQRT3;
-    r[1] = +M_SQRT3;
-    gsl_matrix_set(gauss->extrap, 2, 0, mesh_quad4_h(0, r));
-    gsl_matrix_set(gauss->extrap, 2, 1, mesh_quad4_h(1, r));
-    gsl_matrix_set(gauss->extrap, 2, 2, mesh_quad4_h(2, r));
-    gsl_matrix_set(gauss->extrap, 2, 3, mesh_quad4_h(3, r));
-
-    r[0] = -M_SQRT3;
-    r[1] = +M_SQRT3;
-    gsl_matrix_set(gauss->extrap, 3, 0, mesh_quad4_h(0, r));
-    gsl_matrix_set(gauss->extrap, 3, 1, mesh_quad4_h(1, r));
-    gsl_matrix_set(gauss->extrap, 3, 2, mesh_quad4_h(2, r));
-    gsl_matrix_set(gauss->extrap, 3, 3, mesh_quad4_h(3, r));    
-    
-    
-  // ---- reduced integration: one Gauss point  ----  
-    gauss = &element_type->gauss[integration_reduced];
-    mesh_alloc_gauss(gauss, element_type, 1);
+  mesh_init_shape_at_gauss(gauss, element_type);
   
-    gauss->w[0] = 4 * 1.0;
-    gauss->r[0][0] = 0.0;
-    gauss->r[0][1] = 0.0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);  
+  return;
   
+}
+
+
+void mesh_gauss_init_quad1(element_type_t *element_type, gauss_t *gauss) {
+
+  // ---- one Gauss point  ----  
+  mesh_alloc_gauss(gauss, element_type, 1);
+  
+  gauss->w[0] = 4 * 1.0;
+  gauss->r[0][0] = 0.0;
+  gauss->r[0][1] = 0.0;
+
+  mesh_init_shape_at_gauss(gauss, element_type);  
   
   return;
 }

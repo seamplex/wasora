@@ -58,6 +58,15 @@ int wasora_instruction_mesh_integrate(void *arg) {
     } else {
       if (function->type == type_pointwise_mesh_node && function->mesh == mesh) {
         // funcion mesh node
+        
+        // check if the time is the correct one
+        if (function->name_in_mesh != NULL && function->mesh->format == mesh_format_gmsh
+            && function->mesh_time < wasora_var_value(wasora_special_var(t))-0.001*wasora_var_value(wasora_special_var(dt))) {
+            wasora_call(mesh_gmsh_update_function(function, wasora_var_value(wasora_special_var(t)), wasora_var_value(wasora_special_var(dt))));
+          function->mesh_time = wasora_var_value(wasora_special_var(t));
+        }
+        
+        
         for (i = 0; i < mesh->n_elements; i++) {
           element = &mesh->element[i];
           if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || element->physical_entity == physical_entity) {
@@ -66,7 +75,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
 
               xi = 0;
               for (j = 0; j < element->type->nodes; j++) {
-                xi += element->type->gauss[GAUSS_POINTS_FULL].h[v][j] * function->data_value[element->node[j]->tag - 1];
+                xi += element->type->gauss[mesh->integration].h[v][j] * function->data_value[element->node[j]->tag - 1];
               }
 
               integral += element->w[v] * xi;

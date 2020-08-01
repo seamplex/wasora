@@ -958,13 +958,14 @@ int mesh_gmsh_write_mesh(mesh_t *mesh, int no_physical_names, FILE *file) {
     fprintf(file, "%d ", mesh->element[i].tag);
     fprintf(file, "%d ", mesh->element[i].type->id);
 
-    // en principio aca tendriamos que poner los tags y que se yo
+    // in principle we shuold write the detailed information about entities and parititons
 //    fprintf(file, "%d ", mesh->element[i].ntags);
     
-    // por ahora ponemos solo dos tags que son los que al menos requiere gmsh
-    // el primero es la entidad fisica y el segundo la geometria, que no nos interesa
+    // but for now only two tags are enough:
+    // the first one is the physical entity and the second one ought to be the geometrical entity
+    // if there is no such information, then we just duplicate the physical entity tag
     if (mesh->element[i].physical_entity != NULL) {
-      fprintf(file, "2 %d 0", mesh->element[i].physical_entity->tag);
+      fprintf(file, "2 %d %d", mesh->element[i].physical_entity->tag, mesh->element[i].physical_entity->tag);
     } else {
       fprintf(file, "2 0 0");
     }
@@ -1280,7 +1281,7 @@ int mesh_gmsh_update_function(function_t *function, double t, double dt) {
   }
   
   if (new_data != NULL) {
-    if (alpha = (t-function->mesh_time)/(time-function->mesh_time) < 1) {
+    if ((alpha = (t-function->mesh_time)/(time-function->mesh_time)) < 1) {
       for (j = 0; j < function->data_size; j++) {
         function->data_value[j] += alpha * (new_data[j] - function->data_value[j]);
       }

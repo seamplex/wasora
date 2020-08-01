@@ -22,9 +22,9 @@
 #include <wasora.h>
 
 
-// ---------------------------------------------------------------------
-// tetrahedro isoparametrico de cuatro nodos sobre el triangulo unitario
-// ---------------------------------------------------------------------
+// -------------------------------------
+// iso-parametric four-noded tetrahedron
+// -------------------------------------
 
 int mesh_tet4_init(void) {
   
@@ -45,7 +45,7 @@ int mesh_tet4_init(void) {
   element_type->element_volume = mesh_tetrahedron_vol;
 
 
-  // coordenadas de los nodos
+  // node coordinates (from Gmsh doc)
 /*
 Tetrahedron:                     
 

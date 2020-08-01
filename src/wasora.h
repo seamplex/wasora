@@ -2490,7 +2490,8 @@ extern double mesh_line3_dhdr(int, int, double *);
 
 // triang3.c
 extern int mesh_triang3_init(void);
-extern void mesh_triang_gauss3_init(element_type_t *);
+extern void mesh_gauss_init_triang1(element_type_t *, gauss_t *);
+extern void mesh_gauss_init_triang3(element_type_t *, gauss_t *);
 extern double mesh_triang3_h(int, double *);
 extern double mesh_triang3_dhdr(int, int, double *);
 extern int mesh_point_in_triangle(element_t *, const double *);
@@ -2504,7 +2505,8 @@ extern double mesh_triang6_dhdr(int, int, double *);
 
 // quad4.c
 extern int mesh_quad4_init(void);
-extern void mesh_quad_gauss4_init(element_type_t *);
+extern void mesh_gauss_init_quad1(element_type_t *, gauss_t *);
+extern void mesh_gauss_init_quad4(element_type_t *, gauss_t *);
 extern double mesh_quad4_h(int, double *);
 extern double mesh_quad4_dhdr(int, int, double *);
 extern int mesh_point_in_quadrangle(element_t *, const double *);
@@ -2517,7 +2519,7 @@ extern double mesh_quad8_dhdr(int , int , double *);
 
 // quad9.c
 extern int mesh_quad9_init(void);
-extern void mesh_quad_gauss9_init(element_type_t *);
+extern void mesh_gauss_init_quad9(element_type_t *, gauss_t *);
 extern double mesh_quad9_h(int , double *);
 extern double mesh_quad9_dhdr(int , int , double *);
 

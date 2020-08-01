@@ -28,8 +28,9 @@
 // --------------------------------------------------------------
 int mesh_quad9_init(void) {
   
+  double r[2];
   element_type_t *element_type;
-  int j;
+  int j, v;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE9];
   element_type->name = strdup("quad9");
@@ -44,7 +45,7 @@ int mesh_quad9_init(void) {
   element_type->point_in_element = mesh_point_in_quadrangle;
   element_type->element_volume = mesh_quad_vol;
 
-  // coordenadas de los nodos
+  // node coordinates
 /*
  Quadrangle9:
 
@@ -102,133 +103,84 @@ int mesh_quad9_init(void) {
   wasora_mesh_add_node_parent(&element_type->node_parents[8], 3);
   wasora_mesh_compute_coords_from_parent(element_type, 8);  
   
-  mesh_quad_gauss9_init(element_type);
+  // gauss points and extrapolation matrices
+  element_type->gauss = calloc(2, sizeof(gauss_t));
+  
+  // full integration: 3x3
+  mesh_gauss_init_quad9(element_type, &element_type->gauss[integration_full]);
+  element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 9);
+  
+  // reduced integration: 2x2
+  mesh_gauss_init_quad4(element_type, &element_type->gauss[integration_reduced]);
+  element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 4);
+  
+  
+  for (j = 0; j < element_type->nodes; j++) {
+    r[0] = M_SQRT3 * element_type->node_coords[j][0];
+    r[1] = M_SQRT3 * element_type->node_coords[j][1];
+    
+    for (v = 0; v < 9; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad9_h(v, r));
+    }
+    
+    for (v = 0; v < 4; v++) {
+      gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, v, mesh_quad4_h(v, r));
+    }
+  }
 
   return WASORA_RUNTIME_OK;    
 }
 
-void mesh_quad_gauss9_init(element_type_t *element_type) {
-  double r[3];
-  double a, w1, w2, w3;  
-  int v;
-  gauss_t *gauss;
+#define M_SQRT5 2.23606797749978969640917366873127623544061835961152572427089
 
-  a = 0.774596669241483;
+void mesh_gauss_init_quad9(element_type_t *element_type, gauss_t *gauss) {
+  double a, w1, w2, w3;  
+
+  a = M_SQRT3/M_SQRT5;
   w1 = 25.0/81.0;
   w2 = 40.0/81.0;
   w3 = 64.0/81.0;
   
-  // dos juegos de puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
+  // ---- nine Gauss points
+  mesh_alloc_gauss(gauss, element_type, 9);
   
-  // ---- nueve puntos de Gauss ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
-    mesh_alloc_gauss(gauss, element_type, 9);
-  
-    gauss->w[0] = w1;
-    gauss->r[0][0] = -a;
-    gauss->r[0][1] = -a;
+  gauss->w[0] = w1;
+  gauss->r[0][0] = -a;
+  gauss->r[0][1] = -a;
 
-    gauss->w[1] = w1;
-    gauss->r[1][0] = +a;
-    gauss->r[1][1] = -a;
+  gauss->w[1] = w1;
+  gauss->r[1][0] = +a;
+  gauss->r[1][1] = -a;
  
-    gauss->w[2] = w1;
-    gauss->r[2][0] = +a;
-    gauss->r[2][1] = +a;
+  gauss->w[2] = w1;
+  gauss->r[2][0] = +a;
+  gauss->r[2][1] = +a;
 
-    gauss->w[3] = w1;
-    gauss->r[3][0] = -a;
-    gauss->r[3][1] = +a;
+  gauss->w[3] = w1;
+  gauss->r[3][0] = -a;
+  gauss->r[3][1] = +a;
     
-    gauss->w[4] = w2;
-    gauss->r[4][0] = 0;
-    gauss->r[4][1] = -a;
+  gauss->w[4] = w2;
+  gauss->r[4][0] = 0;
+  gauss->r[4][1] = -a;
 
-    gauss->w[5] = w2;
-    gauss->r[5][0] = +a;
-    gauss->r[5][1] = 0;
+  gauss->w[5] = w2;
+  gauss->r[5][0] = +a;
+  gauss->r[5][1] = 0;
  
-    gauss->w[6] = w2;
-    gauss->r[6][0] = 0;
-    gauss->r[6][1] = +a;
+  gauss->w[6] = w2;
+  gauss->r[6][0] = 0;
+  gauss->r[6][1] = +a;
 
-    gauss->w[7] = w2;
-    gauss->r[7][0] = -a;
-    gauss->r[7][1] = 0;
-    
-    gauss->w[8] = w3;
-    gauss->r[8][0] = 0;
-    gauss->r[8][1] = 0;
+  gauss->w[7] = w2;
+  gauss->r[7][0] = -a;
+  gauss->r[7][1] = 0;
+   
+  gauss->w[8] = w3;
+  gauss->r[8][0] = 0;
+  gauss->r[8][1] = 0;
 
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
-    // matriz de extrapolacion
-    gauss->extrap = gsl_matrix_alloc(gauss->V, gauss->V);
-    
-    r[0] = -1/a;
-    r[1] = -1/a;
-    for (v = 0; v < gauss->V; v++) {
-      gsl_matrix_set(gauss->extrap, 0, v, mesh_quad9_h(v, r));
-    }  
-
-    r[0] = +1/a;
-    r[1] = -1/a;
-    for (v = 0; v < gauss->V; v++) {
-      gsl_matrix_set(gauss->extrap, 1, v, mesh_quad9_h(v, r));
-    }  
-    
-    r[0] = +1/a;
-    r[1] = +1/a;
-    for (v = 0; v < gauss->V; v++) {
-      gsl_matrix_set(gauss->extrap, 2, v, mesh_quad9_h(v, r));
-    }  
-
-    r[0] = -1/a;
-    r[1] = +1/a;
-    for (v = 0; v < gauss->V; v++) {
-      gsl_matrix_set(gauss->extrap, 3, v, mesh_quad9_h(v, r));
-    }
-
-    r[0] = 0;
-    r[1] = -1/a;
-    for (v = 0; v < gauss->V; v++) {
-      gsl_matrix_set(gauss->extrap, 4, v, mesh_quad9_h(v, r));
-    }
-
-    r[0] = +1/a;
-    r[1] = 0;
-    for (v = 0; v < gauss->V; v++) {
-      gsl_matrix_set(gauss->extrap, 5, v, mesh_quad9_h(v, r));
-    }
-
-    r[0] = 0;
-    r[1] = +1/a;
-    for (v = 0; v < gauss->V; v++) {
-      gsl_matrix_set(gauss->extrap, 6, v, mesh_quad9_h(v, r));
-    }
-
-    r[0] = -1/a;
-    r[1] = 0;
-    for (v = 0; v < gauss->V; v++) {
-      gsl_matrix_set(gauss->extrap, 7, v, mesh_quad9_h(v, r));
-    }
-    
-    r[0] = 0;
-    r[1] = 0;
-    for (v = 0; v < gauss->V; v++) {
-      gsl_matrix_set(gauss->extrap, 8, v, mesh_quad9_h(v, r));
-    }
-
-  // ---- un punto de Gauss  ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
-    mesh_alloc_gauss(gauss, element_type, 1);
-  
-    gauss->w[0] = 4 * 1.0;
-    gauss->r[0][0] = 0.0;
-    gauss->r[0][1] = 0.0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);
+  mesh_init_shape_at_gauss(gauss, element_type);
     
   return;
 }        

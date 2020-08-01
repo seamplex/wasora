@@ -48,22 +48,21 @@ int mesh_hexa27_init(void) {
 
 /*
  
-    Hexahedron27:
-
-
-    3----13----2     
-    |\         |\    
-    |15    24  | 14  
-    9  \ 20    11 \  
-    |   7----19+---6 
-    |22 |  26  | 23| 
-    0---+-8----1   | 
-     \ 17    25 \  18
-     10 |  21    12| 
-       \|         \| 
-        4----16----5 
-
+  Hexahedron27:
+  
+  3----13----2     
+  |\         |\    
+  |15    24  | 14  
+  9  \ 20    11 \  
+  |   7----19+---6 
+  |22 |  26  | 23| 
+  0---+-8----1   | 
+   \ 17    25 \  18
+   10 |  21    12| 
+     \|         \| 
+      4----16----5 
  */  
+  
   element_type->node_coords = calloc(element_type->nodes, sizeof(double *));
   element_type->node_parents = calloc(element_type->nodes, sizeof(node_relative_t *));  
   for (j = 0; j < element_type->nodes; j++) {

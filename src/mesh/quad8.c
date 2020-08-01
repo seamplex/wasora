@@ -2,7 +2,7 @@
  *  wasora's mesh-related second-order quadrangle element routines
  *
  *  Copyright (C) 2017 C.P.Camusso.
- *  Copyright (C) 2018 jeremy theler
+ *  Copyright (C) 2018--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -29,8 +29,9 @@
 // --------------------------------------------------------------
 int mesh_quad8_init(void) {
   
+  double r[2];
   element_type_t *element_type;
-  int j;
+  int j, v;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_QUADRANGLE8];
   element_type->name = strdup("quad8");
@@ -45,7 +46,7 @@ int mesh_quad8_init(void) {
   element_type->point_in_element = mesh_point_in_quadrangle;
   element_type->element_volume = mesh_quad_vol;
 
-  // coordenadas de los nodos
+  // node coordinates
 /*
  Quadrangle8:   
 
@@ -96,7 +97,30 @@ int mesh_quad8_init(void) {
   wasora_mesh_add_node_parent(&element_type->node_parents[7], 0);
   wasora_mesh_compute_coords_from_parent(element_type, 7);
 
-  mesh_quad_gauss4_init(element_type);
+  // gauss points and extrapolation matrices
+  element_type->gauss = calloc(2, sizeof(gauss_t));
+  
+  // full integration: 3x3
+  mesh_gauss_init_quad9(element_type, &element_type->gauss[integration_full]);
+  element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 9);
+
+  // reduced integration: 2x2
+  mesh_gauss_init_quad4(element_type, &element_type->gauss[integration_reduced]);
+  element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 4);
+  
+  for (j = 0; j < element_type->nodes; j++) {
+    r[0] = M_SQRT3 * element_type->node_coords[j][0];
+    r[1] = M_SQRT3 * element_type->node_coords[j][1];
+    
+    for (v = 0; v < 9; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad9_h(v, r));
+    }
+    
+    for (v = 0; v < 4; v++) {
+      gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, v, mesh_quad4_h(v, r));
+    }
+  }
+
   
   return WASORA_RUNTIME_OK;    
 }

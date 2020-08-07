@@ -190,7 +190,7 @@ int wasora_mesh_element_types_init(void) {
   // point
   mesh_one_node_point_init();
   
-  // calculamos el baricentro en el espacio de las r
+  // compute the barycenter of each element type in the r-space
   for (i = 0; i < NUMBER_ELEMENT_TYPE; i++) {
     if (wasora_mesh.element_type[i].node_coords != NULL) {
       wasora_mesh.element_type[i].barycenter_coords = calloc(wasora_mesh.element_type[i].dim, sizeof(double));

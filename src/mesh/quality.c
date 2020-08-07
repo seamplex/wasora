@@ -43,13 +43,13 @@ int mesh_compute_quality(mesh_t *mesh, element_t *element) {
     }
     det0 = fabs(mesh_determinant(dxdr));
     
-    for (v = 0; v < element->type->gauss[GAUSS_POINTS_FULL].V; v++) {
+    for (v = 0; v < element->type->gauss[mesh->integration].V; v++) {
 
       gsl_matrix_set_zero(dxdr);
       for (m = 0; m < element->type->dim; m++) {
         for (m_prime = 0; m_prime < element->type->dim; m_prime++) {
           for (j = 0; j < element->type->nodes; j++) {
-            gsl_matrix_add_to_element(dxdr, m, m_prime, element->type->dhdr(j, m_prime, element->type->gauss[GAUSS_POINTS_FULL].r[v]) * element->node[j]->x[m]);
+            gsl_matrix_add_to_element(dxdr, m, m_prime, element->type->dhdr(j, m_prime, element->type->gauss[mesh->integration].r[v]) * element->node[j]->x[m]);
           }  
         }
       }

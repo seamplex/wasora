@@ -29,7 +29,9 @@
 int mesh_tet4_init(void) {
   
   element_type_t *element_type;
-  int j;
+  double r[3];
+  double a, b, c, d;
+  int j, v;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON4];
   element_type->name = strdup("tet4");
@@ -95,101 +97,108 @@ Tetrahedron:
   element_type->node_coords[3][1] = 0;
   element_type->node_coords[3][2] = 1;
   
-  mesh_tet_gauss4_init(element_type);
+  // ------------
+  // gauss points and extrapolation matrices
+  
+  // full integration: 4 points
+  mesh_gauss_init_tet4(element_type, &element_type->gauss[integration_full]);
+  element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 4);
+
+  // reduced integration: 1 point
+  mesh_gauss_init_tet1(element_type, &element_type->gauss[integration_reduced]);
+  element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 1);
+  
+  // the two extrapolation matrices
+  a = (5.0-sqrt(5))/20.0;
+  b = (5.0+3.0*sqrt(5))/20.0;
+  c = -a/(b-a);
+  d = 1+(1-b)/(b-a);
+    
+  r[0] = c;
+  r[1] = c;
+  r[2] = c;
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 0, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = d;
+  r[1] = c;
+  r[2] = c;
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 1, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = c;
+  r[1] = d;
+  r[2] = c;
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 2, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = c;
+  r[1] = c;
+  r[2] = d;
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 3, v, mesh_tet4_h(v, r));
+  }
+  
+  // reduced
+  for (j = 0; j < element_type->nodes; j++) {
+    gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, 0, 1.0);
+  }  
 
   return WASORA_RUNTIME_OK;
 }
 
-void mesh_tet_gauss4_init(element_type_t *element_type) {
-  double a, b, c, d;
-  double r[3];
-  gauss_t *gauss;
 
-  element_type->gauss = calloc(2, sizeof(gauss_t));
-  
-  // el primero es el default
-  // ---- cuatro puntos de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
-    mesh_alloc_gauss(gauss, element_type, 4);
-    
-    a = (5.0-sqrt(5))/20.0;
-    b = (5.0+3.0*sqrt(5))/20.0;
-    
-    gauss->w[0] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[0][0] = a;
-    gauss->r[0][1] = a;
-    gauss->r[0][2] = a;
-  
-    gauss->w[1] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[1][0] = b;
-    gauss->r[1][1] = a;
-    gauss->r[1][2] = a;
+void mesh_gauss_init_tet1(element_type_t *element_type, gauss_t *gauss) {
  
-    gauss->w[2] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[2][0] = a;
-    gauss->r[2][1] = b;
-    gauss->r[2][2] = a;
+  // ---- one Gauss point ----  
+  mesh_alloc_gauss(gauss, element_type, 4);
     
-    gauss->w[3] = 1.0/6.0 * 1.0/4.0;
-    gauss->r[3][0] = a;
-    gauss->r[3][1] = a;
-    gauss->r[3][2] = b;
-    
-    
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
-    // matriz de extrapolacion
-    gauss->extrap = gsl_matrix_alloc(gauss->V, gauss->V);
-    
-    c = -a/(b-a);
-    d = 1+(1-b)/(b-a);
-    
-    r[0] = c;
-    r[1] = c;
-    r[2] = c;
-    gsl_matrix_set(gauss->extrap, 0, 0, mesh_tet4_h(0, r));
-    gsl_matrix_set(gauss->extrap, 0, 1, mesh_tet4_h(1, r));
-    gsl_matrix_set(gauss->extrap, 0, 2, mesh_tet4_h(2, r));
-    gsl_matrix_set(gauss->extrap, 0, 3, mesh_tet4_h(3, r));
+  gauss->w[0] = 1.0/6.0 * 1.0;
+  gauss->r[0][0] = 1.0/4.0;
+  gauss->r[0][1] = 1.0/4.0;
+  gauss->r[0][2] = 1.0/4.0;
 
-    r[0] = d;
-    r[1] = c;
-    r[2] = c;
-    gsl_matrix_set(gauss->extrap, 1, 0, mesh_tet4_h(0, r));
-    gsl_matrix_set(gauss->extrap, 1, 1, mesh_tet4_h(1, r));
-    gsl_matrix_set(gauss->extrap, 1, 2, mesh_tet4_h(2, r));
-    gsl_matrix_set(gauss->extrap, 1, 3, mesh_tet4_h(3, r));
-
-    r[0] = c;
-    r[1] = d;
-    r[2] = c;
-    gsl_matrix_set(gauss->extrap, 2, 0, mesh_tet4_h(0, r));
-    gsl_matrix_set(gauss->extrap, 2, 1, mesh_tet4_h(1, r));
-    gsl_matrix_set(gauss->extrap, 2, 2, mesh_tet4_h(2, r));
-    gsl_matrix_set(gauss->extrap, 2, 3, mesh_tet4_h(3, r));
-
-    r[0] = c;
-    r[1] = c;
-    r[2] = d;
-    gsl_matrix_set(gauss->extrap, 3, 0, mesh_tet4_h(0, r));
-    gsl_matrix_set(gauss->extrap, 3, 1, mesh_tet4_h(1, r));
-    gsl_matrix_set(gauss->extrap, 3, 2, mesh_tet4_h(2, r));
-    gsl_matrix_set(gauss->extrap, 3, 3, mesh_tet4_h(3, r));    
-    
-    
-  // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
-    mesh_alloc_gauss(gauss, element_type, 1);
-  
-    gauss->w[0] = 1.0/6.0 * 1.0;
-    gauss->r[0][0] = 1.0/4.0;
-    gauss->r[0][1] = 1.0/4.0;
-    gauss->r[0][2] = 1.0/4.0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);  
+  mesh_init_shape_at_gauss(gauss, element_type);  
     
   return;
 }
+
+void mesh_gauss_init_tet4(element_type_t *element_type, gauss_t *gauss) {
+
+  double a = (5.0-sqrt(5))/20.0;
+  double b = (5.0+3.0*sqrt(5))/20.0;
+
+  // ---- two Gauss points ----  
+  mesh_alloc_gauss(gauss, element_type, 4);
+    
+  gauss->w[0] = 1.0/6.0 * 1.0/4.0;
+  gauss->r[0][0] = a;
+  gauss->r[0][1] = a;
+  gauss->r[0][2] = a;
+  
+  gauss->w[1] = 1.0/6.0 * 1.0/4.0;
+  gauss->r[1][0] = b;
+  gauss->r[1][1] = a;
+  gauss->r[1][2] = a;
+ 
+  gauss->w[2] = 1.0/6.0 * 1.0/4.0;
+  gauss->r[2][0] = a;
+  gauss->r[2][1] = b;
+  gauss->r[2][2] = a;
+    
+  gauss->w[3] = 1.0/6.0 * 1.0/4.0;
+  gauss->r[3][0] = a;
+  gauss->r[3][1] = a;
+  gauss->r[3][2] = b;
+
+  mesh_init_shape_at_gauss(gauss, element_type);  
+  
+}
+
+
 
 double mesh_tet4_h(int j, double *vec_r) {
   double r = vec_r[0];

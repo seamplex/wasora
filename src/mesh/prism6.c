@@ -118,11 +118,10 @@ void mesh_prism_gauss6_init(element_type_t *element_type) {
   gauss_t *gauss;
   
   // dos juegos de puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // el primero es el default
   // ---- seis puntos de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
+    gauss = &element_type->gauss[integration_full];
     gauss->V = 6;
     mesh_alloc_gauss(gauss, element_type, gauss->V = 6);
    
@@ -159,7 +158,7 @@ void mesh_prism_gauss6_init(element_type_t *element_type) {
     mesh_init_shape_at_gauss(gauss, element_type);
     
   // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
+    gauss = &element_type->gauss[integration_reduced];
     gauss->V = 1;
     mesh_alloc_gauss(gauss, element_type, gauss->V);
   

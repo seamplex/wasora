@@ -80,8 +80,8 @@ int mesh_quad4_init(void) {
   element_type->node_coords[3][0] = -1;
   element_type->node_coords[3][1] = +1;
 
+  // ------------
   // gauss points and extrapolation matrices
-  element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // full integration: 2x2
   mesh_gauss_init_quad4(element_type, &element_type->gauss[integration_full]);

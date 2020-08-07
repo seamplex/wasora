@@ -193,6 +193,8 @@ extern const char factorseparators[];
 #define INFTY         (1125899906842624.0)                    // 2^50
 #define ZERO          (8.881784197001252323389053344727e-16)  // (1/2)^-50
 
+#define M_SQRT5 2.23606797749978969640917366873127623544061835961152572427089
+
 #define DEFAULT_MESH_FAILED_INTERPOLATION_FACTOR   2
 
 
@@ -1821,8 +1823,8 @@ typedef enum {
 #define ELEMENT_TYPE_PRISM15        18
 #define NUMBER_ELEMENT_TYPE         19
 
-#define GAUSS_POINTS_FULL      0
-#define GAUSS_POINTS_REDUCED   1
+//#define GAUSS_POINTS_FULL      0
+//#define GAUSS_POINTS_REDUCED   1
 
 struct material_t {
   char *name;
@@ -1931,6 +1933,21 @@ struct node_relative_t {
   node_relative_t *next;
 };
 
+
+struct gauss_t {
+  int V;               // numero de puntos (v=1,2,...,V )
+  double *w;           // pesos (w[v] es el epso del punto v)
+  double **r;          // coordenadas (r[v][m] es la coordenada del punto v en la dimension m)
+  
+  double **h;          // funciones de forma evaluadas en los puntos de gauss h[v][j]
+  gsl_matrix **dhdr;   // derivadas evaluadas dhdr[v](j,m)
+  
+  // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
+  gsl_matrix *extrap;  // matrix de VxV para extrapolar valores desde los puntos de gauss a los nodos de primer orden
+  
+};
+
+
 // estructura fija con tipos de elementos, incluyendo apuntadores a las funciones de forma
 // los numeros son los propuestos por gmsh (ver abajo la lista)
 struct element_type_t {
@@ -1954,21 +1971,9 @@ struct element_type_t {
   int (*point_in_element)(element_t *, const double *);
   double (*element_volume)(element_t *);
   
-  gauss_t *gauss;      // juegos de puntos puntos de gauss
-};
-
-
-struct gauss_t {
-  int V;               // numero de puntos (v=1,2,...,V )
-  double *w;           // pesos (w[v] es el epso del punto v)
-  double **r;          // coordenadas (r[v][m] es la coordenada del punto v en la dimension m)
-  
-  double **h;          // funciones de forma evaluadas en los puntos de gauss h[v][j]
-  gsl_matrix **dhdr;   // derivadas evaluadas dhdr[v](j,m)
-  
-  // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
-  gsl_matrix *extrap;  // matrix de VxV para extrapolar valores desde los puntos de gauss a los nodos de primer orden
-  
+  gauss_t gauss[2];    // juegos de puntos puntos de gauss
+                       // 0 - full integration
+                       // 1 - reduced integration
 };
 
 
@@ -2383,7 +2388,7 @@ extern int mesh_compute_local_node_index(element_t *, int);
 // gauss.c
 extern int mesh_init_gauss_points(mesh_t *, int);
 extern int mesh_init_gauss_weights(int, int, double **, double **);
-extern double mesh_integral_over_element(function_t *, element_t *, expr_t *);
+extern double mesh_integral_over_element(mesh_t *, function_t *, element_t *, expr_t *);
 extern double mesh_integration_weight(mesh_t *, element_t *, int);
 extern void mesh_init_fem_objects(mesh_t *mesh);
 
@@ -2477,11 +2482,15 @@ extern double mesh_point_vol(element_t *);
 
 // line.c
 extern int mesh_line2_init(void);
-extern void mesh_line_gauss2_init(element_type_t *);
 extern double mesh_line2_h(int, double *);
 extern double mesh_line2_dhdr(int, int, double *);
+
 extern int mesh_point_in_line(element_t *, const double *);
 extern double mesh_line_vol(element_t *);
+
+extern void mesh_gauss_init_line1(element_type_t *, gauss_t *);
+extern void mesh_gauss_init_line2(element_type_t *, gauss_t *);
+extern void mesh_gauss_init_line3(element_type_t *, gauss_t *);
 
 // line3.c
 extern int mesh_line3_init(void);
@@ -2490,12 +2499,13 @@ extern double mesh_line3_dhdr(int, int, double *);
 
 // triang3.c
 extern int mesh_triang3_init(void);
-extern void mesh_gauss_init_triang1(element_type_t *, gauss_t *);
-extern void mesh_gauss_init_triang3(element_type_t *, gauss_t *);
 extern double mesh_triang3_h(int, double *);
 extern double mesh_triang3_dhdr(int, int, double *);
 extern int mesh_point_in_triangle(element_t *, const double *);
 extern double mesh_triang_vol(element_t *);
+
+extern void mesh_gauss_init_triang1(element_type_t *, gauss_t *);
+extern void mesh_gauss_init_triang3(element_type_t *, gauss_t *);
 
 
 // triang6.c
@@ -2505,10 +2515,13 @@ extern double mesh_triang6_dhdr(int, int, double *);
 
 // quad4.c
 extern int mesh_quad4_init(void);
-extern void mesh_gauss_init_quad1(element_type_t *, gauss_t *);
-extern void mesh_gauss_init_quad4(element_type_t *, gauss_t *);
 extern double mesh_quad4_h(int, double *);
 extern double mesh_quad4_dhdr(int, int, double *);
+
+extern void mesh_gauss_init_quad1(element_type_t *, gauss_t *);
+extern void mesh_gauss_init_quad4(element_type_t *, gauss_t *);
+extern void mesh_gauss_init_quad9(element_type_t *, gauss_t *);
+
 extern int mesh_point_in_quadrangle(element_t *, const double *);
 extern double mesh_quad_vol(element_t *);
 
@@ -2519,16 +2532,18 @@ extern double mesh_quad8_dhdr(int , int , double *);
 
 // quad9.c
 extern int mesh_quad9_init(void);
-extern void mesh_gauss_init_quad9(element_type_t *, gauss_t *);
 extern double mesh_quad9_h(int , double *);
 extern double mesh_quad9_dhdr(int , int , double *);
-
 
 // hexahedron8.c
 extern int mesh_hexa8_init(void);
 extern double mesh_hexa8_h(int, double *);
 extern double mesh_hexa8_dhdr(int, int, double *);
-extern void mesh_hexa_gauss8_init(element_type_t *);
+
+extern void mesh_gauss_init_hexa1(element_type_t *, gauss_t *);
+extern void mesh_gauss_init_hexa8(element_type_t *, gauss_t *);
+extern void mesh_gauss_init_hexa27(element_type_t *, gauss_t *);
+
 extern int mesh_point_in_hexahedron(element_t *, const double *);
 extern double mesh_hexahedron_vol(element_t *);
 
@@ -2539,17 +2554,18 @@ extern double mesh_hexa20_dhdr(int, int, double *);
 
 // hexahedron27.c
 extern int mesh_hexa27_init(void);
-extern void mesh_hexa_gauss27_init(element_type_t *);
 extern double mesh_hexa27_h(int, double *);
 extern double mesh_hexa27_dhdr(int, int, double *);
 
 // tet4.c
 extern int mesh_tet4_init(void);
-extern void mesh_tet_gauss4_init(element_type_t *);
 extern double mesh_tet4_h(int, double *);
 extern double mesh_tet4_dhdr(int, int, double *);
 extern int mesh_point_in_tetrahedron(element_t *, const double *);
 extern double mesh_tetrahedron_vol(element_t *);
+
+extern void mesh_gauss_init_tet1(element_type_t *, gauss_t *);
+extern void mesh_gauss_init_tet4(element_type_t *, gauss_t *);
 
 // tet10.c
 extern int mesh_tet10_init(void);

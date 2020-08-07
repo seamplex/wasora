@@ -2,6 +2,7 @@
  *  wasora's mesh-related hexahedron element routines
  *
  *  Copyright (C) 2014--2017 C.P. Camusso.
+ *  Copyright (C) 2017--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -30,8 +31,9 @@
 // --------------------------------------------------------------
 int mesh_hexa20_init(void) {
   
+  double r[3];
   element_type_t *element_type;
-  int j;
+  int j, v;
 
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON20];
   element_type->name = strdup("hexa20");
@@ -157,7 +159,30 @@ int mesh_hexa20_init(void) {
   wasora_mesh_add_node_parent(&element_type->node_parents[19], 7);
   wasora_mesh_compute_coords_from_parent(element_type, 19);    
 
-  mesh_hexa_gauss8_init(element_type);
+  // full integration: 3x3x3
+  mesh_gauss_init_hexa27(element_type, &element_type->gauss[integration_full]);
+  element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 27);
+
+  // reduced integration: 2x2x2
+  mesh_gauss_init_hexa8(element_type, &element_type->gauss[integration_reduced]);
+  element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 8);
+  
+  // the two extrapolation matrices
+  for (j = 0; j < element_type->nodes; j++) {
+    r[0] = M_SQRT3 * element_type->node_coords[j][0];
+    r[1] = M_SQRT3 * element_type->node_coords[j][1];
+    r[2] = M_SQRT3 * element_type->node_coords[j][2];
+
+    // full    
+    for (v = 0; v < 27; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_hexa27_h(v, r));
+    }
+    
+    // reduced
+    for (v = 0; v < 8; v++) {
+      gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, v, mesh_hexa8_h(v, r));
+    }
+  }
 
   return WASORA_RUNTIME_OK;
 }
@@ -356,6 +381,7 @@ double mesh_hexa20_dhdr(int j, int m, double *vec_r) {
           return 0.125*(r+1)*(s+1)*(t+s+r-2)+0.125*(r+1)*(s+1)*(t+1);
         break;
       }
+    break;
     case 7:
       switch(m) {
         case 0:
@@ -368,6 +394,7 @@ double mesh_hexa20_dhdr(int j, int m, double *vec_r) {
           return  0.125*(1-r)*(s+1)*(t+s-r-2)+0.125*(1-r)*(s+1)*(t+1);
         break;
       }
+    break;
     case 8:
       switch(m) {
         case 0:
@@ -380,6 +407,7 @@ double mesh_hexa20_dhdr(int j, int m, double *vec_r) {
           return -(1-r*r)*(1-s)/4.0;
         break;
       }
+    break;
     case 9:
       switch(m) {
         case 0:

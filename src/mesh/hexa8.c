@@ -30,8 +30,9 @@
 
 int mesh_hexa8_init(void) {
   
+  double r[3];
   element_type_t *element_type;
-  int j;
+  int j, v;
 
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_HEXAHEDRON8];
   element_type->name = strdup("hexa8");
@@ -110,78 +111,258 @@ Hexahedron:
   element_type->node_coords[7][1] = +1;
   element_type->node_coords[7][2] = +1;
   
-  mesh_hexa_gauss8_init(element_type);
+  // ------------
+  // gauss points and extrapolation matrices
+  
+  // full integration: 2x2x2
+  mesh_gauss_init_hexa8(element_type, &element_type->gauss[integration_full]);
+  element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 8);
+
+  // reduced integration: 1
+  mesh_gauss_init_hexa1(element_type, &element_type->gauss[integration_reduced]);
+  element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 1);
+  
+  // the two extrapolation matrices
+  for (j = 0; j < element_type->nodes; j++) {
+    r[0] = M_SQRT3 * element_type->node_coords[j][0];
+    r[1] = M_SQRT3 * element_type->node_coords[j][1];
+    r[2] = M_SQRT3 * element_type->node_coords[j][2];
+
+    // full    
+    for (v = 0; v < 8; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_hexa8_h(v, r));
+    }
+    
+    // reduced
+    gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, 0, 1.0);
+  }
+
   
   return WASORA_RUNTIME_OK;
 }
 
-void mesh_hexa_gauss8_init(element_type_t *element_type) {
 
-  gauss_t *gauss;
+void mesh_gauss_init_hexa1(element_type_t *element_type, gauss_t *gauss) {
+
+  // ---- one Gauss point  ----  
+  mesh_alloc_gauss(gauss, element_type, 1);
   
-  // dos juegos de puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
+  gauss->w[0] = 8 * 1.0;
+  gauss->r[0][0] = 0;
+  gauss->r[0][1] = 0;
+  gauss->r[0][2] = 0;
   
-  // el primero es el default
-  // ---- ocho puntos de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
-    mesh_alloc_gauss(gauss, element_type, 8);
-
-    gauss->w[0] = 8 * 1.0/8.0;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-    gauss->r[0][1] = -1.0/M_SQRT3;
-    gauss->r[0][2] = -1.0/M_SQRT3;
-
-    gauss->w[1] = 8 * 1.0/8.0;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-    gauss->r[1][1] = -1.0/M_SQRT3;
-    gauss->r[1][2] = -1.0/M_SQRT3;
-
-    gauss->w[2] = 8 * 1.0/8.0;
-    gauss->r[2][0] = +1.0/M_SQRT3;
-    gauss->r[2][1] = +1.0/M_SQRT3;
-    gauss->r[2][2] = -1.0/M_SQRT3;
-
-    gauss->w[3] = 8 * 1.0/8.0;
-    gauss->r[3][0] = -1.0/M_SQRT3;
-    gauss->r[3][1] = +1.0/M_SQRT3;
-    gauss->r[3][2] = -1.0/M_SQRT3;
-
-    gauss->w[4] = 8 * 1.0/8.0;
-    gauss->r[4][0] = -1.0/M_SQRT3;
-    gauss->r[4][1] = -1.0/M_SQRT3;
-    gauss->r[4][2] = +1.0/M_SQRT3;
-
-    gauss->w[5] = 8 * 1.0/8.0;
-    gauss->r[5][0] = +1.0/M_SQRT3;
-    gauss->r[5][1] = -1.0/M_SQRT3;
-    gauss->r[5][2] = +1.0/M_SQRT3;
-
-    gauss->w[6] = 8 * 1.0/8.0;
-    gauss->r[6][0] = +1.0/M_SQRT3;
-    gauss->r[6][1] = +1.0/M_SQRT3;
-    gauss->r[6][2] = +1.0/M_SQRT3;
-
-    gauss->w[7] = 8 * 1.0/8.0;
-    gauss->r[7][0] = -1.0/M_SQRT3;
-    gauss->r[7][1] = +1.0/M_SQRT3;
-    gauss->r[7][2] = +1.0/M_SQRT3;
-  
-    mesh_init_shape_at_gauss(gauss, element_type);
+  mesh_init_shape_at_gauss(gauss, element_type);  
     
-  // ---- un punto de Gauss sobre el elemento unitario ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
-    mesh_alloc_gauss(gauss, element_type, 1);
-  
-    gauss->w[0] = 8 * 1.0;
-    gauss->r[0][0] = 0;
-    gauss->r[0][1] = 0;
-    gauss->r[0][2] = 0;
+  return;
+}
 
-    mesh_init_shape_at_gauss(gauss, element_type);  
+
+void mesh_gauss_init_hexa8(element_type_t *element_type, gauss_t *gauss) {
+
+  // ---- eight Gauss points  ----  
+  mesh_alloc_gauss(gauss, element_type, 8);
+
+  gauss->w[0] = 8 * 1.0/8.0;
+  gauss->r[0][0] = -1.0/M_SQRT3;
+  gauss->r[0][1] = -1.0/M_SQRT3;
+  gauss->r[0][2] = -1.0/M_SQRT3;
+
+  gauss->w[1] = 8 * 1.0/8.0;
+  gauss->r[1][0] = +1.0/M_SQRT3;
+  gauss->r[1][1] = -1.0/M_SQRT3;
+  gauss->r[1][2] = -1.0/M_SQRT3;
+
+  gauss->w[2] = 8 * 1.0/8.0;
+  gauss->r[2][0] = +1.0/M_SQRT3;
+  gauss->r[2][1] = +1.0/M_SQRT3;
+  gauss->r[2][2] = -1.0/M_SQRT3;
+
+  gauss->w[3] = 8 * 1.0/8.0;
+  gauss->r[3][0] = -1.0/M_SQRT3;
+  gauss->r[3][1] = +1.0/M_SQRT3;
+  gauss->r[3][2] = -1.0/M_SQRT3;
+
+  gauss->w[4] = 8 * 1.0/8.0;
+  gauss->r[4][0] = -1.0/M_SQRT3;
+  gauss->r[4][1] = -1.0/M_SQRT3;
+  gauss->r[4][2] = +1.0/M_SQRT3;
+
+  gauss->w[5] = 8 * 1.0/8.0;
+  gauss->r[5][0] = +1.0/M_SQRT3;
+  gauss->r[5][1] = -1.0/M_SQRT3;
+  gauss->r[5][2] = +1.0/M_SQRT3;
+
+  gauss->w[6] = 8 * 1.0/8.0;
+  gauss->r[6][0] = +1.0/M_SQRT3;
+  gauss->r[6][1] = +1.0/M_SQRT3;
+  gauss->r[6][2] = +1.0/M_SQRT3;
+
+  gauss->w[7] = 8 * 1.0/8.0;
+  gauss->r[7][0] = -1.0/M_SQRT3;
+  gauss->r[7][1] = +1.0/M_SQRT3;
+  gauss->r[7][2] = +1.0/M_SQRT3;
+  
+  mesh_init_shape_at_gauss(gauss, element_type);
   
   return;
 }
+
+
+
+void mesh_gauss_init_hexa27(element_type_t *element_type, gauss_t *gauss) {
+
+  double const alpha = sqrt(3.0/5.0);  
+  double const w1 = 5.0/9.0;
+  double const w2 = 8.0/9.0;
+  
+  // ---- one Gauss point  ----  
+  mesh_alloc_gauss(gauss, element_type, 27);
+
+  
+  //Reference https://www.code-aster.org/V2/doc/v11/en/man_r/r3/r3.01.01.pdf
+  //          https://www.code-aster.org/V2/doc/default/en/man_r/r3/r3.01.01.pdf
+
+  gauss->w[0] = w1 * w1 * w1;
+  gauss->r[0][0] = -alpha;
+  gauss->r[0][1] = -alpha;
+  gauss->r[0][2] = -alpha;
+
+  gauss->w[1] = w1 * w1 * w2;
+  gauss->r[1][0] = -alpha;
+  gauss->r[1][1] = -alpha;
+  gauss->r[1][2] =  0.0;
+
+  gauss->w[2] = w1 * w1 * w1;
+  gauss->r[2][0] = -alpha;
+  gauss->r[2][1] = -alpha;
+  gauss->r[2][2] = +alpha;
+
+  gauss->w[3] = w1 * w1 * w2;
+  gauss->r[3][0] = -alpha;
+  gauss->r[3][1] =  0.0;
+  gauss->r[3][2] = -alpha;
+
+  gauss->w[4] = w1 * w2 * w2;
+  gauss->r[4][0] = -alpha;
+  gauss->r[4][1] = 0.0;
+  gauss->r[4][2] = 0.0;
+
+  gauss->w[5] = w1 * w1 * w2;
+  gauss->r[5][0] = -alpha;
+  gauss->r[5][1] =  0.0;
+  gauss->r[5][2] = +alpha;
+
+  gauss->w[6] = w1 * w1 * w1;
+  gauss->r[6][0] = -alpha;
+  gauss->r[6][1] = +alpha;
+  gauss->r[6][2] = -alpha;
+
+  gauss->w[7] = w1 * w1 * w2;
+  gauss->r[7][0] = -alpha;
+  gauss->r[7][1] = +alpha;
+  gauss->r[7][2] =  0.0;
+
+  gauss->w[8] = w1 * w1 * w1;
+  gauss->r[8][0] = -alpha;
+  gauss->r[8][1] = +alpha;
+  gauss->r[8][2] = +alpha;
+
+  gauss->w[9] = w1 * w1 * w2;
+  gauss->r[9][0] =  0.0;
+  gauss->r[9][1] = -alpha;
+  gauss->r[9][2] = -alpha;
+
+  gauss->w[10] = w1 * w2 * w2;
+  gauss->r[10][0] =  0.0;
+  gauss->r[10][1] = -alpha;
+  gauss->r[10][2] =  0.0;
+
+  gauss->w[11] = w1 * w1 * w2;
+  gauss->r[11][0] =  0.0;
+  gauss->r[11][1] = -alpha;
+  gauss->r[11][2] = +alpha;
+
+  gauss->w[12] = w1 * w2 * w2;
+  gauss->r[12][0] =  0.0;
+  gauss->r[12][1] =  0.0;
+  gauss->r[12][2] = -alpha;
+
+  gauss->w[13] = w2 * w2 * w2;
+  gauss->r[13][0] =  0.0;
+  gauss->r[13][1] =  0.0;
+  gauss->r[13][2] =  0.0;
+
+  gauss->w[14] = w1 * w2 * w2;
+  gauss->r[14][0] =  0.0;
+  gauss->r[14][1] =  0.0;
+  gauss->r[14][2] = +alpha;
+
+  gauss->w[15] = w1 * w1 * w2;
+  gauss->r[15][0] =  0.0;
+  gauss->r[15][1] = +alpha;
+  gauss->r[15][2] = -alpha;
+
+  gauss->w[16] = w1 * w2 * w2;
+  gauss->r[16][0] =  0.0;
+  gauss->r[16][1] = +alpha;
+  gauss->r[16][2] =  0.0;
+
+  gauss->w[17] = w1 * w1 * w2;
+  gauss->r[17][0] =  0.0;
+  gauss->r[17][1] = +alpha;
+  gauss->r[17][2] = +alpha;
+
+  gauss->w[18] = w1 * w1 * w1;
+  gauss->r[18][0] = +alpha;
+  gauss->r[18][1] = -alpha;
+  gauss->r[18][2] = -alpha;
+
+  gauss->w[19] = w1 * w1 * w2;
+  gauss->r[19][0] = +alpha;
+  gauss->r[19][1] = -alpha;
+  gauss->r[19][2] =  0.0;
+
+  gauss->w[20] = w1 * w1 * w1;
+  gauss->r[20][0] = +alpha;
+  gauss->r[20][1] = -alpha;
+  gauss->r[20][2] = +alpha;
+
+  gauss->w[21] = w1 * w1 * w2;
+  gauss->r[21][0] = +alpha;
+  gauss->r[21][1] =  0.0;
+  gauss->r[21][2] = -alpha;
+
+  gauss->w[22] = w1 * w2 * w2;
+  gauss->r[22][0] = +alpha;
+  gauss->r[22][1] =  0.0;
+  gauss->r[22][2] =  0.0;
+
+  gauss->w[23] = w1 * w1 * w2;
+  gauss->r[23][0] = +alpha;
+  gauss->r[23][1] =  0.0;
+  gauss->r[23][2] = +alpha;
+
+  gauss->w[24] = w1 * w1 * w1;
+  gauss->r[24][0] = +alpha;
+  gauss->r[24][1] = +alpha;
+  gauss->r[24][2] = -alpha;
+
+  gauss->w[25] = w1 * w1 * w2;
+  gauss->r[25][0] = +alpha;
+  gauss->r[25][1] = +alpha;
+  gauss->r[25][2] =  0.0;
+
+  gauss->w[26] = w1 * w1 * w1;
+  gauss->r[26][0] = +alpha;
+  gauss->r[26][1] = +alpha;
+  gauss->r[26][2] = +alpha;
+
+  mesh_init_shape_at_gauss(gauss, element_type);
+
+  return;
+}  
+  
 
 
 double mesh_hexa8_h(int j, double *vec_r) {

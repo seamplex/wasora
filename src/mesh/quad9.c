@@ -103,8 +103,8 @@ int mesh_quad9_init(void) {
   wasora_mesh_add_node_parent(&element_type->node_parents[8], 3);
   wasora_mesh_compute_coords_from_parent(element_type, 8);  
   
+  // ------------
   // gauss points and extrapolation matrices
-  element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // full integration: 3x3
   mesh_gauss_init_quad9(element_type, &element_type->gauss[integration_full]);
@@ -131,7 +131,6 @@ int mesh_quad9_init(void) {
   return WASORA_RUNTIME_OK;    
 }
 
-#define M_SQRT5 2.23606797749978969640917366873127623544061835961152572427089
 
 void mesh_gauss_init_quad9(element_type_t *element_type, gauss_t *gauss) {
   double a, w1, w2, w3;  

@@ -76,8 +76,8 @@ v
   element_type->node_coords[2][0] = 0;  
   element_type->node_coords[2][1] = 1;
 
+  // ------------
   // gauss points and extrapolation matrices
-  element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // full integration: 3 points
   mesh_gauss_init_triang3(element_type, &element_type->gauss[integration_full]);

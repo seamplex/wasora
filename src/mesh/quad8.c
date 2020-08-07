@@ -97,8 +97,8 @@ int mesh_quad8_init(void) {
   wasora_mesh_add_node_parent(&element_type->node_parents[7], 0);
   wasora_mesh_compute_coords_from_parent(element_type, 7);
 
+  // ------------
   // gauss points and extrapolation matrices
-  element_type->gauss = calloc(2, sizeof(gauss_t));
   
   // full integration: 3x3
   mesh_gauss_init_quad9(element_type, &element_type->gauss[integration_full]);

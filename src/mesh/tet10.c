@@ -30,7 +30,9 @@
 int mesh_tet10_init(void) {
   
   element_type_t *element_type;
-  int j;
+  double r[3];
+  double a, b, c, d;
+  int j, v;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_TETRAHEDRON10];
   element_type->name = strdup("tet10");
@@ -119,7 +121,97 @@ Tetrahedron10:
   wasora_mesh_add_node_parent(&element_type->node_parents[9], 1);
   wasora_mesh_compute_coords_from_parent(element_type, 9);  
   
-  mesh_tet_gauss4_init(element_type);
+  // ------------
+  // gauss points and extrapolation matrices
+  
+  // full integration: 4 points
+  mesh_gauss_init_tet4(element_type, &element_type->gauss[integration_full]);
+  element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 4);
+
+  // reduced integration: 1 point
+  mesh_gauss_init_tet1(element_type, &element_type->gauss[integration_reduced]);
+  element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 1);
+  
+  // the two extrapolation matrices
+  a = (5.0-sqrt(5))/20.0;
+  b = (5.0+3.0*sqrt(5))/20.0;
+  c = -a/(b-a);
+  d = 1+(1-b)/(b-a);
+    
+  r[0] = c;
+  r[1] = c;
+  r[2] = c;
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 0, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = d;
+  r[1] = c;
+  r[2] = c;
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 1, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = c;
+  r[1] = d;
+  r[2] = c;
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 2, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = c;
+  r[1] = c;
+  r[2] = d;
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 3, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = 0.5*(c+d);
+  r[1] = 0.5*(c+c);
+  r[2] = 0.5*(c+c);
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 4, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = 0.5*(d+c);
+  r[1] = 0.5*(c+d);
+  r[2] = 0.5*(c+c);
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 5, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = 0.5*(c+c);
+  r[1] = 0.5*(c+d);
+  r[2] = 0.5*(c+c);
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 6, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = 0.5*(c+c);
+  r[1] = 0.5*(c+c);
+  r[2] = 0.5*(c+d);
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 7, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = 0.5*(c+c);
+  r[1] = 0.5*(d+c);
+  r[2] = 0.5*(c+d);
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 8, v, mesh_tet4_h(v, r));
+  }
+
+  r[0] = 0.5*(d+c);
+  r[1] = 0.5*(c+c);
+  r[2] = 0.5*(c+d);
+  for (v = 0; v < 4; v++) {
+    gsl_matrix_set(element_type->gauss[integration_full].extrap, 9, v, mesh_tet4_h(v, r));
+  }
+  
+  // reduced
+  for (j = 0; j < element_type->nodes; j++) {
+    gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, 0, 1.0);
+  }  
 
   return WASORA_RUNTIME_OK;
 }

@@ -30,8 +30,9 @@
 
 int mesh_line2_init(void) {
 
+  double r[1];
   element_type_t *element_type;
-  int j;
+  int j, v;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE2];
   element_type->name = strdup("line2");
@@ -65,43 +66,84 @@ Line:
   element_type->first_order_nodes++;
   element_type->node_coords[1][0] = 1;
   
-  mesh_line_gauss2_init(element_type);
+  
+  // ------------
+  // gauss points and extrapolation matrices
+  
+  // full integration: two points
+  mesh_gauss_init_line2(element_type, &element_type->gauss[integration_full]);
+  element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 2);
+
+  // reduced integration: one point
+  mesh_gauss_init_line1(element_type, &element_type->gauss[integration_reduced]);
+  element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 1);
+  
+  // the two extrapolation matrices
+  for (j = 0; j < element_type->nodes; j++) {
+    r[0] = M_SQRT3 * element_type->node_coords[j][0];
+
+    // full    
+    for (v = 0; v < 2; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_line2_h(v, r));
+    }
+    
+    // reduced
+    gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, 0, 1.0);
+  }
   
   return WASORA_RUNTIME_OK;
 }
 
-void mesh_line_gauss2_init(element_type_t *element_type) {
-  gauss_t *gauss;
-  
-  // dos juegos de puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
-  
-  // el primero es el default
-    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
-    mesh_alloc_gauss(gauss, element_type, 2);
 
-    gauss->w[0] = 2 * 0.5;
-    gauss->r[0][0] = -1.0/M_SQRT3;
-
-    gauss->w[1] = 2 * 0.5;
-    gauss->r[1][0] = +1.0/M_SQRT3;
-    
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
-  // ---- un punto de Gauss  ----  
-    gauss = &element_type->gauss[GAUSS_POINTS_REDUCED];
-    mesh_alloc_gauss(gauss, element_type, 1);
+void mesh_gauss_init_line1(element_type_t *element_type, gauss_t *gauss) {
   
-    gauss->w[0] = 2 * 1.0;
-    gauss->r[0][0] = 0;
+  // ---- one Gauss point ----  
+  mesh_alloc_gauss(gauss, element_type, 1);
 
-    mesh_init_shape_at_gauss(gauss, element_type);  
-  
+  gauss->w[0] = 2.0;
+  gauss->r[0][0] = 0.0;
+
+  mesh_init_shape_at_gauss(gauss, element_type);
   
   return;
   
+}  
+  
+void mesh_gauss_init_line2(element_type_t *element_type, gauss_t *gauss) {
+  
+  // ---- two Gauss points ----  
+  mesh_alloc_gauss(gauss, element_type, 2);
 
-}
+  gauss->w[0] = 1.0;
+  gauss->r[0][0] = -1.0/M_SQRT3;
+
+  gauss->w[1] = 1.0;
+  gauss->r[1][0] = +1.0/M_SQRT3;
+
+  mesh_init_shape_at_gauss(gauss, element_type);
+  
+  return;
+}  
+
+
+void mesh_gauss_init_line3(element_type_t *element_type, gauss_t *gauss) {
+  
+  // ---- two Gauss points ----  
+  mesh_alloc_gauss(gauss, element_type, 3);
+
+  gauss->w[0] = 5.0/9.0;
+  gauss->r[0][0] = -sqrt(3.0/5.0);
+
+  gauss->w[1] = 8.0/9.0;
+  gauss->r[1][0] = 0.0;
+
+  gauss->w[1] = 5.0/9.0;
+  gauss->r[1][0] = +sqrt(3.0/5.0);
+  
+  mesh_init_shape_at_gauss(gauss, element_type);
+  
+  return;
+}  
 
 
 double mesh_line2_h(int k, double *vec_r) {

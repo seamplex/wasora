@@ -29,7 +29,6 @@
 int mesh_one_node_point_init(void) {
   
   element_type_t *element_type;
-  gauss_t *gauss;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_POINT1];
   element_type->name = strdup("point");
@@ -44,24 +43,17 @@ int mesh_one_node_point_init(void) {
   element_type->element_volume = mesh_point_vol;
   element_type->point_in_element = NULL;
   
-  // puntos de gauss
-  element_type->gauss = calloc(2, sizeof(gauss_t));
-  
+  // ------------
+  // gauss points and extrapolation matrices
+
   // el primero es el default
-    gauss = &element_type->gauss[GAUSS_POINTS_FULL];
-    mesh_alloc_gauss(gauss, element_type, 1);
+  mesh_alloc_gauss(&element_type->gauss[integration_full], element_type, 1);
+  element_type->gauss[integration_full].w[0] = 1.0;
+  mesh_init_shape_at_gauss(&element_type->gauss[integration_full], element_type);
   
-    gauss->w[0] = 1.0;
-    gauss->r[0][0] = 0.0;
-    gauss->r[0][0] = 0.0;
-    gauss->r[0][0] = 0.0;
-
-    mesh_init_shape_at_gauss(gauss, element_type);
-    
-    
-  // ---- un punto de Gauss sobre el elemento unitario ----  
-    element_type->gauss[GAUSS_POINTS_REDUCED] = element_type->gauss[GAUSS_POINTS_FULL];
-
+  mesh_alloc_gauss(&element_type->gauss[integration_reduced], element_type, 1);
+  element_type->gauss[integration_reduced].w[0] = 1.0;
+  mesh_init_shape_at_gauss(&element_type->gauss[integration_reduced], element_type);
   
   return WASORA_RUNTIME_OK;
 }

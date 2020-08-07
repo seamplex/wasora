@@ -94,7 +94,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
 
               xi = 0;
               for (j = 0; j < element->type->nodes; j++) {
-                xi += element->type->gauss[GAUSS_POINTS_FULL].h[v][j] * wasora_evaluate_function(mesh_integrate->function, element->node[j]->x);
+                xi += element->type->gauss[mesh->integration].h[v][j] * wasora_evaluate_function(mesh_integrate->function, element->node[j]->x);
               }
 
               integral += element->w[v] * xi;

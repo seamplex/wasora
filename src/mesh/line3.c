@@ -30,8 +30,9 @@
 
 int mesh_line3_init(void) {
 
+  double r[1];
   element_type_t *element_type;
-  int j;
+  int j, v;
   
   element_type = &wasora_mesh.element_type[ELEMENT_TYPE_LINE3];
   element_type->name = strdup("line3");
@@ -68,7 +69,31 @@ Line3:
   wasora_mesh_add_node_parent(&element_type->node_parents[2], 1);
   wasora_mesh_compute_coords_from_parent(element_type, 2);
 
-  mesh_line_gauss2_init(element_type);    
+  // ------------
+  // gauss points and extrapolation matrices
+  
+  // full integration: three points
+  mesh_gauss_init_line3(element_type, &element_type->gauss[integration_full]);
+  element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 3);
+
+  // reduced integration: two points
+  mesh_gauss_init_line2(element_type, &element_type->gauss[integration_reduced]);
+  element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 2);
+  
+  // the two extrapolation matrices
+  for (j = 0; j < element_type->nodes; j++) {
+    r[0] = M_SQRT3 * element_type->node_coords[j][0];
+
+    // full    
+    for (v = 0; v < 3; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_line3_h(v, r));
+    }
+    
+    // reduced
+    for (v = 0; v < 2; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_line2_h(v, r));
+    }
+  }
   
   return WASORA_RUNTIME_OK;
 }

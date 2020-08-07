@@ -196,7 +196,7 @@ double mesh_quad8_dhdr(int j, int m, double *vec_r) {
       if (m == 0) {
         return -(1-s*s)/2;
       } else {
-        return -s*(1-r);;
+        return -s*(1-r);
       }
       break;
 

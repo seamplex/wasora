@@ -36,7 +36,7 @@ struct mesh_interp_params {
 double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   
   int i, j;
-  static element_t *chosen_element;
+  static element_t *chosen_element = NULL;
   element_list_item_t *associated_element;
   void *res_item;  
   node_t *nearest_node;
@@ -75,11 +75,14 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
       break;
     }
 
-    chosen_element = NULL;
-    LL_FOREACH(nearest_node->associated_elements, associated_element) {
-      if (associated_element->element->type->dim == m->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
-        chosen_element = associated_element->element;
-        break;
+    // test if the last (cached) chosen_element is the one
+    if (chosen_element == NULL || chosen_element->type->point_in_element(chosen_element, x) == 0) {
+      chosen_element = NULL;
+      LL_FOREACH(nearest_node->associated_elements, associated_element) {
+        if (associated_element->element->type->dim == m->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
+          chosen_element = associated_element->element;
+          break;
+        }  
       }
     }
 

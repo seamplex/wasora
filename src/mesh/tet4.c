@@ -342,8 +342,7 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
 int mesh_point_in_tetrahedron(element_t *element, const double *x) {
 
 // http://en.wikipedia.org/wiki/Barycentric_coordinate_system  
-  double zero, one, lambda1, lambda2, lambda3, lambda4;
-  double xi;
+  double zero, one, lambda4;
   double T[3][3];
   double inv[3][3];
   double xx0[3];
@@ -377,7 +376,7 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
   t12 = T[0][0] * T[1][1];
   t14 = T[0][0] * T[1][2];
   det = t4 * T[1][2] - t6 * T[1][1] - t8 * T[2][2] + t10 * T[2][1] + t12 * T[2][2] - t14 * T[2][1];
-  if (fabs(t17) < 1e-12) {
+  if (fabs(det) < 1e-12) {
     // if the element is degenerate it cannot contain any point
     return 0;
   }

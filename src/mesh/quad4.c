@@ -273,8 +273,10 @@ int mesh_point_in_quadrangle(element_t *element, const double *x) {
 double mesh_quad_vol(element_t *element) {
 
   if (element->volume == 0) {
-    element->volume = 0.5*((element->node[2]->x[0]-element->node[0]->x[0])*(element->node[3]->x[1]-element->node[1]->x[1])
-                          +(element->node[1]->x[0]-element->node[3]->x[0])*(element->node[2]->x[1]-element->node[0]->x[1]));
+    element->volume = fabs(0.5*
+                           ((element->node[2]->x[0]-element->node[0]->x[0])*(element->node[3]->x[1]-element->node[1]->x[1])
+                           +(element->node[1]->x[0]-element->node[3]->x[0])*(element->node[2]->x[1]-element->node[0]->x[1]))
+                          );
   }  
   
   return element->volume;

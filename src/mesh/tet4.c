@@ -289,7 +289,7 @@ double mesh_tet4_dhdr(int j, int m, double *vec_r) {
 
 
 
-
+/*
 int mesh_point_in_tetrahedron(element_t *element, const double *x) {
 
 // http://en.wikipedia.org/wiki/Barycentric_coordinate_system  
@@ -336,6 +336,80 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
   
   return flag;
 }
+*/
+
+
+int mesh_point_in_tetrahedron(element_t *element, const double *x) {
+
+// http://en.wikipedia.org/wiki/Barycentric_coordinate_system  
+  double zero, one, lambda1, lambda2, lambda3, lambda4;
+  double xi;
+  double T[3][3];
+  double inv[3][3];
+  double xx0[3];
+  double lambda[3];
+  double det;
+  double t4, t6, t8, t10, t12, t14, t17;
+  int i, j, k;
+  
+  for (j = 1; j < 4; j++) {
+    for (i = 0; i < 3; i++) {
+      T[i][j-1] = element->node[j]->x[i] - element->node[0]->x[i];
+    }
+    xx0[i] = x[i] - element->node[0]->x[i];
+  }
+  
+/*  
+  det = + T[0][0] * T[1][1] * T[2][2]
+        + T[0][1] * T[1][2] * T[2][0]
+        + T[0][2] * T[1][0] * T[2][1] 
+        - T[0][2] * T[1][1] * T[2][0]
+        - T[0][1] * T[1][0] * T[2][2] 
+        - T[0][0] * T[1][2] * T[2][1];    
+*/
+
+  t4  = T[2][0] * T[0][1];
+  t6  = T[2][0] * T[0][2];
+  t8  = T[1][0] * T[0][1];
+  t10 = T[1][0] * T[0][2];
+  t12 = T[0][0] * T[1][1];
+  t14 = T[0][0] * T[1][2];
+  t17 = 1.0 / (t4 * T[1][2] - t6 * T[1][1] - t8 * T[2][2] + t10 * T[2][1] + t12 * T[2][2] - t14 * T[2][1]);
+
+  if (fabs(t17) < 1e-12) {
+//    wasora_push_error_message("element %d is degenerate", element->tag);
+//    wasora_runtime_error();
+    return 0;
+  }
+  
+  inv[0][0] = +(T[1][1] * T[2][2] - T[1][2] * T[2][1]) * t17;
+  inv[0][1] = -(T[0][1] * T[2][2] - T[0][2] * T[2][1]) * t17;
+  inv[0][2] = +(T[0][1] * T[1][2] - T[0][2] * T[1][1]) * t17;
+  inv[1][0] = -(-T[2][0] * T[1][2] + T[1][0] * T[2][2]) * t17;
+  inv[1][1] = (-t6 + T[0][0] * T[2][2]) * t17;
+  inv[1][2] = -(-t10 + t14) * t17;
+  inv[2][0] = (-T[2][0] * T[1][1] + T[1][0] * T[2][1]) * t17;
+  inv[2][1] = -(-t4 + T[0][0] * T[2][1]) * t17;
+  inv[2][2] = (-t8 + t12) * t17;
+  
+  
+  for (i = 0; i < 3; i++) {
+    lambda[i] = 0;
+    for (k = 0; k < 3; k++) {
+      lambda[i] += inv[i][k] * xx0[k];
+    }
+  }
+ 
+  zero = -wasora_var(wasora_mesh.vars.eps);
+  one = 1+wasora_var(wasora_mesh.vars.eps);
+  lambda4 = 1 - lambda[0] - lambda[1] - lambda[2];
+  
+  return (lambda[0] > zero && lambda[0] < one &&
+          lambda[1] > zero && lambda[1] < one &&
+          lambda[2] > zero && lambda[2] < one &&
+          lambda4 > zero && lambda4 < one);
+}
+
 
 double mesh_tetrahedron_vol(element_t *element) {
 

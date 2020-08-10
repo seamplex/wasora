@@ -108,6 +108,20 @@ int mesh_quad4_init(void) {
   return WASORA_RUNTIME_OK;    
 }
 
+void mesh_gauss_init_quad1(element_type_t *element_type, gauss_t *gauss) {
+
+  // ---- one Gauss point  ----  
+  mesh_alloc_gauss(gauss, element_type, 1);
+  
+  gauss->w[0] = 4 * 1.0;
+  gauss->r[0][0] = 0.0;
+  gauss->r[0][1] = 0.0;
+
+  mesh_init_shape_at_gauss(gauss, element_type);  
+  
+  return;
+}
+
 void mesh_gauss_init_quad4(element_type_t *element_type, gauss_t *gauss) {
 
   // ---- four Gauss points ----  
@@ -135,18 +149,53 @@ void mesh_gauss_init_quad4(element_type_t *element_type, gauss_t *gauss) {
   
 }
 
-
-void mesh_gauss_init_quad1(element_type_t *element_type, gauss_t *gauss) {
-
-  // ---- one Gauss point  ----  
-  mesh_alloc_gauss(gauss, element_type, 1);
+void mesh_gauss_init_quad9(element_type_t *element_type, gauss_t *gauss) {
   
-  gauss->w[0] = 4 * 1.0;
-  gauss->r[0][0] = 0.0;
-  gauss->r[0][1] = 0.0;
-
-  mesh_init_shape_at_gauss(gauss, element_type);  
+  double w1 = 25.0/81.0;
+  double w2 = 40.0/81.0;
+  double w3 = 64.0/81.0;
   
+  // ---- nine Gauss points
+  mesh_alloc_gauss(gauss, element_type, 9);
+  
+  gauss->w[0] = w1;
+  gauss->r[0][0] = -M_SQRT3/M_SQRT5;
+  gauss->r[0][1] = -M_SQRT3/M_SQRT5;
+
+  gauss->w[1] = w1;
+  gauss->r[1][0] = +M_SQRT3/M_SQRT5;
+  gauss->r[1][1] = -M_SQRT3/M_SQRT5;
+ 
+  gauss->w[2] = w1;
+  gauss->r[2][0] = +M_SQRT3/M_SQRT5;
+  gauss->r[2][1] = +M_SQRT3/M_SQRT5;
+
+  gauss->w[3] = w1;
+  gauss->r[3][0] = -M_SQRT3/M_SQRT5;
+  gauss->r[3][1] = +M_SQRT3/M_SQRT5;
+    
+  gauss->w[4] = w2;
+  gauss->r[4][0] = 0.0;
+  gauss->r[4][1] = -M_SQRT3/M_SQRT5;
+
+  gauss->w[5] = w2;
+  gauss->r[5][0] = +M_SQRT3/M_SQRT5;
+  gauss->r[5][1] = 0.0;
+ 
+  gauss->w[6] = w2;
+  gauss->r[6][0] = 0.0;
+  gauss->r[6][1] = +M_SQRT3/M_SQRT5;
+
+  gauss->w[7] = w2;
+  gauss->r[7][0] = -M_SQRT3/M_SQRT5;
+  gauss->r[7][1] = 0.0;
+   
+  gauss->w[8] = w3;
+  gauss->r[8][0] = 0.0;
+  gauss->r[8][1] = 0.0;
+
+  mesh_init_shape_at_gauss(gauss, element_type);
+    
   return;
 }
 

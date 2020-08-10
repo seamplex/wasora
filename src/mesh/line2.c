@@ -132,13 +132,13 @@ void mesh_gauss_init_line3(element_type_t *element_type, gauss_t *gauss) {
   mesh_alloc_gauss(gauss, element_type, 3);
 
   gauss->w[0] = 5.0/9.0;
-  gauss->r[0][0] = -sqrt(3.0/5.0);
+  gauss->r[0][0] = -M_SQRT3/M_SQRT5;
 
   gauss->w[1] = 8.0/9.0;
   gauss->r[1][0] = 0.0;
 
-  gauss->w[1] = 5.0/9.0;
-  gauss->r[1][0] = +sqrt(3.0/5.0);
+  gauss->w[2] = 5.0/9.0;
+  gauss->r[2][0] = +M_SQRT3/M_SQRT5;
   
   mesh_init_shape_at_gauss(gauss, element_type);
   

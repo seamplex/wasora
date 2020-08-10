@@ -108,20 +108,16 @@ int mesh_quad8_init(void) {
   mesh_gauss_init_quad4(element_type, &element_type->gauss[integration_reduced]);
   element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 4);
   
-  for (j = 0; j < element_type->nodes; j++) {
+  for (j = 0; j < element_type->first_order_nodes; j++) {
     r[0] = M_SQRT3 * element_type->node_coords[j][0];
     r[1] = M_SQRT3 * element_type->node_coords[j][1];
     
-    for (v = 0; v < 9; v++) {
-      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad9_h(v, r));
-    }
-    
     for (v = 0; v < 4; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad4_h(v, r));
       gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, v, mesh_quad4_h(v, r));
     }
   }
-
-  
+ 
   return WASORA_RUNTIME_OK;    
 }
 
@@ -133,28 +129,28 @@ double mesh_quad8_h(int j, double *vec_r) {
 
   switch (j) {
     case 0:
-      return (1-r)*(1-s)*(-1-r-s)/4;
+      return (1-r)*(1-s)*(-1-r-s)/4.0;
       break;
     case 1:
-      return (1+r)*(1-s)*(-1+r-s)/4;
+      return (1+r)*(1-s)*(-1+r-s)/4.0;
       break;
     case 2:
-      return (1+r)*(1+s)*(-1+r+s)/4;
+      return (1+r)*(1+s)*(-1+r+s)/4.0;
       break;
     case 3:
-      return (1-r)*(1+s)*(-1-r+s)/4;
+      return (1-r)*(1+s)*(-1-r+s)/4.0;
       break;
     case 4:
-      return (1-r*r)*(1-s)/2;
+      return (1-r*r)*(1-s)/2.0;
       break;
     case 5:
-      return (r+1)*(1-s*s)/2;
+      return (r+1)*(1-s*s)/2.0;
       break;
     case 6:
-      return (1-r*r)*(s+1)/2;
+      return (1-r*r)*(s+1)/2.0;
       break;
     case 7:
-      return (1-r)*(1-s*s)/2;
+      return (1-r)*(1-s*s)/2.0;
       break;
   }
 
@@ -169,42 +165,42 @@ double mesh_quad8_dhdr(int j, int m, double *vec_r) {
   switch(j) {
     case 0:
       if (m == 0) {
-        return (1-s)*(2*r+s)/4;
+        return (1-s)*(2*r+s)/4.0;
       } else {
-        return (1-r)*(r+2*s)/4;
+        return (1-r)*(r+2*s)/4.0;
       }
       break;
     case 1:
       if (m == 0) {
-        return (1-s)*(2*r-s)/4;
+        return (1-s)*(2*r-s)/4.0;
       } else {
-        return -(1+r)*(r-2*s)/4;
+        return -(1+r)*(r-2*s)/4.0;
       }
       break;
     case 2:
       if (m == 0) {
-        return (1+s)*(2*r+s)/4;
+        return (1+s)*(2*r+s)/4.0;
       } else {
-        return (1+r)*(r+2*s)/4;
+        return (1+r)*(r+2*s)/4.0;
       }
       break;
     case 3:
       if (m == 0) {
-        return -(1+s)*(-2*r+s)/4;
+        return -(1+s)*(-2*r+s)/4.0;
       } else {
-        return (1-r)*(-r+2*s)/4;
+        return (1-r)*(-r+2*s)/4.0;
       }
       break;
     case 4:
       if (m == 0) {
         return -r*(1-s);
       } else {
-        return -(1-r*r)/2;
+        return -(1-r*r)/2.0;
       }
       break;
     case 5:
       if (m == 0) {
-        return (1-s*s)/2;
+        return (1-s*s)/2.0;
       } else {
         return -s*(1+r);
       }
@@ -213,12 +209,12 @@ double mesh_quad8_dhdr(int j, int m, double *vec_r) {
       if (m == 0) {
         return -r*(1+s);
       } else {
-        return (1-r*r)/2;
+        return (1-r*r)/2.0;
       }
       break;
     case 7:
       if (m == 0) {
-        return -(1-s*s)/2;
+        return -(1-s*s)/2.0;
       } else {
         return -s*(1-r);
       }

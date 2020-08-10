@@ -80,20 +80,24 @@ Line3:
   mesh_gauss_init_line2(element_type, &element_type->gauss[integration_reduced]);
   element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 2);
   
-  // the two extrapolation matrices
-  for (j = 0; j < element_type->nodes; j++) {
+  
+  for (j = 0; j < element_type->first_order_nodes; j++) {
     r[0] = M_SQRT3 * element_type->node_coords[j][0];
 
-    // full    
-    for (v = 0; v < 3; v++) {
-      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_line3_h(v, r));
-    }
     
-    // reduced
     for (v = 0; v < 2; v++) {
+      // full: 3 points, use the corner nodes with the first-order shape functions and average in the rest
       gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_line2_h(v, r));
+    
+      // reduced: 2 gauss points
+      gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, v, mesh_line2_h(v, r));
     }
   }
+  
+  // average on the high-order of the full one
+  gsl_matrix_set(element_type->gauss[integration_full].extrap, 2, 0, 0.5);
+  gsl_matrix_set(element_type->gauss[integration_full].extrap, 2, 1, 0.5);
+  
   
   return WASORA_RUNTIME_OK;
 }
@@ -101,7 +105,7 @@ Line3:
 double mesh_line3_h(int k, double *vec_r) {
   double r = vec_r[0];
 
-  // numeracion gmsh
+  // Gmsh ordering
   switch (k) {
     case 0:
       return 0.5*r*(r+1);

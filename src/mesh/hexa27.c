@@ -215,18 +215,13 @@ int mesh_hexa27_init(void) {
   element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 8);
   
   // the two extrapolation matrices
-  for (j = 0; j < element_type->nodes; j++) {
+  for (j = 0; j < element_type->first_order_nodes; j++) {
     r[0] = M_SQRT3 * element_type->node_coords[j][0];
     r[1] = M_SQRT3 * element_type->node_coords[j][1];
     r[2] = M_SQRT3 * element_type->node_coords[j][2];
 
-    // full    
-    for (v = 0; v < 27; v++) {
-      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_hexa27_h(v, r));
-    }
-    
-    // reduced
     for (v = 0; v < 8; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_hexa8_h(v, r));
       gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, v, mesh_hexa8_h(v, r));
     }
   }

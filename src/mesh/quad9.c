@@ -115,74 +115,20 @@ int mesh_quad9_init(void) {
   element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 4);
   
   
-  for (j = 0; j < element_type->nodes; j++) {
+  for (j = 0; j < element_type->first_order_nodes; j++) {
     r[0] = M_SQRT3 * element_type->node_coords[j][0];
     r[1] = M_SQRT3 * element_type->node_coords[j][1];
     
-    for (v = 0; v < 9; v++) {
-      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad9_h(v, r));
-    }
-    
     for (v = 0; v < 4; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad4_h(v, r));
       gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, v, mesh_quad4_h(v, r));
     }
   }
-
+  
   return WASORA_RUNTIME_OK;    
 }
 
 
-void mesh_gauss_init_quad9(element_type_t *element_type, gauss_t *gauss) {
-  double a, w1, w2, w3;  
-
-  a = M_SQRT3/M_SQRT5;
-  w1 = 25.0/81.0;
-  w2 = 40.0/81.0;
-  w3 = 64.0/81.0;
-  
-  // ---- nine Gauss points
-  mesh_alloc_gauss(gauss, element_type, 9);
-  
-  gauss->w[0] = w1;
-  gauss->r[0][0] = -a;
-  gauss->r[0][1] = -a;
-
-  gauss->w[1] = w1;
-  gauss->r[1][0] = +a;
-  gauss->r[1][1] = -a;
- 
-  gauss->w[2] = w1;
-  gauss->r[2][0] = +a;
-  gauss->r[2][1] = +a;
-
-  gauss->w[3] = w1;
-  gauss->r[3][0] = -a;
-  gauss->r[3][1] = +a;
-    
-  gauss->w[4] = w2;
-  gauss->r[4][0] = 0;
-  gauss->r[4][1] = -a;
-
-  gauss->w[5] = w2;
-  gauss->r[5][0] = +a;
-  gauss->r[5][1] = 0;
- 
-  gauss->w[6] = w2;
-  gauss->r[6][0] = 0;
-  gauss->r[6][1] = +a;
-
-  gauss->w[7] = w2;
-  gauss->r[7][0] = -a;
-  gauss->r[7][1] = 0;
-   
-  gauss->w[8] = w3;
-  gauss->r[8][0] = 0;
-  gauss->r[8][1] = 0;
-
-  mesh_init_shape_at_gauss(gauss, element_type);
-    
-  return;
-}        
 
 //Taken from https://www.code-aster.org/V2/doc/default/fr/man_r/r3/r3.01.01.pdf
 //The node ordering of aster and gmsh are equal (yei!).

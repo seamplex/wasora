@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related tetrahedron element routines
  *
- *  Copyright (C) 2015--2018 jeremy theler
+ *  Copyright (C) 2015--2020 jeremy theler
  *
  *  This file is part of wasora.
  *
@@ -353,11 +353,13 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
   int i, j, k;
   
   for (j = 1; j < 4; j++) {
-    for (i = 0; i < 3; i++) {
-      T[i][j-1] = element->node[j]->x[i] - element->node[0]->x[i];
-    }
-    xx0[i] = x[i] - element->node[0]->x[i];
+    T[0][j-1] = element->node[j]->x[0] - element->node[0]->x[0];
+    T[1][j-1] = element->node[j]->x[1] - element->node[0]->x[1];
+    T[2][j-1] = element->node[j]->x[2] - element->node[0]->x[2];
   }
+  xx0[0] = x[0] - element->node[0]->x[0];
+  xx0[1] = x[1] - element->node[0]->x[1];
+  xx0[2] = x[2] - element->node[0]->x[2];
   
 /*  
   det = + T[0][0] * T[1][1] * T[2][2]
@@ -374,14 +376,13 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
   t10 = T[1][0] * T[0][2];
   t12 = T[0][0] * T[1][1];
   t14 = T[0][0] * T[1][2];
-  t17 = 1.0 / (t4 * T[1][2] - t6 * T[1][1] - t8 * T[2][2] + t10 * T[2][1] + t12 * T[2][2] - t14 * T[2][1]);
-
+  det = t4 * T[1][2] - t6 * T[1][1] - t8 * T[2][2] + t10 * T[2][1] + t12 * T[2][2] - t14 * T[2][1];
   if (fabs(t17) < 1e-12) {
-//    wasora_push_error_message("element %d is degenerate", element->tag);
-//    wasora_runtime_error();
+    // if the element is degenerate it cannot contain any point
     return 0;
   }
-  
+  t17 = 1.0 / det;
+
   inv[0][0] = +(T[1][1] * T[2][2] - T[1][2] * T[2][1]) * t17;
   inv[0][1] = -(T[0][1] * T[2][2] - T[0][2] * T[2][1]) * t17;
   inv[0][2] = +(T[0][1] * T[1][2] - T[0][2] * T[1][1]) * t17;
@@ -391,8 +392,7 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
   inv[2][0] = (-T[2][0] * T[1][1] + T[1][0] * T[2][1]) * t17;
   inv[2][1] = -(-t4 + T[0][0] * T[2][1]) * t17;
   inv[2][2] = (-t8 + t12) * t17;
-  
-  
+    
   for (i = 0; i < 3; i++) {
     lambda[i] = 0;
     for (k = 0; k < 3; k++) {
@@ -403,6 +403,9 @@ int mesh_point_in_tetrahedron(element_t *element, const double *x) {
   zero = -wasora_var(wasora_mesh.vars.eps);
   one = 1+wasora_var(wasora_mesh.vars.eps);
   lambda4 = 1 - lambda[0] - lambda[1] - lambda[2];
+  
+  
+//  printf("\n%d %g %g %g %g\n", element->tag, lambda[0], lambda[1], lambda[2], lambda4);
   
   return (lambda[0] > zero && lambda[0] < one &&
           lambda[1] > zero && lambda[1] < one &&

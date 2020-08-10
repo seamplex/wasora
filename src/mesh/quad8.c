@@ -104,6 +104,15 @@ int mesh_quad8_init(void) {
   mesh_gauss_init_quad9(element_type, &element_type->gauss[integration_full]);
   element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 9);
 
+  for (j = 0; j < element_type->nodes; j++) {
+    r[0] = M_SQRT5/M_SQRT3 * element_type->node_coords[j][0];
+    r[1] = M_SQRT5/M_SQRT3 * element_type->node_coords[j][1];
+    
+    for (v = 0; v < 9; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad9_h(v, r));
+    }
+  }
+  
   // reduced integration: 2x2
   mesh_gauss_init_quad4(element_type, &element_type->gauss[integration_reduced]);
   element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 4);
@@ -113,10 +122,10 @@ int mesh_quad8_init(void) {
     r[1] = M_SQRT3 * element_type->node_coords[j][1];
     
     for (v = 0; v < 4; v++) {
-      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad4_h(v, r));
       gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, v, mesh_quad4_h(v, r));
     }
   }
+  
  
   return WASORA_RUNTIME_OK;    
 }

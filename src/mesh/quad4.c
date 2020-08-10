@@ -87,21 +87,21 @@ int mesh_quad4_init(void) {
   mesh_gauss_init_quad4(element_type, &element_type->gauss[integration_full]);
   element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 4);
 
+  for (j = 0; j < element_type->nodes; j++) {
+    r[0] = M_SQRT3 * element_type->node_coords[j][0];
+    r[1] = M_SQRT3 * element_type->node_coords[j][1];
+    
+    for (v = 0; v < 4; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad4_h(v, r));
+    }
+  }
+  
+  
   // reduced integration: 1x1
   mesh_gauss_init_quad1(element_type, &element_type->gauss[integration_reduced]);
   element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 1);
   
-  // the two extrapolation matrices
   for (j = 0; j < element_type->nodes; j++) {
-    r[0] = M_SQRT3 * element_type->node_coords[j][0];
-    r[1] = M_SQRT3 * element_type->node_coords[j][1];
-
-    // full    
-    for (v = 0; v < 4; v++) {
-      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_quad4_h(v, r));
-    }
-    
-    // reduced
     gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, 0, 1.0);
   }
 

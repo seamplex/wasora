@@ -73,21 +73,21 @@ Line:
   // full integration: two points
   mesh_gauss_init_line2(element_type, &element_type->gauss[integration_full]);
   element_type->gauss[integration_full].extrap = gsl_matrix_calloc(element_type->nodes, 2);
+  
+  for (j = 0; j < element_type->nodes; j++) {
+    r[0] = M_SQRT3 * element_type->node_coords[j][0];
+    
+    for (v = 0; v < 2; v++) {
+      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_line2_h(v, r));
+    }
+  }
+  
 
   // reduced integration: one point
   mesh_gauss_init_line1(element_type, &element_type->gauss[integration_reduced]);
   element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 1);
   
-  // the two extrapolation matrices
   for (j = 0; j < element_type->nodes; j++) {
-    r[0] = M_SQRT3 * element_type->node_coords[j][0];
-
-    // full    
-    for (v = 0; v < 2; v++) {
-      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_line2_h(v, r));
-    }
-    
-    // reduced
     gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, 0, 1.0);
   }
   

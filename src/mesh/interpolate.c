@@ -35,16 +35,16 @@ struct mesh_interp_params {
 
 double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   
-  int i, j;
+  double x_nearest[3] = {0, 0, 0};
+  double r[3] = {0, 0, 0};    // vector with the local coordinates within the element
+  double y, dist2;
   static element_t *chosen_element = NULL;
   element_list_item_t *associated_element;
   void *res_item;  
   node_t *nearest_node;
-  double y, dist2;
-  double x_nearest[3] = {0, 0, 0};
   mesh_t *m = f->mesh;  
+  int i, j;
 
-  gsl_vector *r = NULL;    // vector with the local coordinates within the element
   
   if (f->data_value == NULL) {
     return 0;
@@ -53,6 +53,7 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   
   if (m->kd_nodes != NULL) {
 
+    // find the nearest node
     res_item = kd_nearest(m->kd_nodes, x);
     nearest_node = (node_t *)(kd_res_item(res_item, x_nearest));
     kd_res_free(res_item);    
@@ -131,13 +132,14 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
       }  
     }
     
-    // fallback: if we still did not find it, choose the nearest node
+    // fallback: if we still did not find it, choose the value at the nearest node
     if (chosen_element == NULL && nearest_node != NULL) {
       return f->data_value[nearest_node->index_mesh];
     }
     
   } else {
 
+    // this logic applies only if for some reason there is no kd-tree
     for (i = 0; i < m->n_nodes; i++) {
       switch (m->spatial_dimensions) {
         case 1:
@@ -158,8 +160,6 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
       }
     }
 
-    // interpolamos porque no es ningun nodo exacto
-    // barremos hasta que lo encontramos
     chosen_element = NULL;
     for (i = 0; i < m->n_elements; i++) {
       if (m->element[i].type->dim == m->bulk_dimensions) {
@@ -172,9 +172,7 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   }
     
   if (chosen_element != NULL) {
-    r = gsl_vector_alloc(chosen_element->type->dim);
     if (mesh_interp_solve_for_r(chosen_element, x, r) != WASORA_RUNTIME_OK) {
-      gsl_vector_free(r);
       return 0;
     }
   } else {
@@ -185,13 +183,13 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
   y = 0;
   if (f->spatial_derivative_of == NULL) {
     for (j = 0; j < chosen_element->type->nodes; j++) {
-      y += chosen_element->type->h(j, gsl_vector_ptr(r,0)) * f->data_value[chosen_element->node[j]->index_mesh];    
+      y += chosen_element->type->h(j, r) * f->data_value[chosen_element->node[j]->index_mesh];    
     }
   } else {
     
     gsl_matrix *dhdx = gsl_matrix_alloc(chosen_element->type->nodes, chosen_element->type->dim);
     
-    mesh_compute_dhdx(chosen_element, gsl_vector_ptr(r,0), NULL, dhdx);
+    mesh_compute_dhdx(chosen_element, r, NULL, dhdx);
       
     for (j = 0; j < chosen_element->type->nodes; j++) {
       y += gsl_matrix_get(dhdx, j, f->spatial_derivative_with_respect_to)
@@ -202,16 +200,15 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
     
   }  
   
-  gsl_vector_free(r);
-  
   return y;
  
 }
 
 
-int mesh_interp_solve_for_r(element_t *element, const double *x, gsl_vector *r) {
+int mesh_interp_solve_for_r(element_t *element, const double *x, double *r) {
   
   int gsl_status;
+  int m;
   size_t iter = 0;  
   struct mesh_interp_params p;
   gsl_vector *test;
@@ -222,36 +219,50 @@ int mesh_interp_solve_for_r(element_t *element, const double *x, gsl_vector *r) 
                                     &mesh_interp_residual_jacob,
                                     element->type->dim, &p};
   
-  p.element = element;
-  p.x = x;
+  if (element->type->id == ELEMENT_TYPE_TETRAHEDRON4 || element->type->id == ELEMENT_TYPE_TETRAHEDRON10) {
+    
+    // the tetrahedron is an easy one
+    mesh_compute_r_tetrahedron(element, x, r);
+
+  } else {
   
-  test = gsl_vector_calloc(element->type->dim);    // guess inicial cero
+    p.element = element;
+    p.x = x;
   
-//  T = gsl_multiroot_fsolver_hybrids;
-//  T = gsl_multiroot_fsolver_hybrid;      
-//  T = gsl_multiroot_fsolver_dnewton;
-//  T = gsl_multiroot_fsolver_broyden;
-  T = gsl_multiroot_fdfsolver_gnewton;
+    test = gsl_vector_calloc(element->type->dim);    // guess inicial cero
+
+//    T = gsl_multiroot_fsolver_hybrids;
+//    T = gsl_multiroot_fsolver_hybrid;      
+//    T = gsl_multiroot_fsolver_dnewton;
+//    T = gsl_multiroot_fsolver_broyden;
+    T = gsl_multiroot_fdfsolver_gnewton;
       
-  s = gsl_multiroot_fdfsolver_alloc (T, element->type->dim);
-  gsl_multiroot_fdfsolver_set (s, &fun, test);
+    s = gsl_multiroot_fdfsolver_alloc (T, element->type->dim);
+    gsl_multiroot_fdfsolver_set (s, &fun, test);
 
-  do {
-    iter++;
-    if ((gsl_status = gsl_multiroot_fdfsolver_iterate(s)) != GSL_SUCCESS) {
-      return WASORA_RUNTIME_ERROR;
-    }
-    gsl_status = gsl_multiroot_test_residual(s->f, wasora_var(wasora_mesh.vars.eps));
-  } while (gsl_status == GSL_CONTINUE && iter < 10);
+    do {
+      iter++;
+      if ((gsl_status = gsl_multiroot_fdfsolver_iterate(s)) != GSL_SUCCESS) {
+        return WASORA_RUNTIME_ERROR;
+      }
+      gsl_status = gsl_multiroot_test_residual(s->f, wasora_var(wasora_mesh.vars.eps));
+    } while (gsl_status == GSL_CONTINUE && iter < 10);
 
-  gsl_vector_memcpy(r, gsl_multiroot_fdfsolver_root(s));
+    for (m = 0; m < element->type->dim; m++) {
+      r[m] = gsl_vector_get(gsl_multiroot_fdfsolver_root(s), m);
+    }  
 
-  gsl_vector_free(test);
-  gsl_multiroot_fdfsolver_free(s);
+    gsl_vector_free(test);
+    gsl_multiroot_fdfsolver_free(s);
+  
+  }
   
   return WASORA_RUNTIME_OK;
+    
   
 }
+
+
 
 
 // vemos que r hace que las x se interpolen exactamente (isoparametricos)
@@ -307,6 +318,63 @@ int mesh_interp_residual_jacob(const gsl_vector *test, void *params, gsl_vector 
   return GSL_SUCCESS;
 }
 
+
+
+
+
+int mesh_compute_r_tetrahedron(element_t *element, const double *x, double *r) {
+
+  int j, j_prime;
+  
+  
+  if (element->type->id == ELEMENT_TYPE_TETRAHEDRON4 || element->type->id == ELEMENT_TYPE_TETRAHEDRON10) {
+//    double xi0, one;
+    double sixV;
+//    double sixV01;
+    double sixV02, sixV03, sixV04;
+
+    // porque ya teniamos todo desde 1    
+    double dx[5][5];
+    double dy[5][5];
+    double dz[5][5];
+    for (j = 0; j < 4; j++) {
+      for (j_prime = 0; j_prime < 4; j_prime++) {
+        dx[j+1][j_prime+1] = element->node[j]->x[0] - element->node[j_prime]->x[0];
+        dy[j+1][j_prime+1] = element->node[j]->x[1] - element->node[j_prime]->x[1];
+        dz[j+1][j_prime+1] = element->node[j]->x[2] - element->node[j_prime]->x[2];
+      }
+    }
+  
+    // arrancan en uno
+    sixV = dx[2][1] * (dy[2][3] * dz[3][4] - dy[3][4] * dz[2][3] ) + dx[3][2] * (dy[3][4] * dz[1][2] - dy[1][2] * dz[3][4] ) + dx[4][3] * (dy[1][2] * dz[2][3] - dy[2][3] * dz[1][2]);
+ 
+    // estos si arrancan en cero
+//    sixV01 = element->node[1]->x[0] * (element->node[2]->x[1]*element->node[3]->x[2] - element->node[3]->x[1]*element->node[2]->x[2]) + element->node[2]->x[0] * (element->node[3]->x[1]*element->node[1]->x[2] - element->node[1]->x[1]*element->node[3]->x[2]) + element->node[3]->x[0] * (element->node[1]->x[1]*element->node[2]->x[2] - element->node[2]->x[1]*element->node[1]->x[2]);
+    sixV02 = element->node[0]->x[0] * (element->node[3]->x[1]*element->node[2]->x[2] - element->node[2]->x[1]*element->node[3]->x[2]) + element->node[2]->x[0] * (element->node[0]->x[1]*element->node[3]->x[2] - element->node[3]->x[1]*element->node[0]->x[2]) + element->node[3]->x[0] * (element->node[2]->x[1]*element->node[0]->x[2] - element->node[0]->x[1]*element->node[2]->x[2]);
+    sixV03 = element->node[0]->x[0] * (element->node[1]->x[1]*element->node[3]->x[2] - element->node[3]->x[1]*element->node[1]->x[2]) + element->node[1]->x[0] * (element->node[3]->x[1]*element->node[0]->x[2] - element->node[0]->x[1]*element->node[3]->x[2]) + element->node[3]->x[0] * (element->node[0]->x[1]*element->node[1]->x[2] - element->node[1]->x[1]*element->node[0]->x[2]);
+    sixV04 = element->node[0]->x[0] * (element->node[2]->x[1]*element->node[1]->x[2] - element->node[1]->x[1]*element->node[2]->x[2]) + element->node[1]->x[0] * (element->node[0]->x[1]*element->node[2]->x[2] - element->node[2]->x[1]*element->node[0]->x[2]) + element->node[2]->x[0] * (element->node[1]->x[1]*element->node[0]->x[2] - element->node[0]->x[1]*element->node[1]->x[2]);
+    
+    // otra vez en uno
+//    xi0 =                1.0/sixV * (sixV01 * 1 + (dy[4][2]*dz[3][2] - dy[3][2]*dz[4][2])*gsl_vector_get(x, 0) + (dx[3][2]*dz[4][2] - dx[4][2]*dz[3][2])*gsl_vector_get(x, 1) + (dx[4][2]*dy[3][2] - dx[3][2]*dy[4][2])*gsl_vector_get(x, 2));
+    r[0] = 1.0/sixV * (sixV02 * 1 + (dy[3][1]*dz[4][3] - dy[3][4]*dz[1][3])*x[0] + (dx[4][3]*dz[3][1] - dx[1][3]*dz[3][4])*x[1] + (dx[3][1]*dy[4][3] - dx[3][4]*dy[1][3])*x[2]);
+    r[1] = 1.0/sixV * (sixV03 * 1 + (dy[2][4]*dz[1][4] - dy[1][4]*dz[2][4])*x[0] + (dx[1][4]*dz[2][4] - dx[2][4]*dz[1][4])*x[1] + (dx[2][4]*dy[1][4] - dx[1][4]*dy[2][4])*x[2]);
+    r[2] = 1.0/sixV * (sixV04 * 1 + (dy[1][3]*dz[2][1] - dy[1][2]*dz[3][1])*x[0] + (dx[2][1]*dz[1][3] - dx[3][1]*dz[1][2])*x[1] + (dx[1][3]*dy[2][1] - dx[1][2]*dy[3][1])*x[2]);
+    
+/*    
+    one = xi0 + gsl_vector_get(r,0) + gsl_vector_get(r,1) + gsl_vector_get(r,2);
+    if (gsl_fcmp(one, 1.0, 1e-3) != 0) {
+      printf("internal mismatch when computing canonical coordinates in element %d\n", element->id);
+      return WASORA_RUNTIME_ERROR;
+    }
+ */
+    
+  } else {
+    wasora_push_error_message("not for element type %d", element->type->id) ;
+    return WASORA_RUNTIME_ERROR;
+  }
+
+  return WASORA_RUNTIME_OK;
+}
 
 
 

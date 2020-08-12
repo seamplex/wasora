@@ -2424,12 +2424,12 @@ extern double mesh_interpolate_function_property(function_t *, const double *);
 extern int mesh_interp_residual(const gsl_vector *, void *, gsl_vector *);
 extern int mesh_interp_jacob(const gsl_vector *, void *, gsl_matrix *);
 extern int mesh_interp_residual_jacob(const gsl_vector *, void *, gsl_vector *, gsl_matrix *);
-extern int mesh_interp_solve_for_r(element_t *, const double *, gsl_vector *);
+extern int mesh_interp_solve_for_r(element_t *, const double *, double *);
+extern int mesh_compute_r_tetrahedron(element_t *, const double *, double *);
 
 
 
 // fem.c
-extern int mesh_compute_r(element_t *, gsl_vector *, gsl_vector *);
 extern int mesh_compute_r_at_node(element_t *, int, gsl_vector *);
 extern void mesh_compute_l(mesh_t *, element_t *);
 extern int mesh_compute_normal(element_t *);

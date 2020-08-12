@@ -327,10 +327,10 @@ element_t *mesh_find_element(mesh_t *mesh, const double *x) {
   }
   
   // si no encontramos ninguno entonces capaz que la malla este deformada, probamos con otros nodos
-  if (element == NULL) {
+  if (element == NULL && wasora_var(wasora_mesh.vars.mesh_failed_interpolation_factor) > 0) {
     struct kdres *presults;
     // pedimos los que estén en un radio de algunas veces (cuantas?) veces el anterior
-    presults = kd_nearest_range(mesh->kd_nodes, x, 7*mesh_subtract_module(x, x_nearest));
+    presults = kd_nearest_range(mesh->kd_nodes, x, wasora_var(wasora_mesh.vars.mesh_failed_interpolation_factor)*mesh_subtract_module(x, x_nearest));
     while(element == NULL && kd_res_end(presults) == 0) {
       node = (node_t *)(kd_res_item(presults, x_nearest));
       LL_FOREACH(node->associated_elements, associated_element) {

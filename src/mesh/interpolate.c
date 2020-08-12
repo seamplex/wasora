@@ -33,23 +33,25 @@ struct mesh_interp_params {
 };
 
 
-double mesh_interpolate_function_node(struct function_t *f, const double *x) {
+double mesh_interpolate_function_node(struct function_t *function, const double *x) {
   
   double x_nearest[3] = {0, 0, 0};
   double r[3] = {0, 0, 0};    // vector with the local coordinates within the element
   double y, dist2;
-  static element_t *chosen_element = NULL;
+  static element_t *chosen_element;
   element_list_item_t *associated_element;
   void *res_item;  
   node_t *nearest_node;
-  mesh_t *m = f->mesh;  
+  mesh_t *m = function->mesh;  
   int i, j;
 
   
-  if (f->data_value == NULL) {
+  if (function->data_value == NULL) {
     return 0;
   }
   
+  // try the last chosen element
+  chosen_element = function->mesh->last_chosen_element;
   
   if (m->kd_nodes != NULL) {
 
@@ -60,18 +62,18 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
 
     switch (m->spatial_dimensions) {
       case 1:
-        if ((dist2 = gsl_pow_2(fabs(x[0]-x_nearest[0]))) < gsl_pow_2(f->multidim_threshold)) {
-          return f->data_value[nearest_node->index_mesh];
+        if ((dist2 = gsl_pow_2(fabs(x[0]-x_nearest[0]))) < gsl_pow_2(function->multidim_threshold)) {
+          return function->data_value[nearest_node->index_mesh];
         }
       break;
       case 2:
-        if ((dist2 = (mesh_subtract_squared_module2d(x, x_nearest))) < gsl_pow_2(f->multidim_threshold)) {
-          return f->data_value[nearest_node->index_mesh];
+        if ((dist2 = (mesh_subtract_squared_module2d(x, x_nearest))) < gsl_pow_2(function->multidim_threshold)) {
+          return function->data_value[nearest_node->index_mesh];
         }
       break;
       case 3:
-        if ((dist2 = (mesh_subtract_squared_module(x, x_nearest))) < gsl_pow_2(f->multidim_threshold)) {
-          return f->data_value[nearest_node->index_mesh];
+        if ((dist2 = (mesh_subtract_squared_module(x, x_nearest))) < gsl_pow_2(function->multidim_threshold)) {
+          return function->data_value[nearest_node->index_mesh];
         }
       break;
     }
@@ -134,7 +136,7 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
     
     // fallback: if we still did not find it, choose the value at the nearest node
     if (chosen_element == NULL && nearest_node != NULL) {
-      return f->data_value[nearest_node->index_mesh];
+      return function->data_value[nearest_node->index_mesh];
     }
     
   } else {
@@ -143,18 +145,18 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
     for (i = 0; i < m->n_nodes; i++) {
       switch (m->spatial_dimensions) {
         case 1:
-          if (fabs(x[0]-m->node[i].x[0]) < f->multidim_threshold) {
-            return f->data_value[m->node[i].index_mesh];
+          if (fabs(x[0]-m->node[i].x[0]) < function->multidim_threshold) {
+            return function->data_value[m->node[i].index_mesh];
           }
         break;
         case 2:
-          if (mesh_subtract_squared_module2d(x, m->node[i].x) < gsl_pow_2(f->multidim_threshold)) {
-            return f->data_value[m->node[i].index_mesh];
+          if (mesh_subtract_squared_module2d(x, m->node[i].x) < gsl_pow_2(function->multidim_threshold)) {
+            return function->data_value[m->node[i].index_mesh];
           }
         break;
         case 3:
-          if (mesh_subtract_squared_module(x, m->node[i].x) < gsl_pow_2(f->multidim_threshold)) {
-            return f->data_value[m->node[i].index_mesh];
+          if (mesh_subtract_squared_module(x, m->node[i].x) < gsl_pow_2(function->multidim_threshold)) {
+            return function->data_value[m->node[i].index_mesh];
           }
         break;
       }
@@ -170,7 +172,10 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
       }
     }
   }
-    
+
+  // update cache
+  function->mesh->last_chosen_element = chosen_element;  
+  
   if (chosen_element != NULL) {
     if (mesh_interp_solve_for_r(chosen_element, x, r) != WASORA_RUNTIME_OK) {
       return 0;
@@ -179,12 +184,14 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
     return 0;
   }
   
-  // calculamos el valor de y
+  // compute the interpolation
   y = 0;
-  if (f->spatial_derivative_of == NULL) {
+  if (function->spatial_derivative_of == NULL) {
+    
     for (j = 0; j < chosen_element->type->nodes; j++) {
-      y += chosen_element->type->h(j, r) * f->data_value[chosen_element->node[j]->index_mesh];    
+      y += chosen_element->type->h(j, r) * function->data_value[chosen_element->node[j]->index_mesh];    
     }
+    
   } else {
     
     gsl_matrix *dhdx = gsl_matrix_alloc(chosen_element->type->nodes, chosen_element->type->dim);
@@ -192,8 +199,8 @@ double mesh_interpolate_function_node(struct function_t *f, const double *x) {
     mesh_compute_dhdx(chosen_element, r, NULL, dhdx);
       
     for (j = 0; j < chosen_element->type->nodes; j++) {
-      y += gsl_matrix_get(dhdx, j, f->spatial_derivative_with_respect_to)
-            * f->spatial_derivative_of->data_value[chosen_element->node[j]->index_mesh];
+      y += gsl_matrix_get(dhdx, j, function->spatial_derivative_with_respect_to)
+            * function->spatial_derivative_of->data_value[chosen_element->node[j]->index_mesh];
     }
     
     gsl_matrix_free(dhdx);
@@ -379,13 +386,13 @@ int mesh_compute_r_tetrahedron(element_t *element, const double *x, double *r) {
 
 
 
-double mesh_interpolate_function_cell(struct function_t *f, const double *x) {
+double mesh_interpolate_function_cell(struct function_t *function, const double *x) {
   
   int i;
   static cell_t *chosen_cell;
   node_t *nearest_node;
   element_list_item_t *associated_element;
-  mesh_t *m = f->mesh;
+  mesh_t *m = function->mesh;
 
 
   if (m->kd_nodes != NULL) {
@@ -415,7 +422,7 @@ double mesh_interpolate_function_cell(struct function_t *f, const double *x) {
     return 0;
   }
 
-  return f->data_value[chosen_cell->id - 1];
+  return function->data_value[chosen_cell->id - 1];
  
 }
 

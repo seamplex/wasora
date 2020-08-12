@@ -2260,6 +2260,9 @@ struct mesh_t {
   void *kd_nodes;
   void *kd_cells;
 
+  // cache for interpolation
+  element_t *last_chosen_element;
+  
   physical_entity_t *origin;
   physical_entity_t *left;
   physical_entity_t *right;

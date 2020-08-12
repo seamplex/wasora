@@ -518,6 +518,7 @@ int mesh_free(mesh_t *mesh) {
   mesh->node = NULL;
   mesh->n_nodes = 0;
   mesh->max_first_neighbor_nodes = 1;
+  mesh->last_chosen_element = NULL;
 
   for (physical_entity = mesh->physical_entities; physical_entity != NULL; physical_entity = physical_entity->hh.next) {
     physical_entity->n_elements = 0;

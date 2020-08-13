@@ -560,6 +560,19 @@ int mesh_free(mesh_t *mesh) {
   mesh->kd_nodes = NULL;
 
   // nodes
+  if (mesh->nodes_argument != NULL) {
+    for (d = 0; d < mesh->spatial_dimensions; d++) {
+      free(mesh->nodes_argument[d]);
+    }
+    free(mesh->nodes_argument);
+    mesh->nodes_argument = NULL;
+  }
+  
+  if (mesh->tag2index != NULL) {
+    free(mesh->tag2index);
+    mesh->tag2index = NULL;
+  }
+  
   if (mesh->node != NULL) {
     for (j = 0; j < mesh->n_nodes; j++) {
       if (mesh->node[j].index_dof != NULL) {

@@ -280,7 +280,6 @@ int wasora_mesh_parse_line(char *line) {
         }
       }
       
-      
       if (wasora_define_instruction(wasora_instruction_mesh, mesh) == NULL) {
         return WASORA_PARSER_ERROR;
       }

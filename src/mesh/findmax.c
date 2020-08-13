@@ -134,9 +134,7 @@ int wasora_instruction_mesh_find_minmax(void *arg) {
     } else {
       if (mesh_find_minmax->centering == centering_cells) {
         for (i = 0; i < mesh->n_cells; i++) {
-          wasora_var(wasora_mesh.vars.x) = mesh->cell[i].x[0];
-          wasora_var(wasora_mesh.vars.y) = mesh->cell[i].x[1];
-          wasora_var(wasora_mesh.vars.z) = mesh->cell[i].x[2];
+          mesh_update_coord_vars(mesh->cell[i].x);
           y = wasora_evaluate_expression(expr);
           if (y > max) {
             max = y;

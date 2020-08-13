@@ -76,16 +76,12 @@ int wasora_instruction_mesh_fill_vector(void *arg) {
   } else {
     if (mesh_fill_vector->centering == centering_cells) {
       for (i = 0; i < mesh->n_cells; i++) {
-        wasora_var(wasora_mesh.vars.x) = mesh->cell[i].x[0];
-        wasora_var(wasora_mesh.vars.y) = mesh->cell[i].x[1];
-        wasora_var(wasora_mesh.vars.z) = mesh->cell[i].x[2];
+        mesh_update_coord_vars(mesh->cell[i].x);
         gsl_vector_set(wasora_value_ptr(vector), i, wasora_evaluate_expression(expr));
       }
     } else {
       for (i = 0; i < mesh->n_nodes; i++) {
-        wasora_var(wasora_mesh.vars.x) = mesh->node[i].x[0];
-        wasora_var(wasora_mesh.vars.y) = mesh->node[i].x[1];
-        wasora_var(wasora_mesh.vars.z) = mesh->node[i].x[2];
+        mesh_update_coord_vars(mesh->node[i].x);
         gsl_vector_set(wasora_value_ptr(vector), i, wasora_evaluate_expression(expr));
       }
     }

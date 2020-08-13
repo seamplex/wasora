@@ -304,68 +304,133 @@ int wasora_instruction_mesh(void *arg) {
 
 }
 
-element_t *mesh_find_element(mesh_t *mesh, const double *x) {
+node_t *mesh_find_nearest_node(mesh_t *mesh, const double *x) {
+  
+  node_t *node;
+  void *res_item;  
+  
+  res_item = kd_nearest(mesh->kd_nodes, x);
+  node = (node_t *)(kd_res_item(res_item, NULL));
+  kd_res_free(res_item);    
 
+  return node;
+}
+
+element_t *mesh_find_element(mesh_t *mesh, node_t *nearest_node, const double *x) {
+
+  double x_nearest[3] = {0, 0, 0};
+  double dist2;
   element_t *element = NULL;
   element_list_item_t *associated_element;
-  node_t *node;
-  double distance;
-  double x_nearest[3] = {0, 0, 0};
-  struct kdres *rset;  //Auxiliary.
-  rset = kd_nearest(mesh->kd_nodes, x);
-  // buscamoe el nodo mas cercano al punto x
-  node = (node_t *)(kd_res_item(rset, x_nearest));
-  kd_res_free(rset);
+  node_t *second_nearest_node;
+  void *res_item;   
 
-  // barremos los elementos asociados al este nodo
-  // si el punto x cae dentro de estos poquitos elementos
-  LL_FOREACH(node->associated_elements, associated_element) {
-    if (associated_element->element->type->dim == mesh->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
-      element = associated_element->element;
-      break;
+  // try the last chosen element
+  element = mesh->last_chosen_element;
+  
+  // test if the last (cached) chosen_element is the one
+  if (element == NULL || element->type->point_in_element(element, x) == 0) {
+    element = NULL;
+    
+    // find the nearest node if not provided
+    if (nearest_node == NULL) {
+      res_item = kd_nearest(mesh->kd_nodes, x);
+      nearest_node = (node_t *)(kd_res_item(res_item, x_nearest));
+      kd_res_free(res_item);    
+    }  
+    
+    LL_FOREACH(nearest_node->associated_elements, associated_element) {
+      if (associated_element->element->type->dim == mesh->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
+        element = associated_element->element;
+        break;
+      }  
     }
   }
   
-  // si no encontramos ninguno entonces capaz que la malla este deformada, probamos con otros nodos
+
   if (element == NULL && wasora_var(wasora_mesh.vars.mesh_failed_interpolation_factor) > 0) {
-    struct kdres *presults;
-    // pedimos los que estén en un radio de algunas veces (cuantas?) veces el anterior
-    presults = kd_nearest_range(mesh->kd_nodes, x, wasora_var(wasora_mesh.vars.mesh_failed_interpolation_factor)*mesh_subtract_module(x, x_nearest));
+    // if we do not find any then the mesh might be deformed or the point might be outside the domain
+    // so we see if we can find another one
+
+    switch (mesh->spatial_dimensions) {
+      case 1:
+        dist2 = gsl_pow_2(fabs(x[0] - x_nearest[0]));
+      break;
+      case 2:
+        dist2 = mesh_subtract_squared_module2d(x, x_nearest);
+      break;
+      case 3:
+        dist2 = mesh_subtract_squared_module(x, x_nearest);
+      break;
+    }
+    
+    // this is a hash of elements we already saw so we do not need to check for them many times
+    struct cached_element {
+      int id;
+      UT_hash_handle hh;
+    };
+      
+    struct cached_element *cache = NULL;
+    struct cached_element *tmp = NULL;
+    struct cached_element *cached_element = NULL;
+
+    // we ask for the nodes which are within a radius mesh_failed_interpolation_factor times the last one
+    struct kdres *presults = kd_nearest_range(mesh->kd_nodes, x, wasora_var(wasora_mesh.vars.mesh_failed_interpolation_factor)*sqrt(dist2));
+      
     while(element == NULL && kd_res_end(presults) == 0) {
-      node = (node_t *)(kd_res_item(presults, x_nearest));
-      LL_FOREACH(node->associated_elements, associated_element) {
-        if (associated_element->element->type->dim == mesh->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
-          element = associated_element->element;
-          break;
-        }
+      second_nearest_node = (node_t *)(kd_res_item(presults, x_nearest));
+      LL_FOREACH(second_nearest_node->associated_elements, associated_element) {
+          
+        cached_element = NULL;
+        HASH_FIND_INT(cache, &associated_element->element->tag, cached_element);
+        if (cached_element == NULL) {
+          struct cached_element *cached_element = malloc(sizeof(struct cached_element));
+          cached_element->id = associated_element->element->tag;
+          HASH_ADD_INT(cache, id, cached_element);
+        
+          if (associated_element->element->type->dim == mesh->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
+            element = associated_element->element;
+            break;
+          }
+        }  
       }
       kd_res_next(presults);
     }
     kd_res_free(presults);
-  }
+
+    HASH_ITER(hh, cache, cached_element, tmp) {
+      HASH_DEL(cache, cached_element);
+      free(cached_element);
+    }  
+  }  
   
-  
-  // TODO: regla SPOT
   if (element == NULL) {
-    // si no encontro ninguno vemos si x esta cerquita del nodo o no
-    distance = 0;
-    if (mesh->spatial_dimensions == 1) {
-      distance = gsl_pow_2(x[0]-node->x[0]);
-    } else if (mesh->spatial_dimensions == 2) {
-    	distance = mesh_subtract_squared_module2d(x, node->x);
-    } else if (mesh->spatial_dimensions == 3) {
-      distance = mesh_subtract_squared_module(x, node->x);
+    // if still we did not find anything, 
+    switch (mesh->spatial_dimensions) {
+      case 1:
+        dist2 = gsl_pow_2(fabs(x[0] - x_nearest[0]));
+      break;
+      case 2:
+        dist2 = mesh_subtract_squared_module2d(x, x_nearest);
+      break;
+      case 3:
+        dist2 = mesh_subtract_squared_module(x, x_nearest);
+      break;
     }
 
-    // si estamos cerquita, ponemos el primero que tenga la dimension correcta y ya
-    if (distance < DEFAULT_MULTIDIM_INTERPOLATION_THRESHOLD) {
-      LL_FOREACH(node->associated_elements, associated_element) {
+    // just what is close
+    if (dist2 < DEFAULT_MULTIDIM_INTERPOLATION_THRESHOLD) {
+      LL_FOREACH(nearest_node->associated_elements, associated_element) {
         if (associated_element->element->type->dim == mesh->bulk_dimensions) {
           element = associated_element->element;
+          break;
         }
       }
     }
   }
+  
+  // update cache
+  mesh->last_chosen_element = element;
 
   return element;
 }

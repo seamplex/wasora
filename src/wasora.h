@@ -2367,7 +2367,8 @@ struct mesh_integrate_t {
 };
 
 // mesh.c
-extern element_t *mesh_find_element(mesh_t *, const double *);
+extern element_t *mesh_find_element(mesh_t *, node_t *, const double *);
+extern node_t *mesh_find_nearest_node(mesh_t *, const double *);
 extern int mesh_free(mesh_t *);
 extern mesh_t *wasora_get_mesh_ptr(const char *);
 

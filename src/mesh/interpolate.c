@@ -38,169 +38,64 @@ double mesh_interpolate_function_node(struct function_t *function, const double 
   double x_nearest[3] = {0, 0, 0};
   double r[3] = {0, 0, 0};    // vector with the local coordinates within the element
   double y, dist2;
-  static element_t *chosen_element;
-  element_list_item_t *associated_element;
-  void *res_item;  
+  static element_t *element;
   node_t *nearest_node;
-  mesh_t *m = function->mesh;  
-  int i, j;
+  mesh_t *mesh = function->mesh;  
+  int j;
 
   
   if (function->data_value == NULL) {
     return 0;
   }
-  
-  // try the last chosen element
-  chosen_element = function->mesh->last_chosen_element;
-  
-  if (m->kd_nodes != NULL) {
 
-    // find the nearest node
-    res_item = kd_nearest(m->kd_nodes, x);
-    nearest_node = (node_t *)(kd_res_item(res_item, x_nearest));
-    kd_res_free(res_item);    
+  // find the nearest node
+  nearest_node = mesh_find_nearest_node(mesh, x);
 
-    switch (m->spatial_dimensions) {
-      case 1:
-        if ((dist2 = gsl_pow_2(fabs(x[0]-x_nearest[0]))) < gsl_pow_2(function->multidim_threshold)) {
-          return function->data_value[nearest_node->index_mesh];
-        }
-      break;
-      case 2:
-        if ((dist2 = (mesh_subtract_squared_module2d(x, x_nearest))) < gsl_pow_2(function->multidim_threshold)) {
-          return function->data_value[nearest_node->index_mesh];
-        }
-      break;
-      case 3:
-        if ((dist2 = (mesh_subtract_squared_module(x, x_nearest))) < gsl_pow_2(function->multidim_threshold)) {
-          return function->data_value[nearest_node->index_mesh];
-        }
-      break;
-    }
-
-    // test if the last (cached) chosen_element is the one
-    if (chosen_element == NULL || chosen_element->type->point_in_element(chosen_element, x) == 0) {
-      chosen_element = NULL;
-      LL_FOREACH(nearest_node->associated_elements, associated_element) {
-        if (associated_element->element->type->dim == m->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
-          chosen_element = associated_element->element;
-          break;
-        }  
+  // check is it is close enough to a node
+  switch (mesh->spatial_dimensions) {
+    case 1:
+      if ((dist2 = gsl_pow_2(fabs(x[0]-x_nearest[0]))) < gsl_pow_2(function->multidim_threshold)) {
+        return function->data_value[nearest_node->index_mesh];
       }
-    }
-
-    
-    // if we do not find any then the mesh might be deformed or the point might be outside the domain
-    // so we see if we can find another one
-    if (chosen_element == NULL && wasora_var(wasora_mesh.vars.mesh_failed_interpolation_factor) > 0) {
-      
-      // this is a hash of elements we already saw so we do not need to check for them many times
-      struct cached_element {
-        int id;
-        UT_hash_handle hh;
-      };
-      
-      struct cached_element *cache = NULL;
-      struct cached_element *tmp = NULL;
-      struct cached_element *cached_element = NULL;
-
-      // we ask for the nodes which are within a radius mesh_failed_interpolation_factor times the last one
-      struct kdres *presults = kd_nearest_range(m->kd_nodes, x, wasora_var(wasora_mesh.vars.mesh_failed_interpolation_factor)*sqrt(dist2));
-      
-      while(chosen_element == NULL && kd_res_end(presults) == 0) {
-        nearest_node = (node_t *)(kd_res_item(presults, x_nearest));
-        LL_FOREACH(nearest_node->associated_elements, associated_element) {
-          
-          cached_element = NULL;
-          HASH_FIND_INT(cache, &associated_element->element->tag, cached_element);
-          if (cached_element == NULL) {
-            struct cached_element *cached_element = malloc(sizeof(struct cached_element));
-            cached_element->id = associated_element->element->tag;
-            HASH_ADD_INT(cache, id, cached_element);
-          
-            if (associated_element->element->type->dim == m->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
-              chosen_element = associated_element->element;
-              break;
-            }
-          }  
-        }
-        kd_res_next(presults);
+    break;
+    case 2:
+      if ((dist2 = (mesh_subtract_squared_module2d(x, x_nearest))) < gsl_pow_2(function->multidim_threshold)) {
+        return function->data_value[nearest_node->index_mesh];
       }
-      kd_res_free(presults);
-
-      HASH_ITER(hh, cache, cached_element, tmp) {
-        HASH_DEL(cache, cached_element);
-        free(cached_element);
-      }  
-    }
-    
-    // fallback: if we still did not find it, choose the value at the nearest node
-    if (chosen_element == NULL && nearest_node != NULL) {
-      return function->data_value[nearest_node->index_mesh];
-    }
-    
-  } else {
-
-    // this logic applies only if for some reason there is no kd-tree
-    for (i = 0; i < m->n_nodes; i++) {
-      switch (m->spatial_dimensions) {
-        case 1:
-          if (fabs(x[0]-m->node[i].x[0]) < function->multidim_threshold) {
-            return function->data_value[m->node[i].index_mesh];
-          }
-        break;
-        case 2:
-          if (mesh_subtract_squared_module2d(x, m->node[i].x) < gsl_pow_2(function->multidim_threshold)) {
-            return function->data_value[m->node[i].index_mesh];
-          }
-        break;
-        case 3:
-          if (mesh_subtract_squared_module(x, m->node[i].x) < gsl_pow_2(function->multidim_threshold)) {
-            return function->data_value[m->node[i].index_mesh];
-          }
-        break;
+    break;
+    case 3:
+      if ((dist2 = (mesh_subtract_squared_module(x, x_nearest))) < gsl_pow_2(function->multidim_threshold)) {
+        return function->data_value[nearest_node->index_mesh];
       }
-    }
-
-    chosen_element = NULL;
-    for (i = 0; i < m->n_elements; i++) {
-      if (m->element[i].type->dim == m->bulk_dimensions) {
-        if (m->element[i].type->point_in_element(&m->element[i], x)) {
-          chosen_element = &m->element[i];
-          break;
-        }
-      }
-    }
+    break;
   }
 
-  // update cache
-  function->mesh->last_chosen_element = chosen_element;  
-  
-  if (chosen_element != NULL) {
-    if (mesh_interp_solve_for_r(chosen_element, x, r) != WASORA_RUNTIME_OK) {
+  if ((element = mesh_find_element(mesh, nearest_node, x)) != NULL) {
+    if (mesh_interp_solve_for_r(element, x, r) != WASORA_RUNTIME_OK) {
       return 0;
     }
   } else {
-    return 0;
+    // should we return the nearest node value?
+    return function->data_value[nearest_node->index_mesh];
   }
   
   // compute the interpolation
   y = 0;
   if (function->spatial_derivative_of == NULL) {
     
-    for (j = 0; j < chosen_element->type->nodes; j++) {
-      y += chosen_element->type->h(j, r) * function->data_value[chosen_element->node[j]->index_mesh];    
+    for (j = 0; j < element->type->nodes; j++) {
+      y += element->type->h(j, r) * function->data_value[element->node[j]->index_mesh];    
     }
     
   } else {
     
-    gsl_matrix *dhdx = gsl_matrix_alloc(chosen_element->type->nodes, chosen_element->type->dim);
+    gsl_matrix *dhdx = gsl_matrix_alloc(element->type->nodes, element->type->dim);
     
-    mesh_compute_dhdx(chosen_element, r, NULL, dhdx);
+    mesh_compute_dhdx(element, r, NULL, dhdx);
       
-    for (j = 0; j < chosen_element->type->nodes; j++) {
+    for (j = 0; j < element->type->nodes; j++) {
       y += gsl_matrix_get(dhdx, j, function->spatial_derivative_with_respect_to)
-            * function->spatial_derivative_of->data_value[chosen_element->node[j]->index_mesh];
+            * function->spatial_derivative_of->data_value[element->node[j]->index_mesh];
     }
     
     gsl_matrix_free(dhdx);
@@ -392,14 +287,14 @@ double mesh_interpolate_function_cell(struct function_t *function, const double 
   static cell_t *chosen_cell;
   node_t *nearest_node;
   element_list_item_t *associated_element;
-  mesh_t *m = function->mesh;
+  mesh_t *mesh = function->mesh;
 
 
-  if (m->kd_nodes != NULL) {
-    nearest_node = (node_t *)(kd_res_item_data(kd_nearest(m->kd_nodes, x)));
+  if (mesh->kd_nodes != NULL) {
+    nearest_node = (node_t *)(kd_res_item_data(kd_nearest(mesh->kd_nodes, x)));
     chosen_cell = NULL;
     LL_FOREACH(nearest_node->associated_elements, associated_element) {
-      if (associated_element->element->type->dim == m->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
+      if (associated_element->element->type->dim == mesh->bulk_dimensions && associated_element->element->type->point_in_element(associated_element->element, x)) {
         chosen_cell = associated_element->element->cell;
         break;
       }
@@ -410,9 +305,9 @@ double mesh_interpolate_function_cell(struct function_t *function, const double 
   if (chosen_cell == NULL || chosen_cell->element->type->point_in_element(chosen_cell->element, x) == 0) {
     chosen_cell = NULL;
     // y si no barremos hasta que lo encontramos
-    for (i = 0; i < m->n_cells; i++) {
-      if (m->cell[i].element->type->point_in_element(m->cell[i].element, x)) {
-        chosen_cell = &m->cell[i];
+    for (i = 0; i < mesh->n_cells; i++) {
+      if (mesh->cell[i].element->type->point_in_element(mesh->cell[i].element, x)) {
+        chosen_cell = &mesh->cell[i];
         break;
       }
     }
@@ -433,12 +328,13 @@ double mesh_interpolate_function_property(struct function_t *function, const dou
   mesh_t *mesh= function->mesh;
   element_t *element; 
 
-  // si no hay malla puede ser que todavia no se inicializo, no es un error  
+  // if there is no mesh it could be that it has not been read
+  // this is not necessarily an error
   if (mesh == NULL || mesh->n_nodes == 0) {
     return 1.0;
   }
   
-  element = mesh_find_element(function->mesh, x);
+  element = mesh_find_element(function->mesh, NULL, x);
 
   if (element != NULL && element->physical_entity != NULL && element->physical_entity->material != NULL) {
     HASH_FIND_STR(element->physical_entity->material->property_datums, property->name, property_data);
@@ -451,7 +347,7 @@ double mesh_interpolate_function_property(struct function_t *function, const dou
         wasora_var(wasora_mesh.vars.z) = x[2];
       }
 
-      // evaluamos la expresion del material
+      // finally evalaute the expression of the material found
       y = wasora_evaluate_expression(&property_data->expr);
     }
   }

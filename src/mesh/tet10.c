@@ -133,8 +133,8 @@ Tetrahedron10:
   element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 1);
   
   // the two extrapolation matrices
-  a = (5.0-sqrt(5))/20.0;
-  b = (5.0+3.0*sqrt(5))/20.0;
+  a = (5.0-M_SQRT5)/20.0;
+  b = (5.0+3.0*M_SQRT5)/20.0;
   c = -a/(b-a);
   d = 1+(1-b)/(b-a);
     

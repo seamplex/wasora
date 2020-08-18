@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related triangle element routines
  *
- *  Copyright (C) 2014-2020 jeremy theler
+ *  Copyright (C) 2014--2020 jeremy theler
  *
  *  This file is part of wasora.
  *

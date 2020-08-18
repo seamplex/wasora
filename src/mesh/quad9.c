@@ -2,6 +2,7 @@
  *  wasora's mesh-related quadrangle element routines
  *
  *  Copyright (C) 2014--2017 C.P.Camusso.
+ *  Copyright (C) 2017--2020 jeremy theler
  *
  *  This file is part of wasora.
  *

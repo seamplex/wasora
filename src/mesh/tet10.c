@@ -1,7 +1,7 @@
 /*------------ -------------- -------- --- ----- ---   --       -            -
  *  wasora's mesh-related second-order tetrahedron element routines
  *
- *  Copyright (C) 2017--2018 jeremy theler
+ *  Copyright (C) 2017--2020 jeremy theler
  *
  *  This file is part of wasora.
  *

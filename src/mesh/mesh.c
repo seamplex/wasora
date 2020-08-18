@@ -208,7 +208,7 @@ int wasora_instruction_mesh(void *arg) {
   // vemos si nos quedo alguna funcion sin leer
   LL_FOREACH(mesh->node_datas, node_data) {
     if (node_data->function->mesh == NULL) {
-      wasora_push_error_message("cannot find data fot function '%s' for t=0 in mesh '%s'", node_data->name_in_mesh, mesh->name);
+      wasora_push_error_message("cannot find data for function '%s' for t=0 in mesh '%s'", node_data->name_in_mesh, mesh->name);
       return WASORA_RUNTIME_ERROR;
     }
     

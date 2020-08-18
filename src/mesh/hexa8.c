@@ -225,41 +225,36 @@ void mesh_gauss_init_hexa27(element_type_t *element_type, gauss_t *gauss) {
   gauss->r[0][1] = -M_SQRT3/M_SQRT5;
   gauss->r[0][2] = -M_SQRT3/M_SQRT5;
 
-  gauss->w[10] = w1 * w1 * w2;
-  gauss->r[10][0] = -M_SQRT3/M_SQRT5;
-  gauss->r[10][1] = -M_SQRT3/M_SQRT5;
-  gauss->r[10][2] =  0.0;
+  gauss->w[1] = w1 * w1 * w1;
+  gauss->r[1][0] = +M_SQRT3/M_SQRT5;
+  gauss->r[1][1] = -M_SQRT3/M_SQRT5;
+  gauss->r[1][2] = -M_SQRT3/M_SQRT5;
 
-  gauss->w[4] = w1 * w1 * w1;
-  gauss->r[4][0] = -M_SQRT3/M_SQRT5;
-  gauss->r[4][1] = -M_SQRT3/M_SQRT5;
-  gauss->r[4][2] = +M_SQRT3/M_SQRT5;
-
-  gauss->w[9] = w1 * w1 * w2;
-  gauss->r[9][0] = -M_SQRT3/M_SQRT5;
-  gauss->r[9][1] =  0.0;
-  gauss->r[9][2] = -M_SQRT3/M_SQRT5;
-
-  gauss->w[22] = w1 * w2 * w2;
-  gauss->r[22][0] = -M_SQRT3/M_SQRT5;
-  gauss->r[22][1] = 0.0;
-  gauss->r[22][2] = 0.0;
-
-  gauss->w[17] = w1 * w1 * w2;
-  gauss->r[17][0] = -M_SQRT3/M_SQRT5;
-  gauss->r[17][1] =  0.0;
-  gauss->r[17][2] = +M_SQRT3/M_SQRT5;
+  gauss->w[2] = w1 * w1 * w1;
+  gauss->r[2][0] = +M_SQRT3/M_SQRT5;
+  gauss->r[2][1] = +M_SQRT3/M_SQRT5;
+  gauss->r[2][2] = -M_SQRT3/M_SQRT5;
 
   gauss->w[3] = w1 * w1 * w1;
   gauss->r[3][0] = -M_SQRT3/M_SQRT5;
   gauss->r[3][1] = +M_SQRT3/M_SQRT5;
   gauss->r[3][2] = -M_SQRT3/M_SQRT5;
+  
+  gauss->w[4] = w1 * w1 * w1;
+  gauss->r[4][0] = -M_SQRT3/M_SQRT5;
+  gauss->r[4][1] = -M_SQRT3/M_SQRT5;
+  gauss->r[4][2] = +M_SQRT3/M_SQRT5;
 
-  gauss->w[15] = w1 * w1 * w2;
-  gauss->r[15][0] = -M_SQRT3/M_SQRT5;
-  gauss->r[15][1] = +M_SQRT3/M_SQRT5;
-  gauss->r[15][2] =  0.0;
+  gauss->w[5] = w1 * w1 * w1;
+  gauss->r[5][0] = +M_SQRT3/M_SQRT5;
+  gauss->r[5][1] = -M_SQRT3/M_SQRT5;
+  gauss->r[5][2] = +M_SQRT3/M_SQRT5;
 
+  gauss->w[6] = w1 * w1 * w1;
+  gauss->r[6][0] = +M_SQRT3/M_SQRT5;
+  gauss->r[6][1] = +M_SQRT3/M_SQRT5;
+  gauss->r[6][2] = +M_SQRT3/M_SQRT5;
+  
   gauss->w[7] = w1 * w1 * w1;
   gauss->r[7][0] = -M_SQRT3/M_SQRT5;
   gauss->r[7][1] = +M_SQRT3/M_SQRT5;
@@ -269,91 +264,97 @@ void mesh_gauss_init_hexa27(element_type_t *element_type, gauss_t *gauss) {
   gauss->r[8][0] =  0.0;
   gauss->r[8][1] = -M_SQRT3/M_SQRT5;
   gauss->r[8][2] = -M_SQRT3/M_SQRT5;
+  
+  gauss->w[9] = w1 * w1 * w2;
+  gauss->r[9][0] = -M_SQRT3/M_SQRT5;
+  gauss->r[9][1] =  0.0;
+  gauss->r[9][2] = -M_SQRT3/M_SQRT5;
 
-  gauss->w[21] = w1 * w2 * w2;
-  gauss->r[21][0] =  0.0;
-  gauss->r[21][1] = -M_SQRT3/M_SQRT5;
-  gauss->r[21][2] =  0.0;
-
-  gauss->w[16] = w1 * w1 * w2;
-  gauss->r[16][0] =  0.0;
-  gauss->r[16][1] = -M_SQRT3/M_SQRT5;
-  gauss->r[16][2] = +M_SQRT3/M_SQRT5;
-
-  gauss->w[20] = w1 * w2 * w2;
-  gauss->r[20][0] =  0.0;
-  gauss->r[20][1] =  0.0;
-  gauss->r[20][2] = -M_SQRT3/M_SQRT5;
-
-  gauss->w[26] = w2 * w2 * w2;
-  gauss->r[26][0] =  0.0;
-  gauss->r[26][1] =  0.0;
-  gauss->r[26][2] =  0.0;
-
-  gauss->w[25] = w1 * w2 * w2;
-  gauss->r[25][0] =  0.0;
-  gauss->r[25][1] =  0.0;
-  gauss->r[25][2] = +M_SQRT3/M_SQRT5;
-
-  gauss->w[13] = w1 * w1 * w2;
-  gauss->r[13][0] =  0.0;
-  gauss->r[13][1] = +M_SQRT3/M_SQRT5;
-  gauss->r[13][2] = -M_SQRT3/M_SQRT5;
-
-  gauss->w[24] = w1 * w2 * w2;
-  gauss->r[24][0] =  0.0;
-  gauss->r[24][1] = +M_SQRT3/M_SQRT5;
-  gauss->r[24][2] =  0.0;
-
-  gauss->w[19] = w1 * w1 * w2;
-  gauss->r[19][0] =  0.0;
-  gauss->r[19][1] = +M_SQRT3/M_SQRT5;
-  gauss->r[19][2] = +M_SQRT3/M_SQRT5;
-
-  gauss->w[1] = w1 * w1 * w1;
-  gauss->r[1][0] = +M_SQRT3/M_SQRT5;
-  gauss->r[1][1] = -M_SQRT3/M_SQRT5;
-  gauss->r[1][2] = -M_SQRT3/M_SQRT5;
-
-  gauss->w[12] = w1 * w1 * w2;
-  gauss->r[12][0] = +M_SQRT3/M_SQRT5;
-  gauss->r[12][1] = -M_SQRT3/M_SQRT5;
-  gauss->r[12][2] =  0.0;
-
-  gauss->w[5] = w1 * w1 * w1;
-  gauss->r[5][0] = +M_SQRT3/M_SQRT5;
-  gauss->r[5][1] = -M_SQRT3/M_SQRT5;
-  gauss->r[5][2] = +M_SQRT3/M_SQRT5;
+  gauss->w[10] = w1 * w1 * w2;
+  gauss->r[10][0] = -M_SQRT3/M_SQRT5;
+  gauss->r[10][1] = -M_SQRT3/M_SQRT5;
+  gauss->r[10][2] =  0.0;
 
   gauss->w[11] = w1 * w1 * w2;
   gauss->r[11][0] = +M_SQRT3/M_SQRT5;
   gauss->r[11][1] =  0.0;
   gauss->r[11][2] = -M_SQRT3/M_SQRT5;
 
-  gauss->w[23] = w1 * w2 * w2;
-  gauss->r[23][0] = +M_SQRT3/M_SQRT5;
-  gauss->r[23][1] =  0.0;
-  gauss->r[23][2] =  0.0;
+  gauss->w[12] = w1 * w1 * w2;
+  gauss->r[12][0] = +M_SQRT3/M_SQRT5;
+  gauss->r[12][1] = -M_SQRT3/M_SQRT5;
+  gauss->r[12][2] =  0.0;
+  
+  gauss->w[13] = w1 * w1 * w2;
+  gauss->r[13][0] =  0.0;
+  gauss->r[13][1] = +M_SQRT3/M_SQRT5;
+  gauss->r[13][2] = -M_SQRT3/M_SQRT5;
+  
+  gauss->w[14] = w1 * w1 * w2;
+  gauss->r[14][0] = +M_SQRT3/M_SQRT5;
+  gauss->r[14][1] = +M_SQRT3/M_SQRT5;
+  gauss->r[14][2] =  0.0;
+  
+  gauss->w[15] = w1 * w1 * w2;
+  gauss->r[15][0] = -M_SQRT3/M_SQRT5;
+  gauss->r[15][1] = +M_SQRT3/M_SQRT5;
+  gauss->r[15][2] =  0.0;
+
+  gauss->w[16] = w1 * w1 * w2;
+  gauss->r[16][0] =  0.0;
+  gauss->r[16][1] = -M_SQRT3/M_SQRT5;
+  gauss->r[16][2] = +M_SQRT3/M_SQRT5;
+
+  gauss->w[17] = w1 * w1 * w2;
+  gauss->r[17][0] = -M_SQRT3/M_SQRT5;
+  gauss->r[17][1] =  0.0;
+  gauss->r[17][2] = +M_SQRT3/M_SQRT5;
 
   gauss->w[18] = w1 * w1 * w2;
   gauss->r[18][0] = +M_SQRT3/M_SQRT5;
   gauss->r[18][1] =  0.0;
   gauss->r[18][2] = +M_SQRT3/M_SQRT5;
+  
+  gauss->w[19] = w1 * w1 * w2;
+  gauss->r[19][0] =  0.0;
+  gauss->r[19][1] = +M_SQRT3/M_SQRT5;
+  gauss->r[19][2] = +M_SQRT3/M_SQRT5;
 
-  gauss->w[2] = w1 * w1 * w1;
-  gauss->r[2][0] = +M_SQRT3/M_SQRT5;
-  gauss->r[2][1] = +M_SQRT3/M_SQRT5;
-  gauss->r[2][2] = -M_SQRT3/M_SQRT5;
+  gauss->w[20] = w1 * w2 * w2;
+  gauss->r[20][0] =  0.0;
+  gauss->r[20][1] =  0.0;
+  gauss->r[20][2] = -M_SQRT3/M_SQRT5;
 
-  gauss->w[14] = w1 * w1 * w2;
-  gauss->r[14][0] = +M_SQRT3/M_SQRT5;
-  gauss->r[14][1] = +M_SQRT3/M_SQRT5;
-  gauss->r[14][2] =  0.0;
+  gauss->w[21] = w1 * w2 * w2;
+  gauss->r[21][0] =  0.0;
+  gauss->r[21][1] = -M_SQRT3/M_SQRT5;
+  gauss->r[21][2] =  0.0;
 
-  gauss->w[6] = w1 * w1 * w1;
-  gauss->r[6][0] = +M_SQRT3/M_SQRT5;
-  gauss->r[6][1] = +M_SQRT3/M_SQRT5;
-  gauss->r[6][2] = +M_SQRT3/M_SQRT5;
+  gauss->w[22] = w1 * w2 * w2;
+  gauss->r[22][0] = -M_SQRT3/M_SQRT5;
+  gauss->r[22][1] = 0.0;
+  gauss->r[22][2] = 0.0;
+  
+  gauss->w[23] = w1 * w2 * w2;
+  gauss->r[23][0] = +M_SQRT3/M_SQRT5;
+  gauss->r[23][1] =  0.0;
+  gauss->r[23][2] =  0.0;
+  
+  gauss->w[24] = w1 * w2 * w2;
+  gauss->r[24][0] =  0.0;
+  gauss->r[24][1] = +M_SQRT3/M_SQRT5;
+  gauss->r[24][2] =  0.0;
+
+  gauss->w[25] = w1 * w2 * w2;
+  gauss->r[25][0] =  0.0;
+  gauss->r[25][1] =  0.0;
+  gauss->r[25][2] = +M_SQRT3/M_SQRT5;
+
+  gauss->w[26] = w2 * w2 * w2;
+  gauss->r[26][0] =  0.0;
+  gauss->r[26][1] =  0.0;
+  gauss->r[26][2] =  0.0;
+
 
   mesh_init_shape_at_gauss(gauss, element_type);
 

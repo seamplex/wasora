@@ -117,7 +117,7 @@ int mesh_quad8_init(void) {
   mesh_gauss_init_quad4(element_type, &element_type->gauss[integration_reduced]);
   element_type->gauss[integration_reduced].extrap = gsl_matrix_calloc(element_type->nodes, 4);
   
-  for (j = 0; j < element_type->first_order_nodes; j++) {
+  for (j = 0; j < element_type->nodes; j++) {
     r[0] = M_SQRT3 * element_type->node_coords[j][0];
     r[1] = M_SQRT3 * element_type->node_coords[j][1];
     

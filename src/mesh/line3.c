@@ -92,7 +92,7 @@ Line3:
     r[0] = M_SQRT3 * element_type->node_coords[j][0];
     
     for (v = 0; v < 2; v++) {
-      gsl_matrix_set(element_type->gauss[integration_full].extrap, j, v, mesh_line2_h(v, r));
+      gsl_matrix_set(element_type->gauss[integration_reduced].extrap, j, v, mesh_line2_h(v, r));
     }
   }
   

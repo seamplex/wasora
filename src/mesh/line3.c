@@ -60,7 +60,7 @@ Line3:
   }
   
   element_type->first_order_nodes++;
-  element_type->node_coords[0][0] = 0;  
+  element_type->node_coords[0][0] = -1;
 
   element_type->first_order_nodes++;
   element_type->node_coords[1][0] = 1;

@@ -42,7 +42,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
         // funcion celda mesh integrada en celda
         for (i = 0; i < mesh->n_cells; i++) {
           element = mesh->cell[i].element;
-          if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || element->physical_entity == physical_entity) {
+          if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || (physical_entity != NULL && element->physical_entity == physical_entity)) {
             integral += function->data_value[i] * mesh->cell[i].element->type->element_volume(mesh->cell[i].element);
           }
         }
@@ -50,7 +50,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
         // funcion no celda o no mesh integrada en celda
         for (i = 0; i < mesh->n_cells; i++) {
           element = mesh->cell[i].element;
-          if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || element->physical_entity == physical_entity) {
+          if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || (physical_entity != NULL && element->physical_entity == physical_entity)) {
             integral += wasora_evaluate_function(function, mesh->cell[i].x) * mesh->cell[i].element->type->element_volume(mesh->cell[i].element);
           }
         }
@@ -69,7 +69,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
         
         for (i = 0; i < mesh->n_elements; i++) {
           element = &mesh->element[i];
-          if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || element->physical_entity == physical_entity) {
+          if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || (physical_entity != NULL && element->physical_entity == physical_entity)) {
             for (v = 0; v < element->type->gauss[mesh->integration].V; v++) {
               mesh_compute_integration_weight_at_gauss(element, v, mesh->integration);
 
@@ -86,18 +86,12 @@ int wasora_instruction_mesh_integrate(void *arg) {
         // funcion general
         for (i = 0; i < mesh->n_elements; i++) {
           element = &mesh->element[i];
-          if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || element->physical_entity == physical_entity) {
+          if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || (physical_entity != NULL && element->physical_entity == physical_entity)) {
             for (v = 0; v < element->type->gauss[mesh->integration].V; v++) {
               mesh_compute_integration_weight_at_gauss(element, v, mesh->integration);
               mesh_compute_x_at_gauss(element, v, mesh->integration);
-              mesh_update_coord_vars(element->x[v]);
 
-              xi = 0;
-              for (j = 0; j < element->type->nodes; j++) {
-                xi += element->type->gauss[mesh->integration].h[v][j] * wasora_evaluate_function(mesh_integrate->function, element->node[j]->x);
-              }
-
-              integral += element->w[v] * xi;
+              integral += element->w[v] * wasora_evaluate_function(mesh_integrate->function, element->x[v]);
             }  
           }
         }
@@ -108,7 +102,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
       // expresion en celdas
       for (i = 0; i < mesh->n_cells; i++) {
         element = mesh->cell[i].element;
-        if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || element->physical_entity == physical_entity) {
+        if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || (physical_entity != NULL && element->physical_entity == physical_entity)) {
           mesh_update_coord_vars(mesh->cell[i].x);
           integral += wasora_evaluate_expression(expr) * mesh->cell[i].element->type->element_volume(mesh->cell[i].element);
         }
@@ -117,7 +111,7 @@ int wasora_instruction_mesh_integrate(void *arg) {
       // expresiones en nodos
       for (i = 0; i < mesh->n_elements; i++) {
         element = &mesh->element[i];
-        if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || element->physical_entity == physical_entity) {
+        if ((physical_entity == NULL && element->type->dim == mesh->bulk_dimensions) || (physical_entity != NULL && element->physical_entity == physical_entity)) {
           for (v = 0; v < element->type->gauss[mesh->integration].V; v++) {
             mesh_compute_integration_weight_at_gauss(element, v, mesh->integration);
             mesh_compute_x_at_gauss(element, v, mesh->integration);

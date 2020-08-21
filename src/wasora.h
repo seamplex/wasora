@@ -2439,7 +2439,7 @@ extern void mesh_compute_l(mesh_t *, element_t *);
 extern int mesh_compute_normal(element_t *);
 extern int mesh_update_coord_vars(double *);
 
-extern void mesh_inverse(gsl_matrix *, gsl_matrix *);
+extern int mesh_inverse(gsl_matrix *, gsl_matrix *);
 extern double mesh_determinant(gsl_matrix *);
 
 extern void mesh_compute_dxdr(element_t *, double *, gsl_matrix *);

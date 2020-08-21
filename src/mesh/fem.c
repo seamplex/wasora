@@ -23,8 +23,9 @@
 
 
 // evalua el jacobiano de las r con respecto a las x invirtiendo el jacobiano directo
-void mesh_inverse(gsl_matrix *direct, gsl_matrix *inverse) {
+int mesh_inverse(gsl_matrix *direct, gsl_matrix *inverse) {
 
+  double det;
   double invdet;
 
   switch(direct->size1) {
@@ -32,14 +33,22 @@ void mesh_inverse(gsl_matrix *direct, gsl_matrix *inverse) {
     	gsl_matrix_set(inverse, 0, 0, 1.0/gsl_matrix_get(direct, 0, 0));
       break;
     case 2:
-      invdet = 1.0/mesh_determinant(direct);
+      if ((det = mesh_determinant(direct)) == 0) {
+        wasora_push_error_message("singular 2x2 matrix");
+        return WASORA_RUNTIME_ERROR;
+      }
+      invdet = 1.0/det;
       gsl_matrix_set(inverse, 0, 0, +invdet*gsl_matrix_get(direct, 1, 1));
       gsl_matrix_set(inverse, 0, 1, -invdet*gsl_matrix_get(direct, 0, 1));
       gsl_matrix_set(inverse, 1, 0, -invdet*gsl_matrix_get(direct, 1, 0));
       gsl_matrix_set(inverse, 1, 1,  invdet*gsl_matrix_get(direct, 0, 0));
       break;
     case 3:
-      invdet = 1.0/mesh_determinant(direct);
+      if ((det = mesh_determinant(direct)) == 0) {
+        wasora_push_error_message("singular 3x3 matrix");
+        return WASORA_RUNTIME_ERROR;
+      }
+      invdet = 1.0/det;
       gsl_matrix_set(inverse, 0, 0, +invdet*(gsl_matrix_get(direct, 2, 2)*gsl_matrix_get(direct, 1, 1) -
                                              gsl_matrix_get(direct, 2, 1)*gsl_matrix_get(direct, 1, 2)));
       gsl_matrix_set(inverse, 0, 1, -invdet*(gsl_matrix_get(direct, 2, 2)*gsl_matrix_get(direct, 0, 1) -
@@ -60,6 +69,9 @@ void mesh_inverse(gsl_matrix *direct, gsl_matrix *inverse) {
                                              gsl_matrix_get(direct, 2, 0)*gsl_matrix_get(direct, 0, 1)));
       gsl_matrix_set(inverse, 2, 2, +invdet*(gsl_matrix_get(direct, 1, 1)*gsl_matrix_get(direct, 0, 0) -
                                              gsl_matrix_get(direct, 1, 0)*gsl_matrix_get(direct, 0, 1)));
+      break;
+    default:
+      wasora_push_error_message("invalid size %d of matrix to invert", direct->size1);
       break;
   }
 
@@ -89,6 +101,8 @@ static void matrix_inverse_3x3(PetscScalar A[3][3],PetscScalar B[3][3])
   
   return;
 */
+  
+  return WASORA_RUNTIME_OK;
 }
 
 

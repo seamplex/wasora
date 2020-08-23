@@ -35,7 +35,6 @@ struct mesh_interp_params {
 
 double mesh_interpolate_function_node(struct function_t *function, const double *x) {
   
-  double x_nearest[3] = {0, 0, 0};
   double r[3] = {0, 0, 0};    // vector with the local coordinates within the element
   double y, dist2;
   static element_t *element;
@@ -54,17 +53,17 @@ double mesh_interpolate_function_node(struct function_t *function, const double 
   // check is it is close enough to a node
   switch (mesh->spatial_dimensions) {
     case 1:
-      if ((dist2 = gsl_pow_2(fabs(x[0]-x_nearest[0]))) < gsl_pow_2(function->multidim_threshold)) {
+      if ((dist2 = gsl_pow_2(fabs(x[0]-nearest_node->x[0]))) < gsl_pow_2(function->multidim_threshold)) {
         return function->data_value[nearest_node->index_mesh];
       }
     break;
     case 2:
-      if ((dist2 = (mesh_subtract_squared_module2d(x, x_nearest))) < gsl_pow_2(function->multidim_threshold)) {
+      if ((dist2 = (mesh_subtract_squared_module2d(x, nearest_node->x))) < gsl_pow_2(function->multidim_threshold)) {
         return function->data_value[nearest_node->index_mesh];
       }
     break;
     case 3:
-      if ((dist2 = (mesh_subtract_squared_module(x, x_nearest))) < gsl_pow_2(function->multidim_threshold)) {
+      if ((dist2 = (mesh_subtract_squared_module(x, nearest_node->x))) < gsl_pow_2(function->multidim_threshold)) {
         return function->data_value[nearest_node->index_mesh];
       }
     break;

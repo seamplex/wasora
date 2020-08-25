@@ -1285,7 +1285,8 @@ int mesh_gmsh_update_function(function_t *function, double t, double dt) {
       for (j = 0; j < function->data_size; j++) {
         function->data_value[j] += alpha * (new_data[j] - function->data_value[j]);
       }
-    }  
+    }
+    free(new_data);
   }
  
   return WASORA_RUNTIME_OK;

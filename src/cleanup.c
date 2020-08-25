@@ -135,8 +135,10 @@ void wasora_free_function(function_t *function) {
     function->data_value = NULL;
   }
   
+  free(function->name_in_mesh);
   free(function->data_file);
   free(function->column);
+  
 // este free es problematico
   if (function->var_argument_alloced) {
     free(function->var_argument);

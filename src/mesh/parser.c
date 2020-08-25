@@ -192,6 +192,7 @@ int wasora_mesh_parse_line(char *line) {
             wasora_push_error_message("expected AS instead of '%s'", token);
             return WASORA_PARSER_ERROR;
           }
+          free(token); // valgrind told me that token was definitely lost
           wasora_call(wasora_parser_string(&function_name));
           
           node_data = calloc(1, sizeof(node_data_t));
@@ -523,6 +524,7 @@ int wasora_mesh_parse_line(char *line) {
           if ((mesh_integrate->result = wasora_get_or_define_variable_ptr(variable)) == NULL) {
             return WASORA_PARSER_ERROR;
           }
+          free(variable); // valgrind
             
         } else {
           wasora_push_error_message("unknown keyword '%s'", token);

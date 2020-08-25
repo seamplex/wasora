@@ -106,10 +106,10 @@ double mesh_line3_h(int k, double *vec_r) {
   // Gmsh ordering
   switch (k) {
     case 0:
-      return 0.5*r*(r+1);
+      return 0.5*r*(r-1);
       break;
     case 1:
-      return 0.5*r*(r-1);
+      return 0.5*r*(r+1);
       break;
     case 2:
       return (1+r)*(1-r);
@@ -126,12 +126,12 @@ double mesh_line3_dhdr(int k, int m, double *vec_r) {
   switch(k) {
     case 0:
       if (m == 0) {
-        return r+0.5;
+        return r-0.5;
       }
       break;
     case 1:
       if (m == 0) {
-        return r-0.5;
+        return r+0.5;
       }
       break;
     case 2:

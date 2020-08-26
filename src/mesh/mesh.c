@@ -496,6 +496,11 @@ int mesh_free(mesh_t *mesh) {
         if (mesh->element[i].dphidx_node != NULL) {
           free(mesh->element[i].dphidx_node);
         }
+        
+        if (mesh->element[i].property_node != NULL) {
+          free(mesh->element[i].property_node);
+        }
+        
       }
       
       if (mesh->element[i].type != NULL && mesh->element[i].type->gauss != NULL) {

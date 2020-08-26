@@ -503,6 +503,7 @@ int wasora_mesh_parse_line(char *line) {
               return WASORA_PARSER_ERROR;
             }
           }
+          free(name); // valgrind
 ///kw+MESH_INTEGRATE+detail Either `NODES` or `CELLS` define how the integration is to be performed.
 ///kw+MESH_INTEGRATE+usage [ NODES
 ///kw+MESH_INTEGRATE+detail In the first case a the integration is performed using the Gauss points and weights associated to each element type.

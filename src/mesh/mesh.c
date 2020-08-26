@@ -481,9 +481,14 @@ int mesh_free(mesh_t *mesh) {
             free(element_item);
           }
           
-          if (mesh->element[i].dphidx_node != NULL) {
+          if (mesh->element[i].dphidx_node != NULL && mesh->element[i].dphidx_node[j] != NULL) {
             gsl_matrix_free(mesh->element[i].dphidx_node[j]);
           }
+          
+          if (mesh->element[i].property_node != NULL && mesh->element[i].dphidx_node != NULL) {
+            free(mesh->element[i].property_node[j]);
+          }
+          
           
         }
         free(mesh->element[i].node);

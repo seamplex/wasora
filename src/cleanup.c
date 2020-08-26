@@ -130,7 +130,7 @@ void wasora_free_function(function_t *function) {
     function->data_argument = NULL;
   }
   
-  if (function->vector_value == NULL && function->mesh == NULL) {
+  if (function->data_value != NULL) {
     free(function->data_value);
     function->data_value = NULL;
   }

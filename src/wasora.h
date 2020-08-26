@@ -2079,15 +2079,14 @@ struct element_t {
   int *l;  // node-major-orderer vector with the global indexes of the DOFs in the element
 
   
-  // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
-  gsl_matrix **dphidx_gauss;  // derivadas de los dofs en los puntos de gauss canonicos
-  gsl_matrix **dphidx_node;   // derivadas de los dofs en los nodos (extrapolados o evaluados)
+  gsl_matrix **dphidx_gauss;  // spatial derivatives of the DOFs at the gauss points
+  gsl_matrix **dphidx_node;   // spatial derivatives of the DOFs at the nodes (extrapoladed or evaluated)
   double **property_node;
 
-  element_type_t *type;                      // apuntador a tipo de elemento
-  physical_entity_t *physical_entity;        // apuntador a la entidad fisica
-  node_t **node;                             // apuntadores a los nodos
-  cell_t *cell;                              // apuntador a la celda asociada al elemento (solo para FVM)
+  element_type_t *type;                      // pointer to the element type
+  physical_entity_t *physical_entity;        // pointer to the physical entity
+  node_t **node;                             // pointer to the nodes
+  cell_t *cell;                              // pointet to the associated cell (only for FVM)
 };
 
 

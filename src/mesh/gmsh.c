@@ -780,14 +780,16 @@ int mesh_gmsh_readmesh(mesh_t *mesh) {
       }
       
       // if we made it this far, we have a function!
-      function->type = type_pointwise_mesh_node;
-      function->mesh = mesh;
-      function->data_argument = mesh->nodes_argument;
-      function->data_size = nodes;
-      if (function->data_value != NULL) {
-        free(function->data_value);
-      }
-      function->data_value = calloc(nodes, sizeof(double));
+      if (function->data_size != nodes) {
+        function->type = type_pointwise_mesh_node;
+        function->mesh = mesh;
+        function->data_argument = mesh->nodes_argument;
+        function->data_size = nodes;
+        if (function->data_value != NULL) {
+          free(function->data_value);
+        }
+        function->data_value = calloc(nodes, sizeof(double));
+      }  
       
       for (j = 0; j < nodes; j++) {
         if (fscanf(mesh->file->pointer, "%d %lf", &node, &value) == 0) {

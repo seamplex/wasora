@@ -195,7 +195,7 @@ extern const char factorseparators[];
 
 #define M_SQRT5 2.23606797749978969640917366873127623544061835961152572427089
 
-#define DEFAULT_MESH_FAILED_INTERPOLATION_FACTOR   2
+#define DEFAULT_MESH_FAILED_INTERPOLATION_FACTOR   -1
 
 
 /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

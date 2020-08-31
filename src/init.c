@@ -277,7 +277,7 @@ int wasora_init_before_parser(void) {
   // e inicializamos los plugins
   for (i = 0; i < wasora.i_plugin; i++) {
     if ((error = wasora.plugin[i].init_before_parser()) != 0) {
-      wasora_push_error_message("in plugin %s,", wasora.plugin[i].name_string);
+      wasora_push_error_message("%s:", wasora.plugin[i].name_string);
       return error;
     }
   }
@@ -306,7 +306,7 @@ int wasora_init_after_parser(void) {
   // inicializamos plugins
   for (i = 0; i < wasora.i_plugin; i++) {
     if (wasora.plugin[i].init_after_parser() != 0) {
-      wasora_push_error_message("in plugin %s,", wasora.plugin[i].name_string);
+      wasora_push_error_message("%s:", wasora.plugin[i].name_string);
       return WASORA_RUNTIME_ERROR;
     }
   }

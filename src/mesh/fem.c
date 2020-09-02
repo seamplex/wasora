@@ -432,8 +432,6 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v, int integration) {
 
     mesh_cross(n, xy, v);
     s = gsl_hypot3(v[0], v[1], v[2]);
-    c = mesh_dot(n, xy);
-    k = (1-c)/(s*s);
 
 /*
  (%i4) V:matrix([0, -v2, v1],[v2, 0, -v0],[-v1, v0, 0]);
@@ -465,6 +463,8 @@ void mesh_compute_dxdr_at_gauss(element_t *element, int v, int integration) {
       R[2][1] = 0;
       R[2][2] = 1;
     } else {
+      c = mesh_dot(n, xy);
+      k = (1-c)/(s*s);
       R[0][0] = 1     + k * (-v[2]*v[2] - v[1]*v[1]);
       R[0][1] = -v[2] + k * (v[0]*v[1]);
       R[0][2] = +v[1] + k * (v[0]*v[2]);

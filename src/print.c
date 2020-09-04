@@ -337,7 +337,7 @@ int wasora_instruction_print_function(void *arg) {
               if (print_token->function->data_value != NULL) {
                 fprintf(print_function->file->pointer, print_function->format, print_token->function->data_value[j]);
               } else {
-                fprintf(print_function->file->pointer, print_function->format, 0);
+                fprintf(print_function->file->pointer, print_function->format, 0.0);
               }
             } else {
               fprintf(print_function->file->pointer, print_function->format, wasora_evaluate_function(print_token->function, x));

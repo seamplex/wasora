@@ -1,0 +1,71 @@
+n = 6
+
+f0(r,s) := (1-r-s)*(2*(1-r-s)-1)
+f1(r,s) := r*(2*r-1)
+f2(r,s) := s*(2*s-1)
+
+f3(r,s) := 4*(1-r-s)*r
+f4(r,s) := 4*r*s
+f5(r,s) := 4*s*(1-r-s)
+
+
+MATRIX  M ROWS n COLS n
+
+M(1,1)  = integral(integral(f0(r,s)*f0(r,s), s, 0, 1-r), r, 0, 1)
+M(1,2)  = integral(integral(f0(r,s)*f1(r,s), s, 0, 1-r), r, 0, 1)
+M(1,3)  = integral(integral(f0(r,s)*f2(r,s), s, 0, 1-r), r, 0, 1)
+M(1,4)  = integral(integral(f0(r,s)*f3(r,s), s, 0, 1-r), r, 0, 1)
+M(1,5)  = integral(integral(f0(r,s)*f4(r,s), s, 0, 1-r), r, 0, 1)
+M(1,6)  = integral(integral(f0(r,s)*f5(r,s), s, 0, 1-r), r, 0, 1)
+
+M(2,1)  = integral(integral(f1(r,s)*f0(r,s), s, 0, 1-r), r, 0, 1)
+M(2,2)  = integral(integral(f1(r,s)*f1(r,s), s, 0, 1-r), r, 0, 1)
+M(2,3)  = integral(integral(f1(r,s)*f2(r,s), s, 0, 1-r), r, 0, 1)
+M(2,4)  = integral(integral(f1(r,s)*f3(r,s), s, 0, 1-r), r, 0, 1)
+M(2,5)  = integral(integral(f1(r,s)*f4(r,s), s, 0, 1-r), r, 0, 1)
+M(2,6)  = integral(integral(f1(r,s)*f5(r,s), s, 0, 1-r), r, 0, 1)
+
+M(3,1)  = integral(integral(f2(r,s)*f0(r,s), s, 0, 1-r), r, 0, 1)
+M(3,2)  = integral(integral(f2(r,s)*f1(r,s), s, 0, 1-r), r, 0, 1)
+M(3,3)  = integral(integral(f2(r,s)*f2(r,s), s, 0, 1-r), r, 0, 1)
+M(3,4)  = integral(integral(f2(r,s)*f3(r,s), s, 0, 1-r), r, 0, 1)
+M(3,5)  = integral(integral(f2(r,s)*f4(r,s), s, 0, 1-r), r, 0, 1)
+M(3,6)  = integral(integral(f2(r,s)*f5(r,s), s, 0, 1-r), r, 0, 1)
+
+M(4,1)  = integral(integral(f3(r,s)*f0(r,s), s, 0, 1-r), r, 0, 1)
+M(4,2)  = integral(integral(f3(r,s)*f1(r,s), s, 0, 1-r), r, 0, 1)
+M(4,3)  = integral(integral(f3(r,s)*f2(r,s), s, 0, 1-r), r, 0, 1)
+M(4,4)  = integral(integral(f3(r,s)*f3(r,s), s, 0, 1-r), r, 0, 1)
+M(4,5)  = integral(integral(f3(r,s)*f4(r,s), s, 0, 1-r), r, 0, 1)
+M(4,6)  = integral(integral(f3(r,s)*f5(r,s), s, 0, 1-r), r, 0, 1)
+
+M(5,1)  = integral(integral(f4(r,s)*f0(r,s), s, 0, 1-r), r, 0, 1)
+M(5,2)  = integral(integral(f4(r,s)*f1(r,s), s, 0, 1-r), r, 0, 1)
+M(5,3)  = integral(integral(f4(r,s)*f2(r,s), s, 0, 1-r), r, 0, 1)
+M(5,4)  = integral(integral(f4(r,s)*f3(r,s), s, 0, 1-r), r, 0, 1)
+M(5,5)  = integral(integral(f4(r,s)*f4(r,s), s, 0, 1-r), r, 0, 1)
+M(5,6)  = integral(integral(f4(r,s)*f5(r,s), s, 0, 1-r), r, 0, 1)
+
+M(6,1)  = integral(integral(f5(r,s)*f0(r,s), s, 0, 1-r), r, 0, 1)
+M(6,2)  = integral(integral(f5(r,s)*f1(r,s), s, 0, 1-r), r, 0, 1)
+M(6,3)  = integral(integral(f5(r,s)*f2(r,s), s, 0, 1-r), r, 0, 1)
+M(6,4)  = integral(integral(f5(r,s)*f3(r,s), s, 0, 1-r), r, 0, 1)
+M(6,5)  = integral(integral(f5(r,s)*f4(r,s), s, 0, 1-r), r, 0, 1)
+M(6,6)  = integral(integral(f5(r,s)*f5(r,s), s, 0, 1-r), r, 0, 1)
+
+# ---------
+PRINT TEXT "elemental mass matrix"
+PRINT %+.6f M
+
+PRINT
+PRINT TEXT "lumped mass matrix"
+PRINT sum(M(1,j),j,1,n)
+PRINT sum(M(2,j),j,1,n)
+PRINT sum(M(3,j),j,1,n)
+PRINT sum(M(4,j),j,1,n)
+PRINT sum(M(5,j),j,1,n)
+PRINT sum(M(6,j),j,1,n)
+
+PRINT
+PRINT TEXT "total mass (should be 1/2)"
+PRINT sum(sum(M(i,j),j,1,n),i,1,n)

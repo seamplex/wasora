@@ -229,6 +229,9 @@ int mesh_compute_r_tetrahedron(element_t *element, const double *x, double *r) {
   
   
   if (element->type->id == ELEMENT_TYPE_TETRAHEDRON4 || element->type->id == ELEMENT_TYPE_TETRAHEDRON10) {
+    
+    // reference: eq (9.11) from AFEM.Ch09
+    
 //    double xi0, one;
     double sixV;
 //    double sixV01;

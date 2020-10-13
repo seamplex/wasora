@@ -1910,19 +1910,19 @@ struct {
 
 } wasora_mesh;
 
-// nodos
+// nodes
 struct node_t {
-  int tag;                  // numero asignado por gmsh
-  int index_mesh;           // indice dentro del array de nodos
+  int tag;                  // number assigned by Gmsh
+  int index_mesh;           // index within the node array
 
-  double x[3];              // coordenadas espaciales del nodo
-  int *index_dof;           // indice del vector incognita para cada uno de los grados de libertad
+  double x[3];              // spatial coordinates of the node
+  int *index_dof;           // index within the solution vector for each DOF
   
-  double *phi;              // funciones solucion en el nodo
-  gsl_matrix *dphidx;       // derivada del dof m con respecto a la coordenada g
-                            // uso gsl_matrix asi no tengo que hacer muchos allocs ni hacerme cargo de row/col-major
-  gsl_matrix *delta_dphidx; // lo mismo pero para las incertezas de las derivadas
-  double *f;                // funciones arbitrarias (sigmas y taus)
+  double *phi;              // values of the solution functions at the node
+  gsl_matrix *dphidx;       // derivative of the m-th DOF with respect to coordinate g
+                            // (this is a gsl_matrix to avoid having to do double mallocs and forgetting about row/col-major
+  gsl_matrix *delta_dphidx; // same as above but for the standard deviations of the derivatives
+  double *f;                // holder of arbitrary functions evaluated at the node (sigmas and taus)
   
   element_list_item_t *associated_elements;
 };

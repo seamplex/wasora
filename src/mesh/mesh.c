@@ -449,7 +449,11 @@ int mesh_free(mesh_t *mesh) {
         free(mesh->cell[i].index);
       }
       if (mesh->cell[i].neighbor != NULL) {
-        free(mesh->cell[i].neighbor);
+	for(int k = 0; k<mesh->cell[i].n_neighbors; k++) {
+	  if(mesh->cell[i].neighbor[k].face_coord != NULL)
+	    free(mesh->cell[i].neighbor[k].face_coord);
+	}
+	free(mesh->cell[i].neighbor);
       }
       if (mesh->cell[i].ifaces != NULL) {
         for (j = 0; j < mesh->cell[i].element->type->faces; j++) {

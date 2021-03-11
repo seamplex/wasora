@@ -308,7 +308,9 @@ struct vector_t {
   int realloced;
   
   // funcion para sacarle los datos
-  function_t *function;
+  function_t *function_data;
+  function_t *function_arg;
+  int function_n_arg;
   
   // linked list con las expresiones de datos
   expr_t *datas;

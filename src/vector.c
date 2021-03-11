@@ -74,15 +74,26 @@ int wasora_vector_init(vector_t *vector) {
     return WASORA_RUNTIME_OK;
   }
 
-  if (vector->function != NULL) {
+  if (vector->function_data != NULL) {
     
-    if (!vector->function->initialized) {
-      wasora_call(wasora_function_init(vector->function));
+    if (!vector->function_data->initialized) {
+      wasora_call(wasora_function_init(vector->function_data));
     }
     if (vector->size_expr->n_tokens == 0) {
-      size = vector->function->data_size;
-    } else if ((size = (int)(round(wasora_evaluate_expression(vector->size_expr)))) != vector->function->data_size) {
-      wasora_push_error_message("vector '%s' has size mismatch, SIZE = %d and FUNCTION = %d", vector->name, size, vector->function->data_size);
+      size = vector->function_data->data_size;
+    } else if ((size = (int)(round(wasora_evaluate_expression(vector->size_expr)))) != vector->function_data->data_size) {
+      wasora_push_error_message("vector '%s' has size mismatch, SIZE = %d and FUNCTION_DATA = %d", vector->name, size, vector->function_data->data_size);
+      return WASORA_PARSER_ERROR;
+    }
+
+  } else if (vector->function_arg != NULL) {
+    if (!vector->function_arg->initialized) {
+      wasora_call(wasora_function_init(vector->function_arg));
+    }
+    if (vector->size_expr->n_tokens == 0) {
+      size = vector->function_arg->data_size;
+    } else if ((size = (int)(round(wasora_evaluate_expression(vector->size_expr)))) != vector->function_arg->data_size) {
+      wasora_push_error_message("vector '%s' has size mismatch, SIZE = %d and FUNCTION_ARG = %d", vector->name, size, vector->function_arg->data_size);
       return WASORA_PARSER_ERROR;
     }
     
@@ -107,8 +118,10 @@ int wasora_vector_init(vector_t *vector) {
     }
   }
   
-  if (vector->function != NULL) {
-    wasora_realloc_vector_ptr(vector, vector->function->data_value, 0);
+  if (vector->function_data != NULL) {
+    wasora_realloc_vector_ptr(vector, vector->function_data->data_value, 0);
+  } else if (vector->function_arg != NULL) {
+    wasora_realloc_vector_ptr(vector, vector->function_arg->data_argument[vector->function_n_arg-1], 0);
   }
   
   vector->initialized = 1;

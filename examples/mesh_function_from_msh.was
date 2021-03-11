@@ -1,5 +1,5 @@
 # read data from .msh and store it as a wasora function f(x,y)
-MESH FILE_PATH tiny.msh DIMENSIONS 2 READ_FUNCTION f AS f
+MESH FILE_PATH tiny.msh DIMENSIONS 2 READ_FUNCTION f
 
 # with no arguments, print definition points of f(x,y) to stdout
 PRINT_FUNCTION f

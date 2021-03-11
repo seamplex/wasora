@@ -679,10 +679,12 @@ if (strcasecmp(token, "FROM") == 0) {
 
       vector_t *vector = NULL;
       char *vectorname = NULL;
-      function_t *function = NULL;
+      function_t *function_data = NULL;
+      function_t *function_arg = NULL;
       expr_t *size_expr = calloc(1, sizeof(expr_t));
       expr_t *datas = NULL;
       int vectorsize = 0;
+      int function_n_arg;
 
 ///kw+VECTOR+usage <name>
       if (wasora_parser_string(&vectorname) != WASORA_PARSER_OK) {
@@ -704,7 +706,7 @@ if (strcasecmp(token, "FROM") == 0) {
             LL_APPEND(datas, data);
           }
 
-///kw+VECTOR+usage FUNCTION_DATA <function> ]
+///kw+VECTOR+usage FUNCTION_DATA <function> |
         } else if (strcasecmp(token, "FUNCTION_DATA") == 0) {
           
           if ((token = wasora_get_next_token(NULL)) == NULL) {
@@ -712,10 +714,34 @@ if (strcasecmp(token, "FROM") == 0) {
             return WASORA_PARSER_ERROR;
           }
 
-          if ((function = wasora_get_function_ptr(token)) == NULL) {
+          if ((function_data = wasora_get_function_ptr(token)) == NULL) {
             wasora_push_error_message("unknown function '%s'", token);
             return WASORA_PARSER_ERROR;
           }
+          
+///kw+VECTOR+usage FUNCTION_ARG <num_arg> <function> ]
+        } else if (strcasecmp(token, "FUNCTION_ARG") == 0 || strcasecmp(token, "FUNCTION_ARGUMENT") == 0) {
+
+          if ((token = wasora_get_next_token(NULL)) == NULL) {
+            wasora_push_error_message("expected argument number");
+            return WASORA_PARSER_ERROR;
+          }
+          function_n_arg = (int)wasora_evaluate_expression_in_string(token);
+          if (function_n_arg <= 0) {
+            wasora_push_error_message("argument number should be positive");
+            return WASORA_PARSER_ERROR;
+          }
+          
+          if ((token = wasora_get_next_token(NULL)) == NULL) {
+            wasora_push_error_message("expected function name");
+            return WASORA_PARSER_ERROR;
+          }
+
+          if ((function_arg = wasora_get_function_ptr(token)) == NULL) {
+            wasora_push_error_message("unknown function '%s'", token);
+            return WASORA_PARSER_ERROR;
+          }
+          
         }
       }
 
@@ -725,8 +751,14 @@ if (strcasecmp(token, "FROM") == 0) {
       }
 
       // TODO: ya demasiado raro es el API para wasora_define_vector, hacemos esto por afuer
-      if (function != NULL) {
-        vector->function = function;
+      if (function_data != NULL) {
+        vector->function_data= function_data;
+      }
+      if (function_arg != NULL) {
+        vector->function_arg= function_arg;
+      }
+      if (function_n_arg != 0) {
+        vector->function_n_arg = function_n_arg;
       }
       
       free(vectorname);

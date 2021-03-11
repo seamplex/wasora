@@ -1,0 +1,5 @@
+MESH FILE_PATH tiny.msh DIMENSIONS 2 READ_FUNCTION f
+VECTOR vecx SIZE nodes FUNCTION_ARG 1 f
+VECTOR vecy SIZE nodes FUNCTION_ARG 2 f
+
+PRINT_VECTOR vecx vecy f(vecx(i),vecy(i))

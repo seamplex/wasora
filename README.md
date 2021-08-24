@@ -3,6 +3,10 @@ title: Wasora’s an advanced suite for optimization & reactor analysis
 lang: en-US
 ...
 
+# WASORA IS NOW OUTDATED/DEPRECATED/NOT DEVELOPED ANYMORE!
+
+# PLEASE SWITCH TO [FeenoX](https://github.com/seamplex/feenox) ASAP
+
 ![Logo](doc/logo.svg){.img-fluid}\ 
 
 
